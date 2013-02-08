@@ -65,7 +65,7 @@ for e = epochs
     text(e+1,min(ylims)+diff(ylims)*.05,sprintf('%g',e),'parent',ax(1));
 end
 
-saveas(fig,get(fig,'fileName'),'pdf'); close all;
+saveas(fig,get(fig,'fileName'),'pdf'); % close all;
 
 %% group trials index loop  TODO: turn this into a tree class
 params_to_discriminate = {'fc','fm','intensity'};
