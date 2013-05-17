@@ -1,0 +1,40 @@
+% quickShow_sweep
+
+trial = regexp(name,'_'); trial = str2num(name(trial(end)+1:end));
+label = regexp(name,'\'); label = name(label(end)+1:end);
+label = regexprep(label,'_','.');
+figure(1);
+obj.y = voltage;
+
+% setupStimulus
+obj.stimx = [];
+obj.stim = [];
+obj.x = ((1:data(trial).sampratein*data(trial).durSweep) - 1)/data(trial).sampratein;
+
+% displayTrial
+redlines = findobj(1,'Color',[1, 0, 0]);
+set(redlines,'color',[1 .8 .8]);
+
+sp = subplot(2,1,1);
+line(obj.x,obj.y,'color',[1 0 0],'linewidth',1,'parent',sp);
+box off; set(gca,'TickDir','out');
+switch data(trial).recmode
+    case 'VClamp'
+        ylabel('I (pA)'); 
+    case 'IClamp'
+        ylabel('V_m (mV)'); 
+end
+
+xlabel('Time (s)'); 
+%ylim([-80 -60]);
+%xlim([0 max(t)]);
+
+ax2 = subplot(2,1,2);
+voltagefft = fft(voltage);
+f = data(trial).sampratein/length(voltage)*[0:length(voltage)/2]; 
+f = [f, fliplr(f(2:end-1))];
+loglog(f,voltagefft.*conj(voltagefft),'r')
+box off; set(gca,'TickDir','out');
+ylabel('V^2'); %xlim([0 max(t)]);
+
+title(sp,label)
