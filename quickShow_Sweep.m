@@ -15,8 +15,11 @@ obj.x = ((1:data(trial).sampratein*data(trial).durSweep) - 1)/data(trial).sampra
 redlines = findobj(1,'Color',[1, 0, 0]);
 set(redlines,'color',[1 .8 .8]);
 
-sp = subplot(2,1,1);
-line(obj.x,obj.y,'color',[1 0 0],'linewidth',1,'parent',sp);
+ax1 = subplot(5,1,1);
+line(obj.x,current,'color',[1 0 0],'linewidth',1,'parent',ax1);
+
+ax2 = subplot(5,1,[2 3]);
+line(obj.x,obj.y,'color',[1 0 0],'linewidth',1,'parent',ax2);
 box off; set(gca,'TickDir','out');
 switch data(trial).recmode
     case 'VClamp'
@@ -29,12 +32,13 @@ xlabel('Time (s)');
 %ylim([-80 -60]);
 %xlim([0 max(t)]);
 
-ax2 = subplot(2,1,2);
+ax3 = subplot(5,1,[4 5]); cla
 voltagefft = fft(voltage);
 f = data(trial).sampratein/length(voltage)*[0:length(voltage)/2]; 
 f = [f, fliplr(f(2:end-1))];
 loglog(f,voltagefft.*conj(voltagefft),'r')
 box off; set(gca,'TickDir','out');
 ylabel('V^2'); %xlim([0 max(t)]);
+xlabel('time (s)');
 
-title(sp,label)
+title(ax1,label)

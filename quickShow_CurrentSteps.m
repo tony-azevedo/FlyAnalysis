@@ -3,17 +3,16 @@
 % 1) load data from folder
 
 % 2) load the trial you want to show
-trials = (15:21);
+trials = (12:14);
 % FlySoundProtocol
 
-eval(['load(''C:\Users\Anthony Azevedo\Acquisition\10-May-2013\10-May-2013_F1_C1\CurrentSteps_Raw_10-May-2013_F1_C1_' num2str(trial) '.mat'')']);
-D = ['C:\Users\Anthony Azevedo\Acquisition\',date,'\',...
-    date,'_F',data(1).flynumber,'_C',data(1).cellnumber];
-name = [D,'\CurrentSteps_Raw_', ...
-    date,'_F',data(1).flynumber,'_C',data(1).cellnumber,'_'];
+D = ['C:\Users\Anthony Azevedo\Acquisition\',data(1).date,'\',...
+    data(1).date,'_F',data(1).flynumber,'_C',data(1).cellnumber];
+namebase = [D,'\CurrentSteps_Raw_', ...
+    data(1).date,'_F',data(1).flynumber,'_C',data(1).cellnumber,'_'];
 
 for trial = trials
-load([name,num2str(trial),'.mat']);
+load([namebase,num2str(trial),'.mat']);
 obj.y = voltage;
 
 data(trial).durSweep = data(trial).stimDurInSec+data(trial).preDurInSec+data(trial).postDurInSec;
@@ -54,8 +53,8 @@ xlabel('Time (s)');
 % xlim([0.5-.03 0.5+.03]);
 
 ax2 = subplot(4,1,1);
-line(obj.stimx,current,'parent',ax2,'color',[.6 .6 .6],'linewidth',1);
-%line(obj.stimx,data(trial).step*obj.stim,'parent',ax2,'color',[.5 1 1],'linewidth',1);
+line(obj.stimx,current(1:length(obj.stimx)),'parent',ax2,'color',[.6 .6 .6],'linewidth',1);
+line(obj.stimx,data(trial).step*obj.stim,'parent',ax2,'color',[.5 1 1],'linewidth',1);
 box off; set(gca,'TickDir','out');
 ylabel('I (pA)'); %xlim([0 max(t)]);
 title(['trials ' num2str(trials)])
