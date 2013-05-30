@@ -3,7 +3,7 @@
 % 1) load data from folder
 
 % 2) load the trial you want to show
-trials = (12:14);
+trials = (11:33);
 % FlySoundProtocol
 
 D = ['C:\Users\Anthony Azevedo\Acquisition\',data(1).date,'\',...
