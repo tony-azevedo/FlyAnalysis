@@ -1,4 +1,4 @@
-% quickShow_PiezoStep
+% quickShow_sweep
 
 trial = regexp(name,'_'); trial = str2num(name(trial(end)+1:end));
 label = regexp(name,'\'); label = name(label(end)+1:end);
@@ -9,7 +9,6 @@ label = [label ' - ' num2str(data(trial).displacement) ' V'];
 x = ((1:data(trial).sampratein*data(trial).durSweep) - 1)/data(trial).sampratein; x = x(:);
 voltage = voltage(1:length(x));
 sgsmonitor = sgsmonitor(1:length(x));
-%sgsmonitor = zeros(size(x));
 
 % displayTrial
 figure(1);
@@ -23,7 +22,6 @@ set(bluelines,'color',[.8 .8 1]);
 %line(obj.stimx,obj.generateStimulus,'parent',ax1,'color',[0 0 1],'linewidth',1);
 % line(obj.x,voltage,'parent',ax1,'color',[1 0 0],'linewidth',1);
 % line(obj.x,sgsmonitor,'parent',ax2,'color',[0 0 1],'linewidth',1);
-
 [ax,l1,l2] = plotyy(x,sgsmonitor,x,voltage,'parent',ax1);
 ax1 = ax(1);
 ax2 = ax(2);
