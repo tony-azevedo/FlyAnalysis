@@ -1,4 +1,4 @@
-% Figure 2 of NRSA Grant, Sine Response
+ % Figure 2 of NRSA Grant, Sine Response
 load('C:\Users\Anthony Azevedo\Acquisition\07-Jun-2013\07-Jun-2013_F1_C1\PiezoSine_07-Jun-2013_F1_C1.mat')
 load('C:\Users\Anthony Azevedo\Acquisition\07-Jun-2013\07-Jun-2013_F1_C1\PiezoSine_Raw_07-Jun-2013_F1_C1_1.mat')
 
