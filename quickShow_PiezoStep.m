@@ -30,7 +30,7 @@ ax2 = ax(2);
 set(l1,'color',[1 1 1]*.7)
 set(ax1,'ycolor',[1 1 1]*0,'ylim',[-2 10],'ytick',(-2:4:10))
 set(l2,'color',[1 0 0])
-set(ax2,'Ycolor',[1 0 0],'ylim',[-200,20],'ytick',(-200:40:20))
+set(ax2,'Ycolor',[1 0 0],'ylim',[-20,100],'ytick',(-200:40:20))
 
 box off; set(gca,'TickDir','out');
 switch data(trial).recmode

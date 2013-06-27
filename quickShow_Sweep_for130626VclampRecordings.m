@@ -10,7 +10,7 @@ c = current;
 c = c/data(trial).scaledcurrentscale + data(trial).scaledcurrentoffset;
 voltage = voltage/data(trial).scaledvoltagescale + data(trial).scaledvoltageoffset;
 current = (voltage-data(trial).scaledcurrentoffset)*data(trial).scaledcurrentscale;
-voltage = (c-data(trial).hardvoltageoffset)*data(trial).hardvoltagescale * 1000;
+voltage = (c*data(trial).hardvoltagescale-data(trial).hardvoltageoffset) * 1000;
 
 % setupStimulus
 obj.stimx = [];
@@ -20,8 +20,8 @@ obj.x = ((1:data(trial).sampratein*data(trial).durSweep) - 1)/data(trial).sampra
 % displayTrial
 redlines = findobj(1,'Color',[1, 0, 0]);
 set(redlines,'color',[1 .8 .8]);
-bluelines = findobj(1,'Color',[0, 0, 1]);
-set(bluelines,'color',[.8 .8 1]);
+bluelines = findobj(1,'markeredgecolor',[0, 0, 1]);
+set(bluelines,'markeredgecolor',[.8 .8 1]);
 
 ax1 = subplot(5,1,1);
 line(obj.x,voltage,'color',[1 0 0],'linewidth',1,'parent',ax1);
@@ -56,7 +56,7 @@ title(ax1,label)
 
 
 % Spike counting
-thresh = 100;
+thresh = 50;
 spikes = current<thresh;
 spikes = (~spikes & [spikes(2:end); false]);
 line(obj.x(spikes),thresh*ones(sum(spikes),1),'linestyle','none','marker','o','markeredgecolor',[0 0 1]*1,'markersize',4,'parent',ax2);

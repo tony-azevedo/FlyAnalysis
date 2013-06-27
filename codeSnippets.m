@@ -44,3 +44,5 @@ f = samprate/length(x)*[0:length(x)/2]; f = [f, fliplr(f(2:end-1))];
 
 %% Preferences
  addpref('ControlOutput','Position',[0.6000   75.6154   69.6000    5.5385])
+ 
+ % simple thresholding
