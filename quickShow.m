@@ -20,7 +20,7 @@ function varargout = quickShow(varargin)
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 
-% Last Modified by GUIDE v2.5 27-Jun-2013 18:10:04
+% Last Modified by GUIDE v2.5 28-Jun-2013 17:53:05
 
 %% Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -131,24 +131,72 @@ loadCellFromDir(handles);
 
 function loadCellFromDir(handles)
 if ~isInCellDir(handles)
-    set(handles.figure1,'name','quickShow - choose a cell directory');
+    set(handles.figure1,'name','quickShow - Choose a cell directory');
     set(handles.protocolMenu, 'String', {'Choose a cell directory'});
     set(handles.protocolMenu,'Enable','off')
+    set(handles.leftButton,'Enable','off')
+    set(handles.rightButton,'Enable','off')
+    set(handles.trialnum,'Enable','off')
     set(handles.showMenu, 'String', {'Choose a cell directory'});
+    set(handles.showMenu,'Enable','off')
     delete(get(handles.quickShow_Panel,'children'));
 else
     set(handles.figure1,'name',sprintf('quickShow - %s',handles.dir));
     disp('NOW BEGIN TO LOAD STUFF');
+    set(handles.protocolMenu,'Enable','on')
+    set(handles.leftButton,'Enable','on')
+    set(handles.rightButton,'Enable','on')
+    set(handles.trialnum,'Enable','on')
+    set(handles.showMenu,'Enable','on')
+
+    a = dir(handles.dir);
+    protocols = {};
+    for i = 1:length(a)
+        ind = regexpi(a(i).name,'_');
+        if ~isempty(strfind(char(65:90),a(i).name(1))) && ...
+            ~isempty(ind) && ...
+            ~sum(strcmp(protocols,a(i).name(1:ind(1)-1)))
+            protocols{end+1} = a(i).name(1:ind(1)-1);
+        end
+    end
+    set(handles.protocolMenu, 'String', protocols);
+    guidata(hObject,handles)
+    protocolMenu_Callback(handles.protocolMenu, [], handles);
 end
 
 
 function protocolMenu_Callback(hObject, eventdata, handles)
-% hObject    handle to protocolMenu (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
 % Hints: contents = get(hObject,'String') returns protocolMenu contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from protocolMenu
+% TODO: populate this with the quickShow routines
+
+protocols = get(hObject,'String');
+protocol = protocols{get(hObject,'value')};
+set(handles.showMenu, 'String', {sprintf('quickShow_%s',protocols{get(hObject,'value')})});
+
+% give handles the information on the Trials involved
+rawfiles = dir([handles.dir '\' protocol '_Raw*']);
+prtclTrialNums = nan(size(rawfiles));
+for i = 1:length(rawfiles)
+    ind_ = regexp(rawfiles(i).name,'_');
+    indDot = regexp(rawfiles(i).name,'\.');
+    prtclTrialNums(i) = str2double(rawfiles(i).name(ind_(end)+1:indDot(1)-1));
+end
+dfile = rawfiles(i).name(~(1:length(rawfiles(i).name) >= ind_(end) & 1:length(rawfiles(i).name) < indDot(1)));
+dfile = regexprep(dfile,'_Raw','');
+d = load([handles.dir '\' dfile]);
+
+handles.prtclTrialNums = prtclTrialNums;
+handles.currentTrialNum = prtclTrialNums(1);
+handles.prtclData = d.data;
+
+set(handles.trialnum,'string',num2str(handles.currentTrialNum));
+guidata(hObject,handles)
+trialnum_Callback(handles.trialnum,[],handles)
+% Call the function labelled in the showMenu
+
+% right button increases the current Trial number
+%
 
 
 % --- Executes during object creation, after setting all properties.
@@ -191,12 +239,15 @@ end
 
 
 function trialnum_Callback(hObject, eventdata, handles)
-% hObject    handle to trialnum (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+trialnum = str2double(get(hObject,'string'));
+if isnan(trialnum)
+    error('bad trial number');
+end
+if ~sum(handles.trialnums==trialnum)
+    error('bad trial number');
+end
+handles.currentTrialNum = trialnum;
 
-% Hints: get(hObject,'String') returns contents of trialnum as text
-%        str2double(get(hObject,'String')) returns contents of trialnum as a double
 
 
 % --- Executes during object creation, after setting all properties.
