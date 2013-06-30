@@ -20,7 +20,7 @@ function varargout = quickShow(varargin)
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 
-% Last Modified by GUIDE v2.5 28-Jun-2013 17:53:05
+% Last Modified by GUIDE v2.5 29-Jun-2013 20:46:57
 
 %% Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -82,13 +82,6 @@ if ~isInCellDir;
 else
     loadCellFromDir(handles);
 end
-% Is this an appropriate folder? 
-    % set handles.cellfolderLogical
-    % call the protocol chooser function
-    % no: make that visible in the protocol menu, and move on 
-    
-    % yes: make it the current folder and run the rest of the setup
-    % routine
 
 
 function varargout = quickShow_OutputFcn(hObject, eventdata, handles)
@@ -132,17 +125,17 @@ loadCellFromDir(handles);
 function loadCellFromDir(handles)
 if ~isInCellDir(handles)
     set(handles.figure1,'name','quickShow - Choose a cell directory');
-    set(handles.protocolMenu, 'String', {'Choose a cell directory'});
+    set(handles.protocolMenu, 'String', {'Choose a cell directory'},'value',1);
     set(handles.protocolMenu,'Enable','off')
     set(handles.leftButton,'Enable','off')
     set(handles.rightButton,'Enable','off')
     set(handles.trialnum,'Enable','off')
     set(handles.showMenu, 'String', {'Choose a cell directory'});
     set(handles.showMenu,'Enable','off')
-    delete(get(handles.quickShow_Panel,'children'));
+    delete(get(handles.quickShowPanel,'children'));
+    guidata(handles.protocolMenu,handles)
 else
     set(handles.figure1,'name',sprintf('quickShow - %s',handles.dir));
-    disp('NOW BEGIN TO LOAD STUFF');
     set(handles.protocolMenu,'Enable','on')
     set(handles.leftButton,'Enable','on')
     set(handles.rightButton,'Enable','on')
@@ -159,95 +152,94 @@ else
             protocols{end+1} = a(i).name(1:ind(1)-1);
         end
     end
-    set(handles.protocolMenu, 'String', protocols);
-    guidata(hObject,handles)
+    set(handles.protocolMenu, 'String', protocols,'value',1);
+    guidata(handles.protocolMenu,handles)
     protocolMenu_Callback(handles.protocolMenu, [], handles);
 end
 
 
 function protocolMenu_Callback(hObject, eventdata, handles)
-% Hints: contents = get(hObject,'String') returns protocolMenu contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from protocolMenu
-% TODO: populate this with the quickShow routines
-
 protocols = get(hObject,'String');
-protocol = protocols{get(hObject,'value')};
-set(handles.showMenu, 'String', {sprintf('quickShow_%s',protocols{get(hObject,'value')})});
+handles.currentPrtcl = protocols{get(hObject,'value')};
 
 % give handles the information on the Trials involved
-rawfiles = dir([handles.dir '\' protocol '_Raw*']);
-prtclTrialNums = nan(size(rawfiles));
-for i = 1:length(rawfiles)
-    ind_ = regexp(rawfiles(i).name,'_');
-    indDot = regexp(rawfiles(i).name,'\.');
-    prtclTrialNums(i) = str2double(rawfiles(i).name(ind_(end)+1:indDot(1)-1));
-end
-dfile = rawfiles(i).name(~(1:length(rawfiles(i).name) >= ind_(end) & 1:length(rawfiles(i).name) < indDot(1)));
+rawfiles = dir([handles.dir '\' handles.currentPrtcl '_Raw*']);
+ind_ = regexp(rawfiles(1).name,'_');
+indDot = regexp(rawfiles(1).name,'\.');
+handles.trialStem = [rawfiles(1).name((1:length(rawfiles(1).name)) <= ind_(end)) '%d' rawfiles(1).name(1:length(rawfiles(1).name) >= indDot(1))];
+dfile = rawfiles(1).name(~(1:length(rawfiles(1).name) >= ind_(end) & 1:length(rawfiles(1).name) < indDot(1)));
 dfile = regexprep(dfile,'_Raw','');
-d = load([handles.dir '\' dfile]);
 
+d = load([handles.dir '\' dfile]);
+handles.prtclData = d.data;
+prtclTrialNums = nan(size(rawfiles));
+for i = 1:length(handles.prtclData)
+    prtclTrialNums(i) = handles.prtclData(i).trial;
+end
 handles.prtclTrialNums = prtclTrialNums;
 handles.currentTrialNum = prtclTrialNums(1);
-handles.prtclData = d.data;
 
 set(handles.trialnum,'string',num2str(handles.currentTrialNum));
 guidata(hObject,handles)
+showMenu_CreateFcn(handles.showMenu, eventdata, handles);
+handles = guidata(hObject);
 trialnum_Callback(handles.trialnum,[],handles)
-% Call the function labelled in the showMenu
-
-% right button increases the current Trial number
-%
 
 
-% --- Executes during object creation, after setting all properties.
 function protocolMenu_CreateFcn(hObject, eventdata, handles)
-
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
      set(hObject,'BackgroundColor','white');
 end
-
-% function gets run before the main creation function?
 set(hObject, 'String', {'Choose a cell folder'});
-%set(hObject, 'String', {'Choose a cell folder'});
+
 
 function leftButton_Callback(hObject, eventdata, handles)
-
-function rightButton_Callback(hObject, eventdata, handles)
-
-
-% --- Executes on selection change in showMenu.
-function showMenu_Callback(hObject, eventdata, handles)
-% hObject    handle to showMenu (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: contents = cellstr(get(hObject,'String')) returns showMenu contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from showMenu
-
-
-% --- Executes during object creation, after setting all properties.
-function showMenu_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to showMenu (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: popupmenu controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
+trialnum = str2double(get(handles.trialnum,'string'));
+trialnum = trialnum-1;
+if trialnum < min(handles.prtclTrialNums)
+    trialnum = trialnum+1;
+elseif ~sum(handles.prtclTrialNums==trialnum)
+    trialnum = trialnum-1;
 end
+set(handles.trialnum,'string',num2str(trialnum));
+handles = guidata(hObject);
+trialnum_Callback(handles.trialnum,[],handles)
+
+    
+function rightButton_Callback(hObject, eventdata, handles)
+trialnum = str2double(get(handles.trialnum,'string'));
+trialnum = trialnum+1;
+if trialnum > max(handles.prtclTrialNums)
+    trialnum = trialnum-1;
+elseif ~sum(handles.prtclTrialNums==trialnum)
+    trialnum = trialnum+1;
+end
+set(handles.trialnum,'string',num2str(trialnum));
+handles = guidata(hObject);
+trialnum_Callback(handles.trialnum,[],handles)
+
 
 
 function trialnum_Callback(hObject, eventdata, handles)
 trialnum = str2double(get(hObject,'string'));
 if isnan(trialnum)
-    error('bad trial number');
+    error('Bad trial number, enter integer');
 end
-if ~sum(handles.trialnums==trialnum)
-    error('bad trial number');
+if ~sum(handles.prtclTrialNums==trialnum)
+    if trialnum > max(handles.prtclTrialNums)
+        error('Trial number too large (>%d)',max(handles.prtclTrialNums));
+    elseif trialnum < min(handles.prtclTrialNums)
+        error('Trial number too small (<%d)',min(handles.prtclTrialNums));
+    else
+        error('Trial number within range but does not exist');
+    end
 end
 handles.currentTrialNum = trialnum;
+handles.trial = load([handles.dir '\' sprintf(handles.trialStem,handles.currentTrialNum)]);
+handles.params = handles.prtclData(handles.prtclTrialNums==handles.currentTrialNum);
 
+guidata(hObject,handles)
+showMenu_Callback(hObject, eventdata, handles)
 
 
 % --- Executes during object creation, after setting all properties.
@@ -263,11 +255,51 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on button press in figButton.
+function showMenu_Callback(hObject, eventdata, handles)
+showfunctions = get(handles.showMenu,'string');
+handles.quickShowFunction = showfunctions{get(handles.showMenu,'value')};
+if get(handles.savetraces_button,'value')
+    savetag = 'save';
+    delete(findobj(handles.quickShowPanel,'tag','delete'));
+else
+    savetag = 'delete';
+    delete(findobj(handles.quickShowPanel,'tag','delete'));
+end
+
+guidata(hObject,handles)
+% updateInfoPanel(hObject,eventdata,handles);
+handles = guidata(hObject);
+feval(str2func(handles.quickShowFunction),handles.quickShowPanel,handles,savetag);
+
+
+function showMenu_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    % Hint: popupmenu controls usually have a white background on Windows. See ISPC and COMPUTER.
+    set(hObject,'BackgroundColor','white');
+end
+if ~isfield(handles,'currentPrtcl');
+    set(hObject, 'String', {'Choose a cell directory'});
+    return
+end
+handles = guidata(hObject);
+a = what(handles.currentPrtcl);
+for i = 1:length(a.m)
+    a.m{i} = regexprep(a.m{i},'.m','');
+end
+set(hObject, 'String', a.m);
+guidata(hObject,handles)
+
+
+function clearcanvas_Callback(hObject, eventdata, handles)
+delete(get(handles.quickShowPanel,'children'))
+
+
 function figButton_Callback(hObject, eventdata, handles)
-% hObject    handle to figButton (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+fig = figure();
+childs = get(handles.quickShowPanel,'children');
+copyobj(childs,repmat(fig,size(childs)));
+orient(fig,'landscape');
+trialnum_Callback(handles.trialnum,[],handles)
 
 
 % --- Executes on button press in epsButton.
@@ -275,6 +307,29 @@ function epsButton_Callback(hObject, eventdata, handles)
 % hObject    handle to epsButton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in savetraces_button.
+function savetraces_button_Callback(hObject, eventdata, handles)
+% hObject    handle to savetraces_button (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of savetraces_button
+if get(handles.savetraces_button,'value')
+    lines = findobj(handles.quickShowPanel,'type','line');
+    set(lines,'tag','save');
+    redlines = findobj(handles.quickShowPanel,'Color',[1, 0, 0]);
+    set(redlines,'color',[1 .75 .75]);
+    bluelines = findobj(handles.quickShowPanel,'Color',[0, 0, 1]);
+    set(bluelines,'color',[.75 .75 1]);
+else
+    redlines = findobj(handles.quickShowPanel,'Color',[1, 0, 0]);
+    set(redlines,'color',[1 .75 .75]);
+    bluelines = findobj(handles.quickShowPanel,'Color',[0, 0, 1]);
+    set(bluelines,'color',[.75 .75 1]);
+end
+guidata(hObject,handles);
 
 
 %% --- Sub functions

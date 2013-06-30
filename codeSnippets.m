@@ -4,7 +4,8 @@
 fig = figure(1);
 ax(1) = axes('position',[0.04,0.04,0.66,0.92],'parent',fig);
 title(ax1,sprintf('%s_%s',regexprep(groupstr,'_','\\_'),grouptrialstr));
-    orient(fig,'landscape'); print(fig,'-depsc',get(fig,'fileName')); close all
+orient(fig,'landscape'); print(fig,'-depsc',get(fig,'fileName')); close all
+ax1 = subplot(3,1,[1 2],'parent',plotcanvas);
 
 %%
 line(x,y,'parent',ax,'DisplayName',dspn,'color',[1 1 1]*0,'linestyle',ls,'marker',m,'markerfacecolor',[1 1 1]*0,'markeredgecolor',[1 1 1]*0,'markersize',ms)
