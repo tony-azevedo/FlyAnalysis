@@ -20,7 +20,7 @@ function varargout = quickShow(varargin)
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 
-% Last Modified by GUIDE v2.5 29-Jun-2013 20:46:57
+% Last Modified by GUIDE v2.5 02-Jul-2013 20:41:22
 
 %% Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -143,6 +143,7 @@ else
     set(handles.showMenu,'Enable','on')
 
     a = dir(handles.dir);
+    
     protocols = {};
     for i = 1:length(a)
         ind = regexpi(a(i).name,'_');
@@ -151,7 +152,12 @@ else
             ~sum(strcmp(protocols,a(i).name(1:ind(1)-1)))
             protocols{end+1} = a(i).name(1:ind(1)-1);
         end
+        if length(a(i).name) > 5 && strcmp(a(i).name(1:5),'notes');
+            handles.notesfilename = fullfile(handles.dir,a(i).name);
+            handles.notesfid = fopen(handles.notesfilename,'r');
+        end
     end
+    set(handles.infoPanel,'userdata',fileread(handles.notesfilename))
     set(handles.protocolMenu, 'String', protocols,'value',1);
     guidata(handles.protocolMenu,handles)
     protocolMenu_Callback(handles.protocolMenu, [], handles);
@@ -163,14 +169,15 @@ protocols = get(hObject,'String');
 handles.currentPrtcl = protocols{get(hObject,'value')};
 
 % give handles the information on the Trials involved
-rawfiles = dir([handles.dir '\' handles.currentPrtcl '_Raw*']);
+rawfiles = dir(fullfile(handles.dir,[handles.currentPrtcl '_Raw*']));
 ind_ = regexp(rawfiles(1).name,'_');
 indDot = regexp(rawfiles(1).name,'\.');
 handles.trialStem = [rawfiles(1).name((1:length(rawfiles(1).name)) <= ind_(end)) '%d' rawfiles(1).name(1:length(rawfiles(1).name) >= indDot(1))];
 dfile = rawfiles(1).name(~(1:length(rawfiles(1).name) >= ind_(end) & 1:length(rawfiles(1).name) < indDot(1)));
 dfile = regexprep(dfile,'_Raw','');
+handles.prtclDataFileName = fullfile(handles.dir,dfile);
 
-d = load([handles.dir '\' dfile]);
+d = load(handles.prtclDataFileName);
 handles.prtclData = d.data;
 prtclTrialNums = nan(size(rawfiles));
 for i = 1:length(handles.prtclData)
@@ -235,7 +242,7 @@ if ~sum(handles.prtclTrialNums==trialnum)
     end
 end
 handles.currentTrialNum = trialnum;
-handles.trial = load([handles.dir '\' sprintf(handles.trialStem,handles.currentTrialNum)]);
+handles.trial = load(fullfile(handles.dir, sprintf(handles.trialStem,handles.currentTrialNum)));
 handles.params = handles.prtclData(handles.prtclTrialNums==handles.currentTrialNum);
 
 guidata(hObject,handles)
@@ -267,7 +274,7 @@ else
 end
 
 guidata(hObject,handles)
-% updateInfoPanel(hObject,eventdata,handles);
+updateInfoPanel(handles);
 handles = guidata(hObject);
 feval(str2func(handles.quickShowFunction),handles.quickShowPanel,handles,savetag);
 
@@ -295,9 +302,26 @@ delete(get(handles.quickShowPanel,'children'))
 
 
 function figButton_Callback(hObject, eventdata, handles)
-fig = figure();
+fig = figure('color',[1 1 1]);
 childs = get(handles.quickShowPanel,'children');
 copyobj(childs,repmat(fig,size(childs)));
+% cp = uipanel('Title',handles.currentPrtcl,'FontSize',12,...
+%                 'BackgroundColor',[1 1 1],...
+%                 'Position',[0 0 .75 1],'parent',fig,'bordertype','none');
+% copyobj(childs,repmat(cp,size(childs)));
+
+infoStr = get(handles.infoPanel,'string');
+fprintf('%s\n',infoStr{:});
+ %celldisp(infoStr)
+% ip = uicontrol('BackgroundColor',[1 1 1],'style','text',...
+%                 'units','normalized',...
+%                 'Position',[.75 0 .25 .9],'parent',fig,...
+%                 'horizontalAlignment','left');
+% set(ip,'units','pixels');            
+% infoStr = textwrap(ip,infoStr);
+% 
+% set(ip,'string',infoStr)%,'position',position);
+
 orient(fig,'landscape');
 trialnum_Callback(handles.trialnum,[],handles)
 
@@ -362,3 +386,64 @@ l = handles.isInCellDirLogical;
 
 guidata(gcf,handles);
 varargout = {l,handles};
+
+
+function updateInfoPanel(handles)
+
+notes = get(handles.infoPanel,'userdata');
+
+trln = regexp(notes,[handles.currentPrtcl ' trial ' num2str(handles.params.trial)]);
+trialinfo = notes(trln:trln+regexp(notes(trln:end),'\n','once'));
+trialinfo = regexprep(trialinfo,'(?=\d)\s',',');
+
+prtclln = regexp(notes(1:trln),[handles.currentPrtcl ' - ']);
+prtclln = prtclln(end);
+prtclinfo = notes(prtclln:prtclln+regexp(notes(prtclln(end):trln),'\n\t\t','once'));
+prtclinfo = regexprep(prtclinfo,'(?=\d)\s',',');
+
+expression = '\n\t';
+[~,lines1] = regexp(prtclinfo,expression,'tokens','split');
+if isempty(lines1{end})
+    lines1 = lines1(1:end-1);
+end
+lines1 = [lines1,{trialinfo}];
+
+infoStr = {lines1{:};lines1{:}};
+infoStr(2,:) = {'  '};
+infoStr = infoStr(:);
+
+comments = regexp(notes(1:trln),'\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\n','end');
+if ~isempty(comments)
+    cmln = regexp(notes(comments(end-1)+1:trln),'\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\n','start');
+    comment = notes(comments(end-1)+1:comments(end-1)+cmln-1);
+    expression = '\n\t';
+    [~,lines2] = regexp(comment,expression,'tokens','split');
+    if isempty(lines2{end})
+        lines2 = lines2(1:end-1);
+    end
+    lines1 = [lines1,lines2];
+end
+infoStr = {lines1{:};lines1{:}};
+infoStr(2,:) = {'  '};
+infoStr = infoStr(:);
+
+[out, position] = textwrap(handles.infoPanel,infoStr);
+%set(handles.infoPanel,'horizontalAlignment','left','string',out,'position',position);
+
+set(handles.infoPanel,'string',out)%,'position',position);
+
+
+function loadstr_button_Callback(hObject, eventdata, handles)
+fprintf('%%*********************\n');
+fprintf('obj.trial = load(''%s'');\n',(fullfile(handles.dir, sprintf(handles.trialStem,handles.currentTrialNum))))
+fprintf('load(''%s'')\n',handles.prtclDataFileName)
+fprintf('plotcanvas = fig;\n');
+fprintf('obj.params = data(%d);\n',handles.currentTrialNum);
+fprintf('savetag = ''delete'';\n');
+s = fileread([handles.quickShowFunction '.m']);
+s = regexprep(s,'%','%%');
+s = regexprep(s,'ax[\d]+','ax');
+newlines = regexp(s,'\n');
+s(newlines) = '';
+
+fprintf(s(newlines(1):end));
