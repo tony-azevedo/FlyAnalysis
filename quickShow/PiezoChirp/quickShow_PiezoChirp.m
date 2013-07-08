@@ -1,107 +1,62 @@
-% quickShow_sweep
+function quickShow_PiezoChirp(plotcanvas,obj,savetag)
 
-trial = regexp(name,'_'); trial = str2num(name(trial(end)+1:end));
-label = regexp(name,'\'); label = name(label(end)+1:end);
-label = regexprep(label,'_','.');
-obj.y = voltage;
+x = ((1:obj.params.sampratein*obj.params.durSweep) - obj.params.preDurInSec*obj.params.sampratein)/obj.params.sampratein;
+x = x(:);
+voltage = obj.trial.voltage(1:length(x));
+current = obj.trial.current(1:length(x));
+sgsmonitor = obj.trial.sgsmonitor(1:length(x));
 
-% setupStimulus
-x = ((1:data(trial).sampratein*data(trial).durSweep) - 1)/data(trial).sampratein; x = x(:)
-stimind = data(trial).sampratein*data(trial).preDurInSec+1:data(trial).sampratein*(data(trial).preDurInSec+data(trial).stimDurInSec);
+obj.stimx = ((1:obj.params.samprateout*(obj.params.preDurInSec+obj.params.stimDurInSec+obj.params.postDurInSec))-obj.params.preDurInSec*obj.params.samprateout)/obj.params.samprateout;
+obj.stimx = obj.stimx(:);
+
+stim = (1:obj.params.samprateout*(obj.params.preDurInSec+obj.params.stimDurInSec+obj.params.postDurInSec));
+stim = stim(:);
+stim(:) = 0;
+
+stimpnts = obj.params.samprateout*obj.params.preDurInSec+1:...
+    obj.params.samprateout*(obj.params.preDurInSec+obj.params.stimDurInSec);
+
+w = window(@triang,2*obj.params.ramptime*obj.params.samprateout);
+w = [w(1:obj.params.ramptime*obj.params.samprateout);...
+    ones(length(stimpnts)-length(w),1);...
+    w(obj.params.ramptime*obj.params.samprateout+1:end)];
+
+stimtime = (stimpnts - stimpnts(1)+1)/obj.params.samprateout;
+
+stim(stimpnts) = ...
+    w.*...
+    chirp(stimtime,obj.params.freqstart,stimtime(end),obj.params.freqstop)';
+obj.stim = stim;
+obj.stim = obj.stim * obj.params.displacement + obj.params.displacementOffset;
+
+stimind = obj.params.sampratein*obj.params.preDurInSec+1:obj.params.sampratein*(obj.params.preDurInSec+obj.params.stimDurInSec);
 freqramp = x; freqramp(:) = 0; 
-df = (data(trial).freqstop-data(trial).freqstart)/length(stimind);
-freqramp(stimind) = (data(trial).freqstart+df:df:data(trial).freqstop);
+df = (obj.params.freqstop-obj.params.freqstart)/length(stimind);
+freqramp(stimind) = (obj.params.freqstart+df:df:obj.params.freqstop);
 
-% displayTrial
-figure(1);
-ax1 = subplot(1,1,1);
-
-redlines = findobj(1,'Color',[1, 0, 0]);
-set(redlines,'color',[1 .8 .8]);
-bluelines = findobj(1,'Color',[0, 0, 1]);
-set(bluelines,'color',[.8 .8 1]);
-
-%line(obj.stimx,obj.generateStimulus,'parent',ax1,'color',[0 0 1],'linewidth',1);
-% line(obj.x,voltage,'parent',ax1,'color',[1 0 0],'linewidth',1);
-% line(obj.x,sgsmonitor,'parent',ax2,'color',[0 0 1],'linewidth',1);
-[ax,l1,l2] = plotyy(x,sgsmonitor,x,voltage,'parent',ax1);
-ax1 = ax(1);
-ax2 = ax(2);
-set(l1,'color',[1 1 1]*.7)
-set(ax1,'ycolor',[1 1 1]*0,'ylim',[-10 5],'ytick',(-8:4:4))
-set(l2,'color',[1 0 0])
-set(ax2,'Ycolor',[1 0 0],'ylim',[-200,50],'ytick',(-200:40:50))
-
-box off; set(gca,'TickDir','out');
-switch data(trial).recmode
+%
+ax1 = subplot(4,1,[1 2],'parent',plotcanvas);
+switch obj.params.recmode
     case 'VClamp'
-        ylabel('I (pA)'); %xlim([0 max(t)]);
+        line(x,current,'parent',ax1,'color',[1 0 0],'tag',savetag);
+        ylabel(ax1,'I (pA)'); %xlim([0 max(t)]);
     case 'IClamp'
-        ylabel(ax2,'V_m (mV)'); %xlim([0 max(t)]);
+        line(x,voltage,'parent',ax1,'color',[1 0 0],'tag',savetag);
+        ylabel(ax1,'V_m (mV)'); %xlim([0 max(t)]);
 end
-ylabel(ax1,'SGS monitor (V)'); %xlim([0 max(t)]);
-xlabel('Time (s)'); %xlim([0 max(t)]);
+box(ax1,'off'); set(ax1,'TickDir','out'); 
+ylabel(ax1,'V_m (mV)'); 
 
-title(label);
+ax2 = subplot(4,1,3,'parent',plotcanvas);
+line(obj.stimx,obj.stim,'parent',ax2,'color',[.75 .75 .75],'linewidth',1,'tag',savetag);
+line(x,sgsmonitor,'parent',ax2,'color',[0 0 1],'linewidth',1,'tag',savetag);
+box(ax2,'off'); set(ax2,'TickDir','out'); 
+ylabel(ax2,'I (pA)'); 
+xlabel(ax2,'Time (s)'); 
 
+ax3 = subplot(4,1,4,'parent',plotcanvas);
+line(x,freqramp,'parent',ax3,'color',[.75 .75 .75],'linewidth',1,'tag',savetag);
+box(ax2,'off'); set(ax3,'TickDir','out'); 
+ylabel(ax3,'(Hz)'); 
+xlabel(ax3,'Time (s)'); 
 
-% displayTrial
-figure(2);
-ax1 = subplot(1,1,1);
-
-redlines = findobj(2,'Color',[1, 0, 0]);
-set(redlines,'color',[1 .8 .8]);
-bluelines = findobj(2,'Color',[0, 0, 1]);
-set(bluelines,'color',[.8 .8 1]);
-
-%line(obj.stimx,obj.generateStimulus,'parent',ax1,'color',[0 0 1],'linewidth',1);
-% line(obj.x,voltage,'parent',ax1,'color',[1 0 0],'linewidth',1);
-% line(obj.x,sgsmonitor,'parent',ax2,'color',[0 0 1],'linewidth',1);
-[ax,l1,l2] = plotyy(x,freqramp,x,voltage,'parent',ax1);
-ax1 = ax(1);
-ax2 = ax(2);
-set(l1,'color',[1 1 1]*.7)
-set(ax1,'ycolor',[1 1 1]*0,'ylim',[-10 200],'ytick',(0:20:200))
-set(l2,'color',[1 0 0])
-set(ax2,'Ycolor',[1 0 0],'ylim',[-200,50],'ytick',(-200:40:50))
-
-box off; set(gca,'TickDir','out');
-switch data(trial).recmode
-    case 'VClamp'
-        ylabel('I (pA)'); %xlim([0 max(t)]);
-    case 'IClamp'
-        ylabel(ax2,'V_m (mV)'); %xlim([0 max(t)]);
-end
-ylabel(ax1,'SGS monitor (V)'); %xlim([0 max(t)]);
-xlabel('Time (s)'); %xlim([0 max(t)]);
-
-title(label);
-
-% ax2 = subplot(4,4,[13 14 15]);
-% box off; set(gca,'TickDir','out');
-
-% figure(2)
-% % ax3 = subplot(3,4,[4 8]);
-% ax3 = subplot(1,1,1);
-% 
-% sgsfft = real(fft(sgsmonitor).*conj(fft(sgsmonitor)));
-% sgsf = data(trial).sampratein/length(sgsmonitor)*[0:length(sgsmonitor)/2]; sgsf = [sgsf, fliplr(sgsf(2:end-1))];
-% 
-% respfft = real(fft(voltage.*conj(fft(voltage))));
-% respf = data(trial).sampratein/length(voltage)*[0:length(voltage)/2]; respf = [respf, fliplr(respf(2:end-1))];
-% 
-% %             stim = obj.generateStimulus;
-% %             stimfft = real(fft(stim).*conj(fft(stim)));
-% %             stimf = obj.params.samprateout/length(stim)*[0:length(stim)/2]; stimf = [stimf, fliplr(stimf(2:end-1))];
-% 
-% [C,IA,IB] = intersect(respf,sgsf);
-% stimratio = respfft(IA)./sgsfft(IB);
-% 
-% %loglog(stimf,stimfft/max(stimfft(stimf>obj.params.freqstart & stimf<obj.params.freqstop))), hold on;
-% loglog(sgsf,sgsfft/max(sgsfft(sgsf>data(trial).freqstart & sgsf<data(trial).freqstop)),'b'), hold on;
-% loglog(respf,respfft/max(respfft(respf>data(trial).freqstart & respf<data(trial).freqstop)),'r'), hold on;
-% loglog(C,stimratio/max(stimratio(C>data(trial).freqstart & C<data(trial).freqstop/2)),'k'), hold on;
-% 
-% %line(obj.x,obj.sensorMonitor,'parent',ax2,'color',[0 0 1],'linewidth',1);
-% box off; set(gca,'TickDir','out');
-% %xlim([data(trial).freqstart data(trial).freqstop*.95])
