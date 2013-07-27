@@ -120,6 +120,7 @@ handles.dir = uigetdir('C:\Users\Anthony Azevedo\Raw_Data\','Choose cell folder'
 if ~handles.dir
     handles.dir = pwd;
 end
+cd(handles.dir); 
 loadCellFromDir(handles);
 
 function loadCellFromDir(handles)
@@ -445,5 +446,12 @@ s = regexprep(s,'%','%%');
 s = regexprep(s,'ax[\d]+','ax');
 newlines = regexp(s,'\n');
 s(newlines) = '';
-
 fprintf(s(newlines(1):end));
+
+notes = get(handles.infoPanel,'userdata');
+
+trln = regexp(notes,[handles.currentPrtcl ' trial ' num2str(handles.params.trial)]);
+trialinfo = notes(trln:trln+regexp(notes(trln:end),'\n','once'));
+trialinfo = regexprep(trialinfo,'(?=\d)\s',',');
+
+fprintf('title(fig,''%s'')\n',trialinfo(1:end-3));

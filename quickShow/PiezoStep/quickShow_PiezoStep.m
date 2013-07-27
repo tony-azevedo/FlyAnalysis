@@ -1,7 +1,7 @@
 function quickShow_PiezoStep(plotcanvas,obj,savetag)
 
 % setupStimulus
-x = ((1:obj.params.sampratein*obj.params.durSweep) - 1)/obj.params.sampratein; x = x(:);
+x = ((1:obj.params.sampratein*obj.params.durSweep) - obj.params.preDurInSec*obj.params.sampratein)/obj.params.sampratein;
 voltage = obj.trial.voltage(1:length(x));
 current = obj.trial.current(1:length(x));
 sgsmonitor = obj.trial.sgsmonitor(1:length(x));
