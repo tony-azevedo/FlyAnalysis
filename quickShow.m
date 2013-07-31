@@ -178,7 +178,14 @@ dfile = rawfiles(1).name(~(1:length(rawfiles(1).name) >= ind_(end) & 1:length(ra
 dfile = regexprep(dfile,'_Raw','');
 handles.prtclDataFileName = fullfile(handles.dir,dfile);
 
-d = load(handles.prtclDataFileName);
+dataFileExist = dir(handles.prtclDataFileName);
+if length(dataFileExist)
+    d = load(handles.prtclDataFileName);
+else
+    createDataFileFromRaw(handles.prtclDataFileName);
+    d = load(handles.prtclDataFileName);
+end
+
 handles.prtclData = d.data;
 prtclTrialNums = nan(size(rawfiles));
 for i = 1:length(handles.prtclData)
@@ -291,6 +298,9 @@ if ~isfield(handles,'currentPrtcl');
 end
 handles = guidata(hObject);
 a = what(handles.currentPrtcl);
+if isempty(a)
+    error('No quickShow for %s\n',handles.currentPrtcl)
+end
 for i = 1:length(a.m)
     a.m{i} = regexprep(a.m{i},'.m','');
 end
