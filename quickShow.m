@@ -333,7 +333,7 @@ fprintf('%s\n',infoStr{:});
 % 
 % set(ip,'string',infoStr)%,'position',position);
 
-orient(fig,'landscape');
+%orient(fig,'landscape');
 trialnum_Callback(handles.trialnum,[],handles)
 
 
@@ -464,4 +464,4 @@ trln = regexp(notes,[handles.currentPrtcl ' trial ' num2str(handles.params.trial
 trialinfo = notes(trln:trln+regexp(notes(trln:end),'\n','once'));
 trialinfo = regexprep(trialinfo,'(?=\d)\s',',');
 
-fprintf('title(fig,''%s'')\n',trialinfo(1:end-3));
+fprintf('title(ax,''%s'')\n',trialinfo(1:end-3));

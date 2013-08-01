@@ -6,7 +6,10 @@ current = obj.trial.current;
 
 % displayTrial
 ax1 = subplot(5,1,4,'parent',plotcanvas);
-switch obj.params.recmode
+if length(obj.params.recmode)>6, mode = obj.params.recmode(1:6);
+else mode = 'IClamp';
+end
+switch mode
     case 'VClamp'
         ylabel(ax1,'V_m (mV)'); 
         line(obj.x,voltage,'color',[1 0 0],'linewidth',1,'parent',ax1,'tag',savetag);
@@ -17,7 +20,7 @@ end
 box(ax1,'off'); set(ax1,'TickDir','out'); axis(ax1,'tight');
 
 ax2 = subplot(5,1,[1 2 3],'parent',plotcanvas);
-switch obj.params.recmode
+switch mode
     case 'VClamp'
         ylabel(ax2,'I (pA)'); 
         line(obj.x,current,'color',[1 0 0],'linewidth',1,'parent',ax2,'tag',savetag);

@@ -8,7 +8,10 @@ sgsmonitor = obj.trial.sgsmonitor(1:length(x));
 
 % displayTrial
 ax1 = subplot(3,1,[1 2],'parent',plotcanvas);
-switch obj.params.recmode
+if length(obj.params.recmode)>6, mode = obj.params.recmode(1:6);
+else mode = 'IClamp';
+end
+switch mode
     case 'VClamp'
         line(x,current,'parent',ax1,'color',[1 0 0],'tag',savetag);
         ylabel(ax1,'I (pA)'); %xlim([0 max(t)]);
