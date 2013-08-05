@@ -1,100 +1,303 @@
-% Lab Meeting 130805
+% 
+% @@ -0,0 +1,300 @@
+% Meeting with Rachel 130801
 
 % 130730_F2_C1 was a good responding cell
 % 
 
-%% first trial 130802 F1_C2
 fig = figure(101);
-obj.trial = load('C:\Users\Anthony Azevedo\Raw_Data\130802\130802_F1_C2\Sweep_Raw_130802_F1_C2_27.mat');
-load('C:\Users\Anthony Azevedo\Raw_Data\130802\130802_F1_C2\Sweep_130802_F1_C2.mat')
+%% first trial
+
+obj.trial = load('C:\Users\Anthony Azevedo\Raw_Data\130730\130730_F1_C1\PiezoSine_Raw_130730_F1_C1_1.mat');
+load('C:\Users\Anthony Azevedo\Raw_Data\130730\130730_F1_C1\PiezoSine_130730_F1_C1.mat')
 plotcanvas = fig;
-obj.trial.params = data(27);
+obj.params = data(1);
 savetag = 'delete';
+
 % setupStimulus
-obj.x = ((1:obj.trial.params.sampratein*obj.trial.params.durSweep) - 1)/obj.trial.params.sampratein;
-voltage = obj.trial.voltage;
-current = obj.trial.current;
+x = ((1:obj.params.sampratein*obj.params.durSweep) - obj.params.preDurInSec*obj.params.sampratein)/obj.params.sampratein;
+voltage = obj.trial.voltage(1:length(x));
+current = obj.trial.current(1:length(x));
+sgsmonitor = obj.trial.sgsmonitor(1:length(x));
 
 % displayTrial
-ax = subplot(5,1,4,'parent',plotcanvas);
-if length(obj.trial.params.recmode)>6, mode = obj.trial.params.recmode(1:6);
+ax = subplot(3,1,[1 2],'parent',plotcanvas);
+if length(obj.params.recmode)>6, mode = obj.params.recmode(1:6);
 else mode = 'IClamp';
 end
 switch mode
     case 'VClamp'
-        ylabel(ax,'V_m (mV)'); 
-        line(obj.x,voltage,'color',[1 0 0],'linewidth',1,'parent',ax,'tag',savetag);
+        line(x,current,'parent',ax,'color',[1 0 0],'tag',savetag);
+        ylabel(ax,'I (mV)'); %xlim([0 max(t)]);
     case 'IClamp'
-        ylabel(ax,'I (pA)'); 
-        line(obj.x,current,'color',[1 0 0],'linewidth',1,'parent',ax,'tag',savetag);
+        line(x,voltage,'parent',ax,'color',[1 0 0],'tag',savetag);
+        ylabel(ax,'V_m (mV)'); %xlim([0 max(t)]);
 end
 box(ax,'off'); set(ax,'TickDir','out'); axis(ax,'tight');
+title(ax,'PiezoSine trial 1, freq=25, 14:29:5')
 
-ax = subplot(5,1,[1 2 3],'parent',plotcanvas);
-switch mode
-    case 'VClamp'
-        ylabel(ax,'I (pA)'); 
-        line(obj.x,current,'color',[1 0 0],'linewidth',1,'parent',ax,'tag',savetag);
-    case 'IClamp'
-        ylabel(ax,'V_m (mV)'); 
-        line(obj.x,voltage,'color',[1 0 0],'linewidth',1,'parent',ax,'tag',savetag);
+ax = subplot(3,1,3,'parent',plotcanvas); 
+line(x,sgsmonitor,'parent',ax,'color',[0 0 1],'tag',savetag);
+ylabel(ax,'SGS monitor (V)'); %xlim([0 max(t)]);
+box(ax,'off'); set(ax,'TickDir','out'); axis(ax,'tight');
+xlabel(ax,'Time (s)'); %xlim([0 max(t)]);
+
+
+%% Show epochs 1:15 25 Hz average .5 disp.
+trials = 1:5:11;
+load('C:\Users\Anthony Azevedo\Raw_Data\130730\130730_F1_C1\PiezoSine_130730_F1_C1.mat')
+load('C:\Users\Anthony Azevedo\Raw_Data\130730\130730_F1_C1\PiezoSine_Raw_130730_F1_C1_1.mat')
+
+resp = zeros(length(trials),length(current));
+for t = 1:length(trials)
+    load(sprintf('C:\\Users\\Anthony Azevedo\\Raw_Data\\130730\\130730_F1_C1\\PiezoSine_Raw_130730_F1_C1_%d.mat',trials(t)))
+    resp(t,:) = voltage;
 end
-box(ax,'off'); set(ax,'TickDir','out'); axis(ax,'tight');
+obj.params = data(trials(1));
+x = ((1:obj.params.sampratein*obj.params.durSweep) - obj.params.preDurInSec*obj.params.sampratein)/obj.params.sampratein;
 
-title(ax,'Sweep trial 27, durSweep=5, 14:17:5')
-
-ax = subplot(5,1,[5],'parent',plotcanvas); 
-voltagefft = fft(voltage);
-f = obj.trial.params.sampratein/length(voltage)*[0:length(voltage)/2]; 
-f = [f, fliplr(f(2:end-1))];
-loglog(ax,f,voltagefft.*conj(voltagefft),'r','tag',savetag)
-hold(ax,'on');
-box(ax,'off'); set(ax,'TickDir','out'); axis(ax,'tight');
-ylabel(ax,'V^2'); %xlim([0 max(t)]);
-xlabel(ax,'Time (s)'); 
-
-
-%%  FR vs I
-fig = figure(101);
-obj.trial = load('C:\Users\Anthony Azevedo\Raw_Data\130802\130802_F1_C2\Sweep_Raw_130802_F1_C2_27.mat');
-
-I = smooth(obj.trial.current,10000);
-x = ((1:obj.trial.params.sampratein*obj.trial.params.durSweep) - 1)/obj.trial.params.sampratein;
-
-% plot(x,obj.trial.current); hold on
 subplot(3,1,1)
-plot(x,I,'r');
+plot(x,resp')
+title('PiezoSine trials 1-15, freq=25, .5V disp')
+ylabel('mV')
 
 subplot(3,1,2)
-plot(x,obj.trial.voltage),hold on
-
-threshold = -40;
-below = obj.trial.voltage <= threshold;
-above = obj.trial.voltage > threshold;
-cross_up = [below(1:end-1) & above(2:end); false];
-
-plot(x(cross_up),threshold*cross_up(cross_up),'or');
-
-window_t = .1;
-noverlap_t = 0.1;
-window = window_t * obj.trial.params.sampratein;
-noverlap = noverlap_t * obj.trial.params.sampratein;
-
-fr = [];
-I = [];
-istart = 0;
-while istart + window < length(cross_up)
-   fr(end+1) = sum(cross_up(istart+1:istart+window));
-   I(end+1) = mean(obj.trial.current(istart+1:istart+window));
-   istart = istart+noverlap;
-end
-
-fr = fr/window_t;
+plot(x,mean(resp))
+ylabel('mV')
 
 subplot(3,1,3)
-plot(I,fr,'or');
+plot(x,sgsmonitor)
+xlabel('s')
+ylabel('V')
 
+%% Show epochs 1:15 50 Hz average .5 disp.
+trials = 2:5:15;
+load('C:\Users\Anthony Azevedo\Raw_Data\130730\130730_F1_C1\PiezoSine_130730_F1_C1.mat')
+load('C:\Users\Anthony Azevedo\Raw_Data\130730\130730_F1_C1\PiezoSine_Raw_130730_F1_C1_2.mat')
 
-%% oscillatory power vs holding potential
+resp = zeros(length(trials),length(current));
+for t = 1:length(trials)
+    load(sprintf('C:\\Users\\Anthony Azevedo\\Raw_Data\\130730\\130730_F1_C1\\PiezoSine_Raw_130730_F1_C1_%d.mat',trials(t)))
+    resp(t,:) = voltage;
+end
+obj.params = data(trials(1));
+x = ((1:obj.params.sampratein*obj.params.durSweep) - obj.params.preDurInSec*obj.params.sampratein)/obj.params.sampratein;
 
+subplot(3,1,1)
+plot(x,resp')
+title('PiezoSine trials 1-15, freq=50, .5 dis')
+ylabel('mV')
 
+subplot(3,1,2)
+plot(x,mean(resp))
+ylabel('mV')
+
+subplot(3,1,3)
+plot(x,sgsmonitor)
+xlabel('s')
+ylabel('V')
+
+%% Show epochs 1:15 100 Hz average .5 disp. RINGING!!
+trials = 3:5:15;
+load('C:\Users\Anthony Azevedo\Raw_Data\130730\130730_F1_C1\PiezoSine_130730_F1_C1.mat')
+load('C:\Users\Anthony Azevedo\Raw_Data\130730\130730_F1_C1\PiezoSine_Raw_130730_F1_C1_3.mat')
+
+resp = zeros(length(trials),length(current));
+for t = 1:length(trials)
+    load(sprintf('C:\\Users\\Anthony Azevedo\\Raw_Data\\130730\\130730_F1_C1\\PiezoSine_Raw_130730_F1_C1_%d.mat',trials(t)))
+    resp(t,:) = voltage;
+end
+obj.params = data(trials(1));
+x = ((1:obj.params.sampratein*obj.params.durSweep) - obj.params.preDurInSec*obj.params.sampratein)/obj.params.sampratein;
+
+subplot(3,1,1)
+plot(x,resp')
+title('PiezoSine trials 1-15, freq=100, .5 dis')
+ylabel('mV')
+
+subplot(3,1,2)
+plot(x,mean(resp))
+ylabel('mV')
+
+subplot(3,1,3)
+plot(x,sgsmonitor)
+xlabel('s')
+ylabel('V')
+
+%% Show epochs 1:15 200 Hz average .5 disp.
+trials = 4:5:15;
+load('C:\Users\Anthony Azevedo\Raw_Data\130730\130730_F1_C1\PiezoSine_130730_F1_C1.mat')
+load('C:\Users\Anthony Azevedo\Raw_Data\130730\130730_F1_C1\PiezoSine_Raw_130730_F1_C1_4.mat')
+
+resp = zeros(length(trials),length(current));
+for t = 1:length(trials)
+    load(sprintf('C:\\Users\\Anthony Azevedo\\Raw_Data\\130730\\130730_F1_C1\\PiezoSine_Raw_130730_F1_C1_%d.mat',trials(t)))
+    resp(t,:) = voltage;
+end
+obj.params = data(trials(1));
+x = ((1:obj.params.sampratein*obj.params.durSweep) - obj.params.preDurInSec*obj.params.sampratein)/obj.params.sampratein;
+
+subplot(3,1,1)
+plot(x,resp')
+title('PiezoSine trials 1-15, freq=200, .5 dis')
+ylabel('mV')
+
+subplot(3,1,2)
+plot(x,mean(resp))
+ylabel('mV')
+
+subplot(3,1,3)
+plot(x,sgsmonitor)
+xlabel('s')
+ylabel('V')
+
+%% Show epochs 1:15 400 Hz average .5 disp.
+trials = 5:5:15;
+load('C:\Users\Anthony Azevedo\Raw_Data\130730\130730_F1_C1\PiezoSine_130730_F1_C1.mat')
+load('C:\Users\Anthony Azevedo\Raw_Data\130730\130730_F1_C1\PiezoSine_Raw_130730_F1_C1_5.mat')
+
+resp = zeros(length(trials),length(current));
+for t = 1:length(trials)
+    load(sprintf('C:\\Users\\Anthony Azevedo\\Raw_Data\\130730\\130730_F1_C1\\PiezoSine_Raw_130730_F1_C1_%d.mat',trials(t)))
+    resp(t,:) = voltage;
+end
+obj.params = data(trials(1));
+x = ((1:obj.params.sampratein*obj.params.durSweep) - obj.params.preDurInSec*obj.params.sampratein)/obj.params.sampratein;
+
+subplot(3,1,1)
+plot(x,resp')
+title('PiezoSine trials 1-15, freq=400, .5 dis')
+ylabel('mV')
+
+subplot(3,1,2)
+plot(x,mean(resp))
+ylabel('mV')
+
+subplot(3,1,3)
+plot(x,sgsmonitor)
+xlabel('s')
+ylabel('V')
+
+%% Show epochs 1:15 400 Hz average .5 disp.
+clf
+trials = 181:5:195;
+nondrugtrials = 1:5:11;
+load('C:\Users\Anthony Azevedo\Raw_Data\130730\130730_F1_C1\PiezoSine_130730_F1_C1.mat')
+load('C:\Users\Anthony Azevedo\Raw_Data\130730\130730_F1_C1\PiezoSine_Raw_130730_F1_C1_5.mat')
+
+% trials = 1:5:11;
+% load('C:\Users\Anthony Azevedo\Raw_Data\130730\130730_F1_C1\PiezoSine_130730_F1_C1.mat')
+% load('C:\Users\Anthony Azevedo\Raw_Data\130730\130730_F1_C1\PiezoSine_Raw_130730_F1_C1_1.mat')
+% 
+% resp = zeros(length(trials),length(current));
+% for t = 1:length(trials)
+%     load(sprintf('C:\\Users\\Anthony Azevedo\\Raw_Data\\130730\\130730_F1_C1\\PiezoSine_Raw_130730_F1_C1_%d.mat',trials(t)))
+%     resp(t,:) = voltage;
+% end
+% obj.params = data(trials(1));
+% x = ((1:obj.params.sampratein*obj.params.durSweep) - obj.params.preDurInSec*obj.params.sampratein)/obj.params.sampratein;
+% 
+% subplot(3,1,1)
+% plot(x,resp')
+% title('PiezoSine trials 1-15, freq=25, .5V disp')
+% ylabel('mV')
+% 
+% subplot(3,1,2)
+% plot(x,mean(resp))
+% ylabel('mV')
+% 
+% subplot(3,1,3)
+% plot(x,sgsmonitor)
+% xlabel('s')
+% ylabel('V')
+
+resp = zeros(length(trials),length(current));
+for t = 1:length(trials)
+    load(sprintf('C:\\Users\\Anthony Azevedo\\Raw_Data\\130730\\130730_F1_C1\\PiezoSine_Raw_130730_F1_C1_%d.mat',trials(t)))
+    resp(t,:) = voltage;
+end
+nondrugresp = zeros(length(nondrugtrials),length(current));
+for t = 1:length(trials)
+    load(sprintf('C:\\Users\\Anthony Azevedo\\Raw_Data\\130730\\130730_F1_C1\\PiezoSine_Raw_130730_F1_C1_%d.mat',nondrugtrials(t)))
+    nondrugresp(t,:) = voltage;
+end
+
+obj.params = data(trials(1));
+x = ((1:obj.params.sampratein*obj.params.durSweep) - obj.params.preDurInSec*obj.params.sampratein)/obj.params.sampratein;
+
+subplot(3,1,1)
+plot(x,resp')
+title('PiezoSine trials 1-15, freq=25, .5 dis, TTX')
+ylabel('mV')
+
+subplot(3,1,2)
+plot(x,mean(nondrugresp),'color',[.5 .5 1]), hold on
+plot(x,mean(resp))
+ylabel('mV')
+
+subplot(3,1,3)
+plot(x,sgsmonitor)
+xlabel('s')
+ylabel('V')
+
+%% Show epochs 1:15 100 Hz average .5 disp.
+trials = 183:5:195;
+nondrugtrials = 3:5:15;
+load('C:\Users\Anthony Azevedo\Raw_Data\130730\130730_F1_C1\PiezoSine_130730_F1_C1.mat')
+load('C:\Users\Anthony Azevedo\Raw_Data\130730\130730_F1_C1\PiezoSine_Raw_130730_F1_C1_5.mat')
+
+% trials = 1:5:11;
+% load('C:\Users\Anthony Azevedo\Raw_Data\130730\130730_F1_C1\PiezoSine_130730_F1_C1.mat')
+% load('C:\Users\Anthony Azevedo\Raw_Data\130730\130730_F1_C1\PiezoSine_Raw_130730_F1_C1_1.mat')
+% 
+% resp = zeros(length(trials),length(current));
+% for t = 1:length(trials)
+%     load(sprintf('C:\\Users\\Anthony Azevedo\\Raw_Data\\130730\\130730_F1_C1\\PiezoSine_Raw_130730_F1_C1_%d.mat',trials(t)))
+%     resp(t,:) = voltage;
+% end
+% obj.params = data(trials(1));
+% x = ((1:obj.params.sampratein*obj.params.durSweep) - obj.params.preDurInSec*obj.params.sampratein)/obj.params.sampratein;
+% 
+% subplot(3,1,1)
+% plot(x,resp')
+% title('PiezoSine trials 1-15, freq=25, .5V disp')
+% ylabel('mV')
+% 
+% subplot(3,1,2)
+% plot(x,mean(resp))
+% ylabel('mV')
+% 
+% subplot(3,1,3)
+% plot(x,sgsmonitor)
+% xlabel('s')
+% ylabel('V')
+
+resp = zeros(length(trials),length(current));
+for t = 1:length(trials)
+    load(sprintf('C:\\Users\\Anthony Azevedo\\Raw_Data\\130730\\130730_F1_C1\\PiezoSine_Raw_130730_F1_C1_%d.mat',trials(t)))
+    resp(t,:) = voltage;
+end
+nondrugresp = zeros(length(nondrugtrials),length(current));
+for t = 1:length(trials)
+    load(sprintf('C:\\Users\\Anthony Azevedo\\Raw_Data\\130730\\130730_F1_C1\\PiezoSine_Raw_130730_F1_C1_%d.mat',nondrugtrials(t)))
+    nondrugresp(t,:) = voltage;
+end
+
+obj.params = data(trials(1));
+x = ((1:obj.params.sampratein*obj.params.durSweep) - obj.params.preDurInSec*obj.params.sampratein)/obj.params.sampratein;
+
+subplot(3,1,1)
+plot(x,resp')
+title('PiezoSine trials 1-15, freq=25, .5 dis, TTX')
+ylabel('mV')
+
+subplot(3,1,2)
+plot(x,mean(nondrugresp),'color',[.5 .5 1]), hold on
+plot(x,mean(resp))
+ylabel('mV')
+
+subplot(3,1,3)
+plot(x,sgsmonitor)
+xlabel('s')
+ylabel('V')
+% \ No newline at end of file

@@ -42,7 +42,7 @@ title(ax,'Sweep trial 27, durSweep=5, 14:17:5')
 
 ax = subplot(5,1,[5],'parent',plotcanvas); 
 voltagefft = fft(voltage);
-f = obj.trial.params.sampratein/length(voltage)*[0:length(voltage)/2]; 
+f = obj.trial.params.sampratein/length(obj.trial.voltage)*[0:length(obj.trial.voltage)/2]; 
 f = [f, fliplr(f(2:end-1))];
 loglog(ax,f,voltagefft.*conj(voltagefft),'r','tag',savetag)
 hold(ax,'on');
@@ -203,9 +203,11 @@ for t = 1:length(trials)
 end
 plot(Imat(:),frmat(:),'or');
 
+
 %% oscillatory power vs holding potential 130730 F1C1 130802 F1C2 Rest
 
 fig = figure(103);
+subplot(4,4,9:16)
 co = get(gca,'ColorOrder');
 
 paths = {...
@@ -224,7 +226,7 @@ for p = 1:length(paths)
         Vm(t) = mean(obj.trial.voltage);
         voltagefft = fft(obj.trial.voltage-mean(obj.trial.voltage));
         voltagefft = voltagefft.*conj(voltagefft);
-        f = obj.params.sampratein/length(voltage)*[0:length(voltage)/2];
+        f = obj.trial.params.sampratein/length(obj.trial.voltage)*[0:length(obj.trial.voltage)/2];
         f = [f, fliplr(f(2:end-1))];
         %loglog(ax,f,voltagefft.*conj(voltagefft),'r','tag',savetag)
         [pptemp,pftemp] = max(voltagefft(f>10));
@@ -243,10 +245,141 @@ for p = 1:length(paths)
     line(meanVm(p),meanpf(p),'linestyle','none','marker','o','markeredgecolor',co(p,:),'markerfacecolor',co(p,:));
 end
 
+%% Examples
+obj.trial = load('C:\Users\Anthony Azevedo\Raw_Data\130802\130802_F1_C2\Sweep_Raw_130802_F1_C2_3.mat');
+load('C:\Users\Anthony Azevedo\Raw_Data\130802\130802_F1_C2\Sweep_130802_F1_C2.mat')
+plotcanvas = fig;
+obj.params = data(3);
+savetag = 'delete';
+% setupStimulus
+obj.x = ((1:obj.params.sampratein*obj.params.durSweep) - 1)/obj.params.sampratein;
+voltage = obj.trial.voltage;
+current = obj.trial.current;
+
+% displayTrial
+ax = subplot(4,4,3,'parent',plotcanvas);
+switch mode
+    case 'VClamp'
+        ylabel(ax,'I (pA)'); 
+        line(obj.x,current,'color',[1 0 0],'linewidth',1,'parent',ax,'tag',savetag);
+    case 'IClamp'
+        ylabel(ax,'V_m (mV)'); 
+        line(obj.x,voltage,'color',[1 0 0],'linewidth',1,'parent',ax,'tag',savetag);
+end
+box(ax,'off'); set(ax,'TickDir','out'); axis(ax,'tight');
+
+ax = subplot(4,4,7,'parent',plotcanvas); 
+voltagefft = fft(voltage);
+f = obj.params.sampratein/length(voltage)*[0:length(voltage)/2]; 
+f = [f, fliplr(f(2:end-1))];
+loglog(ax,f,voltagefft.*conj(voltagefft),'r','tag',savetag)
+hold(ax,'on');
+box(ax,'off'); set(ax,'TickDir','out'); axis(ax,'tight');
+ylabel(ax,'V^2'); %xlim([0 max(t)]);
+xlabel(ax,'Time (s)'); 
+%% Examples
+obj.trial = load('C:\Users\Anthony Azevedo\Raw_Data\130802\130802_F1_C2\Sweep_Raw_130802_F1_C2_7.mat');
+load('C:\Users\Anthony Azevedo\Raw_Data\130802\130802_F1_C2\Sweep_130802_F1_C2.mat')
+plotcanvas = fig;
+obj.params = data(3);
+savetag = 'delete';
+% setupStimulus
+obj.x = ((1:obj.params.sampratein*obj.params.durSweep) - 1)/obj.params.sampratein;
+voltage = obj.trial.voltage;
+current = obj.trial.current;
+
+% displayTrial
+ax = subplot(4,4,1,'parent',plotcanvas);
+switch mode
+    case 'VClamp'
+        ylabel(ax,'I (pA)'); 
+        line(obj.x,current,'color',[1 0 0],'linewidth',1,'parent',ax,'tag',savetag);
+    case 'IClamp'
+        ylabel(ax,'V_m (mV)'); 
+        line(obj.x,voltage,'color',[1 0 0],'linewidth',1,'parent',ax,'tag',savetag);
+end
+box(ax,'off'); set(ax,'TickDir','out'); axis(ax,'tight');
+
+ax = subplot(4,4,5,'parent',plotcanvas); 
+voltagefft = fft(voltage);
+f = obj.params.sampratein/length(voltage)*[0:length(voltage)/2]; 
+f = [f, fliplr(f(2:end-1))];
+loglog(ax,f,voltagefft.*conj(voltagefft),'r','tag',savetag)
+hold(ax,'on');
+box(ax,'off'); set(ax,'TickDir','out'); axis(ax,'tight');
+ylabel(ax,'V^2'); %xlim([0 max(t)]);
+xlabel(ax,'Time (s)'); 
+%% Examples
+obj.trial = load('C:\Users\Anthony Azevedo\Raw_Data\130802\130802_F1_C2\Sweep_Raw_130802_F1_C2_17.mat');
+load('C:\Users\Anthony Azevedo\Raw_Data\130802\130802_F1_C2\Sweep_130802_F1_C2.mat')
+plotcanvas = fig;
+obj.params = data(3);
+savetag = 'delete';
+% setupStimulus
+obj.x = ((1:obj.params.sampratein*obj.params.durSweep) - 1)/obj.params.sampratein;
+voltage = obj.trial.voltage;
+current = obj.trial.current;
+
+% displayTrial
+ax = subplot(4,4,2,'parent',plotcanvas);
+switch mode
+    case 'VClamp'
+        ylabel(ax,'I (pA)'); 
+        line(obj.x,current,'color',[1 0 0],'linewidth',1,'parent',ax,'tag',savetag);
+    case 'IClamp'
+        ylabel(ax,'V_m (mV)'); 
+        line(obj.x,voltage,'color',[1 0 0],'linewidth',1,'parent',ax,'tag',savetag);
+end
+box(ax,'off'); set(ax,'TickDir','out'); axis(ax,'tight');
+
+ax = subplot(4,4,6,'parent',plotcanvas); 
+voltagefft = fft(voltage);
+f = obj.params.sampratein/length(voltage)*[0:length(voltage)/2]; 
+f = [f, fliplr(f(2:end-1))];
+loglog(ax,f,voltagefft.*conj(voltagefft),'r','tag',savetag)
+hold(ax,'on');
+box(ax,'off'); set(ax,'TickDir','out'); axis(ax,'tight');
+ylabel(ax,'V^2'); %xlim([0 max(t)]);
+xlabel(ax,'Time (s)'); 
+%% Examples
+obj.trial = load('C:\Users\Anthony Azevedo\Raw_Data\130802\130802_F1_C2\Sweep_Raw_130802_F1_C2_22.mat');
+load('C:\Users\Anthony Azevedo\Raw_Data\130802\130802_F1_C2\Sweep_130802_F1_C2.mat')
+plotcanvas = fig;
+obj.params = data(3);
+savetag = 'delete';
+% setupStimulus
+obj.x = ((1:obj.params.sampratein*obj.params.durSweep) - 1)/obj.params.sampratein;
+voltage = obj.trial.voltage;
+current = obj.trial.current;
+
+% displayTrial
+ax = subplot(4,4,4,'parent',plotcanvas);
+switch mode
+    case 'VClamp'
+        ylabel(ax,'I (pA)'); 
+        line(obj.x,current,'color',[1 0 0],'linewidth',1,'parent',ax,'tag',savetag);
+    case 'IClamp'
+        ylabel(ax,'V_m (mV)'); 
+        line(obj.x,voltage,'color',[1 0 0],'linewidth',1,'parent',ax,'tag',savetag);
+end
+box(ax,'off'); set(ax,'TickDir','out'); axis(ax,'tight');
+
+ax = subplot(4,4,8,'parent',plotcanvas); 
+voltagefft = fft(voltage);
+f = obj.params.sampratein/length(voltage)*[0:length(voltage)/2]; 
+f = [f, fliplr(f(2:end-1))];
+loglog(ax,f,voltagefft.*conj(voltagefft),'r','tag',savetag)
+hold(ax,'on');
+box(ax,'off'); set(ax,'TickDir','out'); axis(ax,'tight');
+ylabel(ax,'V^2'); %xlim([0 max(t)]);
+xlabel(ax,'Time (s)'); 
+
+
 
 %% oscillatory power vs holding potential 130730 F1C1 130802 F1C2 Hyper
 
 fig = figure(103);
+subplot(4,4,9:16)
 co = get(gca,'ColorOrder');
 
 paths = {...
@@ -265,7 +398,7 @@ for p = 1:length(paths)
         Vm(t) = mean(obj.trial.voltage);
         voltagefft = fft(obj.trial.voltage-mean(obj.trial.voltage));
         voltagefft = voltagefft.*conj(voltagefft);
-        f = obj.params.sampratein/length(voltage)*[0:length(voltage)/2];
+        f = obj.trial.params.sampratein/length(obj.trial.voltage)*[0:length(obj.trial.voltage)/2];
         f = [f, fliplr(f(2:end-1))];
         %loglog(ax,f,voltagefft.*conj(voltagefft),'r','tag',savetag)
         [pptemp,pftemp] = max(voltagefft(f>10));
@@ -287,6 +420,7 @@ end
 %% oscillatory power vs holding potential 130730 F1C1 130802 F1C2 Hyper
 
 fig = figure(103);
+subplot(4,4,9:16)
 co = get(gca,'ColorOrder');
 
 paths = {...
@@ -305,7 +439,7 @@ for p = 1:length(paths)
         Vm(t) = mean(obj.trial.voltage);
         voltagefft = fft(obj.trial.voltage-mean(obj.trial.voltage));
         voltagefft = voltagefft.*conj(voltagefft);
-        f = obj.params.sampratein/length(voltage)*[0:length(voltage)/2];
+        f = obj.trial.params.sampratein/length(obj.trial.voltage)*[0:length(obj.trial.voltage)/2];
         f = [f, fliplr(f(2:end-1))];
         %loglog(ax,f,voltagefft.*conj(voltagefft),'r','tag',savetag)
         [pptemp,pftemp] = max(voltagefft(f>10));
@@ -324,19 +458,16 @@ for p = 1:length(paths)
     line(meanVm(p),meanpf(p),'linestyle','none','marker','o','markeredgecolor',co(p,:),'markerfacecolor',co(p,:));
 end
 
-
-
-%% Sensitivity to sine wave stimuli
+%% oscillatory power vs holding potential 130730 F1C1 130802 F1C2 Depolarized
 
 fig = figure(103);
+subplot(4,4,9:16)
 co = get(gca,'ColorOrder');
 
 paths = {...
-    'C:\Users\Anthony Azevedo\Raw_Data\130730\130730_F1_C1\Sweep_Raw_130730_F1_C1_%d.mat',...
     'C:\Users\Anthony Azevedo\Raw_Data\130802\130802_F1_C2\Sweep_Raw_130802_F1_C2_%d.mat'};
 trialscell = {...
-    21:5:35,...
-    14:18};
+    19:23};
 for p = 1:length(paths)
     clear peakpower peakfreq Vm
     trials = trialscell{p};
@@ -347,7 +478,7 @@ for p = 1:length(paths)
         Vm(t) = mean(obj.trial.voltage);
         voltagefft = fft(obj.trial.voltage-mean(obj.trial.voltage));
         voltagefft = voltagefft.*conj(voltagefft);
-        f = obj.params.sampratein/length(voltage)*[0:length(voltage)/2];
+        f = obj.trial.params.sampratein/length(obj.trial.voltage)*[0:length(obj.trial.voltage)/2];
         f = [f, fliplr(f(2:end-1))];
         %loglog(ax,f,voltagefft.*conj(voltagefft),'r','tag',savetag)
         [pptemp,pftemp] = max(voltagefft(f>10));
@@ -358,12 +489,208 @@ for p = 1:length(paths)
     peakfreqcell{p} = peakfreq;
     Vm_cell{p} = Vm;
     
-    line(Vm,peakfreq,'linestyle','none','marker','o','markeredgecolor',co(p,:),'markerfacecolor','none');
+    line(Vm,peakfreq,'linestyle','none','marker','o','markeredgecolor',co(p+1,:),'markerfacecolor','none');
     
     meanpp(p) = mean(peakpower);
     meanpf(p) = mean(peakfreq);
     meanVm(p) = mean(Vm);
-    line(meanVm(p),meanpf(p),'linestyle','none','marker','o','markeredgecolor',co(p,:),'markerfacecolor',co(p,:));
+    line(meanVm(p),meanpf(p),'linestyle','none','marker','o','markeredgecolor',co(p+1,:),'markerfacecolor',co(p+1,:));
 end
+
+
+%% Sensitivity to sine wave stimuli rest
+fig = figure(104);
+trials = 23:5:35;
+
+load('C:\Users\Anthony Azevedo\Raw_Data\130802\130802_F1_C2\PiezoSine_Raw_130802_F1_C2_21.mat');
+
+resp = zeros(length(trials),length(current));
+for t = 1:length(trials)
+    trial = pathload('C:\Users\Anthony Azevedo\Raw_Data\130802\130802_F1_C2\PiezoSine_Raw_130802_F1_C2_%d.mat',trials(t));
+    resp(t,:) = trial.voltage;
+end
+x = ((1:trial.params.sampratein*trial.params.durSweep) - trial.params.preDurInSec*trial.params.sampratein)/trial.params.sampratein;
+
+subplot(3,1,1)
+plot(x,resp')
+title(sprintf('%s PiezoSine trials %d-%d, freq=%d, %.1f dis',...
+    trial.params.date,trials(1),trials(end),trial.params.freq,trial.params.displacement))
+ylabel('mV')
+
+subplot(3,1,2)
+plot(x,mean(resp))
+ylabel('mV')
+
+subplot(3,1,3)
+plot(x,trial.sgsmonitor)
+xlabel('s')
+ylabel('V')
+
+
+%% Sensitivity to sine wave stimuli hyperpolarized
+fig = figure(104);
+%Show epochs 1:15 100 Hz average .5 disp. RINGING!!
+%trials = 66:5:80;
+trials = 98:5:110;
+
+load('C:\Users\Anthony Azevedo\Raw_Data\130802\130802_F1_C2\PiezoSine_Raw_130802_F1_C2_81.mat');
+
+resp = zeros(length(trials),length(current));
+for t = 1:length(trials)
+    trial = pathload('C:\Users\Anthony Azevedo\Raw_Data\130802\130802_F1_C2\PiezoSine_Raw_130802_F1_C2_%d.mat',trials(t));
+    resp(t,:) = trial.voltage;
+end
+x = ((1:trial.params.sampratein*trial.params.durSweep) - trial.params.preDurInSec*trial.params.sampratein)/trial.params.sampratein;
+
+subplot(3,1,1)
+plot(x,resp')
+title(sprintf('%s PiezoSine trials %d-%d, freq=%d, %.1f dis',...
+    trial.params.date,trials(1),trials(end),trial.params.freq,trial.params.displacement))
+ylabel('mV')
+
+subplot(3,1,2)
+plot(x,mean(resp))
+ylabel('mV')
+
+subplot(3,1,3)
+plot(x,trial.sgsmonitor)
+xlabel('s')
+ylabel('V')
+
+%% Sensitivity to sine wave stimuli mecamylamine
+fig = figure(104);
+%Show epochs 1:15 100 Hz average .5 disp. RINGING!!
+%trials = 66:5:80;
+trials = 126:5:140;
+trials = 143:5:155;
+
+load('C:\Users\Anthony Azevedo\Raw_Data\130802\130802_F1_C2\PiezoSine_Raw_130802_F1_C2_81.mat');
+
+resp = zeros(length(trials),length(current));
+for t = 1:length(trials)
+    trial = pathload('C:\Users\Anthony Azevedo\Raw_Data\130802\130802_F1_C2\PiezoSine_Raw_130802_F1_C2_%d.mat',trials(t));
+    resp(t,:) = trial.voltage;
+end
+x = ((1:trial.params.sampratein*trial.params.durSweep) - trial.params.preDurInSec*trial.params.sampratein)/trial.params.sampratein;
+
+subplot(3,1,1)
+plot(x,resp')
+title(sprintf('%s PiezoSine trials %d-%d, freq=%d, %.1f dis',...
+    trial.params.date,trials(1),trials(end),trial.params.freq,trial.params.displacement))
+ylabel('mV')
+
+subplot(3,1,2)
+plot(x,mean(resp))
+ylabel('mV')
+
+subplot(3,1,3)
+plot(x,trial.sgsmonitor)
+xlabel('s')
+ylabel('V')
+
+%% Sensitivity to sine wave stimuli TTX
+fig = figure(104);
+%Show epochs 1:15 100 Hz average .5 disp. RINGING!!
+trials = 233:5:245;
+
+load('C:\Users\Anthony Azevedo\Raw_Data\130802\130802_F1_C2\PiezoSine_Raw_130802_F1_C2_81.mat');
+
+resp = zeros(length(trials),length(current));
+for t = 1:length(trials)
+    trial = pathload('C:\Users\Anthony Azevedo\Raw_Data\130802\130802_F1_C2\PiezoSine_Raw_130802_F1_C2_%d.mat',trials(t));
+    resp(t,:) = trial.voltage;
+end
+x = ((1:trial.params.sampratein*trial.params.durSweep) - trial.params.preDurInSec*trial.params.sampratein)/trial.params.sampratein;
+
+subplot(3,1,1)
+plot(x,resp')
+title(sprintf('%s PiezoSine trials %d-%d, freq=%d, %.1f dis',...
+    trial.params.date,trials(1),trials(end),trial.params.freq,trial.params.displacement))
+ylabel('mV')
+
+subplot(3,1,2)
+plot(x,mean(resp))
+ylabel('mV')
+
+subplot(3,1,3)
+plot(x,trial.sgsmonitor)
+xlabel('s')
+ylabel('V')
+
+
+%% Courtship song and other stimuli
+fig = figure(105);
+stimtrain = wavread('CourtshipSong.wav');
+Fs = 40000;
+ramptime = .02;
+% sound(stimtrain,Fs)
+subplot(3,1,1)
+
+stim = [0*(1:Fs)';stimtrain;0*(1:Fs)'];
+x = ((1:length(stim))-Fs)/Fs;
+stimpnts = Fs+1:Fs+length(stimtrain);
+clear window
+w = window(@triang,2*ramptime*Fs);
+w = [w(1:ramptime*Fs);...
+    ones(length(stimpnts)-length(w),1);...
+    w(ramptime*Fs+1:end)];
+
+stim(stimpnts) = stim(stimpnts).*w;
+
+plot(x,stim,'k'); hold on
+plot(x(Fs+1:Fs+28000),stim(Fs+1:Fs+28000),'r');
+plot(x(Fs+28000+1:Fs+length(stimtrain)),stim(Fs+28000+1:Fs+length(stimtrain)),'b');
+
+subplot(3,1,[2 3])
+[Pxx,f] = pwelch(stimtrain,[],[],[],40000);
+loglog(f(f<2000),Pxx(f<2000),'k'); hold on
+[Pxx,f] = pwelch(stimtrain(28000:end),[],[],[],40000);
+loglog(f(f<2000),Pxx(f<2000),'r'); hold on
+[Pxx,f] = pwelch(stimtrain(1:28000),[],[],[],40000);
+loglog(f(f<2000),Pxx(f<2000),'b'); hold on
+
+%% Compare polarities of 130730 F1C1
+fig = figure(106);
+trials = 18:5:33;
+
+load('C:\Users\Anthony Azevedo\Raw_Data\130730\130730_F1_C1\PiezoSine_Raw_130730_F1_C1_18.mat');
+
+resp = zeros(length(trials),length(current));
+for t = 1:length(trials)
+    trial = pathload('C:\Users\Anthony Azevedo\Raw_Data\130730\130730_F1_C1\PiezoSine_Raw_130730_F1_C1_%d.mat',trials(t));
+    resp(t,:) = trial.voltage;
+end
+x = ((1:trial.params.sampratein*trial.params.durSweep) - trial.params.preDurInSec*trial.params.sampratein)/trial.params.sampratein;
+
+subplot(3,1,1)
+plot(x,resp')
+title(sprintf('%s PiezoSine trials %d-%d, freq=%d, %.1f dis',...
+    trial.params.date(1:6),trials(1),trials(end),trial.params.freq,trial.params.displacement))
+ylabel('mV')
+
+subplot(3,1,2)
+plot(x,mean(resp))
+ylabel('mV')
+
+subplot(3,1,3)
+plot(x,trial.sgsmonitor)
+xlabel('s')
+ylabel('V')
+
+trials = 23:5:35;
+
+load('C:\Users\Anthony Azevedo\Raw_Data\130802\130802_F1_C2\PiezoSine_Raw_130802_F1_C2_23.mat');
+
+resp = zeros(length(trials),length(current));
+for t = 1:length(trials)
+    trial = pathload('C:\Users\Anthony Azevedo\Raw_Data\130802\130802_F1_C2\PiezoSine_Raw_130802_F1_C2_%d.mat',trials(t));
+    resp(t,:) = trial.voltage;
+end
+x = ((1:trial.params.sampratein*trial.params.durSweep) - trial.params.preDurInSec*trial.params.sampratein)/trial.params.sampratein;
+
+subplot(3,1,2)
+hold on, plot(x,mean(resp))
+%xlim([-.2,.3])
+%ylabel('mV')
 
 
