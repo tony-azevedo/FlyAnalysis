@@ -154,6 +154,7 @@ else
             protocols{end+1} = a(i).name(1:ind(1)-1);
         end
         if length(a(i).name) > 5 && strcmp(a(i).name(1:5),'notes');
+            fclose('all');
             handles.notesfilename = fullfile(handles.dir,a(i).name);
             handles.notesfid = fopen(handles.notesfilename,'r');
         end
@@ -302,7 +303,7 @@ if isempty(a)
     error('No quickShow for %s\n',handles.currentPrtcl)
 end
 for i = 1:length(a.m)
-    a.m{i} = regexprep(a.m{i},'.m','');
+    a.m{i} = regexprep(a.m{i},'\.m','');
 end
 set(hObject, 'String', a.m);
 guidata(hObject,handles)
