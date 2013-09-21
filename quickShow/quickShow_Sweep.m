@@ -1,12 +1,12 @@
 function quickShow_Sweep(plotcanvas,obj,savetag)
 % setupStimulus
-obj.x = ((1:obj.params.sampratein*obj.params.durSweep) - 1)/obj.params.sampratein;
+obj.x = makeInTime(obj.trial.params);
 voltage = obj.trial.voltage;
 current = obj.trial.current;
 
 % displayTrial
 ax1 = subplot(5,1,4,'parent',plotcanvas);
-if length(obj.params.recmode)>6, mode = obj.params.recmode(1:6);
+if length(obj.trial.params.mode)>6, mode = obj.trial.params.mode(1:6);
 else mode = 'IClamp';
 end
 switch mode
@@ -29,16 +29,12 @@ switch mode
         line(obj.x,voltage,'color',[1 0 0],'linewidth',1,'parent',ax2,'tag',savetag);
 end
 box(ax2,'off'); set(ax2,'TickDir','out'); axis(ax2,'tight');
-title(ax2,sprintf('%s F%s-C%s %s trial %d',...
-    obj.trial.params.date,...
-    obj.trial.params.flynumber,...
-    obj.trial.params.cellnumber,...
-    obj.trial.params.protocolName,...
-    obj.trial.params.trial));
+[prot,d,fly,cell,trial] = extractRawIdentifiers(obj.trial.name);
+title(ax2,sprintf('%s', [prot '.' d '.' fly '.' cell '.' trial]));
 
 ax3 = subplot(5,1,[5],'parent',plotcanvas); 
-voltagefft = fft(voltage);
-f = obj.params.sampratein/length(voltage)*[0:length(voltage)/2]; 
+voltagefft = fft(voltage(1:end-1));
+f = obj.trial.params.sampratein/length(voltagefft)*[0:length(voltagefft)/2]; 
 f = [f, fliplr(f(2:end-1))];
 loglog(ax3,f,voltagefft.*conj(voltagefft),'r','tag',savetag)
 hold(ax3,'on');

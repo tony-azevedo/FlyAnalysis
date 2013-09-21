@@ -9,7 +9,7 @@ sgsmonitor = obj.trial.sgsmonitor(1:length(x));
 
 % displayTrial
 ax1 = subplot(3,1,[1 2],'parent',plotcanvas);
-if length(obj.params.recmode)>6, mode = obj.params.recmode(1:6);
+if length(obj.params.mode)>6, mode = obj.params.mode(1:6);
 else mode = 'IClamp';
 end
 switch mode

@@ -20,7 +20,7 @@ function varargout = quickShow(varargin)
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 
-% Last Modified by GUIDE v2.5 02-Jul-2013 20:41:22
+% Last Modified by GUIDE v2.5 13-Sep-2013 09:01:44
 
 %% Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -111,7 +111,7 @@ selection = questdlg(['Close ' get(handles.figure1,'Name') '?'],...
 if strcmp(selection,'No')
     return;
 end
-
+fclose('all');
 delete(handles.figure1)
 
 
@@ -143,7 +143,7 @@ else
     set(handles.trialnum,'Enable','on')
     set(handles.showMenu,'Enable','on')
 
-    a = dir(handles.dir);
+    a = dir([handles.dir '\*_Raw*']);
     
     protocols = {};
     for i = 1:length(a)
@@ -153,12 +153,13 @@ else
             ~sum(strcmp(protocols,a(i).name(1:ind(1)-1)))
             protocols{end+1} = a(i).name(1:ind(1)-1);
         end
-        if length(a(i).name) > 5 && strcmp(a(i).name(1:5),'notes');
-            fclose('all');
-            handles.notesfilename = fullfile(handles.dir,a(i).name);
-            handles.notesfid = fopen(handles.notesfilename,'r');
-        end
     end
+    a = dir([handles.dir '\notes_*']);
+
+    fclose('all');
+    handles.notesfilename = fullfile(handles.dir,a.name);
+    handles.notesfid = fopen(handles.notesfilename,'r');
+
     set(handles.infoPanel,'userdata',fileread(handles.notesfilename))
     set(handles.protocolMenu, 'String', protocols,'value',1);
     guidata(handles.protocolMenu,handles)
@@ -182,7 +183,8 @@ handles.prtclDataFileName = fullfile(handles.dir,dfile);
 dataFileExist = dir(handles.prtclDataFileName);
 if length(dataFileExist)
     d = load(handles.prtclDataFileName);
-else
+end
+if ~length(dataFileExist) || length(d.data) ~= length(rawfiles)
     createDataFileFromRaw(handles.prtclDataFileName);
     d = load(handles.prtclDataFileName);
 end
@@ -255,7 +257,7 @@ handles.trial = load(fullfile(handles.dir, sprintf(handles.trialStem,handles.cur
 handles.params = handles.prtclData(handles.prtclTrialNums==handles.currentTrialNum);
 
 guidata(hObject,handles)
-showMenu_Callback(hObject, eventdata, handles)
+quickShow_Protocol(hObject, eventdata, handles)
 
 
 % --- Executes during object creation, after setting all properties.
@@ -270,10 +272,14 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-
-function showMenu_Callback(hObject, eventdata, handles)
-showfunctions = get(handles.showMenu,'string');
-handles.quickShowFunction = showfunctions{get(handles.showMenu,'value')};
+function quickShow_Protocol(hObject, eventdata, handles)
+handles = guidata(hObject);
+a = what('quickShow');
+a = dir([a.path '\quickShow_' handles.currentPrtcl '.m']);
+if isempty(a)
+    error('No quickShow for %s\n',handles.currentPrtcl)
+end
+handles.quickShowFunction = regexprep(a.name,'\.m','');
 if get(handles.savetraces_button,'value')
     savetag = 'save';
     delete(findobj(handles.quickShowPanel,'tag','delete'));
@@ -288,6 +294,27 @@ handles = guidata(hObject);
 feval(str2func(handles.quickShowFunction),handles.quickShowPanel,handles,savetag);
 
 
+function showMenu_Callback(hObject, eventdata, handles)
+showfunctions = get(handles.showMenu,'string');
+handles.quickShowFunction = showfunctions{get(handles.showMenu,'value')};
+if isempty(which(handles.quickShowFunction))
+    return
+end
+if get(handles.savetraces_button,'value')
+    savetag = 'save';
+    delete(findobj(handles.quickShowPanel,'tag','delete'));
+else
+    savetag = 'delete';
+    delete(findobj(handles.quickShowPanel,'tag','delete'));
+end
+guidata(hObject,handles)
+updateInfoPanel(handles);
+handles = guidata(hObject);
+feval(str2func(handles.quickShowFunction),handles.quickShowPanel,handles,savetag);
+quickShow_Protocol(hObject, eventdata, handles)
+
+
+
 function showMenu_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     % Hint: popupmenu controls usually have a white background on Windows. See ISPC and COMPUTER.
@@ -299,13 +326,14 @@ if ~isfield(handles,'currentPrtcl');
 end
 handles = guidata(hObject);
 a = what(handles.currentPrtcl);
-if isempty(a)
-    error('No quickShow for %s\n',handles.currentPrtcl)
+if isempty(a.m)
+    set(hObject, 'String', {'No Protocol Show Functions'});
+else
+    for i = 1:length(a.m)
+        a.m{i} = regexprep(a.m{i},'\.m','');
+    end
+    set(hObject, 'String', a.m);
 end
-for i = 1:length(a.m)
-    a.m{i} = regexprep(a.m{i},'\.m','');
-end
-set(hObject, 'String', a.m);
 guidata(hObject,handles)
 
 
@@ -466,3 +494,29 @@ trialinfo = notes(trln:trln+regexp(notes(trln:end),'\n','once'));
 trialinfo = regexprep(trialinfo,'(?=\d)\s',',');
 
 fprintf('title(ax,''%s'')\n',trialinfo(1:end-3));
+
+
+% --- Executes on selection change in analysis_popup.
+function analysis_popup_Callback(hObject, eventdata, handles)
+funcs = get(hObject,'string');
+func = str2func(funcs{get(hObject,'value')});
+feval(func,handles.trial,handles.trial.params);
+
+% --- Executes during object creation, after setting all properties.
+function analysis_popup_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to analysis_popup (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+analyses = what('Analysis');
+for i = 1:length(analyses.m)
+    analyses.m{i} = regexprep(analyses.m{i},'\.m','');
+end
+
+funcs = analyses.m;
+set(hObject,'String',funcs);
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end

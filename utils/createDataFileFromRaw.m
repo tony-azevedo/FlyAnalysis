@@ -1,8 +1,12 @@
-function varargout = createDataFileFromRaw(dfn)
-
-if  ~isempty(dir(dfn))
-    return
-end
+function varargout = createDataFileFromRaw(dfn,varargin)
+% override = 0;
+% if nargin
+%     override = varargin{1};
+% end
+% 
+% if  ~isempty(dir(dfn)) && ~override
+%     return
+% end
 
 [filename,remain] = strtok(dfn,'\');
 while ~isempty(remain);
@@ -13,7 +17,7 @@ D = regexprep(dfn,filename,'');
 curprotocol = strtok(filename,'_');
 
 fprintf('Creating data files for %s\n',D);
-rawfiles = dir([D '*.mat']);
+rawfiles = dir([D '\*_Raw_*.mat']);
 
 if ~isempty(dir(regexprep(dfn,'.mat','.h5')))
     raw = load(rawfiles(1).name);

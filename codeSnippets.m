@@ -51,3 +51,25 @@ f = samprate/length(x)*[0:length(x)/2]; f = [f, fliplr(f(2:end-1))];
 %% guistuff
 guidata(hObject,handles)
 handles = guidata(hObject);
+
+
+%% get all the protocols run on a cell
+protocols = cell(length(rawfiles),1);
+for f = 1:length(rawfiles)
+    protocols{f} = strtok(rawfiles(f).name,'_');
+end
+protocols = unique(protocols);
+
+%% make an options entry
+if nargin>1
+    optionstr = varargin{1};
+    if strcmp(optionstr(1),'-')
+        for c = 1:length(optionstr(2:end))
+            switch optionstr(c)
+                case 'q'
+                    quiet = true;
+            end
+        end
+    end
+    varargin = varargin{2:end};
+end
