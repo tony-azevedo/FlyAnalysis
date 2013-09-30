@@ -1,5 +1,5 @@
-function h = AverageLikeSines(h,handles,savetag)
-% see also AverageLikeSongs
+function h = AverageLikeSquareWaves(h,handles,savetag)
+
 if isfield(handles,'infoPanel')
     notes = get(handles.infoPanel,'userdata');
 else
@@ -10,7 +10,9 @@ else
     notes = fileread(handles.notesfilename);
 end
 
-trials = findLikeTrials('name',handles.trial.name,'datastruct',handles.prtclData);
+[start,fin] = getTrialBlock(notes,handles.currentPrtcl,handles.trial.params.trial);
+trials = findLikeTrials('name',handles.trial.name,'window',[start,fin],'datastruct',handles.prtclData);
+
 if isempty(h) || ~ishghandle(h)
     h = figure(100+trials(1)); clf
 else
@@ -36,7 +38,7 @@ for t = 1:length(trials)
 end
 plot(ax,x,y,'color',[1, .7 .7],'tag',savetag); hold on
 plot(ax,x,mean(y,2),'color',[.7 0 0],'tag',savetag);
-axis(ax,'tight')
+
 xlim([-.1 trial.params.stimDurInSec+ min(.15,trial.params.postDurInSec)])
 
 %title([d ' ' fly ' ' cell ' ' prot ' '  num2str(trial.params.freq) ' Hz ' num2str(trial.params.displacement *.3) ' \mum'])
@@ -49,9 +51,7 @@ ylabel(ax,y_units);
 
 ax = subplot(3,1,3,'parent',h);
 plot(ax,x,trial.sgsmonitor,'color',[0 0 1],'tag',savetag); hold on;
-text(-.1,5.01,...
-    [num2str(trial.params.freq) ' Hz ' num2str(trial.params.displacement *3) ' \mum'],...
-    'fontsize',7,'parent',ax,'tag',savetag)
+text(-.1,5.01,[num2str(trial.params.displacement *3) ' \mum'],'fontsize',7,'parent',ax,'tag',savetag)
 
 box(ax,'off');
 set(ax,'TickDir','out');

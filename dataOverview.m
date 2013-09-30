@@ -1,6 +1,6 @@
 function [] = dataOverview(data)
 
-dispstr = '';
+dispstr = sprintf('%s\n',data(1).protocol);
 field = fieldnames(data);
 l = length(data);
 tmp = cell(1,l);
@@ -14,11 +14,18 @@ for name = 1:length(field)
         tmp{e} = data(e).(field{name});
     end
     if isnumeric(tmp{1})
-        [unq,~,IC] = unique(cell2mat(tmp));
-        unq = cellstr(num2str(unq'));
-    else
-        [unq,~,IC] = unique(tmp);
+        for i = 1:length(tmp)
+            tmp{i} = num2str(tmp{i});
+        end
     end
+    if iscell(tmp{1})
+        for i = 1:length(tmp)
+            c = tmp{i};
+            tmp{i} = sprintf('%s; ',c{:});
+        end
+    end
+
+    [unq,~,IC] = unique(tmp);
     if length(unq)>1
         unqstr = '';
         for u = 1:length(unq)

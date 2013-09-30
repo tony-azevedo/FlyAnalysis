@@ -311,7 +311,7 @@ guidata(hObject,handles)
 updateInfoPanel(handles);
 handles = guidata(hObject);
 feval(str2func(handles.quickShowFunction),handles.quickShowPanel,handles,savetag);
-quickShow_Protocol(hObject, eventdata, handles)
+% quickShow_Protocol(hObject, eventdata, handles)
 
 
 
@@ -326,7 +326,7 @@ if ~isfield(handles,'currentPrtcl');
 end
 handles = guidata(hObject);
 a = what(handles.currentPrtcl);
-if isempty(a.m)
+if isempty(a) || length(a.m)==0
     set(hObject, 'String', {'No Protocol Show Functions'});
 else
     for i = 1:length(a.m)
@@ -433,7 +433,7 @@ function updateInfoPanel(handles)
 notes = get(handles.infoPanel,'userdata');
 
 trln = regexp(notes,[handles.currentPrtcl ' trial ' num2str(handles.params.trial)]);
-trialinfo = notes(trln:trln+regexp(notes(trln:end),'\n','once'));
+trialinfo = notes(trln:trln+regexp(notes(trln:end),'\n','once')-1);
 trialinfo = regexprep(trialinfo,'(?=\d)\s',',');
 
 prtclln = regexp(notes(1:trln),[handles.currentPrtcl ' - ']);
@@ -452,20 +452,20 @@ infoStr = {lines1{:};lines1{:}};
 infoStr(2,:) = {'  '};
 infoStr = infoStr(:);
 
-comments = regexp(notes(1:trln),'\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\n','end');
-if ~isempty(comments)
-    cmln = regexp(notes(comments(end-1)+1:trln),'\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\n','start');
-    comment = notes(comments(end-1)+1:comments(end-1)+cmln-1);
-    expression = '\n\t';
-    [~,lines2] = regexp(comment,expression,'tokens','split');
-    if isempty(lines2{end})
-        lines2 = lines2(1:end-1);
-    end
-    lines1 = [lines1,lines2];
-end
-infoStr = {lines1{:};lines1{:}};
-infoStr(2,:) = {'  '};
-infoStr = infoStr(:);
+% comments = regexp(notes(1:trln),'\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\n','end');
+% if ~isempty(comments)
+%     cmln = regexp(notes(comments(end-1)+1:trln),'\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\n','start');
+%     comment = notes(comments(end-1)+1:comments(end-1)+cmln-1);
+%     expression = '\n\t';
+%     [~,lines2] = regexp(comment,expression,'tokens','split');
+%     if isempty(lines2{end})
+%         lines2 = lines2(1:end-1);
+%     end
+%     lines1 = [lines1,lines2];
+% end
+% infoStr = {lines1{:};lines1{:}};
+% infoStr(2,:) = {'  '};
+% infoStr = infoStr(:);
 
 [out, position] = textwrap(handles.infoPanel,infoStr);
 %set(handles.infoPanel,'horizontalAlignment','left','string',out,'position',position);

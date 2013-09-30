@@ -23,15 +23,13 @@ dataOverview(data);
 [blocks,trials] = findTrialBlocks(data);
 blocknums = unique(blocks);
 f = blocknums;
-cnt = 1;
 for b = blocknums
     trial = load(sprintf(stem,data(1).protocol,data(find(blocks==b,1)).trial));
     [~,~,fig] = calculateSealMeasurements(trial,trial.params);
     proplist =  getpref('AnalysisFigures','calculateSealMeasurements');
-    f(cnt) = figure(proplist{:});
-    set(f(cnt),'tag',num2str(b));
-    ch = copyobj(get(fig,'children'),f(cnt));
-    cnt = cnt+1;
+    f(b) = figure(proplist{:});
+    set(f(b),'tag',num2str(b));
+    ch = copyobj(get(fig,'children'),f(b));
 end
 
 layout(f',sprintf('Seal Measurements Blocks: %s',sprintf('%d ', blocknums)),'close');
@@ -138,23 +136,20 @@ for b = blocknums
         'close');
 end
 
-
 %% PiezoSine
 prot = 'PiezoSine';
 dfn = [D prot '_' datestr '_' fly '_' cellnum];
 data = load(dfn); data = data.data;
 dataOverview(data);
-h.dir = D(1:end); 
-h.prtclData = data; 
+h.dir = D(1:end); h.prtclData = data; 
 h.trialStem = [sprintf('%s_Raw_%s_%s_%s_',prot,datestr,fly,cellnum) '%d.mat']; 
 h.currentPrtcl = prot;
 
-[blocks,trials,inds] = findTrialBlocks(data);
+[blocks,trials] = findTrialBlocks(data);
 blocknums = unique(blocks);
 for b = blocknums
     clear f
     blocktrials = trials(blocks==b);
-    blockinds = inds(blocks==b);
     cnt = 1;
     for bt = blocktrials;
         h.trial = load(sprintf(stem,data(1).protocol,bt));
@@ -163,8 +158,8 @@ for b = blocknums
     end
     f = unique(f);
     f = sort(f);
-    f = reshape(f,length(data(blockinds(blocktrials==bt)).displacements),length(data(blockinds(blocktrials==bt)).freqs))';
-    tags = getTrialTags(blockinds,data);
+    f = reshape(f,length(data(bt).displacements),length(data(bt).freqs))';
+    tags = getTrialTags(blocktrials,data);
     layout(f,...
         sprintf('%s Block %d: {%s}', [prot '.' datestr '.' fly '.' cellnum],b,sprintf('%s; ',tags{:})),...
         'close');

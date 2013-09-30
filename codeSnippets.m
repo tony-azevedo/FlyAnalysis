@@ -73,3 +73,6 @@ if nargin>1
     end
     varargin = varargin{2:end};
 end
+
+%% Saving trials!  not bad
+save(regexprep(data.name,'Acquisition','Raw_Data'), '-struct', 'data');

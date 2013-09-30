@@ -34,7 +34,7 @@ end
 
 panels = panels(:)';
 ch = get(panels(1),'children');
-for c=  1:length(ch)
+for c =  1:length(ch)
     xlimscell{c} = [Inf -Inf];
     ylimscell{c} = [Inf -Inf];
 end
@@ -59,7 +59,7 @@ for f = panels
     ch = get(f,'children');
     for c = 1:length(ch)
         set(ch(c),'xlim',xlimscell{c},'ylim',ylimscell{c});
-        if f~=panels(1);
+        if f~=panels(end);
             set(ch(c),'TickDir','out','XColor',[1 1 1],'XTick',[],'XTickLabel','');
             set(ch(c),'TickDir','out','YColor',[1 1 1],'YTick',[],'YTickLabel','');
         end

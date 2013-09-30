@@ -1,5 +1,6 @@
-function h = AverageLikeSines(h,handles,savetag)
-% see also AverageLikeSongs
+function h = AverageLikeSongs(h,handles,savetag)
+% h = AverageLikeSongs(h,handles,savetag)
+% see also AverageLikeSines
 if isfield(handles,'infoPanel')
     notes = get(handles.infoPanel,'userdata');
 else
@@ -11,6 +12,7 @@ else
 end
 
 trials = findLikeTrials('name',handles.trial.name,'datastruct',handles.prtclData);
+
 if isempty(h) || ~ishghandle(h)
     h = figure(100+trials(1)); clf
 else
@@ -49,13 +51,12 @@ ylabel(ax,y_units);
 
 ax = subplot(3,1,3,'parent',h);
 plot(ax,x,trial.sgsmonitor,'color',[0 0 1],'tag',savetag); hold on;
-text(-.1,5.01,...
-    [num2str(trial.params.freq) ' Hz ' num2str(trial.params.displacement *3) ' \mum'],...
+text(-.09,5.01,...
+    [num2str(trial.params.displacement *3) ' \mum'],...
     'fontsize',7,'parent',ax,'tag',savetag)
 
 box(ax,'off');
 set(ax,'TickDir','out');
-
 % set(ax,'TickDir','out','XColor',[1 1 1],'XTick',[],'XTickLabel','');
 % set(ax,'TickDir','out','YColor',[1 1 1],'YTick',[],'YTickLabel','');
 
