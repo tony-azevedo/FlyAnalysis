@@ -12,6 +12,9 @@ elseif sum(strcmp('VClamp',obj.trial.params.mode))
     yname = 'voltage';
     units = 'V_m (mV)';
 end
+if ~exist('yname','var')
+    error('Mode is wrong: %s',obj.trial.params.mode)
+end
 line(obj.x,obj.trial.(yname),'color',[.7 .7 .7],'linewidth',1,'parent',ax1,'tag',savetag);
 box(ax1,'off'); set(ax1,'TickDir','out'); axis(ax1,'tight');
 
