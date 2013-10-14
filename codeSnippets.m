@@ -40,7 +40,7 @@ else
 end
 clear a
 
-%%
+%% frequency axis
 f = samprate/length(x)*[0:length(x)/2]; f = [f, fliplr(f(2:end-1))];
 
 %% Preferences
@@ -76,3 +76,6 @@ end
 
 %% Saving trials!  not bad
 save(regexprep(data.name,'Acquisition','Raw_Data'), '-struct', 'data');
+
+%% Mex building
+mex -LC:\Users\Anthony' Azevedo'\code\flySound\Multiclamp_SDK\3rd' Party Support'\AxMultiClampMsg\ -lAxMultiClampMsg GetMode.cpp
