@@ -17,6 +17,7 @@ if ~exist('yname','var')
 end
 line(obj.x,obj.trial.(yname),'color',[.7 .7 .7],'linewidth',1,'parent',ax1,'tag',savetag);
 box(ax1,'off'); set(ax1,'TickDir','out'); axis(ax1,'tight');
+ylabel(ax1,units);
 
 [prot,d,fly,cell,trial] = extractRawIdentifiers(obj.trial.name);
 text(.01,mean(obj.trial.(yname)),...

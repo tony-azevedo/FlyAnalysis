@@ -62,7 +62,12 @@ for d = 1:length(datastruct)
         end
         switch class(datastruct(d).(fn{f}))
             case 'double'
-                if datastruct(d).(fn{f}) ~= compare.(fn{f})
+                if length(datastruct(d).(fn{f})) == length(compare.(fn{f}))
+                    if datastruct(d).(fn{f}) ~= compare.(fn{f})
+                        e = false;
+                        break
+                    end
+                else
                     e = false;
                     break
                 end
