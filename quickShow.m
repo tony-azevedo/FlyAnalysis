@@ -541,7 +541,6 @@ else
     exposureNum = 1;
 end
 
-
     
 function addClickableExposureTimeline(handles,savetag)
 x = ((1:handles.trial.params.sampratein*handles.params.durSweep) - handles.trial.params.preDurInSec*handles.trial.params.sampratein)/handles.trial.params.sampratein;
@@ -550,9 +549,10 @@ exposure = handles.trial.exposure(1:length(x));
 expostimes = x(exposure);
 lims = get(ax,'ylim');
 for t= 1:length(expostimes)
-    l = line([expostimes(t) expostimes(t)],lims,'parent',ax,'color',[0 0 0],'tag',savetag,'userdata',t);
+    l = line([expostimes(t) expostimes(t)],lims,'parent',ax,'color',[1 1 1] *.8,'tag',savetag,'userdata',t);
     set(l,'ButtonDownFcn',@showClickedImage);
 end
+set(ax,'children',flipud(get(ax,'Children')));
 
 function showClickedImage(l,eventdata,handles)
 handles = guidata(l);
