@@ -540,11 +540,12 @@ if strcmp(get(hObject,'type'),'line')
 else
     exposureNum = 1;
 end
+feval(@playImages,handles.trial,handles.trial.params,exposureNum);
 
     
 function addClickableExposureTimeline(handles,savetag)
 x = ((1:handles.trial.params.sampratein*handles.params.durSweep) - handles.trial.params.preDurInSec*handles.trial.params.sampratein)/handles.trial.params.sampratein;
-ax = findobj('tag','quickshow_outax');
+ax = findobj('tag','quickshow_outax','parent',handles.quickShowPanel);
 exposure = handles.trial.exposure(1:length(x));
 expostimes = x(exposure);
 lims = get(ax,'ylim');
@@ -553,6 +554,7 @@ for t= 1:length(expostimes)
     set(l,'ButtonDownFcn',@showClickedImage);
 end
 set(ax,'children',flipud(get(ax,'Children')));
+
 
 function showClickedImage(l,eventdata,handles)
 handles = guidata(l);
