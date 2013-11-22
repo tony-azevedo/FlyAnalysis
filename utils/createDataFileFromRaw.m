@@ -48,7 +48,17 @@ for p = 1:length(protocols)
     trialnums = nan(size(rawfiles));
     for f = 1:length(rawfiles)
         trial = load([D rawfiles(f).name]);
-        data(f) = trial.params;
+        
+        try data(f) = trial.params;
+        catch e
+            if ~strcmp(e.identifier,'MATLAB:heterogeneousStrucAssignment');
+                error(e)
+            end
+            tempfn = fieldnames(data(f));
+            for name = 1:length(tempfn)
+                data(f).(tempfn{name}) = trial.params.(tempfn{name});
+            end
+        end
         tags(f).tags = trial.tags;
         if isempty( tags(f).tags) && ~ iscell( tags(f).tags)
             tags(f).tags = {};
