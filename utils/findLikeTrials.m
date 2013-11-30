@@ -6,12 +6,16 @@ p.addParamValue('trial',[],@isnumeric);
 p.addParamValue('name','',@ischar);
 p.addParamValue('window',[],@isnumeric);
 p.addParamValue('datastruct',struct,@isstruct);
+p.addParamValue('exclude',{''},@iscell);
 parse(p,varargin{:});
 
 trial = p.Results.trial;
 name = p.Results.name;
 window = p.Results.window;
 datastruct = p.Results.datastruct;
+excludedFields = p.Results.exclude;
+
+excludedFields = union(excludedFields,'trial');
 
 if ~isempty(name);
     [prot,d,fly,cell,trial,D] = extractRawIdentifiers(name);
@@ -57,7 +61,7 @@ for d = 1:length(datastruct)
     fn = fieldnames(compare);
     e = true;
     for f = 1:length(fn)
-        if strcmp('trial',fn{f})
+        if sum(strcmp(excludedFields,fn{f}))
             continue
         end
         switch class(datastruct(d).(fn{f}))

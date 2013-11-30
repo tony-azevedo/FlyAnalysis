@@ -1,4 +1,4 @@
-function transfer = TransferFunctionOfLike(fig,handles,savetag)
+function transfer = TransferFunctionOfLikePiezoSines(fig,handles,savetag)
 % see also AverageLikeSongs
 
 trials = findLikeTrials('name',handles.trial.name,'datastruct',handles.prtclData);
@@ -15,14 +15,12 @@ x = makeTime(trial.params);
 if sum(strcmp({'IClamp','IClamp_fast'},trial.params.mode))
     y_name = 'voltage';
     y_units = 'mV';
-    outname = 'current';
-    outunits = 'pA';
 elseif sum(strcmp('VClamp',trial.params.mode))
     y_name = 'current';
     y_units = 'pA';
-    outname = 'voltage';
-    outunits = 'mV';
 end
+outname = 'sgsmonitor';
+outunits = 'V';
 
 y = zeros(length(x),length(trials));
 u = zeros(length(x),length(trials));
@@ -39,11 +37,10 @@ uc = mean(u,2);
 offset = mean(uc(x<0));
 uc = uc-offset;
 
-
-cyclestomatch = 4;
-yc = yc(x>=trial.params.stimDurInSec-cyclestomatch*1/trial.params.freq & x< trial.params.stimDurInSec);
-uc = uc(x>=trial.params.stimDurInSec-cyclestomatch*1/trial.params.freq & x< trial.params.stimDurInSec);
-t = x(x>=trial.params.stimDurInSec-cyclestomatch*1/trial.params.freq & x< trial.params.stimDurInSec);
+fin = trial.params.stimDurInSec - trial.params.ramptime;
+yc = yc(x>=fin-trial.params.stimDurInSec/2 & x< fin);
+uc = uc(x>=fin-trial.params.stimDurInSec/2 & x< fin);
+t = x(x>=fin-trial.params.stimDurInSec/2 & x< fin);
 
 [C, Lags] = xcorr(yc,uc,'coeff');
 % figure(102); plot(Lags,C);
@@ -57,6 +54,7 @@ t_del = t(i_del+1) - t(1);
 respsign = sign(C(i_del+1));
 
 arg = -t_del / (1/trial.params.freq) * 2*pi;
+
 minfunc = @(x)mean(abs(yc(i_del+1:end)-x*uc(1:end-i_del)));
 mag = fminsearch(minfunc ,1);
 % plot(t(1:end-i_del),mag*uc(1:end-i_del),'color',[.7 0 0]), hold on
@@ -71,14 +69,20 @@ transfer = respsign * mag*(cos(arg) + 1i*sin(arg));
 % plot(t(1:end-i_del),real(u_ideal),'color',[1 .7 .7]), hold on
 % plot(t(1:end-i_del),real(transfer*u_ideal),'color',[1 .7 .7]), hold on
 
-u_ideal = trial.params.amp*exp(1i * (2*pi*trial.params.freq * x - pi/2));
+% make the ideal stimulus, once the piezo response is accounted for
+uc = uc(t>=(fin-2*(1/trial.params.freq)) & t< fin);
+t = t(t>=(fin-2*(1/trial.params.freq)) & t< fin);
+u_ideal = trial.params.displacement*exp(1i * (2*pi*trial.params.freq * t - pi/2));
+[C, Lags] = xcorr(uc,real(u_ideal),'coeff');
+i_del = Lags(C==max(C));
+t_del = t(i_del+1) - t(1);
+u_ideal = trial.params.displacement*exp(1i * (2*pi*trial.params.freq * (x-t_del) - pi/2));
 
 ax = subplot(3,1,[1 2],'parent',fig);
 cla(ax)
-set(ax,'xscale','linear');
 plot(ax,x,y,'color',[1, .7 .7],'tag',savetag); hold on
-plot(ax,x, mean(y,2),'color',[.7 0 0],'tag',savetag);
 plot(ax,x,real(transfer * u_ideal) + base,'color',[0 0 .7],'tag',savetag); hold on;
+plot(ax,x, mean(y,2),'color',[.7 0 0],'tag',savetag);
 axis(ax,'tight')
 xlim([-.1 trial.params.stimDurInSec+ min(.15,trial.params.postDurInSec)])
 
@@ -88,10 +92,9 @@ set(ax,'TickDir','out');
 ylabel(ax,y_units);
 
 ax = subplot(3,1,3,'parent',fig);
-cla(ax),set(ax,'xscale','linear');
-
+cla(ax)
+plot(ax,x,real(transfer/abs(transfer) * u_ideal)+offset,'color',[0 0 .7],'tag',savetag); hold on;
 plot(ax,x,mean(u,2),'color',[.7 .7 1],'tag',savetag); hold on;
-plot(ax,x,real(transfer * u_ideal)+offset,'color',[0 0 .7],'tag',savetag); hold on;
 
 box(ax,'off');
 set(ax,'TickDir','out');

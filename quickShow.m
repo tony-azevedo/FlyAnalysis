@@ -287,6 +287,7 @@ else
     savetag = 'delete';
     delete(findobj(handles.quickShowPanel,'tag','delete'));
 end
+set(get(handles.quickShowPanel,'children'),'xscale','linear');
 
 guidata(hObject,handles)
 updateInfoPanel(handles);
@@ -344,6 +345,7 @@ else
     for i = 1:length(a.m)
         a.m{i} = regexprep(a.m{i},'\.m','');
     end
+    set(hObject,'Value',1);
     set(hObject, 'String', a.m);
 end
 guidata(hObject,handles)
@@ -361,6 +363,7 @@ copyobj(childs,repmat(fig,size(childs)));
 %                 'BackgroundColor',[1 1 1],...
 %                 'Position',[0 0 .75 1],'parent',fig,'bordertype','none');
 % copyobj(childs,repmat(cp,size(childs)));
+linkaxes(get(fig,'children'),'x');
 
 infoStr = get(handles.infoPanel,'string');
 fprintf('%s\n',infoStr{:});
