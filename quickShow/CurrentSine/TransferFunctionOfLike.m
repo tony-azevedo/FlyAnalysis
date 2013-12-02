@@ -40,10 +40,13 @@ offset = mean(uc(x<0));
 uc = uc-offset;
 
 
-cyclestomatch = 4;
-yc = yc(x>=trial.params.stimDurInSec-cyclestomatch*1/trial.params.freq & x< trial.params.stimDurInSec);
-uc = uc(x>=trial.params.stimDurInSec-cyclestomatch*1/trial.params.freq & x< trial.params.stimDurInSec);
-t = x(x>=trial.params.stimDurInSec-cyclestomatch*1/trial.params.freq & x< trial.params.stimDurInSec);
+fin = trial.params.stimDurInSec;
+if isfield(trial.params,'ramptime');
+    fin = trial.params.stimDurInSec;
+end
+yc = yc(x>=fin-trial.params.stimDurInSec/2 & x< fin);
+uc = uc(x>=fin-trial.params.stimDurInSec/2 & x< fin);
+t = x(x>=fin-trial.params.stimDurInSec/2 & x< fin);
 
 [C, Lags] = xcorr(yc,uc,'coeff');
 % figure(102); plot(Lags,C);
@@ -77,8 +80,8 @@ ax = subplot(3,1,[1 2],'parent',fig);
 cla(ax)
 set(ax,'xscale','linear');
 plot(ax,x,y,'color',[1, .7 .7],'tag',savetag); hold on
-plot(ax,x, mean(y,2),'color',[.7 0 0],'tag',savetag);
 plot(ax,x,real(transfer * u_ideal) + base,'color',[0 0 .7],'tag',savetag); hold on;
+plot(ax,x, mean(y,2),'color',[.7 0 0],'tag',savetag);
 axis(ax,'tight')
 xlim([-.1 trial.params.stimDurInSec+ min(.15,trial.params.postDurInSec)])
 
@@ -90,8 +93,8 @@ ylabel(ax,y_units);
 ax = subplot(3,1,3,'parent',fig);
 cla(ax),set(ax,'xscale','linear');
 
-plot(ax,x,mean(u,2),'color',[.7 .7 1],'tag',savetag); hold on;
 plot(ax,x,real(transfer * u_ideal)+offset,'color',[0 0 .7],'tag',savetag); hold on;
+plot(ax,x,mean(u,2),'color',[.7 .7 1],'tag',savetag); hold on;
 
 box(ax,'off');
 set(ax,'TickDir','out');
