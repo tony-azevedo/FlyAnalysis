@@ -130,7 +130,7 @@ for b = blocknums
     end
     f = unique(f);
     f = sort(f);
-    f = reshape(f,[],length(h.trial.params.amps));
+    f = reshape(f',[],length(h.trial.params.freqs));
     tags = getTrialTags(blocktrials,data);
     layout(f,...
         sprintf('%s Block %d: {%s}', [prot '.' datestr '.' fly '.' cellnum],b,sprintf('%s; ',tags{:})),...
@@ -247,7 +247,7 @@ for b = blocknums
     end
     f = unique(f);
     f = sort(f);
-    f = reshape(f,length(data(bt).displacements),length(data(bt).freqs))';
+    f = reshape(f,length(data(bt).displacements),length(data(bt).freqs));
     tags = getTrialTags(blocktrials,data);
     layout(f,...
         sprintf('%s Block %d: {%s}', [prot '.' datestr '.' fly '.' cellnum],b,sprintf('%s; ',tags{:})),...

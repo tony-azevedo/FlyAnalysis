@@ -35,5 +35,6 @@ end
 line(obj.x,obj.trial.(yname),'color',[1 0 0],'linewidth',1,'parent',ax2,'tag',savetag);
 box(ax2,'off'); set(ax2,'TickDir','out'); axis(ax2,'tight');
 ylabel(ax2,units);
+title(ax2,sprintf('%s', [prot '.' d '.' fly '.' cell '.' trial]));
 
 

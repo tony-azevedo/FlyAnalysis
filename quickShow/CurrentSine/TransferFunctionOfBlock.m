@@ -9,9 +9,11 @@ end
 set(fig,'tag',mfilename);
 ax = subplot(3,1,[1 2],'parent',fig);
 ax = subplot(3,1,3,'parent',fig);
+cellID = regexp(handles.dir,'\\');
+cellID = handles.dir(cellID(end)+1:end);
+cellID = regexprep(cellID,'_','\.');
 
 transfer = nan(length(handles.trial.params.freqs),length(handles.trial.params.amps));
-
 blocktrials = findLikeTrials('name',handles.trial.name,'datastruct',handles.prtclData,'exclude',{'amp'});
 t = 1;
 while t <= length(blocktrials)
@@ -41,8 +43,9 @@ for ii = 1:length(ampexamples)
         'parent',ax,'color',[0 1/length(handles.trial.params.amps) 0]*ii,...
         'tag',savetag);
     ylabel(ax,'Magnitude (mV/pA)')
-    title(ax,'I to V transfer function')
-    
+    title(ax,[cellID ': I to V transfer function'])
+    xlabel(ax,'')
+
     ax = subplot(3,1,3,'parent',fig);
     line(handles.trial.params.freqs',angle(transfer(:,ii))/(2*pi)*360,...
         'parent',ax,'color',[0 1/length(handles.trial.params.amps) 0]*ii,...
