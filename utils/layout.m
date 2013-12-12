@@ -62,6 +62,7 @@ for f = panels
         if f~=panels(end);
             set(ch(c),'TickDir','out','XColor',[1 1 1],'XTick',[],'XTickLabel','');
             set(ch(c),'TickDir','out','YColor',[1 1 1],'YTick',[],'YTickLabel','');
+            delete(get(ch(c),'title'))
         end
     end
 end

@@ -1,9 +1,9 @@
-function newfig = BlockPlotMatrix(fig,handles,savetag)
+function newfig = BlockPlotStepMatrix(fig,handles,savetag)
 % see also AverageLikeSines
 
 [prot,datestr,fly,cellnum,trial,D] = extractRawIdentifiers(handles.trial.name);
 
-blocktrials = findLikeTrials('name',handles.trial.name,'datastruct',handles.prtclData,'exclude',{'displacement','freq'});
+blocktrials = findLikeTrials('name',handles.trial.name,'datastruct',handles.prtclData,'exclude',{'displacement'});
 t = 1;
 while t <= length(blocktrials)
     trials = findLikeTrials('trial',blocktrials(t),'datastruct',handles.prtclData);
@@ -15,15 +15,12 @@ clear f
 cnt = 1;
 for bt = blocktrials;
     handles.trial = load(sprintf(handles.trialStem,bt));
-    f(cnt) = AverageLikeSines([],handles,savetag);
+    f(cnt) = AverageLikeSteps([],handles,savetag);
     cnt = cnt+1;
 end
 f = unique(f);
 f = sort(f);
-if ~isfield(handles.prtclData(bt),'displacements');
-    handles.prtclData(bt).displacements = handles.prtclData(bt).displacement;
-end
-f = reshape(f,length(handles.prtclData(bt).displacements),length(handles.prtclData(bt).freqs));
+f = reshape(f,length(handles.prtclData(bt).displacements),[]);
 tags = getTrialTags(blocktrials,handles.prtclData);
 
 b = nan;

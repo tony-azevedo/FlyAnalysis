@@ -40,6 +40,11 @@ for p = 1:length(protocols)
     rawfiles = dir([D protocols{p} '*_Raw_*']);
     
     trial = load([D rawfiles(1).name]);
+    if isfield(trial.params,'recmode');
+        trial.params.mode = trial.params.recmode;
+        save(trial.name, '-struct', 'trial');
+    end
+
     data = trial.params;
     data = repmat(data,size(rawfiles));
     clear tags
@@ -53,7 +58,11 @@ for p = 1:length(protocols)
     trialnums = nan(size(rawfiles));
     for f = 1:length(rawfiles)
         trial = load([D rawfiles(f).name]);
-        
+        if isfield(trial.params,'recmode');
+            trial.params.mode = trial.params.recmode;
+            save(trial.name, '-struct', 'trial');
+        end
+
         try data(f) = trial.params;
         catch e
             if ~strcmp(e.identifier,'MATLAB:heterogeneousStrucAssignment');

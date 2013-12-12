@@ -29,10 +29,13 @@ elseif sum(strcmp('VClamp',trial.params.mode))
     y_units = 'pA';
 end
 
+if length(trial.(y_name))<length(x)
+    x = x(1:length(trial.(y_name)));
+end
 y = zeros(length(x),length(trials));
 for t = 1:length(trials)
     trial = load(fullfile(handles.dir,sprintf(handles.trialStem,trials(t))));
-    y(:,t) = trial.(y_name);
+    y(:,t) = trial.(y_name)(1:length(x));
 end
 plot(ax,x,y,'color',[1, .7 .7],'tag',savetag); hold on
 plot(ax,x,mean(y,2),'color',[.7 0 0],'tag',savetag);

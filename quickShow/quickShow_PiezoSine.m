@@ -1,5 +1,6 @@
 function quickShow_PiezoSine(plotcanvas,obj,savetag)
 
+
 % setupStimulus
 x = ((1:obj.trial.params.sampratein*obj.params.durSweep) - obj.trial.params.preDurInSec*obj.trial.params.sampratein)/obj.trial.params.sampratein;
 voltage = obj.trial.voltage(1:length(x));
