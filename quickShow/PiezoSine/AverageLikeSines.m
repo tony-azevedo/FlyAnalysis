@@ -39,6 +39,8 @@ plot(ax,x,mean(y,2),'color',[.7 0 0],'tag',savetag);
 axis(ax,'tight')
 xlim([-.1 trial.params.stimDurInSec+ min(.15,trial.params.postDurInSec)])
 
+[prot,d,fly,cell,trialnum] = extractRawIdentifiers(trial.name);
+title(ax,sprintf('%s - %d Hz %.2f \\mum', [prot '.' d '.' fly '.' cell '.' trialnum], trial.params.freq,trial.params.displacement*3));
 %title([d ' ' fly ' ' cell ' ' prot ' '  num2str(trial.params.freq) ' Hz ' num2str(trial.params.displacement *.3) ' \mum'])
 box(ax,'off');
 set(ax,'TickDir','out');
@@ -55,6 +57,7 @@ text(-.1,5.01,...
 
 box(ax,'off');
 set(ax,'TickDir','out');
+axis(ax,'tight');
 
 % set(ax,'TickDir','out','XColor',[1 1 1],'XTick',[],'XTickLabel','');
 % set(ax,'TickDir','out','YColor',[1 1 1],'YTick',[],'YTickLabel','');

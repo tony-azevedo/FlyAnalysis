@@ -43,8 +43,13 @@ for p = 1:length(protocols)
     data = trial.params;
     data = repmat(data,size(rawfiles));
     clear tags
-    tags.tags = trial.tags;
+    if isfield(trial,'tags')
+        tags.tags = trial.tags;
+    else
+        tags.tags = {};
+    end
     tags = repmat(tags,size(rawfiles));
+    
     trialnums = nan(size(rawfiles));
     for f = 1:length(rawfiles)
         trial = load([D rawfiles(f).name]);
@@ -59,7 +64,9 @@ for p = 1:length(protocols)
                 data(f).(tempfn{name}) = trial.params.(tempfn{name});
             end
         end
-        tags(f).tags = trial.tags;
+        if isfield(trial,'tags')
+            tags(f).tags = trial.tags;
+        end
         if isempty( tags(f).tags) && ~ iscell( tags(f).tags)
             tags(f).tags = {};
         end

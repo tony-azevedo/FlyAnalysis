@@ -80,15 +80,18 @@ end
 
 %% Resting Membrane comparisons
 naConcentrations = {'130','90','50','27','TTX'};
-cells = {'131014_F3_C1'};
-load('C:\Users\Anthony Azevedo\Raw_Data\131014\131014_F3_C1\Sweep_Raw_131014_F3_C1_9.mat');
-Vm_rest = [mean(voltage),nan,nan,nan,nan];
-load('C:\Users\Anthony Azevedo\Raw_Data\131014\131014_F3_C1\Sweep_Raw_131014_F3_C1_31.mat');
-Vm_rest(3) = mean(voltage);
-Vm_rest_cell = {Vm_rest};
+cells = {};
+Vm_rest_cell = {};
+
+% cells = {'131014.F3.C1'};
+% load('C:\Users\Anthony Azevedo\Raw_Data\131014\131014_F3_C1\Sweep_Raw_131014_F3_C1_9.mat');
+% Vm_rest = [mean(voltage),nan,nan,nan,nan];
+% load('C:\Users\Anthony Azevedo\Raw_Data\131014\131014_F3_C1\Sweep_Raw_131014_F3_C1_31.mat');
+% Vm_rest(3) = mean(voltage);
+% Vm_rest_cell = {Vm_rest};
 
 % ***********
-cells = {cells{:},'131015_F1_C1'};
+cells = {cells{:},'131015.F1.C1'};
 Vm_rest_v = nan(1,5);
 load('C:\Users\Anthony Azevedo\Raw_Data\131015\131015_F1_C1\Sweep_Raw_131015_F1_C1_1.mat');
 Vm_rest = mean(voltage);
@@ -134,7 +137,7 @@ Vm_rest_v(5) = Vm_rest/5;
 Vm_rest_cell = {Vm_rest_cell{:},Vm_rest_v};
 
 % ***********
-cells = {cells{:},'131015_F3_C1'};
+cells = {cells{:},'131015.F3.C1'};
 Vm_rest_v = nan(1,5);
 load('C:\Users\Anthony Azevedo\Raw_Data\131015\131015_F3_C1\Sweep_Raw_131015_F3_C1_1.mat');
 Vm_rest = mean(voltage);
@@ -195,7 +198,7 @@ Vm_rest_v(5) = Vm_rest/5;
 Vm_rest_cell = {Vm_rest_cell{:},Vm_rest_v};
 
 % ***********
-cells = {cells{:},'131016_F1_C1'};
+cells = {cells{:},'131016.F1.C1'};
 Vm_rest_v = nan(1,4);
 load('C:\Users\Anthony Azevedo\Raw_Data\131016\131016_F1_C1\Sweep_Raw_131016_F1_C1_1.mat');
 Vm_rest = mean(voltage);
@@ -272,14 +275,24 @@ Vm_rest_cell = {Vm_rest_cell{:},Vm_rest_v};
 figure
 a = subplot(1,1,1); hold on
 co = get(a,'colorOrder');
+x = (5:-1:1);
 for i = 1:length(Vm_rest_cell)
-l(i) = plot((5:-1:1),Vm_rest_cell{i},'-o','color',co(mod(i,size(co,1)),:));
+    y = Vm_rest_cell{i};
+    l(i) = plot(x(~isnan(y)),y(~isnan(y)),'-o','color',co(mod(i,size(co,1)),:));
 end
-legend(l,cells)
+legend(l,cells,'location','NorthWest')
+legend boxoff;
 set(a,'XtickLabel',fliplr(naConcentrations),'xtick',(1:5));
 
 xlabel('Na Concentrations or conditions')
 ylabel('Resting potential (mV)')
+
+ax = a;
+set(ax,'fontsize',18)
+set(findall(ax,'type','text'),'fontsize',18)
+set(ax,'position',[0.2 0.2 0.75 0.7]);
+
+set(gcf,'FileName','Na Exchange Experiments');
 
 
 %% PiezoStep

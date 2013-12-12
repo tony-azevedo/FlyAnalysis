@@ -44,10 +44,14 @@ xlim([-.1 trial.params.stimDurInSec+ min(.15,trial.params.postDurInSec)])
 %title([d ' ' fly ' ' cell ' ' prot ' '  num2str(trial.params.freq) ' Hz ' num2str(trial.params.displacement *.3) ' \mum'])
 box(ax,'off');
 set(ax,'TickDir','out');
+axis(ax,'tight');
+xlim([-.1 trial.params.stimDurInSec+ min(.15,trial.params.postDurInSec)])
 ylabel(ax,y_units);
 
 % set(ax,'TickDir','out','XColor',[1 1 1],'XTick',[],'XTickLabel','');
 % set(ax,'TickDir','out','YColor',[1 1 1],'YTick',[],'YTickLabel','');
+[prot,d,fly,cell,trialnum] = extractRawIdentifiers(trial.name);
+title(ax,sprintf('%s - %.2f \\mum', [prot '.' d '.' fly '.' cell '.' trialnum],trial.params.displacement*3));
 
 ax = subplot(3,1,3,'parent',h);
 plot(ax,x,trial.sgsmonitor,'color',[0 0 1],'tag',savetag); hold on;
@@ -55,6 +59,7 @@ text(-.1,5.01,[num2str(trial.params.displacement *3) ' \mum'],'fontsize',7,'pare
 
 box(ax,'off');
 set(ax,'TickDir','out');
+axis(ax,'tight');
 
 % set(ax,'TickDir','out','XColor',[1 1 1],'XTick',[],'XTickLabel','');
 % set(ax,'TickDir','out','YColor',[1 1 1],'YTick',[],'YTickLabel','');

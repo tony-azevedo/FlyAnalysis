@@ -20,7 +20,7 @@ function varargout = quickShow(varargin)
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 
-% Last Modified by GUIDE v2.5 13-Sep-2013 09:01:44
+% Last Modified by GUIDE v2.5 07-Dec-2013 17:55:42
 
 %% Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -292,18 +292,23 @@ set(get(handles.quickShowPanel,'children'),'xscale','linear');
 guidata(hObject,handles)
 updateInfoPanel(handles);
 handles = guidata(hObject);
-feval(str2func(handles.quickShowFunction),handles.quickShowPanel,handles,savetag);
-if isfield(handles.trial,'exposure') && isfield(handles.trial,'imageNum')
-    obj = copyobj(handles.clearcanvas,get(handles.clearcanvas,'parent'));
-    pos = get(obj,'position');
-    set(obj,'position',get(obj,'position')+([0 pos(4) 0 0]))
-    set(obj,'callback',@(hObject,eventdata)quickShow('trialImages_Callback',hObject,eventdata,handles))
-    set(obj,'tag','image','String','Image');
-    addClickableExposureTimeline(handles,savetag);
+if get(handles.showmenu_chkbx,'value')
+    showMenu_Callback(hObject, eventdata, handles)
 else
-    obj2 = findobj(get(handles.clearcanvas,'parent'),'tag','image');
-    delete(obj2);
+    feval(str2func(handles.quickShowFunction),handles.quickShowPanel,handles,savetag);
+    if isfield(handles.trial,'exposure') && (isfield(handles.trial,'imageNum') || 7 == exist(regexprep(regexprep(handles.trial.name(1:end-4),'Raw','Images'),'Acquisition','Raw_Data')))
+        obj = copyobj(handles.clearcanvas,get(handles.clearcanvas,'parent'));
+        pos = get(obj,'position');
+        set(obj,'position',get(obj,'position')+([0 pos(4) 0 0]))
+        set(obj,'callback',@(hObject,eventdata)quickShow('trialImages_Callback',hObject,eventdata,handles))
+        set(obj,'tag','image','String','Image');
+        addClickableExposureTimeline(handles,savetag);
+    else
+        obj2 = findobj(get(handles.clearcanvas,'parent'),'tag','image');
+        delete(obj2);
+    end
 end
+    
     
 
 
@@ -320,6 +325,8 @@ else
     savetag = 'delete';
     delete(findobj(handles.quickShowPanel,'tag','delete'));
 end
+set(get(handles.quickShowPanel,'children'),'xscale','linear');
+
 guidata(hObject,handles)
 updateInfoPanel(handles);
 handles = guidata(hObject);
@@ -363,7 +370,10 @@ copyobj(childs,repmat(fig,size(childs)));
 %                 'BackgroundColor',[1 1 1],...
 %                 'Position',[0 0 .75 1],'parent',fig,'bordertype','none');
 % copyobj(childs,repmat(cp,size(childs)));
-linkaxes(get(fig,'children'),'x');
+linax = findobj(fig,'xscale','linear');
+if length(linax)>1
+    linkaxes(linax,'x');
+end
 
 infoStr = get(handles.infoPanel,'string');
 fprintf('%s\n',infoStr{:});
@@ -547,7 +557,10 @@ feval(@playImages,handles.trial,handles.trial.params,exposureNum);
 
     
 function addClickableExposureTimeline(handles,savetag)
-x = ((1:handles.trial.params.sampratein*handles.params.durSweep) - handles.trial.params.preDurInSec*handles.trial.params.sampratein)/handles.trial.params.sampratein;
+x = (1:handles.trial.params.sampratein*handles.params.durSweep)/handles.trial.params.sampratein;
+if isfield(handles.trial.params,'preDurInSec')
+    x = ((1:handles.trial.params.sampratein*handles.params.durSweep) - handles.trial.params.preDurInSec*handles.trial.params.sampratein)/handles.trial.params.sampratein;
+end
 ax = findobj('tag','quickshow_outax','parent',handles.quickShowPanel);
 exposure = handles.trial.exposure(1:length(x));
 expostimes = x(exposure);
@@ -562,3 +575,12 @@ set(ax,'children',flipud(get(ax,'Children')));
 function showClickedImage(l,eventdata,handles)
 handles = guidata(l);
 trialImages_Callback(l, eventdata, handles)
+
+
+% --- Executes on button press in showmenu_chkbx.
+function showmenu_chkbx_Callback(hObject, eventdata, handles)
+% hObject    handle to showmenu_chkbx (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of showmenu_chkbx
