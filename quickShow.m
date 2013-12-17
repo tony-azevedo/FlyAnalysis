@@ -307,6 +307,10 @@ else
         obj2 = findobj(get(handles.clearcanvas,'parent'),'tag','image');
         delete(obj2);
     end
+    ax = titlesubplot(handles.quickShowPanel);
+    [prot,d,fly,cell,trial] = extractRawIdentifiers(handles.trial.name);
+    title(ax,sprintf('%s', [prot '.' d '.' fly '.' cell '.' trial]));
+    
 end
     
     
