@@ -76,6 +76,7 @@ end
 
 %% Saving trials!  not bad
 save(regexprep(data.name,'Acquisition','Raw_Data'), '-struct', 'data');
+save(data.name, '-struct', 'data');
 
 %% Mex building
 mex -LC:\Users\Anthony' Azevedo'\code\flySound\Multiclamp_SDK\3rd' Party Support'\AxMultiClampMsg\ -lAxMultiClampMsg GetMode.cpp
