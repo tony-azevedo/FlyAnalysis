@@ -530,6 +530,9 @@ function analysis_popup_Callback(hObject, eventdata, handles)
 funcs = get(hObject,'string');
 func = str2func(funcs{get(hObject,'value')});
 feval(func,handles.trial,handles.trial.params);
+handles.trial = load(fullfile(handles.dir, sprintf(handles.trialStem,handles.currentTrialNum)));
+guidata(hObject,handles);
+
 
 % --- Executes during object creation, after setting all properties.
 function analysis_popup_CreateFcn(hObject, eventdata, handles)

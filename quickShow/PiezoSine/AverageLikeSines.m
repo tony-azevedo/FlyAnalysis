@@ -40,7 +40,7 @@ end
 plot(ax,x,y,'color',[1, .7 .7],'tag',savetag); hold on
 plot(ax,x,mean(y,2),'color',[.7 0 0],'tag',savetag);
 axis(ax,'tight')
-xlim([-.1 trial.params.stimDurInSec+ min(.15,trial.params.postDurInSec)])
+xlim([-.1 trial.params.stimDurInSec+ min(.25,trial.params.postDurInSec)])
 
 [prot,d,fly,cell,trialnum] = extractRawIdentifiers(trial.name);
 title(ax,sprintf('%s - %d Hz %.2f \\mum', [prot '.' d '.' fly '.' cell '.' trialnum], trial.params.freq,trial.params.displacement*3));
@@ -65,5 +65,5 @@ axis(ax,'tight');
 % set(ax,'TickDir','out','XColor',[1 1 1],'XTick',[],'XTickLabel','');
 % set(ax,'TickDir','out','YColor',[1 1 1],'YTick',[],'YTickLabel','');
 
-xlim([-.1 trial.params.stimDurInSec+ min(.15,trial.params.postDurInSec)])
+xlim([-.1 trial.params.stimDurInSec+ min(.25,trial.params.postDurInSec)])
 %ylim([4.5 5.5])

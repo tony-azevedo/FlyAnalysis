@@ -24,6 +24,7 @@ if ~isfield(handles.prtclData(bt),'displacements');
     handles.prtclData(bt).displacements = handles.prtclData(bt).displacement;
 end
 f = reshape(f,length(handles.prtclData(bt).displacements),length(handles.prtclData(bt).freqs));
+f = f';
 tags = getTrialTags(blocktrials,handles.prtclData);
 
 b = nan;

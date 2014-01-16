@@ -80,6 +80,15 @@ for p = 1:length(protocols)
             tags(f).tags = {};
         end
         trialnums(f) = trial.params.trial;
+        
+        if isfield(trial,'exposure')
+            % shorten the exposure vector to include only times associated
+            % with images
+            imdir = regexprep(regexprep(regexprep(trial.name,'Raw','Images'),'.mat',''),'Acquisition','Raw_Data');
+            d = ls(fullfile(imdir,'*_Image_*'));
+            trial.exposure(cumsum(trial.exposure)>length(d)) = 0;
+            save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
+        end
     end
     for f = 1:length(rawfiles)
         data(f).tags = tags(f).tags;
