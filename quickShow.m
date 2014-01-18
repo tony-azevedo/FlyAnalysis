@@ -302,6 +302,7 @@ else
         set(obj,'position',get(obj,'position')+([0 pos(4) 0 0]))
         set(obj,'callback',@(hObject,eventdata)quickShow('trialImages_Callback',hObject,eventdata,handles))
         set(obj,'tag','image','String','Image');
+        
         addClickableExposureTimeline(handles,savetag);
     else
         obj2 = findobj(get(handles.clearcanvas,'parent'),'tag','image');

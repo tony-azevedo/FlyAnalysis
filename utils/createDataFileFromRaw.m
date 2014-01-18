@@ -82,11 +82,32 @@ for p = 1:length(protocols)
         trialnums(f) = trial.params.trial;
         
         if isfield(trial,'exposure')
-            % shorten the exposure vector to include only times associated
+            % add an exposure time vector to the trial, and adjust images
+            % and exposure vector to include only times associated 
             % with images
+            t = makeInTime(trial.params);
+            trial.exposure_time = t(trial.exposure);
+            
             imdir = regexprep(regexprep(regexprep(trial.name,'Raw','Images'),'.mat',''),'Acquisition','Raw_Data');
+            fprintf('%s\n',imdir);
             d = ls(fullfile(imdir,'*_Image_*'));
-            trial.exposure(cumsum(trial.exposure)>length(d)) = 0;
+            numImages = size(d,1);
+            trial.exposure(cumsum(trial.exposure)>numImages) = 0;
+            trial.exposure_time = trial.exposure_time(1:min(numImages,length(trial.exposure_time)));
+            if numImages > length(trial.exposure_time)
+                mkdir(fullfile(imdir,'extras'))
+                for im_ind = numImages - diff([length(trial.exposure_time),numImages])+1:numImages
+                    imfilename = constructFilnameFromExposureNum(trial,im_ind);
+                    if ~isempty(imfilename)
+                        movefile(imfilename,fullfile(imdir,'extras'))
+                    end
+                end
+            end
+            d = ls(fullfile(imdir,'*_Image_*'));
+            numImages = size(d,1);
+            if numImages > length(trial.exposure_time)
+                error('Problem moving files into %s',fullfile(imdir,'extras'));
+            end
             save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
         end
     end

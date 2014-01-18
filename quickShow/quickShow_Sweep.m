@@ -1,5 +1,6 @@
 function plotcanvas = quickShow_Sweep(plotcanvas,obj,savetag)
 % setupStimulus
+h = guidata(plotcanvas);
 obj.x = makeInTime(obj.trial.params);
 
 % displayTrial
@@ -57,3 +58,5 @@ if ~isempty(obj.prtclData(obj.prtclTrialNums==obj.currentTrialNum).tags)
     ylims = get(ax2,'ylim');
     text(xlims(1)+.05*diff(xlims),ylims(1)+.05*diff(ylims),tagstr,'parent',ax2,'tag','delete');
 end
+drawnow
+%guidata(plotcanvas,h);
