@@ -1,14 +1,4 @@
-function h = AverageLikePlateauxDFoverF(h,handles,savetag)
-
-if isfield(handles,'infoPanel')
-    notes = get(handles.infoPanel,'userdata');
-else
-    a = dir([handles.dir '\notes_*']);
-
-    fclose('all');
-    handles.notesfilename = fullfile(handles.dir,a.name);
-    notes = fileread(handles.notesfilename);
-end
+function h = AverageLikeCurrentStepDFoverF(h,handles,savetag)
 
 trials = findLikeTrials('name',handles.trial.name,'datastruct',handles.prtclData);
 if isempty(h) || ~ishghandle(h)
@@ -20,17 +10,10 @@ set(h,'tag',mfilename);
 trial = load(fullfile(handles.dir,sprintf(handles.trialStem,trials(1))));
 x = makeTime(trial.params);
 
-if sum(strcmp({'IClamp','IClamp_fast'},trial.params.mode))
-    y_name = 'voltage';
-    y_units = 'mV';
-    outname = 'current';
-    outunits = 'pA';
-elseif sum(strcmp('VClamp',trial.params.mode))
-    y_name = 'current';
-    y_units = 'pA';
-    outname = 'voltage';
-    outunits = 'mV';
-end
+y_name = 'voltage';
+y_units = 'mV';
+outname = 'current';
+outunits = 'pA';
 
 %min_exposures = Inf;
 exp_t_i = -Inf;
@@ -52,10 +35,13 @@ ax = subplot(3,1,1,'parent',h);
 plot(ax,x,y,'color',[1, .7 .7],'tag',savetag); hold on
 plot(ax,x,mean(y,2),'color',[.7 0 0],'tag',savetag);
 
-title(ax,[mfilename sprintf('.%d',trials)]);
+[~,dateID,flynum,cellnum,] = extractRawIdentifiers(trial.name);
+%   [mfilename '_' protocol '_' dateID '_' flynum '_' cellnum '_' trialnum]
+
+title(ax,['%\DeltaF/F IStep ' dateID '.' flynum '.' cellnum  sprintf('.%d',trials)]);
 ylabel(ax,y_units);
 axis(ax,'tight')
-xlim([-.5 trial.params.stimDurInSec+ min(.5,trial.params.postDurInSec)])
+xlim([-.15 trial.params.stimDurInSec+ min(.5,trial.params.postDurInSec)])
 box(ax,'off');
 set(ax,'TickDir','out');
 
@@ -83,8 +69,8 @@ end
 plot(ax,exposure_times(1,:),mean(dFoverF,1),'color',[0 .7 0],'tag',savetag);
 ylabel(ax,'%\DeltaF / F');
 axis(ax,'tight')
-xlim([-.5 trial.params.stimDurInSec+ min(.5,trial.params.postDurInSec)])
-
+xlim([-.15 trial.params.stimDurInSec+ min(.5,trial.params.postDurInSec)])
+axis(ax,'tight')
 box(ax,'off');
 set(ax,'TickDir','out');
 
@@ -108,13 +94,13 @@ plot(ax,x,trial.(outname),'color',[0 0 1],'tag',savetag); hold on;
 ylabel(ax,outunits);
 xlabel(ax,'Time (s)');
 axis(ax,'tight')
-xlim([-.5 trial.params.stimDurInSec+ min(.5,trial.params.postDurInSec)])
+xlim([-.15 trial.params.stimDurInSec+ min(.5,trial.params.postDurInSec)])
 
 ylims = get(ax,'ylim');
 xlims = get(ax,'xlim');
 % plot(ax,x,trial.exposure*diff(ylims)+ylims(1),'color',[1 1 1]*.9,'tag',savetag); hold on;
 % set(ax,'children',flipud(get(ax,'children')));
-text(xlims(1)+.01*diff(xlims),max(ylims)-.1*diff(ylims),[num2str(trial.params.plateaux(1)) ' ' outunits],'fontsize',7,'parent',ax,'tag',savetag)
+text(xlims(1)+.01*diff(xlims),max(ylims)-.1*diff(ylims),[num2str(trial.params.steps(1)) ' ' outunits],'fontsize',7,'parent',ax,'tag',savetag)
 
 box(ax,'off');
 set(ax,'TickDir','out');

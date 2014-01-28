@@ -1,4 +1,4 @@
-function plotcanvas = quickShow_Sweep(plotcanvas,obj,savetag)
+function plotcanvas = UnabridgedSweep(plotcanvas,obj,savetag)
 % setupStimulus
 h = guidata(plotcanvas);
 obj.x = makeInTime(obj.trial.params);
@@ -25,8 +25,8 @@ if ~exist('yname','var')
 end
 obj.trial.(yname) = obj.trial.(yname)(1:length(obj.x));
 
-%line(obj.x(obj.x>=0 & obj.x<=1),obj.trial.(yname)(obj.x>=0 & obj.x<=1),'color',[.7 .7 .7],'linewidth',1,'parent',ax1,'tag',savetag);
-line(downsample(obj.x,10),downsample(obj.trial.(yname),10),'color',[.7 .7 .7],'linewidth',1,'parent',ax1,'tag',savetag);
+line(obj.x,obj.trial.(yname),'color',[.7 .7 .7],'linewidth',1,'parent',ax1,'tag',savetag);
+%line(downsample(obj.x,10),downsample(obj.trial.(yname),10),'color',[.7 .7 .7],'linewidth',1,'parent',ax1,'tag',savetag);
 box(ax1,'off'); set(ax1,'TickDir','out'); axis(ax1,'tight');
 ylabel(ax1,units);
 
@@ -69,7 +69,8 @@ end
 obj.trial.(yname) = obj.trial.(yname)(1:length(obj.x));
 
 % line(obj.x(obj.x>=0 & obj.x<=1),obj.trial.(yname)(obj.x>=0 & obj.x<=1),'color',[1 0 0],'linewidth',1,'parent',ax2,'tag',savetag);
-line(downsample(obj.x,10),downsample(obj.trial.(yname),10),'color',[1 0 0],'linewidth',1,'parent',ax2,'tag',savetag);
+%line(downsample(obj.x,10),downsample(obj.trial.(yname),10),'color',[1 0 0],'linewidth',1,'parent',ax2,'tag',savetag);
+line(obj.x,obj.trial.(yname),'color',[1 0 0],'linewidth',1,'parent',ax2,'tag',savetag);
 axis(ax2,'tight');
 if exist('xlims','var')
         set(ax2,'xlim',xlims)

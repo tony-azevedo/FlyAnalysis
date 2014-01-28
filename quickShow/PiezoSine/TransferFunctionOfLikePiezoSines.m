@@ -63,7 +63,11 @@ t = t(t>=(fin-2*(1/trial.params.freq)) & t< fin);
 u_ideal = trial.params.displacement*exp(1i * (2*pi*trial.params.freq * t - pi/2));
 [C, Lags] = xcorr(uc,real(u_ideal),'coeff');
 i_del = Lags(C==max(C));
-t_del = t(i_del+1) - t(1);
+if i_del <= 0
+    t_del = t(end)-t(end+i_del+1);
+else
+    t_del = t(i_del+1) - t(1);
+end
 u_ideal = trial.params.displacement*exp(1i * (2*pi*trial.params.freq * (x-t_del) - pi/2));
 
 ax = subplot(6,1,1,'parent',fig);

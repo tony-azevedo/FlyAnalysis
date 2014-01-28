@@ -40,7 +40,7 @@ for ii = 1:length(dispexamples)
     line(handles.trial.params.freqs',abs(transfer(:,ii)),...
         'parent',ax,'color',[0 1/length(handles.trial.params.displacements) 0]*ii,...
         'tag',savetag);
-    ylabel(ax,'Magnitude (mV/pA)')
+    ylabel(ax,'Magnitude (mV/V)')
     title(ax,'Stim to V transfer function')
 
     ax = subplot(3,1,3,'parent',fig);

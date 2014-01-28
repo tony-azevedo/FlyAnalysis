@@ -42,7 +42,7 @@ for p = 1:length(protocols)
     trial = load([D rawfiles(1).name]);
     if isfield(trial.params,'recmode');
         trial.params.mode = trial.params.recmode;
-        save(trial.name, '-struct', 'trial');
+        save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
     end
 
     data = trial.params;
@@ -60,7 +60,7 @@ for p = 1:length(protocols)
         trial = load([D rawfiles(f).name]);
         if isfield(trial.params,'recmode');
             trial.params.mode = trial.params.recmode;
-            save(trial.name, '-struct', 'trial');
+            save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
         end
 
         try data(f) = trial.params;
@@ -92,7 +92,7 @@ for p = 1:length(protocols)
             fprintf('%s\n',imdir);
             d = ls(fullfile(imdir,'*_Image_*'));
             numImages = size(d,1);
-            trial.exposure(cumsum(trial.exposure)>numImages) = 0;
+            % trial.exposure(cumsum(trial.exposure)>numImages) = 0;
             trial.exposure_time = trial.exposure_time(1:min(numImages,length(trial.exposure_time)));
             if numImages > length(trial.exposure_time)
                 mkdir(fullfile(imdir,'extras'))

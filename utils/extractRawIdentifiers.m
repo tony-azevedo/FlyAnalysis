@@ -1,6 +1,6 @@
 function varargout = extractRawIdentifiers(name)
-% [prot,d,fly,cell,trial,D] = extractRawIdentifiers(name)
-%   [mfilename '_' prot '_' d '_' fly '_' cell '_' trial]
+% [protocol,dateID,flynum,cellnum,trialnum,D,trialStem] = extractRawIdentifiers(name)
+%   [mfilename '_' protocol '_' dateID '_' flynum '_' cellnum '_' trialnum]
 
 [remain,D] = strtok(fliplr(name),'\');
 
@@ -14,4 +14,8 @@ remain = fliplr(remain);
 [cell,remain] = strtok(remain,'_');
 trial = strtok(strtok(remain,'_'),'.mat');
 
-varargout = {prot,d,fly,cell,trial,D};
+trialStem = [prot '_Raw_' d '_' fly '_' cell '_%d.mat'];
+%trialStem = regexprep(trialStem,'\\','\\\');
+%trialStem = regexprep(trialStem,'Anthony Azevedo','Anthony'' Azevedo''');
+
+varargout = {prot,d,fly,cell,trial,D,trialStem};

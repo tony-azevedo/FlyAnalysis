@@ -16,6 +16,7 @@ current = obj.trial.current;
 ax = subplot(5,1,4,'parent',plotcanvas);
 if length(obj.trial.params.recmode)>6, mode = obj.trial.params.recmode(1:6);
 else mode = 'IClamp';
+
 end
 switch mode
     case 'VClamp'

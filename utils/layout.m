@@ -9,6 +9,9 @@ mode = '';
 if nargin>2
     mode = varargin{2};
 end
+if nargin>3
+    ylim_entered = varargin{3};
+end
 
 fig = figure;
 set(fig,'Color','white','PaperPosition',[0.25,0.25 8, 10.5],...
@@ -59,10 +62,12 @@ for f = panels
     ch = get(f,'children');
     for c = 1:length(ch)
         set(ch(c),'xlim',xlimscell{c},'ylim',ylimscell{c});
+        if f~=panels(1);
+            delete(get(ch(c),'title'))
+        end
         if f~=panels(end);
             set(ch(c),'TickDir','out','XColor',[1 1 1],'XTick',[],'XTickLabel','');
             set(ch(c),'TickDir','out','YColor',[1 1 1],'YTick',[],'YTickLabel','');
-            delete(get(ch(c),'title'))
         end
     end
 end

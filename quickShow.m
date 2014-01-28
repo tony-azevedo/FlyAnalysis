@@ -303,6 +303,7 @@ else
         set(obj,'callback',@(hObject,eventdata)quickShow('trialImages_Callback',hObject,eventdata,handles))
         set(obj,'tag','image','String','Image');
         
+        drawnow
         addClickableExposureTimeline(handles,savetag);
     else
         obj2 = findobj(get(handles.clearcanvas,'parent'),'tag','image');
@@ -371,6 +372,8 @@ function figButton_Callback(hObject, eventdata, handles)
 fig = figure('color',[1 1 1]);
 childs = get(handles.quickShowPanel,'children');
 copyobj(childs,repmat(fig,size(childs)));
+findobj(fig,'ButtonDownFcn',@showClickedImage);
+
 % cp = uipanel('Title',handles.currentPrtcl,'FontSize',12,...
 %                 'BackgroundColor',[1 1 1],...
 %                 'Position',[0 0 .75 1],'parent',fig,'bordertype','none');
@@ -380,19 +383,16 @@ if length(linax)>1
     linkaxes(linax,'x');
 end
 
+for chi = length(childs):-1:1
+    if ~isempty(get(get(childs(1),'title'),'string'))
+        set(fig,'fileName',regexprep(get(get(childs(1),'title'),'string'),'\.','_'))
+    end
+end
+
 infoStr = get(handles.infoPanel,'string');
 fprintf('%s\n',infoStr{:});
- %celldisp(infoStr)
-% ip = uicontrol('BackgroundColor',[1 1 1],'style','text',...
-%                 'units','normalized',...
-%                 'Position',[.75 0 .25 .9],'parent',fig,...
-%                 'horizontalAlignment','left');
-% set(ip,'units','pixels');            
-% infoStr = textwrap(ip,infoStr);
-% 
-% set(ip,'string',infoStr)%,'position',position);
 
-%orient(fig,'landscape');
+orient(fig,'tall');
 trialnum_Callback(handles.trialnum,[],handles)
 
 
