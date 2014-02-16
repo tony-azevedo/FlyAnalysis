@@ -53,7 +53,7 @@ ylabel(ax,y_units);
 % set(ax,'TickDir','out','YColor',[1 1 1],'YTick',[],'YTickLabel','');
 
 ax = subplot(3,1,3,'parent',h);
-plot(ax,x,trial.sgsmonitor,'color',[0 0 1],'tag',savetag); hold on;
+plot(ax,x,trial.sgsmonitor(1:length(x)),'color',[0 0 1],'tag',savetag); hold on;
 text(-.1,5.01,...
     [num2str(trial.params.freq) ' Hz ' num2str(trial.params.displacement *3) ' \mum'],...
     'fontsize',7,'parent',ax,'tag',savetag)

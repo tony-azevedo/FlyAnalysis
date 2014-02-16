@@ -39,7 +39,7 @@ hasDFoverF = 0;
 y = zeros(length(x),length(trials));
 for t = 1:length(trials)
     trial = load(fullfile(handles.dir,sprintf(handles.trialStem,trials(t))));
-    y(:,t) = trial.(y_name);
+    y(:,t) = trial.(y_name)(1:length(x));
     if isfield(trial,'dFoverF')
         exp_t_i = max(exp_t_i, trial.exposure_time(1));
         exp_t_f = min(exp_t_f, trial.exposure_time(end));
@@ -52,7 +52,9 @@ ax = subplot(3,1,1,'parent',h);
 plot(ax,x,y,'color',[1, .7 .7],'tag',savetag); hold on
 plot(ax,x,mean(y,2),'color',[.7 0 0],'tag',savetag);
 
-title(ax,[mfilename sprintf('.%d',trials)]);
+[~,dateID,flynum,cellnum] = extractRawIdentifiers(trial.name);
+
+title(ax,[dateID '.' flynum '.' cellnum ' ' mfilename sprintf('.%d',trials)]);
 ylabel(ax,y_units);
 axis(ax,'tight')
 xlim([-.5 trial.params.stimDurInSec+ min(.5,trial.params.postDurInSec)])
@@ -104,7 +106,7 @@ elseif sum(strcmp('VClamp',trial.params.mode))
     outname = 'voltage';
     outunits = 'mV';
 end
-plot(ax,x,trial.(outname),'color',[0 0 1],'tag',savetag); hold on;
+plot(ax,x,trial.(outname)(1:length(x)),'color',[0 0 1],'tag',savetag); hold on;
 ylabel(ax,outunits);
 xlabel(ax,'Time (s)');
 axis(ax,'tight')

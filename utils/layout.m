@@ -35,6 +35,7 @@ for y = 1:dim(1)
     end
 end
 
+axpan = panels(end,1);
 panels = panels(:)';
 ch = get(panels(1),'children');
 for c =  1:length(ch)
@@ -65,7 +66,7 @@ for f = panels
         if f~=panels(1);
             delete(get(ch(c),'title'))
         end
-        if f~=panels(end);
+        if f~=axpan;
             set(ch(c),'TickDir','out','XColor',[1 1 1],'XTick',[],'XTickLabel','');
             set(ch(c),'TickDir','out','YColor',[1 1 1],'YTick',[],'YTickLabel','');
         end

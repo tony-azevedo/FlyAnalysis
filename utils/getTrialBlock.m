@@ -16,8 +16,8 @@ end
 trlnnum = regexp(notes,[currentPrtcl ' trial ' num2str(trial) ',']);
 trln = notes(trlnnum:end);
 comments = regexp(trln,'\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\n','end');
-comtxt = trln(1:comments(1));
-if ~isempty(comtxt)
+if ~isempty(comments)
+    comtxt = trln(1:comments(1));
     bllnnum = regexp(comtxt,[currentPrtcl ' trial '],'start');
     blln = comtxt(bllnnum(length(bllnnum)):end);
     newlnnum = regexp(blln,'\n');
