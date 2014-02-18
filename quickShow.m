@@ -20,7 +20,7 @@ function varargout = quickShow(varargin)
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 
-% Last Modified by GUIDE v2.5 07-Dec-2013 17:55:42
+% Last Modified by GUIDE v2.5 16-Feb-2014 18:34:54
 
 %% Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -116,7 +116,13 @@ delete(handles.figure1)
 
 
 function folderButton_Callback(hObject, eventdata, handles)
-handles.dir = uigetdir('C:\Users\Anthony Azevedo\Raw_Data\','Choose cell folder');
+if ~isempty(strfind(pwd,'C:\Users\Anthony Azevedo\Raw_Data\'))
+    [~, remain] = strtok(fliplr(pwd),'\');
+    curdir = fliplr(remain);
+else
+    curdir = 'C:\Users\Anthony Azevedo\Raw_Data\';
+end
+handles.dir = uigetdir(curdir,'Choose cell folder');
 if ~handles.dir
     handles.dir = pwd;
 end
@@ -592,3 +598,11 @@ function showmenu_chkbx_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of showmenu_chkbx
+
+
+% --- Executes on button press in trialpath.
+function trialpath_Callback(hObject, eventdata, handles)
+fprintf('%%*********************\n');
+fprintf('''%s'';\n',(fullfile(handles.dir, sprintf(handles.trialStem,handles.currentTrialNum))))
+clipboard('copy',sprintf('''%s'';\n',(fullfile(handles.dir, sprintf(handles.trialStem,handles.currentTrialNum)))));
+

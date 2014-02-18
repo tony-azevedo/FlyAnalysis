@@ -18,7 +18,9 @@ numstem(end-length(ens)+1:end) = ens;
 
 d = dir([imFileStem numstem '*']);
 if length(d)==0
+    warning([imFileStem numstem '* is not a file stem.  Use changeImageNameScript'])
     varargout{1} = [];
+    
 else
     
     varargout{1} = fullfile(imdir,d(1).name);

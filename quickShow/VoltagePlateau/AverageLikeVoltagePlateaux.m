@@ -1,4 +1,4 @@
-function h = AverageLikePlateaux(h,handles,savetag)
+function h = AverageLikeVoltagePlateaux(h,handles,savetag)
 
 if isfield(handles,'infoPanel')
     notes = get(handles.infoPanel,'userdata');
