@@ -1,4 +1,4 @@
-function transfer = TransferFunctionOfBlockPiezoSines(fig,handles,savetag)
+function transfer = PiezoSineOsciTransFunc(fig,handles,savetag)
 % works on Current Sine, there for the blocks have a rang of amps and freqs
 % see also TransferFunctionOfLike
 
@@ -33,7 +33,7 @@ for ii = 1:length(dispexamples)
     freqexamples = blocktrials;
     for jj = 1:length(freqexamples)
         handles.trial = load(fullfile(handles.dir,sprintf(handles.trialStem,freqexamples(jj))));
-        transfer(jj,ii) = TransferFunctionOfLikePiezoSines([],handles,savetag);
+        transfer(jj,ii) = PiezoSineOsciSelectivity([],handles,savetag);
     end
 
     ax = subplot(3,1,[1 2],'parent',fig);

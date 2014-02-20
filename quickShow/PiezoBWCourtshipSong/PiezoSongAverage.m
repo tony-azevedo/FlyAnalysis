@@ -1,4 +1,4 @@
-function h = AverageLikeSongs(h,handles,savetag)
+function h = PiezoSongAverage(h,handles,savetag)
 % h = AverageLikeSongs(h,handles,savetag)
 % see also AverageLikeSines
 if isfield(handles,'infoPanel')
@@ -34,31 +34,30 @@ end
 y = zeros(length(x),length(trials));
 for t = 1:length(trials)
     trial = load(fullfile(handles.dir,sprintf(handles.trialStem,trials(t))));
-    y(:,t) = trial.(y_name);
+    y(:,t) = trial.(y_name)(1:length(x));
 end
 plot(ax,x,y,'color',[1, .7 .7],'tag',savetag); hold on
 plot(ax,x,mean(y,2),'color',[.7 0 0],'tag',savetag);
 axis(ax,'tight')
-xlim([-.1 trial.params.stimDurInSec+ min(.15,trial.params.postDurInSec)])
+xlim(ax,[-.1 trial.params.stimDurInSec+ min(.15,trial.params.postDurInSec)])
 
 %title([d ' ' fly ' ' cell ' ' prot ' '  num2str(trial.params.freq) ' Hz ' num2str(trial.params.displacement *.3) ' \mum'])
 box(ax,'off');
 set(ax,'TickDir','out');
 ylabel(ax,y_units);
 
-% set(ax,'TickDir','out','XColor',[1 1 1],'XTick',[],'XTickLabel','');
-% set(ax,'TickDir','out','YColor',[1 1 1],'YTick',[],'YTickLabel','');
-
 ax = subplot(3,1,3,'parent',h);
-plot(ax,x,trial.sgsmonitor,'color',[0 0 1],'tag',savetag); hold on;
+plot(ax,x,trial.sgsmonitor(1:length(x)),'color',[0 0 1],'tag',savetag); hold on;
 text(-.09,5.01,...
     [num2str(trial.params.displacement *3) ' \mum'],...
     'fontsize',7,'parent',ax,'tag',savetag)
+axis(ax,'tight');
+ylims = get(ax,'ylim');
+ylims = [ylims(1)-.05*(ylims(2)-ylims(1)) ylims(2)+.05*(ylims(2)-ylims(1)) ];
+ylim(ax,ylims);
 
 box(ax,'off');
 set(ax,'TickDir','out');
-% set(ax,'TickDir','out','XColor',[1 1 1],'XTick',[],'XTickLabel','');
-% set(ax,'TickDir','out','YColor',[1 1 1],'YTick',[],'YTickLabel','');
 
-xlim([-.1 trial.params.stimDurInSec+ min(.15,trial.params.postDurInSec)])
+xlim(ax,[-.1 trial.params.stimDurInSec+ min(.15,trial.params.postDurInSec)])
 %ylim([4.5 5.5])

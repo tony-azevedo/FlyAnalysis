@@ -1,6 +1,5 @@
-function h = AverageLikeSongs(h,handles,savetag)
-% h = AverageLikeSongs(h,handles,savetag)
-% see also AverageLikeSines
+function h = PiezoSineAverage(h,handles,savetag)
+% see also AverageLikeSongs
 if isfield(handles,'infoPanel')
     notes = get(handles.infoPanel,'userdata');
 else
@@ -12,7 +11,6 @@ else
 end
 
 trials = findLikeTrials('name',handles.trial.name,'datastruct',handles.prtclData);
-
 if isempty(h) || ~ishghandle(h)
     h = figure(100+trials(1)); clf
 else
@@ -31,16 +29,21 @@ elseif sum(strcmp('VClamp',trial.params.mode))
     y_units = 'pA';
 end
 
+if length(trial.(y_name))<length(x)
+    x = x(1:length(trial.(y_name)));
+end
 y = zeros(length(x),length(trials));
 for t = 1:length(trials)
     trial = load(fullfile(handles.dir,sprintf(handles.trialStem,trials(t))));
-    y(:,t) = trial.(y_name);
+    y(:,t) = trial.(y_name)(1:length(x));
 end
 plot(ax,x,y,'color',[1, .7 .7],'tag',savetag); hold on
 plot(ax,x,mean(y,2),'color',[.7 0 0],'tag',savetag);
 axis(ax,'tight')
-xlim([-.1 trial.params.stimDurInSec+ min(.15,trial.params.postDurInSec)])
+xlim([-.1 trial.params.stimDurInSec+ min(.25,trial.params.postDurInSec)])
 
+[prot,d,fly,cell,trialnum] = extractRawIdentifiers(trial.name);
+title(ax,sprintf('%s - %d Hz %.2f \\mum', [prot '.' d '.' fly '.' cell '.' trialnum], trial.params.freq,trial.params.displacement*3));
 %title([d ' ' fly ' ' cell ' ' prot ' '  num2str(trial.params.freq) ' Hz ' num2str(trial.params.displacement *.3) ' \mum'])
 box(ax,'off');
 set(ax,'TickDir','out');
@@ -50,15 +53,17 @@ ylabel(ax,y_units);
 % set(ax,'TickDir','out','YColor',[1 1 1],'YTick',[],'YTickLabel','');
 
 ax = subplot(3,1,3,'parent',h);
-plot(ax,x,trial.sgsmonitor,'color',[0 0 1],'tag',savetag); hold on;
-text(-.09,5.01,...
-    [num2str(trial.params.displacement *3) ' \mum'],...
+plot(ax,x,trial.sgsmonitor(1:length(x)),'color',[0 0 1],'tag',savetag); hold on;
+text(-.1,5.01,...
+    [num2str(trial.params.freq) ' Hz ' num2str(trial.params.displacement *3) ' \mum'],...
     'fontsize',7,'parent',ax,'tag',savetag)
 
 box(ax,'off');
 set(ax,'TickDir','out');
+axis(ax,'tight');
+
 % set(ax,'TickDir','out','XColor',[1 1 1],'XTick',[],'XTickLabel','');
 % set(ax,'TickDir','out','YColor',[1 1 1],'YTick',[],'YTickLabel','');
 
-xlim([-.1 trial.params.stimDurInSec+ min(.15,trial.params.postDurInSec)])
+xlim([-.1 trial.params.stimDurInSec+ min(.25,trial.params.postDurInSec)])
 %ylim([4.5 5.5])

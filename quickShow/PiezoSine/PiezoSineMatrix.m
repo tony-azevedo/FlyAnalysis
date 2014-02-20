@@ -1,4 +1,4 @@
-function newfig = BlockPlotMatrix(fig,handles,savetag)
+function newfig = PiezoSineMatrix(fig,handles,savetag)
 % see also AverageLikeSines
 
 [prot,datestr,fly,cellnum,trial,D] = extractRawIdentifiers(handles.trial.name);
@@ -15,7 +15,7 @@ clear f
 cnt = 1;
 for bt = blocktrials;
     handles.trial = load(sprintf(handles.trialStem,bt));
-    f(cnt) = AverageLikeSines([],handles,savetag);
+    f(cnt) = PiezoSineAverage([],handles,savetag);
     cnt = cnt+1;
 end
 f = unique(f);
