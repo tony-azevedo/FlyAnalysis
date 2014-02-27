@@ -148,6 +148,20 @@ analysis_cell(cnt).evidencecalls = {...
     'PiezosineDepolTransFunc'
     };
 
+cnt = cnt+1;
+analysis_cell(cnt).name = {
+   '140214_F1_C1'};
+analysis_cell(cnt).comment = {
+    'Responsive to higher intensities across frequencies.  TTX'
+    };
+analysis_cell(cnt).exampletrials = {...
+'C:\Users\Anthony Azevedo\Raw_Data\140214\140214_F1_C1\PiezoSine_Raw_140214_F1_C1_102.mat';
+    };
+analysis_cell(cnt).evidencecalls = {...
+    'PiezosineDepolTransFunc'
+    };
+
+
 
 cnt = cnt+1;
 analysis_cell(cnt).name = {
