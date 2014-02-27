@@ -127,6 +127,17 @@ reject_cells(cnt).exampletrial = 'C:\Users\Anthony Azevedo\Raw_Data\140121\14012
 
 
 cnt = cnt+1;
+analysis_cell(cnt).name = '140122_F2_C1';
+analysis_cell(cnt).comment = {'Moving a lot! Not a clear deliniation of the cell'};
+analysis_cell(cnt).exampletrials = {...
+    'C:\Users\Anthony Azevedo\Raw_Data\140122\140122_F2_C1\Sweep_Raw_140122_F2_C1_2.mat';...
+    'C:\Users\Anthony Azevedo\Raw_Data\140122\140122_F2_C1\PiezoSine_Raw_140122_F2_C1_12.mat';...
+    };
+analysis_cell(cnt).evidencecalls = {...
+    };
+
+
+cnt = cnt+1;
 reject_cells(cnt).name = '140122_F2_C2';
 reject_cells(cnt).reason = 'Blew up the cell';
 reject_cells(cnt).exampletrial = 'C:\Users\Anthony Azevedo\Raw_Data\140122\140122_F2_C2\Sweep_Raw_140122_F2_C2_1.mat';
@@ -190,16 +201,6 @@ analysis_cell(cnt).exampletrials = {...
 analysis_cell(cnt).evidencecalls = {...
     };
 
-cnt = cnt+1;
-analysis_cell(cnt).name = '140122_F2_C1';
-analysis_cell(cnt).comment = {'Moving a lot! Sound responsive, step responsive, not a big change in fluorescence, either the decline or the breakin'};
-analysis_cell(cnt).exampletrials = {...
-    'C:\Users\Anthony Azevedo\Raw_Data\140122\140122_F2_C1\Sweep_Raw_140122_F2_C1_2.mat';...
-    'C:\Users\Anthony Azevedo\Raw_Data\140122\140122_F2_C1\PiezoSine_Raw_140122_F2_C1_12.mat';...
-    };
-analysis_cell(cnt).evidencecalls = {...
-    };
-
 
 cnt = cnt+1;
 analysis_cell(cnt).name = '140131_F3_C1';
@@ -249,7 +250,58 @@ analysis_cell(cnt).exampletrials = {...
 analysis_cell(cnt).evidencecalls = {...
     };
 
+%% Motion minimization
+% These cells are used to test the image correlation methods
+cnt = 0;
 
+cnt = cnt+1;
+moving_cell(cnt).name = '140131_F3_C1';
+moving_cell(cnt).comment = {'Moving.  Nice bright cell, not sound responsive, otherwise classic B1'};
+moving_cell(cnt).exampletrials = {...
+    'C:\Users\Anthony Azevedo\Raw_Data\140131\140131_F3_C1\Sweep_Raw_140131_F3_C1_2.mat';...
+    'C:\Users\Anthony Azevedo\Raw_Data\140131\140131_F3_C1\VoltagePlateau_Raw_140131_F3_C1_1.mat';...
+    };
+moving_cell(cnt).evidencecalls = {...
+    };
+
+
+cnt = cnt+1;
+moving_cell(cnt).name = '140206_F1_C1';
+moving_cell(cnt).comment = {'Movement, Not sound responsive.  Good looking cell'};
+moving_cell(cnt).exampletrials = {...
+    'C:\Users\Anthony Azevedo\Raw_Data\140206\140206_F1_C1\Sweep_Raw_140206_F1_C1_1.mat';...
+    'C:\Users\Anthony Azevedo\Raw_Data\140206\140206_F1_C1\Sweep_Raw_140206_F1_C1_2.mat';...
+    'C:\Users\Anthony Azevedo\Raw_Data\140206\140206_F1_C1\VoltagePlateau_Raw_140206_F1_C1_1.mat';...
+    'C:\Users\Anthony Azevedo\Raw_Data\140206\140206_F1_C1\PiezoSine_Raw_140206_F1_C1_26.mat';...
+    };
+moving_cell(cnt).evidencecalls = {...
+    };
+
+
+cnt = cnt+1;
+moving_cell(cnt).name = '140207_F1_C2';
+moving_cell(cnt).comment = {'Cell is pressed against others. Moving a lot!  Should be able to fix, Not sound responsive.'};
+moving_cell(cnt).exampletrials = {...
+    'C:\Users\Anthony Azevedo\Raw_Data\140207\140207_F1_C2\Sweep_Raw_140207_F1_C2_1.mat';...
+    'C:\Users\Anthony Azevedo\Raw_Data\140207\140207_F1_C2\Sweep_Raw_140207_F1_C2_2.mat';...
+    'C:\Users\Anthony Azevedo\Raw_Data\140207\140207_F1_C2\VoltagePlateau_Raw_140207_F1_C2_5.mat';...
+    };
+moving_cell(cnt).evidencecalls = {...
+    };
+
+
+for c_ind = 3:cnt
+    for t_ind = 1:length(moving_cell(c_ind).exampletrials)
+        trial = load(moving_cell(c_ind).exampletrials{t_ind});
+        [protocol,dateID,flynum,cellnum,trialnum,D,trialStem] = extractRawIdentifiers(trial.name);
+
+        afterCorrectionFig = figure;
+        set(afterCorrectionFig,'name',[moving_cell(c_ind).name ' - ' protocol '_' trialnum]);
+        I = roiFluoTrace(trial,trial.params,'NewROI','Yes','dFoFfig',afterCorrectionFig,'MotionCorrection',true,'ShowMovies',true);
+        
+    end
+end
+        
 
 
 %%
@@ -306,23 +358,8 @@ analyze_cells(cnt).exampletrial = 'C:\Users\Anthony Azevedo\Raw_Data\131211\1312
 % current injection are not as large as those in response to voltage
 % changes, though the changes in voltage should be enough drive some change
 
-%% Motion minimization
-cnt = cnt+1;
-moving_cells(cnt).name = '140115_F2_C1';
-moving_cells(cnt).reason = 'Good Motion example! Not good access, ran out of saline, no cell';
-moving_cells(cnt).exampletrial = 'C:\Users\Anthony Azevedo\Raw_Data\140115\140115_F2_C1\CurrentPlateau_Raw_140115_F2_C1_1.mat';
 
 
-moving_cells(cnt).name = '140121_F2_C1';
-moving_cells(cnt).comment = {'Banner Cell, sound responsive, spiking, just great!'};
-moving_cells(cnt).exampletrials = {...
-    'C:\Users\Anthony Azevedo\Raw_Data\140121\140121_F2_C1\Sweep_Raw_140121_F2_C1_2.mat';...
-    'C:\Users\Anthony Azevedo\Raw_Data\140117\140117_F2_C1\VoltagePlateau_Raw_140117_F2_C1_3.mat';...
-    };
-moving_cells(cnt).evidencecalls = {...
-    'fluorescence(trial,trial.params)';...
-    'DFoverFoverDV(trial,trial.params)';...
-    };
 
 %%
 % Analyze a cell further if it has
