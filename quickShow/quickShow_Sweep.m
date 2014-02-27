@@ -38,10 +38,19 @@ text(xlims(1)+.05*diff(xlims),ylims(1)+.05*diff(ylims),...
     sprintf('%s', [prot '.' d '.' fly '.' cell '.' trial]),...
     'parent',ax1,'fontsize',7,'tag','delete');
 
-if isfield(obj.trial,'dFoverF')
+if isfield(obj.trial,'roiFluoTrace')
+    exp_t = obj.trial.exposure_time;
+    
+    if sum(exp_t<0)
+        bsln = exp_t<0 & exp_t>exp_t(1)+.02;
+    else
+        bsln = exp_t<1 & exp_t>exp_t(1)+.02;
+    end
+    dFoverF_trace = 100 * (obj.trial.roiFluoTrace/nanmean(obj.trial.roiFluoTrace(bsln)) - 1);
+
     ax2 = subplot(3,1,2,'parent',plotcanvas);
     set(ax2,'tag','quickshow_dFoverF_ax');
-    line(obj.trial.exposure_time,obj.trial.dFoverF,'color',[0 .7 0],'linewidth',1,'parent',ax2,'tag',savetag);
+    line(obj.trial.exposure_time,dFoverF_trace,'color',[0 .7 0],'linewidth',1,'parent',ax2,'tag',savetag);
     
     ylabel(ax2,'%\DeltaF / F');
     axis(ax2,'tight')
@@ -80,7 +89,7 @@ box(ax2,'off');
 set(ax2,'TickDir','out'); 
 
 
-if ~isempty(obj.prtclData(obj.prtclTrialNums==obj.currentTrialNum).tags)
+if isfield(obj,'prtclData') && ~isempty(obj.prtclData(obj.prtclTrialNums==obj.currentTrialNum).tags)
     tags = obj.prtclData(obj.prtclTrialNums==obj.currentTrialNum).tags;
     tagstr = tags{1};
     for i = 2:length(tags)
