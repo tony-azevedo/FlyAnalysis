@@ -331,8 +331,9 @@ end
 % x and y.  However, most of the movement produced by beating of the brain
 % is stretching of the cell in x and y.  This is a fundamental limitation
 % on how much motion artifact can be eliminated from the \Delta F/F trace.
+% The hallmark of correction is the stationary electrode.
 % Motion correction (such as it is) has been implemented in all following
-% analysis.
+% analysis, but a better solution is to use a tight ROI.
 
 %% No Effect of Internal pH
 % We thought briefly that low pH of the initial batch of internal was
@@ -353,7 +354,7 @@ roiFluoTrace(trial,trial.params,'NewROI','No','dFoFfig',gcf,'MotionCorrection',t
 %% Fluorescence Changes at Break-in
 % Look for a strong change in the statistics of the current trace (-7X
 % std).  That is the point of break in.  Then plot the change in
-% fluorescence of 4 frames before and after.
+% fluorescence of DFrames frames before and after.
 
 for c_ind = 1:length(analysis_cell)
     trial = load(analysis_cell(c_ind).breakin_trial{1});
@@ -364,7 +365,7 @@ end
 %% %
 close all
 
-dFrame = 14;
+DFrame = 15;
 commandvoltage = zeros(length(analysis_cell),1);
 breakin_dF_traces = zeros(length(analysis_cell),dFrame*2+1);
 breakin_dF_dF = breakin_dF_traces;
@@ -420,6 +421,8 @@ for c_ind = 1:length(analysis_cell)
 end
 
 %%
+% With the time of break-in found and the change in fluorescence localized,
+% plot the fluorescence trace at break-in.
 
 x = frame_window - break_in_frame;
 
@@ -430,6 +433,9 @@ colors = get(gca,'ColorOrder');
 DeltaF_breakin = mean(breakin_dF_traces(:,x>=1&x<=5),2)-...
                 mean(breakin_dF_traces(:,x>=-4&x<=0),2);
 
+%% 
+% Finally, plot DF_over_F vs holding potential
+
 figure
 hold on
 for c_ind = 1:length(DeltaF_breakin)
@@ -437,6 +443,24 @@ for c_ind = 1:length(DeltaF_breakin)
 end
 xlim([-50,-25])
 legend show
+
+
+%%
+% We can see that those cells that do not appear to be B1 cells also do not
+% increase in fluorescence upon break-in (from the 
+% orginal notes, see the Google Drive notebook notes).  Currently, the four
+% definite B1 cells cluster around 2% change in fluorescence, once they are
+% held at 50mV.  When comparing these \Delta Fs to calibration curves,
+% consider the decrease in fluorescence for a step from -50mV to -36mV.
+%
+% As a future plan, if I break in at -40, I should deliver steps from -40.
+
+
+%% Comparison of break-in step with \Delta F/F vs \Delta V
+% I typically recorded two blocks of VoltagePlateau protocols in a row.  I
+% have combined such blocks in order to incorporate them all into this
+% analysis.
+
 
 %% Current Plateau cells
 % cnt = 0;

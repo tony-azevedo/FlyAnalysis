@@ -402,20 +402,10 @@ orient(fig,'tall');
 trialnum_Callback(handles.trialnum,[],handles)
 
 
-% --- Executes on button press in epsButton.
 function epsButton_Callback(hObject, eventdata, handles)
-% hObject    handle to epsButton (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
 
-% --- Executes on button press in savetraces_button.
 function savetraces_button_Callback(hObject, eventdata, handles)
-% hObject    handle to savetraces_button (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of savetraces_button
 if get(handles.savetraces_button,'value')
     lines = findobj(handles.quickShowPanel,'type','line');
     set(lines,'tag','save');
@@ -592,7 +582,7 @@ trialImages_Callback(l, eventdata, handles)
 
 
 % --- Executes on button press in showmenu_chkbx.
-function showmenu_chkbx_Callback(hObject, eventdata, handles)
+function showmenu_chkbx_Callback(hObject, eventdata, handles) %#ok<*INUSD>
 % hObject    handle to showmenu_chkbx (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -601,8 +591,37 @@ function showmenu_chkbx_Callback(hObject, eventdata, handles)
 
 
 % --- Executes on button press in trialpath.
-function trialpath_Callback(hObject, eventdata, handles)
+function trialpath_Callback(hObject, eventdata, handles) %#ok<*INUSL>
 fprintf('%%*********************\n');
 fprintf('''%s'';\n',(fullfile(handles.dir, sprintf(handles.trialStem,handles.currentTrialNum))))
 clipboard('copy',sprintf('''%s'';\n',(fullfile(handles.dir, sprintf(handles.trialStem,handles.currentTrialNum)))));
 
+
+% --- Executes button press in Combine Blocks.
+function combineblocks_Callback(hObject, eventdata, handles) %#ok<*DEFNU>
+blocktrials = findLikeTrials('name',handles.trial.name,'datastruct',handles.prtclData,'exclude',{'trialBlock'});
+
+blocks = zeros(1,length(blocktrials));
+tags = cell(size(blocks));
+for bt_ind = 1:length(blocktrials)
+    tags{bt_ind} = handles.prtclData(bt_ind).tags;
+    blocks(bt_ind) = handles.prtclData(bt_ind).trialBlock;
+end
+
+[blocks,ind] = unique(blocks);
+tags = tags(ind);
+
+% make a little dialog that creates checkboxes and populates the window
+% with choices
+
+blocks2combine = selectFromCheckBoxes(blocks,tags);
+if isempty(blocks2combine)
+    error('No blocks selected for combination');
+end
+    
+for prt_ind = 1:length(handles.prtclData)
+    if sum(blocks2combine==handles.prtclData(prt_ind))
+        handles.prtclData(prt_ind).combinedTrialBlock = handles.trial.params.trialBlock;
+    end
+end
+    

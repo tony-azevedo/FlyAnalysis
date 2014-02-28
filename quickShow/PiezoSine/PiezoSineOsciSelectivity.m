@@ -1,5 +1,4 @@
 function transfer = PiezoSineOsciSelectivity(fig,handles,savetag)
-% see also AverageLikeSongs
 
 trials = findLikeTrials('name',handles.trial.name,'datastruct',handles.prtclData);
 if isempty(fig) || ~ishghandle(fig)
