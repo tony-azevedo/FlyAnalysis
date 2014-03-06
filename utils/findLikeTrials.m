@@ -2,11 +2,11 @@ function varargout = findLikeTrials(varargin)
 % [nums,inds] = findLikeTrials('name',name,'trial',trial,'window',window,'datastruct',datastruct)
 
 p = inputParser;
-p.addParamValue('trial',[],@isnumeric);
-p.addParamValue('name','',@ischar);
-p.addParamValue('window',[],@isnumeric);
-p.addParamValue('datastruct',struct,@isstruct);
-p.addParamValue('exclude',{''},@iscell);
+p.addParameter('trial',[],@isnumeric);
+p.addParameter('name','',@ischar);
+p.addParameter('window',[],@isnumeric);
+p.addParameter('datastruct',struct,@isstruct);
+p.addParameter('exclude',{''},@iscell);
 parse(p,varargin{:});
 
 trial = p.Results.trial;
