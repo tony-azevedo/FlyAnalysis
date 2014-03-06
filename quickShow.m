@@ -583,11 +583,6 @@ trialImages_Callback(l, eventdata, handles)
 
 % --- Executes on button press in showmenu_chkbx.
 function showmenu_chkbx_Callback(hObject, eventdata, handles) %#ok<*INUSD>
-% hObject    handle to showmenu_chkbx (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of showmenu_chkbx
 
 
 % --- Executes on button press in trialpath.
@@ -599,29 +594,65 @@ clipboard('copy',sprintf('''%s'';\n',(fullfile(handles.dir, sprintf(handles.tria
 
 % --- Executes button press in Combine Blocks.
 function combineblocks_Callback(hObject, eventdata, handles) %#ok<*DEFNU>
-blocktrials = findLikeTrials('name',handles.trial.name,'datastruct',handles.prtclData,'exclude',{'trialBlock'});
+blocktrials = findLikeTrials('name',handles.trial.name,'datastruct',handles.prtclData,'exclude',{'trialBlock','combinedTrialBlock','gain','secondary_gain','randomize'});
 
 blocks = zeros(1,length(blocktrials));
+combinedblocks = [];
+combinedblocksnums = [];
+if isfield(handles.prtclData(blocktrials(1)),'combinedTrialBlock')
+    combinedblocks = zeros(1,length(blocktrials));
+    combinedblocksnums = zeros(1,length(blocktrials));
+end
 tags = cell(size(blocks));
 for bt_ind = 1:length(blocktrials)
     tags{bt_ind} = handles.prtclData(bt_ind).tags;
     blocks(bt_ind) = handles.prtclData(bt_ind).trialBlock;
+    if isfield(handles.prtclData(bt_ind),'combinedTrialBlock') && handles.prtclData(bt_ind).combinedTrialBlock>0
+        combinedblocks(bt_ind) = handles.prtclData(bt_ind).trialBlock;
+        combinedblocksnums(bt_ind) = handles.prtclData(bt_ind).combinedTrialBlock;
+    end
 end
 
 [blocks,ind] = unique(blocks);
+if ~isempty(combinedblocks)
+    combinedblocks = combinedblocks(ind);
+    combinedblocks = combinedblocks(combinedblocks>0);
+    combinedblocksnums = combinedblocksnums(ind);
+    combinedblocksnums = combinedblocksnums(combinedblocksnums>0);
+    disp(['Blocks ' sprintf('%d ', blocks) 'constitute combined blocks ' sprintf('%d ',combinedblocksnums)])
+end
 tags = tags(ind);
 
 % make a little dialog that creates checkboxes and populates the window
 % with choices
 
-blocks2combine = selectFromCheckBoxes(blocks,tags);
+blocks2combine = selectFromCheckBoxes(blocks,tags,'title','select blocks, dbl click to continue','prechecked',ismember(blocks,combinedblocks));
 if isempty(blocks2combine)
-    error('No blocks selected for combination');
+    error('No block pairs selected for combination');
 end
-    
+
+blocks2combine = blocks(logical(blocks2combine));
+fprintf('(Un)Combining Blocks: ')
+fprintf('%d, ', blocks2combine);
+fprintf('\n');
+
 for prt_ind = 1:length(handles.prtclData)
-    if sum(blocks2combine==handles.prtclData(prt_ind))
+    if sum(blocks2combine==handles.prtclData(prt_ind).trialBlock)
         handles.prtclData(prt_ind).combinedTrialBlock = handles.trial.params.trialBlock;
+        trial = load(fullfile(handles.dir,sprintf(handles.trialStem,handles.prtclData(prt_ind).trial)));
+        trial.params.combinedTrialBlock = handles.trial.params.trialBlock;
+        save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
+    else 
+        handles.prtclData(prt_ind).combinedTrialBlock = 0;
+        trial = load(fullfile(handles.dir,sprintf(handles.trialStem,handles.prtclData(prt_ind).trial)));
+        if isfield('trial.params','combinedTrialBlock')
+            trial.params = rmfield(trial.params,'combinedTrialBlock');
+        end
+        save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
     end
+
 end
-    
+data = handles.prtclData; %#ok<NASGU>
+save(handles.prtclDataFileName,'data');
+guidata(hObject,handles)
+

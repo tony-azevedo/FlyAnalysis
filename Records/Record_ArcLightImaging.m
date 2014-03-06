@@ -365,7 +365,7 @@ end
 %% %
 close all
 
-DFrame = 15;
+dFrame = 15;
 commandvoltage = zeros(length(analysis_cell),1);
 breakin_dF_traces = zeros(length(analysis_cell),dFrame*2+1);
 breakin_dF_dF = breakin_dF_traces;
