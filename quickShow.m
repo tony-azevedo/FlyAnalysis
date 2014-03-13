@@ -606,10 +606,10 @@ end
 tags = cell(size(blocks));
 for bt_ind = 1:length(blocktrials)
     tags{bt_ind} = handles.prtclData(bt_ind).tags;
-    blocks(bt_ind) = handles.prtclData(bt_ind).trialBlock;
-    if isfield(handles.prtclData(bt_ind),'combinedTrialBlock') && handles.prtclData(bt_ind).combinedTrialBlock>0
-        combinedblocks(bt_ind) = handles.prtclData(bt_ind).trialBlock;
-        combinedblocksnums(bt_ind) = handles.prtclData(bt_ind).combinedTrialBlock;
+    blocks(bt_ind) = handles.prtclData(blocktrials(bt_ind)).trialBlock;
+    if isfield(handles.prtclData(blocktrials(bt_ind)),'combinedTrialBlock') && handles.prtclData(blocktrials(bt_ind)).combinedTrialBlock>0
+        combinedblocks(bt_ind) = handles.prtclData(blocktrials(bt_ind)).trialBlock;
+        combinedblocksnums(bt_ind) = handles.prtclData(blocktrials(bt_ind)).combinedTrialBlock;
     end
 end
 

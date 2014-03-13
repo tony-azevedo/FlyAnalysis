@@ -49,6 +49,7 @@ end
 for d = 1:length(datastruct)
     if datastruct(d).trial == trial
         compare = datastruct(d);
+        break
     end
 end
 

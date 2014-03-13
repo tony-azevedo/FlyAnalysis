@@ -1,4 +1,4 @@
-function transfer = PiezoSineOsciSelectivity(fig,handles,savetag)
+function varargout = PiezoSineOsciSelectivity(fig,handles,savetag)
 
 trials = findLikeTrials('name',handles.trial.name,'datastruct',handles.prtclData);
 if isempty(fig) || ~ishghandle(fig)
@@ -25,8 +25,8 @@ y = zeros(length(x),length(trials));
 u = zeros(length(x),length(trials));
 for t = 1:length(trials)
     trial = load(fullfile(handles.dir,sprintf(handles.trialStem,trials(t))));
-    y(:,t) = trial.(y_name);
-    u(:,t) = trial.(outname);
+    y(:,t) = trial.(y_name)(1:length(x));
+    u(:,t) = trial.(outname)(1:length(x));
 end
 
 yc = mean(y,2);
@@ -48,13 +48,20 @@ f_ind = find(abs(f-trial.params.freq)==min(abs(f-trial.params.freq)));
 
 transfer = YC(f_ind(1))/UC(f_ind(1));
 
+varargout{1} = transfer;
+
 % make the ideal stimulus, once the piezo response is accounted for
 uc = uc(t>=(fin-2*(1/trial.params.freq)) & t< fin);
 t = t(t>=(fin-2*(1/trial.params.freq)) & t< fin);
 u_ideal = trial.params.displacement*exp(1i * (2*pi*trial.params.freq * t - pi/2));
 [C, Lags] = xcorr(uc,real(u_ideal),'coeff');
 i_del = Lags(C==max(C));
-t_del = t(i_del+1) - t(1);
+if i_del < 0
+    t_del = t(end+i_del+1) - t(end);
+else
+    t_del = t(i_del+1) - t(1);
+end
+
 u_ideal = trial.params.displacement*exp(1i * (2*pi*trial.params.freq * (x-t_del) - pi/2));
 
 ax = subplot(3,1,[1 2],'parent',fig);

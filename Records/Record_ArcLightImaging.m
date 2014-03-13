@@ -189,6 +189,9 @@ analysis_cell(1).evidencecalls = {...
 analysis_cell(1).breakin_trial = {...
     'C:\Users\Anthony Azevedo\Raw_Data\140117\140117_F2_C1\Sweep_Raw_140117_F2_C1_2.mat';...
     };
+analysis_cell(1).plateau_trial = {...
+    'C:\Users\Anthony Azevedo\Raw_Data\140117\140117_F2_C1\VoltagePlateau_Raw_140117_F2_C1_3.mat';...
+    };
 
 analysis_cell(2).name = '140121_F2_C1';
 analysis_cell(2).comment = {'Banner Cell, sound responsive, spiking, just great!'};
@@ -203,6 +206,9 @@ analysis_cell(2).evidencecalls = {...
 analysis_cell(2).breakin_trial = {...
     'C:\Users\Anthony Azevedo\Raw_Data\140121\140121_F2_C1\Sweep_Raw_140121_F2_C1_2.mat';...
     };
+analysis_cell(2).plateau_trial = {...
+    'C:\Users\Anthony Azevedo\Raw_Data\140121\140121_F2_C1\VoltagePlateau_Raw_140121_F2_C1_4.mat';...
+    };
 
 analysis_cell(3).name = '140122_F1_C1';
 analysis_cell(3).comment = {'Moving, not a typical auditory Neuron, slight decrease in fluorescence?'};
@@ -214,6 +220,9 @@ analysis_cell(3).evidencecalls = {...
     };
 analysis_cell(3).breakin_trial = {...
     'C:\Users\Anthony Azevedo\Raw_Data\140122\140122_F1_C1\Sweep_Raw_140122_F1_C1_2.mat';...
+    };
+analysis_cell(3).plateau_trial = {...
+    'C:\Users\Anthony Azevedo\Raw_Data\140122\140122_F1_C1\VoltagePlateau_Raw_140122_F1_C1_3.mat';...
     };
 
 
@@ -227,6 +236,9 @@ analysis_cell(4).evidencecalls = {...
     };
 analysis_cell(4).breakin_trial = {...
     'C:\Users\Anthony Azevedo\Raw_Data\140131\140131_F3_C1\Sweep_Raw_140131_F3_C1_2.mat';...
+    };
+analysis_cell(4).plateau_trial = {...
+    'C:\Users\Anthony Azevedo\Raw_Data\140131\140131_F3_C1\VoltagePlateau_Raw_140131_F3_C1_1.mat';...
     };
 
 
@@ -243,6 +255,9 @@ analysis_cell(5).evidencecalls = {...
 analysis_cell(5).breakin_trial = {...
     'C:\Users\Anthony Azevedo\Raw_Data\140205\140205_F1_C1\Sweep_Raw_140205_F1_C1_3.mat';...
     };
+analysis_cell(5).plateau_trial = {...
+    'C:\Users\Anthony Azevedo\Raw_Data\140205\140205_F1_C1\VoltagePlateau_Raw_140205_F1_C1_2.mat';...
+    };
 
 analysis_cell(6).name = '140206_F1_C1';
 analysis_cell(6).comment = {'Movement, Not sound responsive.  Good looking cell'};
@@ -257,6 +272,9 @@ analysis_cell(6).evidencecalls = {...
 analysis_cell(6).breakin_trial = {...
     'C:\Users\Anthony Azevedo\Raw_Data\140206\140206_F1_C1\Sweep_Raw_140206_F1_C1_2.mat';...
     };
+analysis_cell(6).plateau_trial = {...
+    'C:\Users\Anthony Azevedo\Raw_Data\140206\140206_F1_C1\VoltagePlateau_Raw_140206_F1_C1_1.mat';...
+    };
 
 analysis_cell(7).name = '140207_F1_C2';
 analysis_cell(7).comment = {'Moving a lot!  Should be able to fix, Not sound responsive. Cell is pressed against others'};
@@ -268,6 +286,9 @@ analysis_cell(7).evidencecalls = {...
     };
 analysis_cell(7).breakin_trial = {...
     'C:\Users\Anthony Azevedo\Raw_Data\140207\140207_F1_C2\Sweep_Raw_140207_F1_C2_2.mat';...
+    };
+analysis_cell(7).plateau_trial = {...
+    'C:\Users\Anthony Azevedo\Raw_Data\140207\140207_F1_C2\VoltagePlateau_Raw_140207_F1_C2_5.mat';...
     };
 
 
@@ -441,8 +462,10 @@ hold on
 for c_ind = 1:length(DeltaF_breakin)
     plot(commandvoltage(c_ind),DeltaF_breakin(c_ind),'o','color',colors(c_ind,:),'markerfacecolor',colors(c_ind,:),'DisplayName',analysis_cell(c_ind).name);
 end
-xlim([-50,-25])
 legend show
+plot([0 0],get(gca,'ylim'),'k:')
+plot(get(gca,'xlim'),[0 0],'k:')
+xlim([-50,-25])
 
 
 %%
@@ -460,6 +483,83 @@ legend show
 % I typically recorded two blocks of VoltagePlateau protocols in a row.  I
 % have combined such blocks in order to incorporate them all into this
 % analysis.
+
+close all
+coeffout = zeros(length(analysis_cell),4);
+parci = coeffout;
+
+pf = figure;
+for c_ind = 1:length(analysis_cell)
+    
+    trial = load(analysis_cell(c_ind).plateau_trial{1});
+    obj.trial = trial;
+    
+    ind_ = regexp(trial.name,'_');
+    indDot = regexp(trial.name,'\.');
+    dfile = trial.name(~(1:length(trial.name) >= ind_(end) & 1:length(trial.name) < indDot(1)));
+    dfile = regexprep(dfile,'_Raw','');
+    dfile = regexprep(dfile,'Acquisition','Raw_Data');
+    prtclData = load(dfile);
+    obj.prtclData = prtclData.data;
+    
+    trialStem = [trial.name((1:length(trial.name)) <= ind_(end)) '%d' trial.name(1:length(trial.name) >= indDot(1))];
+    trialStem = regexprep(trialStem,'Acquisition','Raw_Data');
+    trialStem = regexprep(trialStem,'\\','\\\');
+    
+    obj.dir = fliplr(dfile);
+    slash = regexp(obj.dir,'\\');
+    obj.dir = fliplr(obj.dir(slash(1)+1:end));
+
+    if 0
+        trials = findLikeTrials('name',trial.name,'exclude',{'trialBlock'});
+        for t_ind = 1:length(trials)
+            trial = load(sprintf(trialStem,trials(t_ind)));
+            disp(trial.name)
+            figure
+            roiFluoTrace(trial,trial.params,'NewROI','Yes','dFoFfig',gcf,'MotionCorrection',true,'ShowMovies',true);
+        end
+    end
+    obj.trialStem = fliplr(trialStem);
+    slash = regexp(obj.trialStem,'\\');
+    obj.trialStem = fliplr(obj.trialStem(1:slash(1)-1));
+
+    figure
+    VoltagePlateauxAverageDFoverF(gcf,obj,'No Save');
+    figure
+    [h,dV,dF] = DFoverFoverDV_off(gcf,obj,'No Save');
+    set(findobj(h,'color',[.3 1 .3]),'color',[.8 .8 .8])
+    set(findobj(h,'color',[0 .7 0]),'color',[.8 .8 .8],'markerfacecolor',[.8 .8 .8])
+    
+    coef = [1.5704   60.6866   71.3401  253.4654]; 
+    
+    [coeffout(c_ind,:),resid,jacob,covab,mse] = nlinfit(dV(:)',dF(:)',@CaoBoltzmann,coef);
+    parci = nlparci(coeffout(c_ind,:),resid,'jacobian',jacob);
+    
+    deltaV_hyp = min(dV(1,:)):.01:max(dV(1,:));
+
+    [dFprediction, delta] = nlpredci(@CaoBoltzmann,deltaV_hyp,coeffout(c_ind,:),resid,'covar',covab);
+    hold on,
+    plot(deltaV_hyp,dFprediction,'color',colors(c_ind,:),'linewidth',2)
+    plot(deltaV_hyp,[dFprediction+delta;dFprediction-delta],'color',colors(c_ind,:),'linewidth',.5)
+    
+    deltaV_hyp_in_ci = false(size(deltaV_hyp));
+    for v_ind = 1:length(deltaV_hyp)
+        if DeltaF_breakin(c_ind) < dFprediction(v_ind) + delta(v_ind) && DeltaF_breakin(c_ind) > dFprediction(v_ind) - delta(v_ind)
+            deltaV_hyp_in_ci(v_ind) = true;
+        end
+    end
+    if sum(deltaV_hyp_in_ci)
+        plot([deltaV_hyp(find(deltaV_hyp_in_ci,1,'first')) deltaV_hyp(find(deltaV_hyp_in_ci,1,'first'))], get(gca,'ylim'),'k','color',[.8 .8 .8]);
+        plot([deltaV_hyp(find(deltaV_hyp_in_ci,1,'last')) deltaV_hyp(find(deltaV_hyp_in_ci,1,'last'))], get(gca,'ylim'),'k','color',[.8 .8 .8]);
+        plot(mean(deltaV_hyp(deltaV_hyp_in_ci)),DeltaF_breakin(c_ind),'o','color',colors(c_ind,:),'markerfacecolor',colors(c_ind,:));
+
+        DeltaV_breakin(c_ind) = mean(deltaV_hyp(deltaV_hyp_in_ci));
+    else
+        plot(0,DeltaF_breakin(c_ind),'o','color',colors(c_ind,:),'markerfacecolor',colors(c_ind,:));
+        DeltaV_breakin(c_ind) = min(dV(1,:));
+    end
+
+end
 
 
 %% Current Plateau cells
