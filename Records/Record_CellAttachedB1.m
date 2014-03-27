@@ -2,6 +2,9 @@
 % 17 B1 Cell attached recordings
 % 3 Big Spikers
 analysis_cells_cell = {
+    '130925_F1_C1'  %?
+    '130925_F2_C1'  %?
+    '130925_F3_C1'  %?
     '131002_F1_C2'
     '131002_F1_C1'
     '131001_F1_C1'
