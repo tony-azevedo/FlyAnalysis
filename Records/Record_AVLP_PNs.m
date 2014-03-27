@@ -52,20 +52,21 @@ patch_failure = {'140212_F1_C2';
 disp([length(patch_failure) ' cells']);
 
 %% Recorded Cells
-recorded_cells = {'140110_F1_C1'; %In
+recorded_cells = {
+    '140110_F1_C1'; %Include
     
-'140112_F1_C1'; %Ex
-
-'140212_F1_C1'; % In
-
-'140214_F1_C1'; % Ex
-
-'140218_F2_C2'; % Ex
-'140218_F3_C1'; % In
-
-'140219_F1_C1'; % Ex
-'140219_F3_C4'; % In
-};
+    '140112_F1_C1'; %Exclude
+    
+    '140212_F1_C1'; % Include
+    
+    '140214_F1_C1'; % Ex
+    
+    '140218_F2_C2'; % Ex
+    '140218_F3_C1'; % In
+    
+    '140219_F1_C1'; % Ex
+    '140219_F3_C4'; % In
+    };
 
 
 %% Cells To Exclude:

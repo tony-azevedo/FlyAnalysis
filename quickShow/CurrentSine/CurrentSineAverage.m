@@ -36,7 +36,7 @@ end
 y = zeros(length(x),length(trials));
 for t = 1:length(trials)
     trial = load(fullfile(handles.dir,sprintf(handles.trialStem,trials(t))));
-    y(:,t) = trial.(y_name);
+    y(:,t) = trial.(y_name)(1:length(x));
 end
 plot(ax,x,y,'color',[1, .7 .7],'tag',savetag); hold on
 plot(ax,x,mean(y,2),'color',[.7 0 0],'tag',savetag);
@@ -52,7 +52,7 @@ ylabel(ax,y_units);
 % set(ax,'TickDir','out','YColor',[1 1 1],'YTick',[],'YTickLabel','');
 
 ax = subplot(3,1,3,'parent',h);
-plot(ax,x,trial.(outname),'color',[0 0 1],'tag',savetag); hold on;
+plot(ax,x,trial.(outname)(1:length(x)),'color',[0 0 1],'tag',savetag); hold on;
 text(-.1,5.01,...
     [num2str(trial.params.freq) ' Hz ' num2str(trial.params.amp) ' ' outunits],...
     'fontsize',7,'parent',ax,'tag',savetag)

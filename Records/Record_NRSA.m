@@ -6,7 +6,7 @@
 %% Figure 1C
 % Low Frequency cell, down the row of middle amplitude
 analysis_cell.name = {
-    '140128';
+    '140128_F1_C1';
     };
 analysis_cell.comment = {
     'Low Frequency selective, very nice!'
@@ -17,25 +17,29 @@ analysis_cell.exampletrials = {...
 analysis_cell.evidencecalls = {
     'PiezoSineMatrix'
     'PiezoSongAverage'
+    'PiezoSineOsciRespVsFreq'
     };
 
+% Mid Range
 transfer = PiezoSineOsciTransFunc(fig,handles,savetag);
 
 analysis_cell.name = {
-    '131015';
+    '131122_F2_C1';
     };
 analysis_cell.comment = {
     'High Frequency selective, hints of inhibition. Assymetric response to forward and back CourtS'
     };
 analysis_cell.exampletrials = {...
-    'C:\Users\Anthony Azevedo\Raw_Data\140110\140110_F1_C1\PiezoSine_Raw_140110_F1_C1_17.mat';
-    'C:\Users\Anthony Azevedo\Raw_Data\140110\140110_F1_C1\PiezoCourtshipSong_Raw_140110_F1_C1_2.mat';
-    'C:\Users\Anthony Azevedo\Raw_Data\140110\140110_F1_C1\PiezoBWCourtshipSong_Raw_140110_F1_C1_4.mat';
+    'C:\Users\Anthony Azevedo\Raw_Data\131122\131122_F2_C1\PiezoSine_Raw_131122_F2_C1_10.mat';
     };
 analysis_cell.evidencecalls = {
     'PiezoSineMatrix'
     'PiezoSongAverage'
+    'PiezoSineOsciRespVsFreq'
     };
+
+
+
 
 
 %% Fig 1D

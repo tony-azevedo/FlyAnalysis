@@ -28,8 +28,8 @@ y = zeros(length(x),length(trials));
 u = zeros(length(x),length(trials));
 for t = 1:length(trials)
     trial = load(fullfile(handles.dir,sprintf(handles.trialStem,trials(t))));
-    y(:,t) = trial.(y_name);
-    u(:,t) = trial.(outname);
+    y(:,t) = trial.(y_name)(1:length(x));
+    u(:,t) = trial.(outname)(1:length(x));
 end
 
 yc = mean(y,2);
