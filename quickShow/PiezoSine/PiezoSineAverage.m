@@ -1,14 +1,4 @@
 function h = PiezoSineAverage(h,handles,savetag)
-% see also AverageLikeSongs
-if isfield(handles,'infoPanel')
-    notes = get(handles.infoPanel,'userdata');
-else
-    a = dir([handles.dir '\notes_*']);
-
-    fclose('all');
-    handles.notesfilename = fullfile(handles.dir,a.name);
-    notes = fileread(handles.notesfilename);
-end
 
 trials = findLikeTrials('name',handles.trial.name,'datastruct',handles.prtclData);
 if isempty(h) || ~ishghandle(h)

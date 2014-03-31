@@ -2,14 +2,6 @@ function transfer = PiezoSineOsciRespVsFreq(fig,handles,savetag)
 % works on Current Sine, there for the blocks have a rang of amps and freqs
 % see also TransferFunctionOfLike
 
-p = inputParser;
-p.PartialMatching = 0;
-p.addParameter('NewROI','',@ischar);
-p.addParameter('dFoFfig',[],@isnumeric);
-p.addParameter('MotionCorrection',true,@islogical);
-p.addParameter('ShowMovies',false,@islogical);
-p.addParameter('MovieLocation','',@ischar);
-
 if isempty(fig) || ~ishghandle(fig)
     fig = figure(200); clf
 else
@@ -41,7 +33,7 @@ for ii = 1:length(dispexamples)
     freqexamples = blocktrials;
     for jj = 1:length(freqexamples)
         handles.trial = load(fullfile(handles.dir,sprintf(handles.trialStem,freqexamples(jj))));
-        transfer(jj,ii) = PiezoSineOsciSelectivity([],handles,savetag) * handles.trial.params.displacement;
+        transfer(jj,ii) = PiezoSineOsciTransFunc([],handles,savetag) * handles.trial.params.displacement;
     end
 
     ax = subplot(3,1,[1 2],'parent',fig);

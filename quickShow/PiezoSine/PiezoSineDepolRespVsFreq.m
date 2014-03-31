@@ -1,4 +1,4 @@
-function area = PiezoSineDepolSelectivity(fig,handles,savetag)
+function area = PiezoSineDepolRespVsFreq(fig,handles,savetag)
 % works on Current Sine, there for the blocks have a rang of amps and freqs
 % see also TransferFunctionOfLike
 

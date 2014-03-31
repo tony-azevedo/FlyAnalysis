@@ -18,4 +18,10 @@ trialStem = [prot '_Raw_' d '_' fly '_' cell '_%d.mat'];
 %trialStem = regexprep(trialStem,'\\','\\\');
 %trialStem = regexprep(trialStem,'Anthony Azevedo','Anthony'' Azevedo''');
 
-varargout = {prot,d,fly,cell,trial,D,trialStem};
+ind_ = regexp(name,'_');
+indDot = regexp(name,'\.');
+dfile = name(~(1:length(name) >= ind_(end) & 1:length(name) < indDot(1)));
+dfile = regexprep(dfile,'_Raw','');
+dfile = regexprep(dfile,'Acquisition','Raw_Data');
+
+varargout = {prot,d,fly,cell,trial,D,trialStem,dfile};

@@ -1,8 +1,14 @@
-function transfer = TransferFunctionOfLike(fig,handles,savetag)
+function transfer = CurrentSineTransFunc(fig,handles,savetag,varargin)
 % see also AverageLikeSongs
+p = inputParser;
+p.PartialMatching = 0;
+p.addParameter('closefig',1,@isnumeric);
+parse(p,varargin{:});
 
 trials = findLikeTrials('name',handles.trial.name,'datastruct',handles.prtclData);
-if isempty(fig) || ~ishghandle(fig)
+if isempty(fig) && p.Results.closefig 
+    fig = figure(101); clf
+elseif isempty(fig) || ~ishghandle(fig) 
     fig = figure(100+trials(1)); clf
 else
 end

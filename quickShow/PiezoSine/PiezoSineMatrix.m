@@ -14,7 +14,7 @@ end
 clear f
 cnt = 1;
 for bt = blocktrials;
-    handles.trial = load(sprintf(handles.trialStem,bt));
+    handles.trial = load(fullfile(handles.dir,sprintf(handles.trialStem,bt)));
     f(cnt) = PiezoSineAverage([],handles,savetag);
     cnt = cnt+1;
 end
@@ -32,6 +32,6 @@ if isfield(handles.trial.params, 'trialBlock')
     b = handles.trial.params.trialBlock;
 end
 newfig = layout(f,...
-    sprintf('%s Block %d: {%s}', [handles.currentPrtcl '.' datestr '.' fly '.' cellnum],b,sprintf('%s; ',tags{:})),...
+    sprintf('%s Block %d: {%s}', [prot '.' datestr '.' fly '.' cellnum],b,sprintf('%s; ',tags{:})),...
     'close');
 

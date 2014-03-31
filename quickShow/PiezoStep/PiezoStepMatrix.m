@@ -1,4 +1,4 @@
-function newfig = BlockPlotStepMatrix(fig,handles,savetag)
+function newfig = PiezoStepMatrix(fig,handles,savetag)
 % see also AverageLikeSines
 
 [prot,datestr,fly,cellnum,trial,D] = extractRawIdentifiers(handles.trial.name);
@@ -15,7 +15,7 @@ clear f
 cnt = 1;
 for bt = blocktrials;
     handles.trial = load(sprintf(handles.trialStem,bt));
-    f(cnt) = AverageLikeSteps([],handles,savetag);
+    f(cnt) = PiezoStepAverage([],handles,savetag);
     cnt = cnt+1;
 end
 f = unique(f);

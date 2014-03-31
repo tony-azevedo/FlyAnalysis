@@ -194,7 +194,7 @@ analysis_cell(1).plateau_trial = {...
     };
 
 analysis_cell(2).name = '140121_F2_C1';
-analysis_cell(2).comment = {'Banner Cell, sound responsive, spiking, just great!'};
+analysis_cell(2).comment = {'Banner Cell, sound responsive, not spiking, just great!'};
 analysis_cell(2).exampletrials = {...
     'C:\Users\Anthony Azevedo\Raw_Data\140121\140121_F2_C1\Sweep_Raw_140121_F2_C1_2.mat';...
     'C:\Users\Anthony Azevedo\Raw_Data\140117\140117_F2_C1\VoltagePlateau_Raw_140117_F2_C1_3.mat';...
@@ -467,6 +467,7 @@ plot([0 0],get(gca,'ylim'),'k:')
 plot(get(gca,'xlim'),[0 0],'k:')
 xlim([-50,-25])
 
+set(gcf,'tag','DFoverF_vs_DV_fig');
 
 %%
 % We can see that those cells that do not appear to be B1 cells also do not
