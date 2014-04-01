@@ -862,8 +862,9 @@ pos2 = get(ax,'position');
 delete(ax);
 set(axs(2),'position',pos2,'parent',4);
 set(axs(2),'TickDir','out','XColor',[1 1 1],'XTick',[],'XTickLabel','');
-set(axs(2),'ylim',[-50  -15])
-set(axs(2),'YTick',[-40 -30 -20])
+set(axs(2),'ylim',[-52  -15])
+set(axs(2),'xlim',[-.4    1.6]);
+set(axs(2),'YTick',[-50 -40 -30 -20])
 title(axs(2),'');
 
 ax = subplot(5,3,13,'parent',4);
@@ -873,6 +874,7 @@ delete(ax);
 set(axs(1),'position',pos1,'parent',4);
 title(axs(1),'');
 set(axs(1),'ylim',[3.7773    5.8852]);
+set(axs(1),'xlim',[-.4    1.5]);
 
 
 % Figure 4B
@@ -973,8 +975,9 @@ pos2 = get(ax,'position');
 delete(ax);
 set(axs(2),'position',pos2,'parent',4);
 set(axs(2),'TickDir','out','XColor',[1 1 1],'XTick',[],'XTickLabel','');
-set(axs(2),'ylim',[-50  -15])
-set(axs(2),'YTick',[-40 -30 -20])
+set(axs(2),'ylim',[-52  -15])
+set(axs(2),'xlim',[-.4    1.6]);
+set(axs(2),'YTick',[-50 -40 -30 -20])
 title(axs(2),'');
 
 ax = subplot(5,3,[14],'parent',4);
@@ -985,6 +988,7 @@ set(axs(1),'position',pos1,'parent',4);
 title(axs(1),'');
 ylabel(axs(1),'');
 set(axs(1),'ylim',[3.7773    5.8852]);
+set(axs(1),'xlim',[-.4    1.6]);
 
 %% Export fig
 export_fig C:\Users\Anthony' Azevedo'\Dropbox\NRSA_Resubmit\Figures\Figure_4 -pdf -transparent
