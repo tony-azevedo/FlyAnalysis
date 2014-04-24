@@ -1,5 +1,10 @@
 function quickShow_CurrentSine(plotcanvas,obj,savetag)
 
+if isfield(obj.trial,'voltage_1')
+    plotcanvas = quickShow_Sweep2T(plotcanvas,obj,savetag);
+    return
+end
+
 % setupStimulus
 if isfield(obj.trial,'voltage')
     x = ((1:obj.trial.params.sampratein*obj.params.durSweep) - obj.trial.params.preDurInSec*obj.trial.params.sampratein)/obj.trial.params.sampratein;

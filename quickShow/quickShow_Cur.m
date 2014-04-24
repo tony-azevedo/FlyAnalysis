@@ -1,7 +1,7 @@
 function quickShow_CurrentStep(plotcanvas,obj,savetag)
 
 if isfield(obj.trial,'voltage_1')
-    plotcanvas = quickShow_CurrentStep2T(plotcanvas,obj,savetag);
+    plotcanvas = quickShow_Sweep2T(plotcanvas,obj,savetag);
     return
 end
 
