@@ -1,5 +1,5 @@
 % Script to save a csv for each protocol
-%%  Make sure to navigat to the Raw Data folder
+%%  Make sure to navigate to the Raw Data folder
 
 %%
 
