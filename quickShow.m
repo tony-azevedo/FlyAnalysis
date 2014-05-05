@@ -142,6 +142,20 @@ if ~isInCellDir(handles)
     delete(get(handles.quickShowPanel,'children'));
     guidata(handles.protocolMenu,handles)
 else
+    a = dir([handles.dir '\*_Raw*']);
+    if length(a)==0
+        set(handles.figure1,'name','quickShow - Choose a cell directory');
+        set(handles.protocolMenu, 'String', {'Choose a cell directory'},'value',1);
+        set(handles.protocolMenu,'Enable','off')
+        set(handles.leftButton,'Enable','off')
+        set(handles.rightButton,'Enable','off')
+        set(handles.trialnum,'Enable','off')
+        set(handles.showMenu, 'String', {'Choose a cell directory'});
+        set(handles.showMenu,'Enable','off')
+        delete(get(handles.quickShowPanel,'children'));
+        guidata(handles.protocolMenu,handles)
+        error('No raw data here')
+    end
     set(handles.figure1,'name',sprintf('quickShow - %s',handles.dir));
     set(handles.protocolMenu,'Enable','on')
     set(handles.leftButton,'Enable','on')
@@ -149,8 +163,6 @@ else
     set(handles.trialnum,'Enable','on')
     set(handles.showMenu,'Enable','on')
 
-    a = dir([handles.dir '\*_Raw*']);
-    
     protocols = {};
     for i = 1:length(a)
         ind = regexpi(a(i).name,'_');

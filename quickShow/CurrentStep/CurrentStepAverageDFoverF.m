@@ -1,4 +1,4 @@
-function h = AverageLikeCurrentStepDFoverF(h,handles,savetag)
+function h = CurrentStepAverageDFoverF(h,handles,savetag)
 
 trials = findLikeTrials('name',handles.trial.name,'datastruct',handles.prtclData);
 if isempty(h) || ~ishghandle(h)

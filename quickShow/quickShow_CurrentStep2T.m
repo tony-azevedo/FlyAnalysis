@@ -31,8 +31,6 @@ switch obj.trial.params.mode_2
         ylabel(ax2,'V_m (mV)'); %xlim([0 max(t)]);
 end
 box(ax2,'off'); set(ax2,'TickDir','out'); axis(ax2,'tight');
-[prot,d,fly,cell,trial] = extractRawIdentifiers(obj.trial.name);
-title(ax2,sprintf('%s', [prot '.' d '.' fly '.' cell '.' trial]));
 
 ax3 = subplot(3,1,3,'parent',plotcanvas,'tag','quickshow_outax'); 
 set(ax3,'tag','quickshow_outax');

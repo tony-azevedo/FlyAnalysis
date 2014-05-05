@@ -14,8 +14,8 @@ end
 clear f
 cnt = 1;
 for bt = blocktrials;
-    handles.trial = load(sprintf(handles.trialStem,bt));
-    f(cnt) = AverageLikeCurrentSteps([],handles,savetag);
+    handles.trial = load(fullfile(handles.dir,sprintf(handles.trialStem,bt)));
+    f(cnt) = CurrentStepAverage([],handles,savetag,'callingfile',mfilename);
     cnt = cnt+1;
 end
 f = unique(f);

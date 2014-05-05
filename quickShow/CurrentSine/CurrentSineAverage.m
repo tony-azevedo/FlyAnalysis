@@ -13,11 +13,11 @@ x = makeTime(trial.params);
 
 if isfield(trial.params,'mode_1')
     end1 = '_1';
-    end2 = '_1';   
+    end2 = '_2';   
 else
     end1 = '';
 end
-dual = exist('var','end2');
+dual = exist('end2','var');
 
 if sum(strcmp({'IClamp','IClamp_fast'},trial.params.(['mode' end1])))
     y_name = 'voltage';
@@ -60,7 +60,6 @@ if dual
 else
     ax = subplot(3,1,[1 2],'parent',h);
 end
-
 plot(ax,x,y,'color',[1, .7 .7],'tag',savetag); hold on
 plot(ax,x,mean(y,2),'color',[.7 0 0],'tag',savetag);
 axis(ax,'tight')
@@ -69,15 +68,31 @@ xlim([-.1 trial.params.stimDurInSec+ min(.15,trial.params.postDurInSec)])
 box(ax,'off');
 set(ax,'TickDir','out');
 ylabel(ax,y_units);
+[prot,d,fly,cell,trialnum] = extractRawIdentifiers(trial.name);
+title(ax,sprintf('%s', [prot '.' d '.' fly '.' cell '.' trialnum]));
 
-
+if dual
+    ax = subplot(3,1,2,'parent',h);
+    plot(ax,x,y2,'color',[1, .7 .7],'tag',savetag); hold on
+    plot(ax,x,mean(y2,2),'color',[.7 0 0],'tag',savetag);
+    axis(ax,'tight')
+    xlim([-.1 trial.params.stimDurInSec+ min(.15,trial.params.postDurInSec)])
+    
+    box(ax,'off');
+    set(ax,'TickDir','out');
+    ylabel(ax,y_units2);
+end
 
 ax = subplot(3,1,3,'parent',h);
-plot(ax,x,trial.(outname)(1:length(x)),'color',[0 0 1],'tag',savetag); hold on;
+plot(ax,x,trial.([outname end1])(1:length(x)),'color',[0 0 .5],'tag',savetag); hold on;
+if dual
+    plot(ax,x,trial.([outname2 end2])(1:length(x)),'color',[.5 .5 1],'tag',savetag); hold on;
+end
 text(-.1,5.01,...
     [num2str(trial.params.freq) ' Hz ' num2str(trial.params.amp) ' ' outunits],...
     'fontsize',7,'parent',ax,'tag',savetag)
 
+axis(ax,'tight')
 box(ax,'off');
 set(ax,'TickDir','out');
 

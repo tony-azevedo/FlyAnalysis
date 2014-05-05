@@ -1,4 +1,9 @@
 %% All Cells
+
+% These neurons are called AVLP-PNs (for now) because they invervate the
+% area designated AVLP in 10.1016/j.neuron.2013.12.017.  Neurons with
+% similar projections are defined in the MARCM catalog as inervating
+% vlp,cvlp,ammc
 all_cells = {'140110_F1_C1';
     
 '140112_F1_C1';
