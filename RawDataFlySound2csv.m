@@ -1,27 +1,10 @@
+function RawDataFlySound2csv()
 % Script to save a csv for each protocol
 %%  Make sure to navigate to the Raw Data folder
-
+cd C:\Users\Anthony' Azevedo'\Raw_Data\
 %%
 
 dotname = @(s) isempty(strfind(s,'.')); % utility function for navigating folders
-rigparamnames = { 
-    'headstagegain' 
-    'daqCurrentOffset' 
-    'daqout_to_current' 
-    'daqout_to_current_offset' 
-    'daqout_to_voltage' 
-    'daqout_to_voltage_offset' 
-    'rearcurrentswitchval' 
-    'hardcurrentscale' 
-    'hardcurrentoffset' 
-    'hardvoltagescale' 
-    'hardvoltageoffset' 
-    'scaledcurrentscale' 
-    'scaledcurrentoffset' 
-    'scaledvoltagescale' 
-    'scaledvoltageoffset'
-    'displFactor'
-    };
 
 root_contents = dir;
 % clean out the contents
@@ -53,6 +36,7 @@ for rc_ind = 1:length(root_contents)
                     isempty(regexp(files(f_ind).name,'notes')) &&...
                     isempty(regexp(files(f_ind).name,'Rig')) &&...
                     isempty(regexp(files(f_ind).name,'Acquisition')) &&...
+                    isempty(regexp(files(f_ind).name,'Params')) &&...
                     isempty(regexp(files(f_ind).name,'.csv')) &&...
                     ~isempty(regexp(files(f_ind).name,'.mat'))
                 
@@ -61,44 +45,34 @@ for rc_ind = 1:length(root_contents)
             end
         end
         
-        % Find out what the date, fly, cell genotype are.
-        acqfn = dir('Acquisition_*');
-        if length(acqfn)>0
-            load(fullfile('.',acqfn.name));
-        end
         contents = what;
         
         % For each protocol in a data folder
         for p_ind = 1:length(protocols)
             
             data = load(protocolDataFns{p_ind});
-            
             data = data.data;
             
+            data = updateDataForCurrentStruct(data);
+            [data.idstr] = deal(IDstr);
+            [data.datestr] = deal(IDstr(1:regexp(IDstr,'_F')-1));
+            [data.path] = deal(contents.path);
+            
             % make the trial stem and creation date for the file,
-            trialstem = [protocols{p_ind} '_Raw' IDstr '_%d.mat'];
+            trialstem = [protocols{p_ind} '_Raw_' IDstr '_%d.mat'];
             
             % add to structure; date, fly, cell, genotype, trial name, time stapmp
             for d_ind = 1:length(data)
                 
                 data(d_ind).rawname = sprintf(trialstem,data(d_ind).trial);
-                data(d_ind).datestr = IDstr(2:7);
-                data(d_ind).idstr = IDstr(2:end);
+                
                 if strcmp(contents.mat,data(d_ind).rawname)
                     a = dir(data(d_ind).rawname);
                     data(d_ind).timestamp = a.date;
                 else
-                    data(d_ind).timestamp = acqfn.date;
+                    a = dir(contents.mat{end});
+                    data(d_ind).timestamp = a.date;
                 end
-                if exist('acqStruct','var')
-                    data(d_ind).fly = acqStruct.flynumber;
-                    data(d_ind).cell = acqStruct.cellnumber;
-                    data(d_ind).genotype = acqStruct.flygenotype;
-                
-                else % annoying cases where I stored rig parameters in the trial structure
-                    rigStruct.
-                end
-                data(d_ind).path = contents.path;
             end
             
             % run the structarr2csv
@@ -111,3 +85,77 @@ for rc_ind = 1:length(root_contents)
     end
     cd ..
 end
+
+
+function data = updateDataForCurrentStruct(data)
+rpn = rigparamnames;
+
+% Find out what the date, fly, cell genotype are.
+acqfn = dir('Acquisition_*');
+if length(acqfn)>0
+    load(fullfile('.',acqfn.name));
+end
+
+if exist('acqStruct','var')
+        [data.flynumber] = deal(acqStruct.flynumber);
+        [data.cellnumber] = deal(acqStruct.cellnumber);
+        [data.genotype] = deal(acqStruct.flygenotype);
+else % annoying cases where I stored rig parameters in the trial structure
+    [data.genotype] = deal(data(1).flygenotype);
+    rpn = rigparamnames();
+    for rp_ind = 1:length(rpn)
+        if isfield(data,rpn{rp_ind});
+            rigStruct.(rpn{rp_ind}) = data(:).(rpn{rp_ind});
+            data = rmfield(data(:),rpn{rp_ind});
+        end
+    end
+    if exist('rigStruct','var')
+        name = ['RigStruct_', ...
+            data(1).date,'_F',data(1).flynumber,'_C',data(1).cellnumber];
+        save(name,'rigStruct');
+    end
+
+    for ii = 1:length(data)
+        if isfield(data(ii),'recgain')
+            data(ii).gain = data(ii).recgain;
+        end
+        if isfield(data(ii),'recmode')
+            data(ii).mode = data(ii).recmode;
+        end
+    end
+    data = rmfield(data(:),'flygenotype');
+    if isfield(data(ii),'recgain')
+        data = rmfield(data(:),'recgain');
+    end
+    if isfield(data(ii),'recmode')
+        data = rmfield(data(:),'recmode');
+    end
+end
+
+function  rpn = rigparamnames()
+rpn = { 
+    'headstagegain' 
+    'daqCurrentOffset' 
+    'daqout_to_current' 
+    'daqout_to_current_offset' 
+    'daqout_to_voltage' 
+    'daqout_to_voltage_offset' 
+    'rearcurrentswitchval' 
+    'hardcurrentscale' 
+    'hardcurrentoffset' 
+    'hardvoltagescale' 
+    'hardvoltageoffset' 
+    'scaledcurrentscale' 
+    'scaledcurrentoffset' 
+    'scaledvoltagescale' 
+    'scaledvoltageoffset'
+    'Cm'
+    'Rinput'
+    'Rseries'
+    'currentoffset'
+    'currentscale'
+    'iclampoutputfactor'
+    'vclampoutputfactor'
+    'voltageoffset'
+    'voltagescale'
+    };

@@ -204,6 +204,7 @@ if length(dataFileExist)
 end
 if ~length(dataFileExist) || length(d.data) ~= length(rawfiles)
     createDataFileFromRaw(handles.prtclDataFileName);
+    FlySoundDataStruct2csv(handles.prtclDataFileName);
     d = load(handles.prtclDataFileName);
 end
 
