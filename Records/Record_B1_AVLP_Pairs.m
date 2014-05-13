@@ -8,7 +8,7 @@ all_pairs = {
     '140422_F1_C1'
     '140423_F1_C1'
     '140424_F1_C1'
-    '140424_F1_C2'
+    '140428_F1_C1'
 };
 %% Documenting Patching Difficulties.
 % I struggled here.  I did not start new cells when pathcing failed. listed
@@ -82,6 +82,23 @@ reject_cells(5).exampletrial = {
 'C:\Users\Anthony Azevedo\Raw_Data\140423\140423_F1_C1\CurrentStep_Raw_140423_F1_C1_35.mat';
     };
 
+reject_cells(6).name = {
+    '140506_F1_C1'};
+reject_cells(6).reason = {
+    'single B1 cell, lost AVLP neuron upon starting the trials';
+    };
+reject_cells(6).exampletrial = {
+'C:\Users\Anthony Azevedo\Raw_Data\140506\140506_F1_C1\CurrentSine_Raw_140506_F1_C1_7.mat';
+    };
+
+reject_cells(7).name = {
+    '140506_F1_C1'};
+reject_cells(7).reason = {
+    'single B1 cell, random neuron (not green) in the AVLP cluster.  B1 cell did not spike!';
+    };
+reject_cells(7).exampletrial = {
+'C:\Users\Anthony Azevedo\Raw_Data\140506\140506_F1_C1\CurrentSine_Raw_140506_F1_C1_7.mat';
+    };
 
 %% Cells to Analyze:
 recorded_cells = {
@@ -97,8 +114,8 @@ analysis_cell(1).comment = {
     'Unconnected'
     };
 analysis_cell(1).exampletrials = {...
-    'C:\Users\Anthony Azevedo\Raw_Data\140417\140417_F1_C1\CurrentStep_Raw_140417_F1_C1_24.mat';
     'C:\Users\Anthony Azevedo\Raw_Data\140417\140417_F1_C1\CurrentSine_Raw_140417_F1_C1_6.mat';
+    'C:\Users\Anthony Azevedo\Raw_Data\140417\140417_F1_C1\CurrentStep_Raw_140417_F1_C1_24.mat';
     'C:\Users\Anthony Azevedo\Raw_Data\140417\140417_F1_C1\CurrentStep_Raw_140417_F1_C1_82.mat';
     };
 analysis_cell(1).evidencecalls = {
@@ -128,6 +145,21 @@ analysis_cell(3).comment = {
     'Unconnected'
     };
 analysis_cell(3).exampletrials = {...
+'C:\Users\Anthony Azevedo\Raw_Data\140424\140424_F1_C2\CurrentSine_Raw_140424_F1_C2_1.mat';
+'C:\Users\Anthony Azevedo\Raw_Data\140424\140424_F1_C2\CurrentStep_Raw_140424_F1_C2_2.mat';
+'C:\Users\Anthony Azevedo\Raw_Data\140424\140424_F1_C2\CurrentStep_Raw_140424_F1_C2_27.mat';
+};
+analysis_cell(3).evidencecalls = {...
+    'CurrentStepFamMatrix'
+    'CurrentSineMatrix'
+    };
+
+analysis_cell(3).name = {
+   '140424_F1_C2'};
+analysis_cell(3).comment = {
+    'Unconnected'
+    };
+analysis_cell(3).exampletrials = {...
 'C:\Users\Anthony Azevedo\Raw_Data\140424\140424_F1_C2\CurrentStep_Raw_140424_F1_C2_2.mat';
 'C:\Users\Anthony Azevedo\Raw_Data\140424\140424_F1_C2\CurrentStep_Raw_140424_F1_C2_27.mat';
 'C:\Users\Anthony Azevedo\Raw_Data\140424\140424_F1_C2\CurrentSine_Raw_140424_F1_C2_1.mat';
@@ -137,7 +169,46 @@ analysis_cell(3).evidencecalls = {...
     'CurrentSineMatrix'
     };
 
-%% Exporting dashboard info on each cell 1 (Sine Matrices, step matrices)
+analysis_cell(4).name = {
+   '140428_F1_C1'};
+analysis_cell(4).comment = {
+    'Unconnected, lost the B1 neuron after sine injections'
+    };
+analysis_cell(4).exampletrials = {...
+'C:\Users\Anthony Azevedo\Raw_Data\140428\140428_F1_C1\CurrentSine_Raw_140428_F1_C1_67.mat';
+};
+analysis_cell(4).evidencecalls = {...
+    'CurrentSineMatrix'
+    };
+
+analysis_cell(4).name = {
+   '140428_F1_C1'};
+analysis_cell(4).comment = {
+    'Unconnected, lost the B1 neuron after sine injections'
+    };
+analysis_cell(4).exampletrials = {...
+'C:\Users\Anthony Azevedo\Raw_Data\140428\140428_F1_C1\CurrentSine_Raw_140428_F1_C1_67.mat';
+};
+analysis_cell(4).evidencecalls = {...
+    'CurrentSineMatrix'
+    };
+
+analysis_cell(5).name = {
+   '140506_F2_C1'};
+analysis_cell(5).comment = {
+    'Unconnected, spiking B1 neuron, lost the AVLP neuron after sine injection'
+    };
+analysis_cell(5).exampletrials = {...
+'C:\Users\Anthony Azevedo\Raw_Data\140506\140506_F2_C1\CurrentSine_Raw_140506_F2_C1_18.mat';
+'C:\Users\Anthony Azevedo\Raw_Data\140506\140506_F2_C1\CurrentStep_Raw_140506_F2_C1_1.mat';
+};
+analysis_cell(5).evidencecalls = {...
+    'CurrentSineMatrix'
+    'CurrentStepFamMatrix'
+    };
+
+
+%% Exporting dashboard info on cell 1 (Sine Matrices, step matrices)
 close all
 
 for c_ind = 1
@@ -165,7 +236,7 @@ end
 %fprintf('** Figure_%d saved\n',numext);
 
 
-%% Exporting dashboard info on each cell 2(Sine Matrices, step matrices)
+%% Exporting dashboard info on cell 2(Sine Matrices, step matrices)
 close all
 for c_ind = 2
     for t_ind = 1:length(analysis_cell(c_ind).exampletrials)
@@ -189,9 +260,9 @@ end
 
 
 
-%% Exporting dashboard info on each cell 3 (Sine Matrices, step matrices)
+%% Exporting dashboard info on cell 3 (Sine Matrices, step matrices)
 close all
-for c_ind = 3:length(analysis_cell)
+for c_ind = 3
     for t_ind = 1:length(analysis_cell(c_ind).exampletrials)
         trial = load(analysis_cell(c_ind).exampletrials{t_ind});
         obj.trial = trial;
@@ -212,4 +283,48 @@ for c_ind = 3:length(analysis_cell)
 end
 
 
+%% Exporting dashboard info on cell 4 (Sine Matrices, step matrices)
+close all
+for c_ind = 4
+    for t_ind = 1:length(analysis_cell(c_ind).exampletrials)
+        trial = load(analysis_cell(c_ind).exampletrials{t_ind});
+        obj.trial = trial;
+        
+        [obj.currentPrtcl,~,~,~,obj.currentTrialNum,obj.dir,obj.trialStem,dfile] = extractRawIdentifiers(trial.name);
+        obj.currentPrtcl
+        prtclData = load(dfile);
+        obj.prtclData = prtclData.data;
+        obj.prtclTrialNums = obj.currentTrialNum;
 
+        for e_ind = 1:length(analysis_cell(c_ind).evidencecalls)
+            if ~isempty(strfind(analysis_cell(c_ind).evidencecalls{e_ind},obj.currentPrtcl))
+                fprintf('%s([],obj,'''');\n',analysis_cell(c_ind).evidencecalls{e_ind});
+                eval(sprintf('%s([],obj,'''');',analysis_cell(c_ind).evidencecalls{e_ind}));
+            end
+        end
+    end
+end
+
+%% Exporting dashboard info on cell 5 (Sine Matrices, step matrices)
+close all
+for c_ind = 5
+    for t_ind = 1:length(analysis_cell(c_ind).exampletrials)
+        trial = load(analysis_cell(c_ind).exampletrials{t_ind});
+        obj.trial = trial;
+        
+        [obj.currentPrtcl,~,~,~,obj.currentTrialNum,obj.dir,obj.trialStem,dfile] = extractRawIdentifiers(trial.name);
+        
+        prtclData = load(dfile);
+        obj.prtclData = prtclData.data;
+        obj.prtclTrialNums = obj.currentTrialNum;
+
+        for e_ind = 1:length(analysis_cell(c_ind).evidencecalls)
+            if ~isempty(strfind(analysis_cell(c_ind).evidencecalls{e_ind},obj.currentPrtcl))
+                fprintf('%s([],obj,'''');\n',analysis_cell(c_ind).evidencecalls{e_ind});
+                eval(sprintf('%s([],obj,'''');',analysis_cell(c_ind).evidencecalls{e_ind}));
+            end
+        end
+    end
+end
+
+%%

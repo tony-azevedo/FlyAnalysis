@@ -14,14 +14,15 @@ if nargin>3
 end
 
 fig = figure;
-set(fig,'Color','white','PaperPosition',[0.25,0.25 8, 10.5],...
+set(fig,'Color','none','PaperPosition',[0.25,0.25 8, 10.5],...
     'name',name,...
     'fileName',regexprep(name,'[\s:-]','_'));
+
 dim = size(h);
 panels = h;
 for y = 1:dim(1)
     for x = 1:dim(2)
-        panels(y,x) = uipanel('parent',fig,'BorderType','none','BackgroundColor','white',...
+        panels(y,x) = uipanel('parent',bigp,'BorderType','none','BackgroundColor','white',...
             'position',[(x-1)*1/dim(2) (y-1)*1/dim(1) 1/dim(2) 1/dim(1)]);
     end
 end
@@ -73,7 +74,7 @@ for f = panels
     end
 end
 
-% 
+disp('') 
 % hs = getappdata(fig,'PrintHeaderHeaderSpec');
 % if isempty(hs)
 %     hs = struct('dateformat','yyyy-mm-dd',...

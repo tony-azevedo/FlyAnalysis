@@ -78,6 +78,11 @@ set(ax,'TickDir','out');
 ylabel(ax,y_units);
 [prot,d,fly,cell,trialnum] = extractRawIdentifiers(trial.name);
 title(ax,sprintf('%s', [prot '.' d '.' fly '.' cell '.' trialnum]));
+text(-.09,mean(mean(y(x<0),2),1),...
+    [prot '.' d '.' fly '.' cell '.' trialnum ': ' num2str(trial.params.step) ' ' outunits],...
+    'fontsize',7,'parent',ax,'tag',savetag)
+
+set(ax,'tag','response_ax');
 
 if dual
     if isempty(p.Results.callingfile)
@@ -94,6 +99,8 @@ if dual
     box(ax,'off');
     set(ax,'TickDir','out');
     ylabel(ax,y_units2);
+    set(ax,'tag','response_ax');
+
 end
 
 if dual && strcmp(p.Results.callingfile,'CurrentStepFamMatrix')
@@ -106,6 +113,7 @@ axis(ax,'tight')
 box(ax,'off');
 set(ax,'TickDir','out');
 xlim([-.1 trial.params.stimDurInSec+ min(.15,trial.params.postDurInSec)])
+set(ax,'tag','stimulus_ax');
 
 if dual
     if strcmp(p.Results.callingfile,'CurrentStepFamMatrix')
@@ -116,5 +124,6 @@ if dual
     box(ax,'off');
     set(ax,'TickDir','out');
     xlim([-.1 trial.params.stimDurInSec+ min(.15,trial.params.postDurInSec)])
+    set(ax,'tag','stimulus_ax');
 end
 
