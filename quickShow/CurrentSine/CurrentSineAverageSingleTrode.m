@@ -1,5 +1,5 @@
 function h = CurrentSineAverageSingleTrode(h,handles,savetag,varargin)
-% see also AverageLikeSongs
+% see also CurrentSineAverage
 p = inputParser;
 p.PartialMatching = 0;
 p.addParameter('trode','',@ischar);

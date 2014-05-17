@@ -22,7 +22,7 @@ hasDFoverF = 0;
 y = zeros(length(x),length(trials));
 for t = 1:length(trials)
     trial = load(fullfile(handles.dir,sprintf(handles.trialStem,trials(t))));
-    y(:,t) = trial.(y_name);
+    y(:,t) = trial.(y_name)(1:length(x));
     if isfield(trial,'dFoverF')
         exp_t_i = max(exp_t_i, trial.exposure_time(1));
         exp_t_f = min(exp_t_f, trial.exposure_time(end));
@@ -90,7 +90,7 @@ elseif sum(strcmp('VClamp',trial.params.mode))
     outname = 'voltage';
     outunits = 'mV';
 end
-plot(ax,x,trial.(outname),'color',[0 0 1],'tag',savetag); hold on;
+plot(ax,x,trial.(outname)(1:length(x)),'color',[0 0 1],'tag',savetag); hold on;
 ylabel(ax,outunits);
 xlabel(ax,'Time (s)');
 axis(ax,'tight')

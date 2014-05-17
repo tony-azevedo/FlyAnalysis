@@ -100,7 +100,17 @@ reject_cells(7).exampletrial = {
 'C:\Users\Anthony Azevedo\Raw_Data\140506\140506_F1_C1\CurrentSine_Raw_140506_F1_C1_7.mat';
     };
 
+reject_cells(8).name = {
+    '140512_F1_C1'};
+reject_cells(8).reason = {
+    'single B1 cell, spiking, could not get AVLP neurons!';
+    };
+reject_cells(8).exampletrial = {
+'C:\Users\Anthony Azevedo\Raw_Data\140512\140512_F1_C1\CurrentStep_Raw_140512_F1_C1_4.mat';
+    };
+
 %% Cells to Analyze:
+savedir = 'C:\Users\Anthony Azevedo\Desktop\Rachel_Meeting';
 recorded_cells = {
     '140717_F1_C1'; 
     '140424_F1_C1'; 
@@ -207,6 +217,134 @@ analysis_cell(5).evidencecalls = {...
     'CurrentStepFamMatrix'
     };
 
+% Use this one as a comparison with the spiking kind
+analysis_cell(6).name = {
+   '140508_F1_C1'};
+analysis_cell(6).comment = {
+    'Unconnected, non-spiking B1 neuron, lost AVLP at the Step injections'
+    };
+analysis_cell(6).exampletrials = {...
+'C:\Users\Anthony Azevedo\Raw_Data\140508\140508_F1_C1\CurrentSine_Raw_140508_F1_C1_15.mat';
+'C:\Users\Anthony Azevedo\Raw_Data\140508\140508_F1_C1\CurrentStep_Raw_140508_F1_C1_3.mat';
+};
+analysis_cell(6).evidencecalls = {...
+    'CurrentSineMatrix'
+    'CurrentStepFamMatrix'
+    };
+
+analysis_cell(7).name = {
+   '140508_F1_C2'};
+analysis_cell(7).comment = {
+    'Unconnected, spiking B1 neuron, crazy B1'
+    };
+analysis_cell(7).exampletrials = {...
+'C:\Users\Anthony Azevedo\Raw_Data\140508\140508_F1_C2\CurrentSine_Raw_140508_F1_C2_14.mat';
+'C:\Users\Anthony Azevedo\Raw_Data\140508\140508_F1_C2\CurrentSine_Raw_140508_F1_C2_57.mat';  % Hyperpolarized
+'C:\Users\Anthony Azevedo\Raw_Data\140508\140508_F1_C2\CurrentStep_Raw_140508_F1_C2_60.mat';  % a little confusing, looks like the non-spiking kind, but spikes in earlier records.  The spiking is unstable
+};
+analysis_cell(7).evidencecalls = {...
+    'CurrentSineMatrix'
+    'CurrentStepFamMatrix'
+    };
+
+analysis_cell(8).name = {
+   '140508_F2_C1'};
+analysis_cell(8).comment = {
+    'Not very good recording, unconnected'
+    };
+analysis_cell(7).exampletrials = {...
+'C:\Users\Anthony Azevedo\Raw_Data\140508\140508_F2_C1\CurrentSine_Raw_140508_F2_C1_18.mat';
+'C:\Users\Anthony Azevedo\Raw_Data\140508\140508_F2_C1\CurrentStep_Raw_140508_F2_C1_1.mat';
+};
+analysis_cell(8).evidencecalls = {...
+    'CurrentSineMatrix'
+    'CurrentStepFamMatrix'
+    };
+
+analysis_cell(9).name = {
+   '140509_F1_C1'};
+analysis_cell(9).comment = {
+    'unconnected, non-spiking.  Not a typical B1 neuron'
+    };
+analysis_cell(9).exampletrials = {...
+'C:\Users\Anthony Azevedo\Raw_Data\140509\140509_F1_C1\CurrentStep_Raw_140509_F1_C1_40.mat';
+'C:\Users\Anthony Azevedo\Raw_Data\140509\140509_F1_C1\CurrentSine_Raw_140509_F1_C1_1.mat';
+};
+analysis_cell(9).evidencecalls = {...
+    'CurrentSineMatrix'
+    'CurrentStepFamMatrix'
+    };
+
+% Use this one (all of fly 3) as a comparison with the non spiking kind
+analysis_cell(10).name = {
+   '140509_F3_C1'};
+analysis_cell(10).comment = {
+    'unconnected.  typical B1 neuron'
+    };
+analysis_cell(10).exampletrials = {...
+'C:\Users\Anthony Azevedo\Raw_Data\140509\140509_F3_C1\CurrentSine_Raw_140509_F3_C1_1.mat';
+'C:\Users\Anthony Azevedo\Raw_Data\140509\140509_F3_C1\CurrentStep_Raw_140509_F3_C1_1.mat';
+};
+analysis_cell(10).evidencecalls = {...
+    'CurrentSineMatrix'
+    'CurrentStepFamMatrix'
+    };
+
+analysis_cell(11).name = {
+   '140509_F3_C2'};
+analysis_cell(11).comment = {
+    'typical B1 neuron, same as C1'
+    };
+analysis_cell(11).exampletrials = {...
+'C:\Users\Anthony Azevedo\Raw_Data\140509\140509_F3_C2\CurrentSine_Raw_140509_F3_C2_1.mat';
+'C:\Users\Anthony Azevedo\Raw_Data\140509\140509_F3_C2\CurrentStep_Raw_140509_F3_C2_20.mat';
+};
+analysis_cell(11).evidencecalls = {...
+    'CurrentSineMatrix'
+    'CurrentStepFamMatrix'
+    };
+
+analysis_cell(12).name = {
+   '140509_F3_C3'};
+analysis_cell(12).comment = {
+    'unconnected.  typical B1 neuron, same as C1'
+    };
+analysis_cell(12).exampletrials = {...
+'C:\Users\Anthony Azevedo\Raw_Data\140509\140509_F3_C3\CurrentSine_Raw_140509_F3_C3_11.mat';
+'C:\Users\Anthony Azevedo\Raw_Data\140509\140509_F3_C3\CurrentStep_Raw_140509_F3_C3_1.mat';
+};
+analysis_cell(12).evidencecalls = {...
+    'CurrentSineMatrix'
+    'CurrentStepFamMatrix'
+    };
+
+analysis_cell(13).name = {
+   '140512_F2_C1'};
+analysis_cell(13).comment = {
+    'unconnected.  not a real solid AVLP recording, weird B1 neuron.  I think I fucked it up with large hyperpolarizing current'
+    };
+analysis_cell(13).exampletrials = {...
+'C:\Users\Anthony Azevedo\Raw_Data\140512\140512_F2_C1\CurrentSine_Raw_140512_F2_C1_1.mat';
+'C:\Users\Anthony Azevedo\Raw_Data\140512\140512_F2_C1\CurrentStep_Raw_140512_F2_C1_1.mat';
+};
+analysis_cell(13).evidencecalls = {...
+    'CurrentSineMatrix'
+    'CurrentStepFamMatrix'
+    };
+
+analysis_cell(14).name = {
+   '140512_F3_C1'};
+analysis_cell(14).comment = {
+    'unconnected.  typical B1 neuron, hyperpolarized the wrong cell because Multiclamp control changed while queriying the sate of the amplifier'
+    };
+analysis_cell(14).exampletrials = {...
+'C:\Users\Anthony Azevedo\Raw_Data\140512\140512_F3_C1\CurrentSine_Raw_140512_F3_C1_1.mat';
+'C:\Users\Anthony Azevedo\Raw_Data\140512\140512_F3_C1\CurrentStep_Raw_140512_F3_C1_16.mat';
+};
+analysis_cell(14).evidencecalls = {...
+    'CurrentSineMatrix'
+    'CurrentStepFamMatrix'
+    };
 
 %% Exporting dashboard info on cell 1 (Sine Matrices, step matrices)
 close all
@@ -322,6 +460,36 @@ for c_ind = 5
             if ~isempty(strfind(analysis_cell(c_ind).evidencecalls{e_ind},obj.currentPrtcl))
                 fprintf('%s([],obj,'''');\n',analysis_cell(c_ind).evidencecalls{e_ind});
                 eval(sprintf('%s([],obj,'''');',analysis_cell(c_ind).evidencecalls{e_ind}));
+            end
+        end
+    end
+end
+
+
+%% Exporting dashboard info on cells 6:14 (Sine Matrices, step matrices)
+close all
+savedir = 'C:\Users\Anthony Azevedo\Desktop\Rachel_Meeting';
+for c_ind = 6:14
+    for t_ind = 1:length(analysis_cell(c_ind).exampletrials)
+        trial = load(analysis_cell(c_ind).exampletrials{t_ind});
+        obj.trial = trial;
+        
+        [obj.currentPrtcl,~,~,~,obj.currentTrialNum,obj.dir,obj.trialStem,dfile] = extractRawIdentifiers(trial.name);
+        
+        prtclData = load(dfile);
+        obj.prtclData = prtclData.data;
+        obj.prtclTrialNums = obj.currentTrialNum;
+
+        for e_ind = 1:length(analysis_cell(c_ind).evidencecalls)
+            % run analyses to go along with the trial
+            if ~isempty(strfind(analysis_cell(c_ind).evidencecalls{e_ind},obj.currentPrtcl))
+                fprintf('p = %s([],obj,'''');\n',analysis_cell(c_ind).evidencecalls{e_ind});
+                eval(sprintf('f = %s([],obj,'''');',analysis_cell(c_ind).evidencecalls{e_ind}));
+                for f_ind = 1:length(f)
+                    p = panel.recover(f(f_ind));
+                    fn = fullfile(savedir,['Pairs_' regexprep(obj.trialStem,'_%d.mat',['_',num2str(f_ind)]) '.pdf']);
+                    p.export(fn, '-rp');
+                end
             end
         end
     end

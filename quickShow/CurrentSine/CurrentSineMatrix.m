@@ -15,6 +15,8 @@ clear f
 cnt = 1;
 if isfield(handles.trial.params,'mode_1')
     multi = 1;
+else
+    multi = 0;
 end
 
 for bt = blocktrials;
@@ -40,9 +42,13 @@ if isfield(handles.trial.params, 'trialBlock')
     b = handles.trial.params.trialBlock;
 end
 
-varargout{1} = layout_sub(f,...
+h = layout_sub(f,...
     sprintf('%s Block %d: {%s}', [prot '.' datestr '.' fly '.' cellnum],b,sprintf('%s; ',tags{:})),...
     'close');
+
+varargout{1} = h;
+%varargout{2} = p;
+
 % varargout{1} = layout(f,...
 %     sprintf('%s Block %d: {%s}', [prot '.' datestr '.' fly '.' cellnum],b,sprintf('%s; ',tags{:})),...
 %     'close');
@@ -68,9 +74,12 @@ if multi
     if isfield(handles.trial.params, 'trialBlock')
         b = handles.trial.params.trialBlock;
     end
-    varargout{2} = layout_sub(f,...
+    h = layout_sub(f,...
         sprintf('%s Block %d: {%s}', [prot '.' datestr '.' fly '.' cellnum],b,sprintf('%s; ',tags{:})),...
         'close');
+    varargout{1} = [varargout{1},h];
+    %     varargout{4} = p;
+
 end
 
 
@@ -81,7 +90,7 @@ h = figure;
 set(h,'color',[1 1 1])
 p = panel(h);
 p.pack('v',{dim(1)/(dim(1)+1)  1/(dim(1)+1)})  % response panel, stimulus panel
-p.margin = [13 10 2 2];
+p.margin = [13 10 2 10];
 p(1).marginbottom = 2;
 p(2).marginleft = 12;
 
@@ -129,7 +138,13 @@ p(2).ylabel('Stimulus (pA)')
 p(2).xlabel('Time (s)')
 p(2).de.fontsize = 8;
 
+p.title(name)
+if nargin>2 && strcmp(varargin{1},'close')
+    close(f(:)')
+end
+
 varargout{1} = h;
+%varargout{2} = p;
 
 % % if we set the properties on the root panel, they affect
 % % all its children and grandchildren.

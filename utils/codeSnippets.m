@@ -8,7 +8,14 @@ orient(fig,'landscape'); print(fig,'-depsc',get(fig,'fileName')); close all
 ax1 = subplot(3,1,[1 2],'parent',plotcanvas);
 
 %%
-line(x,y,'parent',ax,'DisplayName',dspn,'color',[1 1 1]*0,'linestyle',ls,'marker',m,'markerfacecolor',[1 1 1]*0,'markeredgecolor',[1 1 1]*0,'markersize',ms)
+line(x,y,'parent',ax,'DisplayName',dspn,...
+    'color',[1 1 1]*0,...
+    'linestyle',ls,...
+    'marker',m,...
+    'markerfacecolor',[1 1 1]*0,...
+    'markeredgecolor',[1 1 1]*0,...
+    'markersize',ms ...
+    )
 
 %%
 trials = zeros(length(data));
@@ -77,6 +84,13 @@ end
 %% Saving trials!  not bad
 save(regexprep(data.name,'Acquisition','Raw_Data'), '-struct', 'data');
 save(data.name, '-struct', 'data');
+save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
 
 %% Mex building
 mex -LC:\Users\Anthony' Azevedo'\code\flySound\Multiclamp_SDK\3rd' Party Support'\AxMultiClampMsg\ -lAxMultiClampMsg GetMode.cpp
+
+%% Panel stuff
+if x>1
+    set(ax_to,'TickDir','out','YColor',[1 1 1],'YTick',[],'YTickLabel','');
+end
+

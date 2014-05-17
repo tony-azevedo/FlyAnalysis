@@ -81,7 +81,6 @@ title(ax,sprintf('%s', [prot '.' d '.' fly '.' cell '.' trialnum]));
 text(-.09,mean(mean(y(x<0),2),1),...
     [prot '.' d '.' fly '.' cell '.' trialnum ': ' num2str(trial.params.step) ' ' outunits],...
     'fontsize',7,'parent',ax,'tag',savetag)
-
 set(ax,'tag','response_ax');
 
 if dual

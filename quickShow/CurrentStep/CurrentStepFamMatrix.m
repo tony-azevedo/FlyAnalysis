@@ -42,7 +42,7 @@ h = figure;
 set(h,'color',[1 1 1])
 p = panel(h);
 p.pack('v',{dim(1)/(dim(1)+1)  1/(dim(1)+1)})  % response panel, stimulus panel
-p.margin = [13 10 2 2];
+p.margin = [13 10 2 10];
 p(1).marginbottom = 2;
 p(2).marginleft = 12;
 
@@ -55,8 +55,8 @@ for y = 1:dim(1)
     for x = 1:dim(2)
         ax_from = findobj(f(y,x),'tag','response_ax');
 
-        xlims = get(ax_from(2),'xlim');
         if dual
+            xlims = get(ax_from(2),'xlim');
             ylims_from = cat(1,get(ax_from(1),'ylim'),get(ax_from(2),'ylim'));
             ylims = [min([ylims(1),ylims_from(:,1)']),...
                 max([ylims(2),ylims_from(:,2)'])];
@@ -72,9 +72,18 @@ for y = 1:dim(1)
             set(ax_to,'ytick',[])
             set(ax_to,'ycolor',[1 1 1])
         else
-            ylims_from = cat(1,get(ax_from(1),'ylim'),get(ax_from(2),'ylim'));
+            xlims = get(ax_from,'xlim');
+
+            ylims_from = get(ax_from,'ylim');
             ylims = [min([ylims(1),ylims_from(:,1)']),...
                 max([ylims(2),ylims_from(:,2)'])];
+
+            p(1,y,x).select();
+            ax_to = gca;
+            copyobj(get(ax_from,'children'),ax_to)
+            if x>1
+                set(ax_to,'TickDir','out','YColor',[1 1 1],'YTick',[],'YTickLabel','');
+            end
         end
     end
 end
@@ -94,8 +103,8 @@ for x = 1:dim(2)
     ax_to = gca;
     ax_from = findobj(f(y,x),'tag','stimulus_ax');
 
-    xlims = get(ax_from(1),'xlim');
     if dual
+        xlims = get(ax_from(1),'xlim');
         ylims_from = cat(1,get(ax_from(1),'ylim'),get(ax_from(2),'ylim'));
         ylims = [min([ylims(1),ylims_from(:,1)']),...
             max([ylims(2),ylims_from(:,2)'])];
@@ -111,15 +120,30 @@ for x = 1:dim(2)
         set(ax_to,'ytick',[])
         set(ax_to,'ycolor',[1 1 1])
     else
-        ylims_from = cat(1,get(ax_from(1),'ylim'),get(ax_from(2),'ylim'));
+        xlims = get(ax_from,'xlim');
+        
+        ylims_from = get(ax_from,'ylim');
         ylims = [min([ylims(1),ylims_from(:,1)']),...
             max([ylims(2),ylims_from(:,2)'])];
+        
+        p(2,1,x).select();
+        ax_to = gca;
+        copyobj(get(ax_from,'children'),ax_to)
+        if x>1
+            set(ax_to,'TickDir','out','YColor',[1 1 1],'YTick',[],'YTickLabel','');
+        end
     end
 end
 set(p(2).de.axis,'xlim',xlims,'ylim',ylims)
 p(2).ylabel('Stimulus (pA)')
 p(2).xlabel('Time (s)')
 p(2).de.fontsize = 8;
+
+p.title(name)
+if nargin>2 && strcmp(varargin{1},'close')
+    close(f)
+end
+
 
 varargout{1} = h;
 

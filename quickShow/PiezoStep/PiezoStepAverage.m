@@ -30,28 +30,20 @@ for t = 1:length(trials)
 end
 plot(ax,x,y,'color',[1, .7 .7],'tag',savetag); hold on
 plot(ax,x,mean(y,2),'color',[.7 0 0],'tag',savetag);
-
 xlim([-.1 trial.params.stimDurInSec+ min(.15,trial.params.postDurInSec)])
-
-%title([d ' ' fly ' ' cell ' ' prot ' '  num2str(trial.params.freq) ' Hz ' num2str(trial.params.displacement *.3) ' \mum'])
+text(-.09,mean(mean(y(x<0),2),1),...
+    [num2str(trial.params.displacement *3) ' \mum'],...
+    'fontsize',7,'parent',ax,'tag',savetag)
 box(ax,'off');
 set(ax,'TickDir','out');
 ylabel(ax,y_units);
 [prot,d,fly,cell,trialnum] = extractRawIdentifiers(handles.trial.name);
 title(ax,sprintf('%s', [prot '.' d '.' fly '.' cell '.' trialnum]));
-
-% set(ax,'TickDir','out','XColor',[1 1 1],'XTick',[],'XTickLabel','');
-% set(ax,'TickDir','out','YColor',[1 1 1],'YTick',[],'YTickLabel','');
+set(ax,'tag','response_ax');
 
 ax = subplot(3,1,3,'parent',h); cla(ax,'reset')
 plot(ax,x,trial.sgsmonitor(1:length(x)),'color',[0 0 1],'tag',savetag); hold on;
-text(-.1,5.01,[num2str(trial.params.displacement *3) ' \mum'],'fontsize',7,'parent',ax,'tag',savetag)
-
 box(ax,'off');
 set(ax,'TickDir','out');
-
-% set(ax,'TickDir','out','XColor',[1 1 1],'XTick',[],'XTickLabel','');
-% set(ax,'TickDir','out','YColor',[1 1 1],'YTick',[],'YTickLabel','');
-
 xlim([-.1 trial.params.stimDurInSec+ min(.15,trial.params.postDurInSec)])
-%ylim([4.5 5.5])
+set(ax,'tag','stimulus_ax');

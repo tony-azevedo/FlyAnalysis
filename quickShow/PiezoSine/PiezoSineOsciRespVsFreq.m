@@ -7,8 +7,17 @@ if isempty(fig) || ~ishghandle(fig)
 else
 end
 set(fig,'tag',mfilename);
-ax = subplot(3,1,[1 2],'parent',fig);
-ax = subplot(3,1,3,'parent',fig);
+if strcmp(get(fig,'type'),'figure')
+    set(fig,'color',[1 1 1])
+else
+    delete(get(fig,'children'));
+end
+p = panel(fig);
+p.pack('v',{2/3  1/3})  % response panel, stimulus panel
+p.margin = [13 10 2 10];
+p(1).marginbottom = 2;
+p(2).marginleft = 12;
+
 
 transfer = nan(length(handles.trial.params.freqs),length(handles.trial.params.displacements));
 
@@ -35,18 +44,23 @@ for ii = 1:length(dispexamples)
         handles.trial = load(fullfile(handles.dir,sprintf(handles.trialStem,freqexamples(jj))));
         transfer(jj,ii) = PiezoSineOsciTransFunc([],handles,savetag) * handles.trial.params.displacement;
     end
-
-    ax = subplot(3,1,[1 2],'parent',fig);
+    
+    ax = p(1).select();
     line(handles.trial.params.freqs',abs(transfer(:,ii)),...
         'parent',ax,'color',[0 1/length(handles.trial.params.displacements) 0]*ii,...
         'tag',savetag);
     ylabel(ax,'Magnitude (mV/V)')
     title(ax,'Stim to V transfer function')
 
-    ax = subplot(3,1,3,'parent',fig);
+    ax = p(2).select();
     line(handles.trial.params.freqs',angle(transfer(:,ii))/(2*pi)*360,...
-        'parent',ax,'color',[0 1/length(handles.trial.params.displacements) 0]*ii,...
-        'tag',savetag);
+        'parent',ax,...
+        'linestyle','none',...
+        'marker','o',...
+        'markerfacecolor',[0 1/length(handles.trial.params.displacements) 0]*ii,...
+        'markeredgecolor',[0 1/length(handles.trial.params.displacements) 0]*ii,...
+        'markersize',4);
+    
     ylabel(ax,'phase (deg)')
     xlabel(ax,'Frequency (Hz)')
 end
