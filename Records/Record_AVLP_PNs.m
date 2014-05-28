@@ -34,6 +34,8 @@ all_cells = {'140110_F1_C1';
 '140219_F4_C2';
 
 };
+
+
 %% Documenting Patching Difficulties.
 % Cells that were sealed onto, but for which the patching failed.
 patch_failure = {'140212_F1_C2';
@@ -97,6 +99,7 @@ reject_cells(cnt).reason = {
 reject_cells(cnt).exampletrial = {
 'C:\Users\Anthony Azevedo\Raw_Data\140214\140214_F1_C1\PiezoSine_Raw_140214_F1_C1_102.mat';
     };
+analysis_cell(cnt).genotype = genotypoToFilename(IdentifyGenotype(getFlyGenotype(analysis_cell(cnt).exampletrials{1})));
 
 cnt = cnt+1;
 reject_cells(cnt).name = {
@@ -107,6 +110,7 @@ reject_cells(cnt).reason = {
 reject_cells(cnt).exampletrial = {
 'C:\Users\Anthony Azevedo\Raw_Data\140218\140218_F2_C2\PiezoSine_Raw_140218_F2_C2_6.mat';
     };
+analysis_cell(cnt).genotype = genotypoToFilename(IdentifyGenotype(getFlyGenotype(analysis_cell(cnt).exampletrials{1})));
 
 cnt = cnt+1;
 reject_cells(cnt).name = {
@@ -117,6 +121,7 @@ reject_cells(cnt).reason = {
 reject_cells(cnt).exampletrial = {
     'C:\Users\Anthony Azevedo\Raw_Data\140219\140219_F1_C1\PiezoSine_Raw_140219_F1_C1_2.mat';
     };
+analysis_cell(cnt).genotype = genotypoToFilename(IdentifyGenotype(getFlyGenotype(analysis_cell(cnt).exampletrials{1})));
 
 
 %% Cells to Analyze:
@@ -138,6 +143,7 @@ analysis_cell(cnt).evidencecalls = {
     'PiezoSineMatrix'
     'PiezoSongAverage'
     };
+analysis_cell(cnt).genotype = genotypoToFilename(IdentifyGenotype(getFlyGenotype(analysis_cell(cnt).exampletrials{1})));
 
 
 cnt = cnt+1;
@@ -153,6 +159,8 @@ analysis_cell(cnt).exampletrials = {...
 analysis_cell(cnt).evidencecalls = {...
     'PiezosineDepolTransFunc'
     };
+analysis_cell(cnt).genotype = genotypoToFilename(IdentifyGenotype(getFlyGenotype(analysis_cell(cnt).exampletrials{1})));
+
 
 cnt = cnt+1;
 analysis_cell(cnt).name = {
@@ -166,6 +174,7 @@ analysis_cell(cnt).exampletrials = {...
 analysis_cell(cnt).evidencecalls = {...
     'PiezosineDepolTransFunc'
     };
+analysis_cell(cnt).genotype = genotypoToFilename(IdentifyGenotype(getFlyGenotype(analysis_cell(cnt).exampletrials{1})));
 
 
 
@@ -182,6 +191,7 @@ analysis_cell(cnt).exampletrials = {...
 analysis_cell(cnt).evidencecalls = {...
     'PiezoSineMatrix'
     };
+analysis_cell(cnt).genotype = genotypoToFilename(IdentifyGenotype(getFlyGenotype(analysis_cell(cnt).exampletrials{1})));
 
 
 cnt = cnt+1;
@@ -199,10 +209,92 @@ analysis_cell(cnt).exampletrials = {...
 analysis_cell(cnt).evidencecalls = {...
     'PiezoSineMatrix'
     };
+analysis_cell(cnt).genotype = genotypoToFilename(IdentifyGenotype(getFlyGenotype(analysis_cell(cnt).exampletrials{1})));
+
+savedir = 'C:\Users\Anthony Azevedo\RAnalysis_Data\Record_WEDPNs';
+if ~isdir(savedir)
+    mkdir(savedir)
+end
+save = 1
+
+%% Exporting PiezoSineMatrix info on cells 
+close all
+for c_ind = 1:length(analysis_cell)
+    for t_ind = 1:length(analysis_cell(c_ind).exampletrials)
+        trial = load(analysis_cell(c_ind).exampletrials{t_ind});
+        obj.trial = trial;
+        
+        [obj.currentPrtcl,dateID,flynum,cellnum,obj.currentTrialNum,obj.dir,obj.trialStem,dfile] = ...
+            extractRawIdentifiers(trial.name);
+        
+        if ~isempty(strfind('PiezoSineMatrix',obj.currentPrtcl))
+            prtclData = load(dfile);
+            obj.prtclData = prtclData.data;
+            obj.prtclTrialNums = obj.currentTrialNum;
+            
+            if exist('f','var') && ishandle(f), delete(f),end
+            if exist('f2','var') && ishandle(f2), delete(f2),end
+
+            f = PiezoSineMatrix([],obj,'to_layout');
+            if save
+            p = panel.recover(f);
+
+            genotypedir = fullfile(savedir,analysis_cell(c_ind).genotype);
+            if ~isdir(genotypedir), mkdir(genotypedir); end
+
+            fn = fullfile(genotypedir,['WPNs_', ... 
+                dateID '_', ...
+                flynum '_', ... 
+                cellnum '_', ... 
+                num2str(obj.trial.params.trialBlock) '_',...
+                'PiezoSineMatrix', ...
+                '.pdf']);
+            p.fontname = 'Arial';
+            p.export(fn, '-rp','-l');
+
+            f2 = findobj(0,'tag','PiezoSineMatrixStimuli');
+            f2 = f2(1);
+            p = panel.recover(f2);
+            p.fontname = 'Arial';
+            fn = regexprep(fn,'PiezoSineMatrix','PiezoSineMat_Stim');
+            p.export(fn, '-rp','-l');
+            end
+        end
+    end
+end
 
 
+%% Exporting PiezoSineDepolRespVsFreq info on cells 
+close all
+for c_ind = 1:length(analysis_cell)
+    for t_ind = 1:length(analysis_cell(c_ind).exampletrials)
+        trial = load(analysis_cell(c_ind).exampletrials{t_ind});
+        obj.trial = trial;
+        
+        [obj.currentPrtcl,dateID,flynum,cellnum,obj.currentTrialNum,obj.dir,obj.trialStem,dfile] = ...
+            extractRawIdentifiers(trial.name);
+        
+        if ~isempty(strfind('PiezoSineDepolRespVsFreq',obj.currentPrtcl))
+            prtclData = load(dfile);
+            obj.prtclData = prtclData.data;
+            obj.prtclTrialNums = obj.currentTrialNum;
 
+            genotypedir = fullfile(savedir,analysis_cell(c_ind).genotype);
+            if ~isdir(genotypedir), mkdir(genotypedir); end
 
+            if exist('f','var') && ishandle(f), close(f),end
+            PiezoSineDepolRespVsFreq([],obj,'');
+            f = findobj(0,'tag','PiezoSineDepolRespVsFreq');
+            if save
+            p = panel.recover(f);
+            fn = fullfile(genotypedir,['WPNs_' dateID '_' flynum '_' cellnum '_' num2str(obj.trial.params.trialBlock) '_',...
+                'PiezoSineDepolRespVsFreq.pdf']);
+            p.fontname = 'Arial';
+            p.export(fn, '-rp','-l','-a1.4');
+            end
+        end
+    end
+end
 
 
 

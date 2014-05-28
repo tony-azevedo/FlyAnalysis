@@ -28,7 +28,7 @@ analysis_cell(cnt).evidencecalls = {...
     'PiezoSineOsciRespVsFreq'
     'PiezoStepMatrix'
     };
-analysis_cell(cnt).genotype = getFlyGenotype(analysis_cell(cnt).exampletrials{1});
+analysis_cell(cnt).genotype = genotypoToFilename(IdentifyGenotype(getFlyGenotype(analysis_cell(cnt).exampletrials{1})));
 analysis_cell(cnt).comment = {
     'band pass, high left side (50 Hz), peak at 100, slow steps';
     };
@@ -42,7 +42,7 @@ analysis_cell(cnt).exampletrials = {...
 'C:\Users\Anthony Azevedo\Raw_Data\131126\131126_F2_C1\PiezoSine_Raw_131126_F2_C1_1.mat';
 'C:\Users\Anthony Azevedo\Raw_Data\131126\131126_F2_C1\PiezoStep_Raw_131126_F2_C1_34.mat';
 };
-analysis_cell(cnt).genotype = getFlyGenotype(analysis_cell(cnt).exampletrials{1});
+analysis_cell(cnt).genotype = genotypoToFilename(IdentifyGenotype(getFlyGenotype(analysis_cell(cnt).exampletrials{1})));
 analysis_cell(cnt).comment = {
     'band pass, low left side, slight peak following hyperpolarizing current injection';
     };
@@ -55,7 +55,7 @@ analysis_cell(cnt).exampletrials = {...
 'C:\Users\Anthony Azevedo\Raw_Data\131122\131122_F2_C1\PiezoSine_Raw_131122_F2_C1_1.mat';
 'C:\Users\Anthony Azevedo\Raw_Data\131122\131122_F2_C1\PiezoStep_Raw_131122_F2_C1_1.mat';
 };
-analysis_cell(cnt).genotype = getFlyGenotype(analysis_cell(cnt).exampletrials{1});
+analysis_cell(cnt).genotype = genotypoToFilename(IdentifyGenotype(getFlyGenotype(analysis_cell(cnt).exampletrials{1})));
 analysis_cell(cnt).comment = {
     'No clear evidence of non-spiking';
     };

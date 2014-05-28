@@ -7,7 +7,6 @@ end
 save = 1
 
 %% Possible cells
-% 131015_F1_C1
 
 %% Cells that possibly should be excluded
 exclude_cells = {
@@ -20,7 +19,7 @@ exclude_cells = {
     };
 
 %%
-% VT30609
+% VT30604
 cnt = 1;
 analysis_cell(cnt).name = {
     '131211_F2_C1';
@@ -30,7 +29,7 @@ analysis_cell(cnt).exampletrials = {...
 'C:\Users\Anthony Azevedo\Raw_Data\131211\131211_F2_C1\PiezoSine_Raw_131211_F2_C1_1.mat';
 'C:\Users\Anthony Azevedo\Raw_Data\131211\131211_F2_C1\CurrentPlateau_Raw_131211_F2_C1_5.mat';
 };
-analysis_cell(cnt).genotype = getFlyGenotype(analysis_cell(cnt).exampletrials{1});
+analysis_cell(cnt).genotype = genotypoToFilename(IdentifyGenotype(getFlyGenotype(analysis_cell(cnt).exampletrials{1})));
 analysis_cell(cnt).comment = {
     'Questionable.  No clear spiking, sharper tuning';
     };
@@ -44,7 +43,7 @@ analysis_cell(cnt).exampletrials = {...
 'C:\Users\Anthony Azevedo\Raw_Data\131014\131014_F4_C1\PiezoSine_Raw_131014_F4_C1_1.mat';
 'C:\Users\Anthony Azevedo\Raw_Data\131014\131014_F4_C1\PiezoStep_Raw_131014_F4_C1_1.mat';
 };
-analysis_cell(cnt).genotype = getFlyGenotype(analysis_cell(cnt).exampletrials{1});
+analysis_cell(cnt).genotype = genotypoToFilename(IdentifyGenotype(getFlyGenotype(analysis_cell(cnt).exampletrials{1})));
 analysis_cell(cnt).comment = {
     'clear spiking (sweep), but not great stimulus control';
     };
@@ -56,8 +55,9 @@ analysis_cell(cnt).name = {
 analysis_cell(cnt).exampletrials = {...
 'C:\Users\Anthony Azevedo\Raw_Data\131014\131014_F3_C1\PiezoSine_Raw_131014_F3_C1_4.mat';
 'C:\Users\Anthony Azevedo\Raw_Data\131014\131014_F3_C1\Sweep_Raw_131014_F3_C1_13.mat';
+'C:\Users\Anthony Azevedo\Raw_Data\131014\131014_F3_C1\PiezoStep_Raw_131014_F3_C1_1.mat';
 };
-analysis_cell(cnt).genotype = getFlyGenotype(analysis_cell(cnt).exampletrials{1});
+analysis_cell(cnt).genotype = genotypoToFilename(IdentifyGenotype(getFlyGenotype(analysis_cell(cnt).exampletrials{1})));
 analysis_cell(cnt).comment = {
     'clear spiking, mid range frequency, holding potential is offset, but otherwise ok';
     };
@@ -71,7 +71,7 @@ analysis_cell(cnt).exampletrials = {...
 'C:\Users\Anthony Azevedo\Raw_Data\131016\131016_F1_C1\PiezoStep_Raw_131016_F1_C1_1.mat';
 'C:\Users\Anthony Azevedo\Raw_Data\131016\131016_F1_C1\PiezoSine_Raw_131016_F1_C1_10.mat';
 };
-analysis_cell(cnt).genotype = getFlyGenotype(analysis_cell(cnt).exampletrials{1});
+analysis_cell(cnt).genotype = genotypoToFilename(IdentifyGenotype(getFlyGenotype(analysis_cell(cnt).exampletrials{1})));
 analysis_cell(cnt).comment = {
     'Clear spiking, not good stimulus control! exclude from PiezoStepAnalysis';
     };
@@ -85,7 +85,7 @@ analysis_cell(cnt).exampletrials = {...
 'C:\Users\Anthony Azevedo\Raw_Data\140311\140311_F1_C1\Sweep_Raw_140311_F1_C1_1.mat';
 'C:\Users\Anthony Azevedo\Raw_Data\140311\140311_F1_C1\CurrentSine_Raw_140311_F1_C1_4.mat';
 };
-analysis_cell(cnt).genotype = getFlyGenotype(analysis_cell(cnt).exampletrials{1});
+analysis_cell(cnt).genotype = genotypoToFilename(IdentifyGenotype(getFlyGenotype(analysis_cell(cnt).exampletrials{1})));
 analysis_cell(cnt).comment = {
     'From paired recording, no AVLP, only current sine data';
     };
@@ -98,7 +98,7 @@ analysis_cell(cnt).exampletrials = {...
 'C:\Users\Anthony Azevedo\Raw_Data\140121\140121_F2_C1\CurrentStep_Raw_140121_F2_C1_13.mat';
 'C:\Users\Anthony Azevedo\Raw_Data\140121\140121_F2_C1\Sweep_Raw_140121_F2_C1_7.mat';
 };
-analysis_cell(cnt).genotype = getFlyGenotype(analysis_cell(cnt).exampletrials{1});
+analysis_cell(cnt).genotype = genotypoToFilename(IdentifyGenotype(getFlyGenotype(analysis_cell(cnt).exampletrials{1})));
 analysis_cell(cnt).comment = {
     'No obvious spikes in the sweep, current steps show activity, Piezo activity is unclear';
     };
@@ -112,7 +112,7 @@ analysis_cell(cnt).exampletrials = {...
 'C:\Users\Anthony Azevedo\Raw_Data\140117\140117_F2_C1\CurrentStep_Raw_140117_F2_C1_10.mat';
 'C:\Users\Anthony Azevedo\Raw_Data\140117\140117_F2_C1\Sweep_Raw_140117_F2_C1_7.mat';
 };
-analysis_cell(cnt).genotype = getFlyGenotype(analysis_cell(cnt).exampletrials{1});
+analysis_cell(cnt).genotype = genotypoToFilename(IdentifyGenotype(getFlyGenotype(analysis_cell(cnt).exampletrials{1})));
 analysis_cell(cnt).comment = {
     'No obvious spikes in the sweep, current steps show activity, Piezo activity is unclear';
     };
@@ -129,8 +129,9 @@ analysis_cell(cnt).exampletrials = {...
 'C:\Users\Anthony Azevedo\Raw_Data\131126\131126_F2_C2\PiezoSine_Raw_131126_F2_C2_1.mat';
 'C:\Users\Anthony Azevedo\Raw_Data\131126\131126_F2_C2\CurrentStep_Raw_131126_F2_C2_20.mat'; % this is what a spiking cell looks like
 'C:\Users\Anthony Azevedo\Raw_Data\131126\131126_F2_C2\CurrentStep_Raw_131126_F2_C2_22.mat'; % hyperpolarized
+'C:\Users\Anthony Azevedo\Raw_Data\131126\131126_F2_C2\PiezoStep_Raw_131126_F2_C2_1.mat';
 };
-analysis_cell(cnt).genotype = getFlyGenotype(analysis_cell(cnt).exampletrials{1});
+analysis_cell(cnt).genotype = genotypoToFilename(IdentifyGenotype(getFlyGenotype(analysis_cell(cnt).exampletrials{1})));
 analysis_cell(cnt).comment = {
     'Banner cell, Current Sine @ hyp. Vm, was used in NRSA-resubmit, sharp tuning though coarse';
     };
@@ -150,7 +151,7 @@ analysis_cell(cnt).comment = {
 
 %% Exporting PiezeSineMatrix info on cells 
 close all
-for c_ind = 1 %1:length(analysis_cell)
+for c_ind = 1:length(analysis_cell)
     for t_ind = 1:length(analysis_cell(c_ind).exampletrials)
         trial = load(analysis_cell(c_ind).exampletrials{t_ind});
         obj.trial = trial;
@@ -194,7 +195,7 @@ end
 
 %% Exporting PiezoSineOsciRespVsFreq info on cells 
 close all
-for c_ind = 1% 1:length(analysis_cell)
+for c_ind = 1:length(analysis_cell)
     for t_ind = 1:length(analysis_cell(c_ind).exampletrials)
         trial = load(analysis_cell(c_ind).exampletrials{t_ind});
         obj.trial = trial;
@@ -226,7 +227,7 @@ end
 
 %% Exporting CurrentStepFamMatrix info on cells 
 close all
-for c_ind = 2%1:length(analysis_cell)
+for c_ind = 1:length(analysis_cell)
     for t_ind = 1:length(analysis_cell(c_ind).exampletrials)
         trial = load(analysis_cell(c_ind).exampletrials{t_ind});
         obj.trial = trial;
@@ -355,6 +356,9 @@ for c_ind = 1:length(analysis_cell)
         end
     end
 end
+
+%% Plot all transfer functions in one plot 
+
 
 %% Plot f2/f2 ratio for PiezoSine
 

@@ -9,7 +9,4 @@ if length(acq) == 0
     return
 end    
 acq = load(fullfile(D,acq(1).name));
-g = regexprep(acq.acqStruct.flygenotype,'/','!');
-
-%Stupid clean up
-g = regexprep(g,':',';');
+g = acq.acqStruct.flygenotype;

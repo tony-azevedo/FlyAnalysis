@@ -25,7 +25,7 @@ analysis_cell(1).evidencecalls = {...
     'PiezoStepMatrix'
     'PiezoSineOsciRespVsFreq'
     };
-analysis_cell(1).genotype = getFlyGenotype(analysis_cell(1).exampletrials{1});
+analysis_cell(1).genotype = genotypoToFilename(IdentifyGenotype(getFlyGenotype(analysis_cell(1).exampletrials{1})));
 analysis_cell(1).comment = {
     'Complete over harmonics, slight band pass';
     };
@@ -42,7 +42,7 @@ analysis_cell(2).exampletrials = {...
 'C:\Users\Anthony Azevedo\Raw_Data\140122\140122_F2_C1\PiezoSine_Raw_140122_F2_C1_37.mat';
 'C:\Users\Anthony Azevedo\Raw_Data\140122\140122_F2_C1\PiezoStep_Raw_140122_F2_C1_6.mat';
     };
-analysis_cell(2).genotype = getFlyGenotype(analysis_cell(2).exampletrials{2});
+analysis_cell(2).genotype = genotypoToFilename(IdentifyGenotype(getFlyGenotype(analysis_cell(2).exampletrials{1})));
 analysis_cell(2).comment = {
     'coarse freq sample, single amplitude, VCLAMP data!';
     };

@@ -42,7 +42,7 @@ h = figure;
 set(h,'color',[1 1 1])
 p = panel(h);
 p.pack('v',{dim(1)/(dim(1)+1)  1/(dim(1)+1)})  % response panel, stimulus panel
-p.margin = [12 10 2 10];
+p.margin = [18 10 2 10];
 p.fontname = 'Arial';
 p(1).marginbottom = 2;
 p(2).margintop = 8;
@@ -53,15 +53,20 @@ p(1).de.margin = 2;
 ylims = [Inf, -Inf];
 for y = 1:dim(1)
     for x = 1:dim(2)
-        p(1,y,x).select();
-        ax_to = gca;
-        ax_from = findobj(f(y,x),'tag','response_ax');
+        ax_to = p(1,y,x).select();
+
+        ax_from = findobj(f(y,x),'tag','response_ax'); 
+        delete(get(ax_from,'xlabel'));
+        delete(get(ax_from,'ylabel'));
+        delete(get(ax_from,'zlabel'));
+        delete(get(ax_from,'title'));
+        
         xlims = get(ax_from,'xlim');
         ylims_from = get(ax_from,'ylim');
         ylims = [min(ylims(1),ylims_from(1)),...
             max(ylims(2),ylims_from(2))];
         
-        copyobj(get(ax_from,'children'),ax_to)
+        copyobj(get(ax_from,'children'),ax_to); 
         if x>1
             set(ax_to,'TickDir','out','YColor',[1 1 1],'YTick',[],'YTickLabel','');
         end
@@ -139,7 +144,7 @@ p.title([name '_ Stimuli'])
 
 
 if nargin>2 && strcmp(varargin{1},'close')
-    close(f(:))
+    delete(f(:))
 end
 
 varargout{1} = h;

@@ -298,6 +298,12 @@ for c_ind = 1:length(analysis_cell)
     fprintf('Comment: %s\n\n', analysis_cell(c_ind).comment{1});
 end
 
+savedir = 'C:\Users\Anthony Azevedo\RAnalysis_Data\Record_ArcLightImaging';
+if ~isdir(savedir)
+    mkdir(savedir)
+end
+save = 1
+
 
 %% Motion minimization
 % These cells are used to test the image correlation methods
@@ -396,6 +402,8 @@ for c_ind = 1:length(analysis_cell)
     
     trial = load(analysis_cell(c_ind).exampletrials{1});
     obj.trial = trial;
+    [obj.currentPrtcl,dateID,flynum,cellnum,obj.currentTrialNum,obj.dir,obj.trialStem,dfile] = ...
+        extractRawIdentifiers(trial.name);
 
     figure
     quickShow_Sweep(gcf,obj,'No Save');
@@ -439,6 +447,10 @@ for c_ind = 1:length(analysis_cell)
     breakin_dF_traces(c_ind,:) = breakin_dF;
     breakin_dF_dF(c_ind,:) = breakin_dF - mean(breakin_dF(frame_window<break_in_frame));
     breakin_framewindows(c_ind,:) = frame_window;
+    
+    eval(['export_fig ', ...
+        ['C:\Users\Anthony'' Azevedo''\RAnalysis_Data\Record_ArcLightImaging\' ['break-in_',dateID,'_',flynum,'_',cellnum]],...
+        ' -pdf -transparent'])
 end
 
 %%
@@ -494,7 +506,9 @@ for c_ind = 1:length(analysis_cell)
     
     trial = load(analysis_cell(c_ind).plateau_trial{1});
     obj.trial = trial;
-    
+    [obj.currentPrtcl,dateID,flynum,cellnum,obj.currentTrialNum,obj.dir,obj.trialStem,dfile] = ...
+        extractRawIdentifiers(trial.name);
+
     ind_ = regexp(trial.name,'_');
     indDot = regexp(trial.name,'\.');
     dfile = trial.name(~(1:length(trial.name) >= ind_(end) & 1:length(trial.name) < indDot(1)));
@@ -526,6 +540,10 @@ for c_ind = 1:length(analysis_cell)
 
     figure
     VoltagePlateauxAverageDFoverF(gcf,obj,'No Save');
+    eval(['export_fig ', ...
+        ['C:\Users\Anthony'' Azevedo''\RAnalysis_Data\Record_ArcLightImaging\' ['AverageDFoverF_',dateID,'_',flynum,'_',cellnum]],...
+        ' -pdf -transparent'])
+    
     figure
     [h,dV,dF] = DFoverFoverDV_off(gcf,obj,'No Save');
     set(findobj(h,'color',[.3 1 .3]),'color',[.8 .8 .8])
@@ -559,6 +577,9 @@ for c_ind = 1:length(analysis_cell)
         plot(0,DeltaF_breakin(c_ind),'o','color',colors(c_ind,:),'markerfacecolor',colors(c_ind,:));
         DeltaV_breakin(c_ind) = min(dV(1,:));
     end
+    eval(['export_fig ', ...
+        ['C:\Users\Anthony'' Azevedo''\RAnalysis_Data\Record_ArcLightImaging\' ['DeltaV_breakin_',dateID,'_',flynum,'_',cellnum]],...
+        ' -pdf -transparent'])
 
 end
 

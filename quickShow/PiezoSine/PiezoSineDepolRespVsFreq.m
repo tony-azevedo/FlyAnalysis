@@ -7,8 +7,10 @@ if isempty(fig) || ~ishghandle(fig)
 else
 end
 set(fig,'tag',mfilename);
-ax = subplot(3,1,[1 2],'parent',fig);
-ax = subplot(3,1,3,'parent',fig);
+
+p = panel(fig);
+p.pack('v',{1})  % response panel, stimulus panel
+p.margin = [20 20 2 10];
 
 area = nan(length(handles.trial.params.freqs),length(handles.trial.params.displacements));
 amp = area;
@@ -37,7 +39,7 @@ for ii = 1:length(dispexamples)
         [area(jj,ii),amp(jj,ii)] = PiezoSineDepolTransFunc([],handles,savetag);
     end
 
-    ax = subplot(1,1,1,'parent',fig);
+    ax = p(1).select();
     line(handles.trial.params.freqs',abs(area(:,ii)),...
         'parent',ax,'color',[0 1/length(handles.trial.params.displacements) 0]*ii,...
         'tag',savetag);

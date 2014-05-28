@@ -64,11 +64,11 @@ trials = {
 'C:\Users\Anthony Azevedo\Raw_Data\131002\131002_F1_C1\Sweep_Raw_131002_F1_C1_6.mat',... % GH86
 'C:\Users\Anthony Azevedo\Raw_Data\131001\131001_F1_C1\Sweep_Raw_131001_F1_C1_4.mat'; % GH86
 
-'C:\Users\Anthony Azevedo\Raw_Data\131022\131022_F1_C1\Sweep_Raw_131022_F1_C1_2.mat',... % GH86
-'C:\Users\Anthony Azevedo\Raw_Data\131112\131112_F1_C1\Sweep_Raw_131112_F1_C1_3.mat',... % GH86
+'C:\Users\Anthony Azevedo\Raw_Data\131022\131022_F1_C1\Sweep_Raw_131022_F1_C1_2.mat',... % BS
+'C:\Users\Anthony Azevedo\Raw_Data\131112\131112_F1_C1\Sweep_Raw_131112_F1_C1_3.mat',... % BS
 'C:\Users\Anthony Azevedo\Raw_Data\131112\131112_F1_C2\Sweep_Raw_131112_F1_C2_3.mat'; % GH86
 
-'C:\Users\Anthony Azevedo\Raw_Data\131112\131112_F3_C1\Sweep_Raw_131112_F3_C1_3.mat',... % GH86
+'C:\Users\Anthony Azevedo\Raw_Data\131112\131112_F3_C1\Sweep_Raw_131112_F3_C1_3.mat',... % BS
 'C:\Users\Anthony Azevedo\Raw_Data\131112\131112_F3_C2\Sweep_Raw_131112_F3_C2_2.mat',... % GH86
 'C:\Users\Anthony Azevedo\Raw_Data\131022\131022_F4_C1\Sweep_Raw_131022_F4_C1_1.mat'; % GH86
 

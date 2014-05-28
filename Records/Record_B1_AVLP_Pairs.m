@@ -110,7 +110,12 @@ reject_cells(8).exampletrial = {
     };
 
 %% Cells to Analyze:
-savedir = 'C:\Users\Anthony Azevedo\Desktop\Rachel_Meeting';
+savedir = 'C:\Users\Anthony Azevedo\RAnalysis_Data\Record_Pairs';
+if ~isdir(savedir)
+    mkdir(savedir)
+end
+save = 1
+
 recorded_cells = {
     '140717_F1_C1'; 
     '140424_F1_C1'; 
@@ -346,130 +351,10 @@ analysis_cell(14).evidencecalls = {...
     'CurrentStepFamMatrix'
     };
 
-%% Exporting dashboard info on cell 1 (Sine Matrices, step matrices)
+
+%% Exporting dashboard info on cells 1:14 (Sine Matrices, step matrices)
 close all
-
-for c_ind = 1
-    for t_ind = 1:length(analysis_cell(c_ind).exampletrials)
-        trial = load(analysis_cell(c_ind).exampletrials{t_ind});
-        obj.trial = trial;
-        
-        [obj.currentPrtcl,~,~,~,obj.currentTrialNum,obj.dir,obj.trialStem,dfile] = extractRawIdentifiers(trial.name);
-        obj.currentPrtcl
-        prtclData = load(dfile);
-        obj.prtclData = prtclData.data;
-        obj.prtclTrialNums = obj.currentTrialNum;
-
-        for e_ind = 1:length(analysis_cell(c_ind).evidencecalls)
-            if ~isempty(strfind(analysis_cell(c_ind).evidencecalls{e_ind},obj.currentPrtcl))
-                fprintf('%s([],obj,'''');\n',analysis_cell(c_ind).evidencecalls{e_ind});
-                eval(sprintf('%s([],obj,'''');',analysis_cell(c_ind).evidencecalls{e_ind}));
-            end
-        end
-    end
-end
-
-%figname
-%eval(sprintf('export_fig C:\\Users\\Anthony'' Azevedo''\\Desktop\\Rachel'' Meeting''\\Figure_%d -pdf -transparent',numext));
-%fprintf('** Figure_%d saved\n',numext);
-
-
-%% Exporting dashboard info on cell 2(Sine Matrices, step matrices)
-close all
-for c_ind = 2
-    for t_ind = 1:length(analysis_cell(c_ind).exampletrials)
-        trial = load(analysis_cell(c_ind).exampletrials{t_ind});
-        obj.trial = trial;
-        
-        [obj.currentPrtcl,~,~,~,obj.currentTrialNum,obj.dir,obj.trialStem,dfile] = extractRawIdentifiers(trial.name);
-        obj.currentPrtcl
-        prtclData = load(dfile);
-        obj.prtclData = prtclData.data;
-        obj.prtclTrialNums = obj.currentTrialNum;
-
-        for e_ind = 1:length(analysis_cell(c_ind).evidencecalls)
-            if ~isempty(strfind(analysis_cell(c_ind).evidencecalls{e_ind},obj.currentPrtcl))
-                fprintf('%s([],obj,'''');\n',analysis_cell(c_ind).evidencecalls{e_ind});
-                eval(sprintf('%s([],obj,'''');',analysis_cell(c_ind).evidencecalls{e_ind}));
-            end
-        end
-    end
-end
-
-
-
-%% Exporting dashboard info on cell 3 (Sine Matrices, step matrices)
-close all
-for c_ind = 3
-    for t_ind = 1:length(analysis_cell(c_ind).exampletrials)
-        trial = load(analysis_cell(c_ind).exampletrials{t_ind});
-        obj.trial = trial;
-        
-        [obj.currentPrtcl,~,~,~,obj.currentTrialNum,obj.dir,obj.trialStem,dfile] = extractRawIdentifiers(trial.name);
-        obj.currentPrtcl
-        prtclData = load(dfile);
-        obj.prtclData = prtclData.data;
-        obj.prtclTrialNums = obj.currentTrialNum;
-
-        for e_ind = 1:length(analysis_cell(c_ind).evidencecalls)
-            if ~isempty(strfind(analysis_cell(c_ind).evidencecalls{e_ind},obj.currentPrtcl))
-                fprintf('%s([],obj,'''');\n',analysis_cell(c_ind).evidencecalls{e_ind});
-                eval(sprintf('%s([],obj,'''');',analysis_cell(c_ind).evidencecalls{e_ind}));
-            end
-        end
-    end
-end
-
-
-%% Exporting dashboard info on cell 4 (Sine Matrices, step matrices)
-close all
-for c_ind = 4
-    for t_ind = 1:length(analysis_cell(c_ind).exampletrials)
-        trial = load(analysis_cell(c_ind).exampletrials{t_ind});
-        obj.trial = trial;
-        
-        [obj.currentPrtcl,~,~,~,obj.currentTrialNum,obj.dir,obj.trialStem,dfile] = extractRawIdentifiers(trial.name);
-        obj.currentPrtcl
-        prtclData = load(dfile);
-        obj.prtclData = prtclData.data;
-        obj.prtclTrialNums = obj.currentTrialNum;
-
-        for e_ind = 1:length(analysis_cell(c_ind).evidencecalls)
-            if ~isempty(strfind(analysis_cell(c_ind).evidencecalls{e_ind},obj.currentPrtcl))
-                fprintf('%s([],obj,'''');\n',analysis_cell(c_ind).evidencecalls{e_ind});
-                eval(sprintf('%s([],obj,'''');',analysis_cell(c_ind).evidencecalls{e_ind}));
-            end
-        end
-    end
-end
-
-%% Exporting dashboard info on cell 5 (Sine Matrices, step matrices)
-close all
-for c_ind = 5
-    for t_ind = 1:length(analysis_cell(c_ind).exampletrials)
-        trial = load(analysis_cell(c_ind).exampletrials{t_ind});
-        obj.trial = trial;
-        
-        [obj.currentPrtcl,~,~,~,obj.currentTrialNum,obj.dir,obj.trialStem,dfile] = extractRawIdentifiers(trial.name);
-        
-        prtclData = load(dfile);
-        obj.prtclData = prtclData.data;
-        obj.prtclTrialNums = obj.currentTrialNum;
-
-        for e_ind = 1:length(analysis_cell(c_ind).evidencecalls)
-            if ~isempty(strfind(analysis_cell(c_ind).evidencecalls{e_ind},obj.currentPrtcl))
-                fprintf('%s([],obj,'''');\n',analysis_cell(c_ind).evidencecalls{e_ind});
-                eval(sprintf('%s([],obj,'''');',analysis_cell(c_ind).evidencecalls{e_ind}));
-            end
-        end
-    end
-end
-
-
-%% Exporting dashboard info on cells 6:14 (Sine Matrices, step matrices)
-close all
-savedir = 'C:\Users\Anthony Azevedo\Desktop\Rachel_Meeting';
-for c_ind = 6:14
+for c_ind = 1:length(analysis_cell)
     for t_ind = 1:length(analysis_cell(c_ind).exampletrials)
         trial = load(analysis_cell(c_ind).exampletrials{t_ind});
         obj.trial = trial;

@@ -7,7 +7,7 @@ if genotypeMap.forward.isKey(str)
     return
 else
     keys = genotypeMap.backward.keys;
-    prntstr = sprintf('Input Number for Genotype (or enter if absent)\n');
+    prntstr = sprintf('Genotype: %s\nInput Number for Genotype (or enter if absent)\n',str);
     for k = 1:length(keys)
         prntstr = sprintf('%s%d: %s \n',prntstr,k,keys{k});
     end
