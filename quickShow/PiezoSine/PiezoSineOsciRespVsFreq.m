@@ -49,7 +49,7 @@ for ii = 1:length(dispexamples)
     line(handles.trial.params.freqs',abs(transfer(:,ii)),...
         'parent',ax,'color',[0 1/length(handles.trial.params.displacements) 0]*ii,...
         'tag',savetag);
-    ylabel(ax,'Magnitude (mV/V)')
+    ylabel(ax,'Magnitude (mV)')
     title(ax,'Stim to V transfer function')
 
     ax = p(2).select();

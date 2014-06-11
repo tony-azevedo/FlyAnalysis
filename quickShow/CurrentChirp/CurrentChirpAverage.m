@@ -22,13 +22,8 @@ ax = subplot(3,1,[1 2],'parent',h);
 trial = load(fullfile(handles.dir,sprintf(handles.trialStem,trials(1))));
 x = makeTime(trial.params);
 
-if sum(strcmp({'IClamp','IClamp_fast'},trial.params.mode))
-    y_name = 'voltage';
-    y_units = 'mV';
-elseif sum(strcmp('VClamp',trial.params.mode))
-    y_name = 'current';
-    y_units = 'pA';
-end
+y_name = 'voltage';
+y_units = 'mV';
 
 if length(trial.(y_name))<length(x)
     x = x(1:length(trial.(y_name)));
@@ -49,8 +44,8 @@ title(ax,sprintf('%s : %d-%d Hz %.2f \\mum',...
     [prot '.' d '.' fly '.' cell '.' trialnum],...
     trial.params.freqStart,...
     trial.params.freqEnd,...
-    trial.params.displacement*3));
-
+    trial.params.amp));
+%title([d ' ' fly ' ' cell ' ' prot ' '  num2str(trial.params.freq) ' Hz ' num2str(trial.params.displacement *.3) ' \mum'])
 box(ax,'off');
 set(ax,'TickDir','out');
 ylabel(ax,y_units);
@@ -64,7 +59,7 @@ plot(ax,x,freqramp,'color',[0 0 1],'tag',savetag); hold on;
 text(-.1,5.01,...
     [num2str(trial.params.freqStart) '-' ...
     num2str(trial.params.freqEnd) ' Hz ' ...
-    num2str(trial.params.displacement *3) ' \mum'],...
+    num2str(trial.params.amp) ' pA'],...
     'fontsize',7,'parent',ax,'tag',savetag)
 
 box(ax,'off');
@@ -76,7 +71,7 @@ xlim([-.1 trial.params.stimDurInSec+ min(.25,trial.params.postDurInSec)])
 set(ax,'tag','ramp_ax');
 
 ax = subplot(6,1,6,'parent',h);
-plot(ax,x,trial.sgsmonitor(1:length(x)),'color',[0 0 1],'tag',savetag); hold on;
+plot(ax,x,trial.current(1:length(x)),'color',[0 0 1],'tag',savetag); hold on;
 
 box(ax,'off');
 set(ax,'TickDir','out');
@@ -84,3 +79,4 @@ axis(ax,'tight');
 
 xlim([-.1 trial.params.stimDurInSec+ min(.25,trial.params.postDurInSec)])
 set(ax,'tag','stimulus_ax');
+

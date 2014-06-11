@@ -1,4 +1,11 @@
-function plotcanvas = quickShow_Sweep(plotcanvas,obj,savetag)
+function plotcanvas = quickShow_Sweep(plotcanvas,obj,savetag,varargin)
+
+p = inputParser;
+p.PartialMatching = 0;
+p.addParameter('BGCorrectImages',false,@islogical);
+parse(p,varargin{:});
+
+
 % setupStimulus
 if isfield(obj.trial,'voltage_1')
     plotcanvas = quickShow_Sweep2T(plotcanvas,obj,savetag);
@@ -43,18 +50,14 @@ text(xlims(1)+.05*diff(xlims),ylims(1)+.05*diff(ylims),...
     'parent',ax1,'fontsize',7,'tag','delete');
 
 if isfield(obj.trial,'roiFluoTrace')
-    exp_t = obj.trial.exposure_time;
-    
-    if sum(exp_t<0)
-        bsln = exp_t<0 & exp_t>exp_t(1)+.02;
+    if p.Results.BGCorrectImages
+        dFF_t = dFoverF_bgcorr_trace(obj.trial);
     else
-        bsln = exp_t<1 & exp_t>exp_t(1)+.02;
+        dFF_t = dFoverF_withbg_trace(obj.trial);
     end
-    dFoverF_trace = 100 * (obj.trial.roiFluoTrace/nanmean(obj.trial.roiFluoTrace(bsln)) - 1);
-
     ax2 = subplot(3,1,2,'parent',plotcanvas);
     set(ax2,'tag','quickshow_dFoverF_ax');
-    line(obj.trial.exposure_time,dFoverF_trace,'color',[0 .7 0],'linewidth',1,'parent',ax2,'tag',savetag);
+    line(obj.trial.exposure_time,dFF_t,'color',[0 .7 0],'linewidth',1,'parent',ax2,'tag',savetag);
     
     ylabel(ax2,'%\DeltaF / F');
     axis(ax2,'tight')

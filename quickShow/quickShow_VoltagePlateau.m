@@ -1,4 +1,8 @@
-function quickShow_VoltagePlateau(plotcanvas,obj,savetag)
+function quickShow_VoltagePlateau(plotcanvas,obj,savetag,varargin)
+p = inputParser;
+p.PartialMatching = 0;
+p.addParameter('BGCorrectImages',false,@islogical);
+parse(p,varargin{:});
 
 % setupStimulus
 x = ((1:obj.trial.params.sampratein*obj.params.durSweep) - obj.trial.params.preDurInSec*obj.trial.params.sampratein)/obj.trial.params.sampratein;
@@ -10,7 +14,13 @@ current = obj.trial.current(1:length(x));
 if isfield(obj.trial,'dFoverF')
     ax1 = subplot(3,1,2,'parent',plotcanvas);
     set(ax1,'tag','quickshow_dFoverF_ax');
-    line(obj.trial.exposure_time,obj.trial.dFoverF,'color',[0 .7 0],'linewidth',1,'parent',ax1,'tag',savetag);
+    
+    if p.Results.BGCorrectImages
+        dFF_t = dFoverF_bgcorr_trace(obj.trial);
+    else
+        dFF_t = dFoverF_withbg_trace(obj.trial);
+    end
+    line(obj.trial.exposure_time,dFF_t,'color',[0 .7 0],'linewidth',1,'parent',ax1,'tag',savetag);
     
     ylabel(ax1,'%\DeltaF / F');
     axis(ax1,'tight')

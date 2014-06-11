@@ -20,7 +20,7 @@ function varargout = quickShow(varargin)
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 
-% Last Modified by GUIDE v2.5 16-Feb-2014 18:34:54
+% Last Modified by GUIDE v2.5 07-Jun-2014 20:31:51
 
 %% Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -274,6 +274,14 @@ end
 handles.currentTrialNum = trialnum;
 handles.trial = load(fullfile(handles.dir, sprintf(handles.trialStem,handles.currentTrialNum)));
 handles.params = handles.prtclData(handles.prtclTrialNums==handles.currentTrialNum);
+if ~isfield(handles.trial,'excluded')
+    handles.trial.excluded = 0;
+    trial = handles.trial;
+    save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
+end
+set(handles.exclude,'value',handles.trial.excluded);
+set(handles.allow_excluding,'value',0);
+set(handles.exclude,'enable','off');
 
 guidata(hObject,handles)
 quickShow_Protocol(hObject, eventdata, handles)
@@ -580,7 +588,7 @@ if isfield(handles.trial.params,'preDurInSec')
 end
 ax = findobj('tag','quickshow_outax','parent',handles.quickShowPanel);
 exposure = handles.trial.exposure(1:length(x));
-expostimes = x(exposure);
+expostimes = x(logical(exposure));
 lims = get(ax,'ylim');
 for t= 1:length(expostimes)
     l = line([expostimes(t) expostimes(t)],lims,'parent',ax,'color',[1 1 1] *.8,'tag',savetag,'userdata',t);
@@ -667,5 +675,32 @@ for prt_ind = 1:length(handles.prtclData)
 end
 data = handles.prtclData; %#ok<NASGU>
 save(handles.prtclDataFileName,'data');
+guidata(hObject,handles)
+
+
+% --- Executes on button press in exclude.
+function exclude_Callback(hObject, eventdata, handles)
+handles = guidata(hObject);
+val = get(handles.exclude,'value');
+if val==1
+    handles.trial.excluded = 1;
+    fprintf('Trial %g excluded\n',handles.trial.params.trial);
+else
+    handles.trial.excluded = 0;
+    fprintf('Trial %g included\n',handles.trial.params.trial);
+end
+trial = handles.trial;
+save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
+guidata(hObject,handles)
+
+% --- Executes on button press in allow_excluding.
+function allow_excluding_Callback(hObject, eventdata, handles)
+handles = guidata(hObject);
+val = get(handles.allow_excluding,'value');
+if val==1
+    set(handles.exclude,'Enable','on')
+else
+    set(handles.exclude,'enable','off')
+end
 guidata(hObject,handles)
 

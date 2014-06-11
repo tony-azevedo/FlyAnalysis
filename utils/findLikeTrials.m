@@ -53,6 +53,11 @@ for d = 1:length(datastruct)
     end
 end
 
+if isfield(datastruct,'combinedTrialBlock') && compare.combinedTrialBlock ~= 0
+    fprintf(1,'Trial Blocks have been combined: %d\n',compare.combinedTrialBlock);
+    excludedFields = union(excludedFields,'trialBlock');
+end
+
 likenums = [];
 likeinds = [];
 for d = 1:length(datastruct)

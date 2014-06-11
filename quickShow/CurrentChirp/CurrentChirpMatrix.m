@@ -1,9 +1,9 @@
-function newfig = PiezoChirpMatrix(fig,handles,savetag)
+function newfig = CurrentChirpMatrix(fig,handles,savetag)
 % see also AverageLikeSines
 
 [~,dateID,flynum,cellnum] = extractRawIdentifiers(handles.trial.name);
 
-blocktrials = findLikeTrials('name',handles.trial.name,'datastruct',handles.prtclData,'exclude',{'displacement'});
+blocktrials = findLikeTrials('name',handles.trial.name,'datastruct',handles.prtclData,'exclude',{'amp'});
 t = 1;
 while t <= length(blocktrials)
     trials = findLikeTrials('trial',blocktrials(t),'datastruct',handles.prtclData);
@@ -15,15 +15,15 @@ clear f
 cnt = 1;
 for bt = blocktrials;
     handles.trial = load(fullfile(handles.dir,sprintf(handles.trialStem,bt)));
-    f(cnt) = PiezoChirpAverage([],handles,savetag);
+    f(cnt) = CurrentChirpAverage([],handles,savetag);
     cnt = cnt+1;
 end
 f = unique(f);
 f = sort(f);
-if ~isfield(handles.prtclData(bt),'displacements');
-    handles.prtclData(bt).displacements = handles.prtclData(bt).displacement;
+if ~isfield(handles.prtclData(bt),'amps');
+    handles.prtclData(bt).amps = handles.prtclData(bt).amp;
 end
-f = reshape(f,length(handles.prtclData(bt).displacements),[]);
+f = reshape(f,length(handles.prtclData(bt).amps),[]);
 f = f';
 tags = getTrialTags(blocktrials,handles.prtclData);
 

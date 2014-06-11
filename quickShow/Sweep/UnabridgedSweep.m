@@ -1,4 +1,10 @@
-function plotcanvas = UnabridgedSweep(plotcanvas,obj,savetag)
+function plotcanvas = UnabridgedSweep(plotcanvas,obj,savetag,varargin)
+
+p = inputParser;
+p.PartialMatching = 0;
+p.addParameter('BGCorrectImages',false,@islogical);
+parse(p,varargin{:});
+
 % setupStimulus
 h = guidata(plotcanvas);
 obj.x = makeInTime(obj.trial.params);
@@ -41,7 +47,14 @@ text(xlims(1)+.05*diff(xlims),ylims(1)+.05*diff(ylims),...
 if isfield(obj.trial,'dFoverF')
     ax2 = subplot(3,1,2,'parent',plotcanvas);
     set(ax2,'tag','quickshow_dFoverF_ax');
-    line(obj.trial.exposure_time,obj.trial.dFoverF,'color',[0 .7 0],'linewidth',1,'parent',ax2,'tag',savetag);
+
+    if p.Results.BGCorrectImages
+        dFF_t = dFoverF_bgcorr_trace(obj.trial);
+    else
+        dFF_t = dFoverF_withbg_trace(obj.trial);
+    end
+
+    line(obj.trial.exposure_time,dFF_t,'color',[0 .7 0],'linewidth',1,'parent',ax2,'tag',savetag);
     
     ylabel(ax2,'%\DeltaF / F');
     axis(ax2,'tight')
@@ -68,8 +81,6 @@ end
 
 obj.trial.(yname) = obj.trial.(yname)(1:length(obj.x));
 
-% line(obj.x(obj.x>=0 & obj.x<=1),obj.trial.(yname)(obj.x>=0 & obj.x<=1),'color',[1 0 0],'linewidth',1,'parent',ax2,'tag',savetag);
-%line(downsample(obj.x,10),downsample(obj.trial.(yname),10),'color',[1 0 0],'linewidth',1,'parent',ax2,'tag',savetag);
 line(obj.x,obj.trial.(yname),'color',[1 0 0],'linewidth',1,'parent',ax2,'tag',savetag);
 axis(ax2,'tight');
 if exist('xlims','var')

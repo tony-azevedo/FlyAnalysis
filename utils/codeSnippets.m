@@ -94,3 +94,31 @@ if x>1
     set(ax_to,'TickDir','out','YColor',[1 1 1],'YTick',[],'YTickLabel','');
 end
 
+%% Parser
+p = inputParser;
+p.PartialMatching = 0;
+p.addParameter('NewROI','Yes',@ischar);
+p.addParameter('dFoFfig',[],@isnumeric);
+p.addParameter('MotionCorrection',true,@islogical);
+p.addParameter('ShowMovies',false,@islogical);
+p.addParameter('MovieLocation','',@ischar);
+
+parse(p,varargin{:});
+
+%% Panel 
+figure(fig);
+set(fig,'color',[1 1 1])
+panl = panel(fig);
+
+panl.pack('v',{1/3 2/3})  % response panel, stimulus panel
+panl.margin = [18 10 2 10];
+panl.fontname = 'Arial';
+panl(1).marginbottom = 2;
+panl(2).margintop = 8;
+
+panl(1).pack('h',{1/3 2/3})
+%p(1).de.margin = 2;
+
+[protocol,dateID,flynum,cellnum,trialnum] = extractRawIdentifiers(data.name);
+    
+panl.title([protocol '\_' dateID '\_' flynum '\_' cellnum '\_' trialnum])

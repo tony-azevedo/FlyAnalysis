@@ -85,13 +85,20 @@ for p = 1:length(protocols)
             % add an exposure time vector to the trial, and adjust images
             % and exposure vector to include only times associated 
             % with images
-            t = makeInTime(trial.params);
-            trial.exposure_time = t(trial.exposure);
-            
             imdir = regexprep(regexprep(regexprep(trial.name,'Raw','Images'),'.mat',''),'Acquisition','Raw_Data');
             fprintf('%s\n',imdir);
             d = ls(fullfile(imdir,'*_Image_*'));
             numImages = size(d,1);
+
+            t = makeInTime(trial.params);
+            
+            if numImages>0 && ~sum(trial.exposure)
+                % fucked up, no exposure input, but images were saved
+                [trial.exposure_time,trial.exposure] = exposureTimeFromImages(trial,imdir);
+            else
+                trial.exposure_time = t(trial.exposure);
+            end
+
             % trial.exposure(cumsum(trial.exposure)>numImages) = 0;
             trial.exposure_time = trial.exposure_time(1:min(numImages,length(trial.exposure_time)));
             if numImages > length(trial.exposure_time)

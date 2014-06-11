@@ -45,6 +45,7 @@ dF = dFoverFplateaux(:,2:2:end) - dFoverFplateaux(:,1:2:end);
 dF = dF(:,order);
 
 ax = subplot(1,1,1,'parent',h);
+cla(ax,'reset')
 for r = 1:size(dV,1)
     plot(ax,dV(r,:),dF(r,:),'+','color',[.3 1 .3],'tag',savetag); hold on
 end
