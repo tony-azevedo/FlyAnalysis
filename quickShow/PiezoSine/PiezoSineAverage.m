@@ -11,6 +11,12 @@ ax = subplot(3,1,[1 2],'parent',h);
 trial = load(fullfile(handles.dir,sprintf(handles.trialStem,trials(1))));
 x = makeTime(trial.params);
 
+if isempty(regexp(trial.params.mode(end),'\w+'))
+    trial.params.mode = trial.params.mode(1:end-1);
+    data = trial;
+    save(regexprep(data.name,'Acquisition','Raw_Data'), '-struct', 'data');
+end
+
 if sum(strcmp({'IClamp','IClamp_fast'},trial.params.mode))
     y_name = 'voltage';
     y_units = 'mV';

@@ -1,93 +1,69 @@
 cd('C:\Users\Anthony Azevedo\Code\FlyAnalysis\Records\') % Go to the home folder
 
 %% Cells to Analyze
-
-
-analysis_cell(1).name = '140117_F2_C1';
-analysis_cell(1).comment = {'Bright, isolated','Prepoints on Voltage Plateau too few to get good dFoverF relationship'};
-analysis_cell(1).exampletrials = {...
+% Note 6/11/14:  I'm taking three cells out of the analysis: 140207 - due
+% to motion; 140205 - likely the rogue PN in VT30609-Gal4; 140122 - same
+cnt = 1;
+analysis_cell(cnt).name = '140117_F2_C1';
+analysis_cell(cnt).comment = {'Bright, isolated','Prepoints on Voltage Plateau too few to get good dFoverF relationship'};
+analysis_cell(cnt).exampletrials = {...
     'C:\Users\Anthony Azevedo\Raw_Data\140117\140117_F2_C1\Sweep_Raw_140117_F2_C1_2.mat';...
     'C:\Users\Anthony Azevedo\Raw_Data\140117\140117_F2_C1\VoltagePlateau_Raw_140117_F2_C1_3.mat';...
     };
-analysis_cell(1).breakin_trial = {...
+analysis_cell(cnt).breakin_trial = {...
     'C:\Users\Anthony Azevedo\Raw_Data\140117\140117_F2_C1\Sweep_Raw_140117_F2_C1_2.mat';...
     };
-analysis_cell(1).plateau_trial = {...
+analysis_cell(cnt).plateau_trial = {...
     'C:\Users\Anthony Azevedo\Raw_Data\140117\140117_F2_C1\VoltagePlateau_Raw_140117_F2_C1_3.mat';...
     };
 
-analysis_cell(2).name = '140121_F2_C1';
-analysis_cell(2).comment = {'Example Cell, sound responsive, not spiking, just great! This is the Example cell for figure'};
-analysis_cell(2).exampletrials = {...
+cnt = 2;
+analysis_cell(cnt).name = '140121_F2_C1';
+analysis_cell(cnt).comment = {'Example Cell, sound responsive, not spiking, just great! This is the Example cell for figure'};
+analysis_cell(cnt).exampletrials = {...
     'C:\Users\Anthony Azevedo\Raw_Data\140121\140121_F2_C1\Sweep_Raw_140121_F2_C1_2.mat';...
     'C:\Users\Anthony Azevedo\Raw_Data\140117\140117_F2_C1\VoltagePlateau_Raw_140117_F2_C1_3.mat';...
     };
-analysis_cell(2).breakin_trial = {...
+analysis_cell(cnt).breakin_trial = {...
     'C:\Users\Anthony Azevedo\Raw_Data\140121\140121_F2_C1\Sweep_Raw_140121_F2_C1_2.mat';...
     };
-analysis_cell(2).plateau_trial = {...
+analysis_cell(cnt).plateau_trial = {...
     'C:\Users\Anthony Azevedo\Raw_Data\140121\140121_F2_C1\VoltagePlateau_Raw_140121_F2_C1_4.mat';...
     };
 
-
-analysis_cell(4).name = '140131_F3_C1';
-analysis_cell(4).comment = {'Moving.  Nice bright cell, not sound responsive, otherwise classic B1'};
-analysis_cell(4).exampletrials = {...
+cnt = 3;
+analysis_cell(cnt).name = '140131_F3_C1';
+analysis_cell(cnt).comment = {'Moving.  Nice bright cell, not sound responsive, otherwise classic B1'};
+analysis_cell(cnt).exampletrials = {...
     'C:\Users\Anthony Azevedo\Raw_Data\140131\140131_F3_C1\Sweep_Raw_140131_F3_C1_2.mat';...
     'C:\Users\Anthony Azevedo\Raw_Data\140131\140131_F3_C1\VoltagePlateau_Raw_140131_F3_C1_1.mat';...
     };
-analysis_cell(4).breakin_trial = {...
+analysis_cell(cnt).breakin_trial = {...
     'C:\Users\Anthony Azevedo\Raw_Data\140131\140131_F3_C1\Sweep_Raw_140131_F3_C1_2.mat';...
     };
-analysis_cell(4).plateau_trial = {...
+analysis_cell(cnt).plateau_trial = {...
     'C:\Users\Anthony Azevedo\Raw_Data\140131\140131_F3_C1\VoltagePlateau_Raw_140131_F3_C1_1.mat';...
     };
 
 
 % New Internal
-
-analysis_cell(5).name = '140205_F1_C1';
-analysis_cell(5).comment = {'Not a B1 cell, some spikes, smaller DF/F / DV'};
-analysis_cell(5).exampletrials = {...
-    'C:\Users\Anthony Azevedo\Raw_Data\140205\140205_F1_C1\Sweep_Raw_140205_F1_C1_3.mat';...
-    'C:\Users\Anthony Azevedo\Raw_Data\140205\140205_F1_C1\VoltagePlateau_Raw_140205_F1_C1_2.mat';...
-    };
-analysis_cell(5).breakin_trial = {...
-    'C:\Users\Anthony Azevedo\Raw_Data\140205\140205_F1_C1\Sweep_Raw_140205_F1_C1_3.mat';...
-    };
-analysis_cell(5).plateau_trial = {...
-    'C:\Users\Anthony Azevedo\Raw_Data\140205\140205_F1_C1\VoltagePlateau_Raw_140205_F1_C1_2.mat';...
-    };
-
-analysis_cell(6).name = '140206_F1_C1';
-analysis_cell(6).comment = {'Movement, Not sound responsive.  Good looking cell'};
-analysis_cell(6).exampletrials = {...
+cnt = 4;
+analysis_cell(cnt).name = '140206_F1_C1';
+analysis_cell(cnt).comment = {'Movement, Not sound responsive.  Good looking cell'};
+analysis_cell(cnt).exampletrials = {...
     'C:\Users\Anthony Azevedo\Raw_Data\140206\140206_F1_C1\Sweep_Raw_140206_F1_C1_2.mat';...
     'C:\Users\Anthony Azevedo\Raw_Data\140206\140206_F1_C1\Sweep_Raw_140206_F1_C1_1.mat';...
     'C:\Users\Anthony Azevedo\Raw_Data\140206\140206_F1_C1\VoltagePlateau_Raw_140206_F1_C1_1.mat';...
     'C:\Users\Anthony Azevedo\Raw_Data\140206\140206_F1_C1\PiezoSine_Raw_140206_F1_C1_26.mat';...
     };
-analysis_cell(6).breakin_trial = {...
+analysis_cell(cnt).breakin_trial = {...
     'C:\Users\Anthony Azevedo\Raw_Data\140206\140206_F1_C1\Sweep_Raw_140206_F1_C1_2.mat';...
     };
-analysis_cell(6).plateau_trial = {...
+analysis_cell(cnt).plateau_trial = {...
     'C:\Users\Anthony Azevedo\Raw_Data\140206\140206_F1_C1\VoltagePlateau_Raw_140206_F1_C1_1.mat';...
     };
 
-analysis_cell(7).name = '140207_F1_C2';
-analysis_cell(7).comment = {'Moving a lot!  Should be able to fix, Not sound responsive. Cell is pressed against others'};
-analysis_cell(7).exampletrials = {...
-    'C:\Users\Anthony Azevedo\Raw_Data\140207\140207_F1_C2\Sweep_Raw_140207_F1_C2_2.mat';...
-    'C:\Users\Anthony Azevedo\Raw_Data\140207\140207_F1_C2\VoltagePlateau_Raw_140207_F1_C2_5.mat';...
-    };
-analysis_cell(7).breakin_trial = {...
-    'C:\Users\Anthony Azevedo\Raw_Data\140207\140207_F1_C2\Sweep_Raw_140207_F1_C2_2.mat';...
-    };
-analysis_cell(7).plateau_trial = {...
-    'C:\Users\Anthony Azevedo\Raw_Data\140207\140207_F1_C2\VoltagePlateau_Raw_140207_F1_C2_5.mat';...
-    };
-
-cnt = 8;
+cnt = 5;
 analysis_cell(cnt).name = '140528_F1_C1';
 analysis_cell(cnt).comment = {
 'Break in at -25, pretty good cell. Changed gain in Iclamp, though this doesnt matter'
@@ -104,7 +80,7 @@ analysis_cell(cnt).plateau_trial = {...
     };
 
 
-cnt = 9;
+cnt = 6;
 analysis_cell(cnt).name = '140530_F1_C1';
 analysis_cell(cnt).comment = {
 'Break in at -25, High Frequency cell.'
@@ -121,7 +97,7 @@ analysis_cell(cnt).plateau_trial = {...
     };
 
 
-cnt = 10;
+cnt = 7;
 analysis_cell(cnt).name = '140530_F2_C1';
 analysis_cell(cnt).comment = {
 'Break in at -25, High Frequency cell.'
@@ -137,7 +113,7 @@ analysis_cell(cnt).plateau_trial = {...
 'C:\Users\Anthony Azevedo\Raw_Data\140530\140530_F2_C1\VoltagePlateau_Raw_140530_F2_C1_2.mat';
     };
 
-cnt = 11;
+cnt = 8;
 analysis_cell(cnt).name = '140602_F1_C1';
 analysis_cell(cnt).comment = {
 'Break in at -25, Mid Range Spiking.'
@@ -153,7 +129,7 @@ analysis_cell(cnt).plateau_trial = {...
 'C:\Users\Anthony Azevedo\Raw_Data\140602\140602_F1_C1\VoltagePlateau_Raw_140602_F1_C1_1.mat';
     };
 
-cnt = 12;
+cnt = 9;
 analysis_cell(cnt).name = '140602_F2_C1';
 analysis_cell(cnt).comment = {
 'Break in at -25, Mid range, non spiking. Motion artifact'
@@ -169,7 +145,7 @@ analysis_cell(cnt).plateau_trial = {...
 'C:\Users\Anthony Azevedo\Raw_Data\140602\140602_F2_C1\VoltagePlateau_Raw_140602_F2_C1_1.mat';
     };
 
-cnt = 13;
+cnt = 10;
 analysis_cell(cnt).name = '140603_F1_C1';
 analysis_cell(cnt).comment = {
 'Break in at -25, Mid range, non spiking. There is a delay in the acquisition. didnt have the exposure trace'
@@ -192,7 +168,7 @@ for c_ind = 1:length(analysis_cell)
     fprintf('Comment: %s\n\n', analysis_cell(c_ind).comment{1});
 end
 
-backgroundCorrectionFlag = 1;
+backgroundCorrectionFlag =0;
 if backgroundCorrectionFlag
     savedir = 'C:\Users\Anthony Azevedo\RAnalysis_Data\Record_ArcLightImaging\BackgroundCorrection';
 else
@@ -235,15 +211,15 @@ moving_cell(2).evidencecalls = {...
     };
 
 
-moving_cell(3).name = '140207_F1_C2';
-moving_cell(3).comment = {'Cell is pressed against others. Moving a lot!  Should be able to fix, Not sound responsive.'};
-moving_cell(3).exampletrials = {...
-    'C:\Users\Anthony Azevedo\Raw_Data\140207\140207_F1_C2\Sweep_Raw_140207_F1_C2_1.mat';...
-    'C:\Users\Anthony Azevedo\Raw_Data\140207\140207_F1_C2\Sweep_Raw_140207_F1_C2_2.mat';...
-    'C:\Users\Anthony Azevedo\Raw_Data\140207\140207_F1_C2\VoltagePlateau_Raw_140207_F1_C2_5.mat';...
-    };
-moving_cell(3).evidencecalls = {...
-    };
+% moving_cell(3).name = '140207_F1_C2';
+% moving_cell(3).comment = {'Cell is pressed against others. Moving a lot!  Should be able to fix, Not sound responsive.'};
+% moving_cell(3).exampletrials = {...
+%     'C:\Users\Anthony Azevedo\Raw_Data\140207\140207_F1_C2\Sweep_Raw_140207_F1_C2_1.mat';...
+%     'C:\Users\Anthony Azevedo\Raw_Data\140207\140207_F1_C2\Sweep_Raw_140207_F1_C2_2.mat';...
+%     'C:\Users\Anthony Azevedo\Raw_Data\140207\140207_F1_C2\VoltagePlateau_Raw_140207_F1_C2_5.mat';...
+%     };
+% moving_cell(3).evidencecalls = {...
+%     };
 
 
 for c_ind = 1%:length(moving_cell)
@@ -385,6 +361,7 @@ for c_ind = 1:length(analysis_cell)
     
     commandvoltage(c_ind) = mean(trial.voltage(t<break_in)); %#ok<SAGROW>
     deltaT = t(break_in);
+    breakinDeltaT(c_ind) = deltaT;
     
     % Change the time base (exposure time and t);
     et = trial.exposure_time-deltaT;
@@ -412,63 +389,59 @@ for c_ind = 1:length(analysis_cell)
     coef = [-40, 40,3];            
     exp_base = et(et>0 & et<4);
 
-    [exp_coeffout,resid,jacob,covab,mse] = nlinfit(...
+    [exp_coeffout(c_ind,:),resid,jacob,covab,mse] = nlinfit(...
         exp_base(:)',...
         breakin_dF(et>0 & et<4),...
-        @exponential,coef);
-    parci = nlparci(exp_coeffout,resid,'jacobian',jacob);
+        @exponential,coef); %#ok<SAGROW>
+    parci = nlparci(exp_coeffout(c_ind,:),resid,'jacobian',jacob);
     
     base_base = et(et>-.5 & et<0);
-    [base_coeffout] = polyfit(...
+    base_coeffout(c_ind,:) = polyfit(...
         base_base(:)',...
         breakin_dF(et>-.5 & et<0),...
         1);
     breakin_dF_model = [...
-        base_coeffout(1)*et_window(et_window <= 0) + base_coeffout(2); ...
-        exponential(exp_coeffout,et_window(et_window > 0))];
+        base_coeffout(c_ind,1)*et_window(et_window <= 0) + base_coeffout(c_ind,2); ...
+        exponential(exp_coeffout(c_ind,:),et_window(et_window > 0))];
     
+    % Plot
     subplot(3,1,2), hold on
     plot(...
         et(et>-.5 & et<0)+deltaT,...
-        base_coeffout(1)*et(et>-.5 & et<0) + base_coeffout(2));
+        base_coeffout(c_ind,1)*et(et>-.5 & et<0) + base_coeffout(c_ind,2));
     plot(...
         et(et>-.5 & et<0)+deltaT,...
         breakin_dF(et>-.5 & et<0),'m');
     
-    switch analysis_cell(c_ind).name
-        case '140207_F1_C2'
-            exp_base = et(et>0 & et<.4);
-            [exp_coeffout] = polyfit(...
-                exp_base(:)',...
-                breakin_dF(et>0 & et<.4),...
-                1);
-            breakin_dF_model = [...
-                base_coeffout(1)*et_window(et_window <= 0) + base_coeffout(2); ...
-                exp_coeffout(1)*et_window(et_window > 0) + exp_coeffout(2)];
-
-            % Plot
-            subplot(3,1,2), hold on
-            plot(...
-                et(et>0)+deltaT,...
-                exp_coeffout(1)*et(et>0) + exp_coeffout(2));
-            plot(...
-                et(et>0)+deltaT,...
-                breakin_dF(et>0),'g');
-        otherwise
-            % Plot
-            subplot(3,1,2), hold on
-            plot(...
-                et(et>0)+deltaT,...
-                exponential(exp_coeffout,et(et>0)));
-            plot(...
-                et(et>0)+deltaT,...
-                breakin_dF(et>0),'g');
-    end
+    subplot(3,1,2), hold on
+    plot(...
+        et(et>0)+deltaT,...
+        exponential(exp_coeffout(c_ind,:),et(et>0)));
+    plot(...
+        et(et>0)+deltaT,...
+        breakin_dF(et>0),'g');
     
 
     breakin_dF = breakin_dF(frame_window);
-    
     breakin_dF_traces(c_ind,:) = breakin_dF; %#ok<SAGROW>
+    
+    detrend = breakin_dF(:);
+    detrend(et_window <= 0) = ... % detrend baseline
+        detrend(et_window <= 0) - ...
+        breakin_dF_model(et_window <= 0);
+    detrend(et_window <= 0) = ... % add back final baseline point
+        detrend(et_window <= 0) + ...
+        repmat(breakin_dF_model(find(et_window<=0,1,'last')),size(et_window(et_window <= 0)));
+    detrend(et_window > 0) = ... % detrend baseline
+        detrend(et_window > 0) - ...
+        breakin_dF_model(et_window > 0);
+    detrend(et_window > 0) = ... % add back final baseline point
+        detrend(et_window > 0) + ...
+        repmat(breakin_dF_model(find(et_window>0,1,'first')),size(et_window(et_window > 0)));
+    
+    breakin_dF_detrended(c_ind,:) = detrend;
+    breakin_dF_dF_detrended(c_ind,:) = detrend-mean(detrend(et_window<=0),1);
+    
     breakin_dF_model_traces(c_ind,:) = breakin_dF_model' - breakin_dF_model(find(et_window<=0,1,'last')); %#ok<SAGROW>
     breakin_dF_dF(c_ind,:) = breakin_dF - mean(breakin_dF(et_window<=0)); %#ok<SAGROW>
     breakin_exposure_time_windows(c_ind,:) = et_window; %#ok<SAGROW>
@@ -526,6 +499,51 @@ eval(['export_fig ', ...
     [savedir 'Break-in_Fluorescence'],...
     ' -pdf -transparent'])
 
+%%
+% With the time of break-in found and the change in fluorescence localized,
+% plot the fluorescence trace after detrending.  Also compare each trace to
+% it's detrended line
+close all
+
+fig = figure;
+ax = subplot(1,1,1); hold on
+colors = get(ax,'ColorOrder');
+colors = [colors; (2/3)*colors];
+for t_ind = 1:size(breakin_dF_dF_detrended,1)
+    plot(ax, breakin_exposure_time_windows(t_ind,:),breakin_dF_dF_detrended(t_ind,:),...
+        '-','color',colors(t_ind,:),...
+        'displayname',analysis_cell(t_ind).name);
+    x_p = breakin_exposure_time_windows(t_ind,:) > .03 & breakin_exposure_time_windows(t_ind,:) <.13;
+    x_n = breakin_exposure_time_windows(t_ind,:) > -.1 & breakin_exposure_time_windows(t_ind,:) <.02;
+    DeltaF_breakin_detrended(t_ind) = mean(breakin_dF_dF_detrended(t_ind,x_p),2)-...
+        mean(breakin_dF_dF_detrended(t_ind,x_n),2); %#ok<SAGROW>
+    
+    figure
+    subplot(1,1,1); hold on
+    plot(breakin_exposure_time_windows(t_ind,:),breakin_dF_dF(t_ind,:),...
+        '-','color',colors(t_ind,:),...
+        'displayname',analysis_cell(t_ind).name);
+    plot(breakin_exposure_time_windows(t_ind,:),breakin_dF_dF_detrended(t_ind,:),...
+        'o','Markerfacecolor',colors(t_ind,:),...
+        'displayname',analysis_cell(t_ind).name);
+    
+end
+
+figure(fig)
+ylabel(ax,'% \DeltaF/F')
+xlabel(ax,'Time from break-in (s)');
+textbp('Frames, 20 ms exposure');
+
+plot(ax,[-.1 -.1],get(gca,'ylim'),'--', 'color',[1 .9 .9]);
+plot(ax,[-.02 -.02],get(gca,'ylim'),'--','color',[1 .9 .9]);
+plot(ax,[.03 .03],get(gca,'ylim'),'--','color',[.9 .9 1]);
+plot(ax,[.13 .13],get(gca,'ylim'),'--','color',[.9 .9 1]);
+
+saveas(fig,fullfile(regexprep(savedir,'''',''),'Break-in_Fluo_detrend'));
+
+eval(['export_fig ', ...
+    [savedir 'Break-in_Fluo_detrend'],...
+    ' -pdf -transparent'])
 
 %%
 % With the time of break-in found and the change in fluorescence localized,
@@ -568,6 +586,24 @@ eval(['export_fig ', ...
     [savedir 'FitVsMeasured_DeltaF'],...
     ' -pdf -transparent'])
 
+%% Compare the actual and detrended breakins
+figure
+hold on
+for c_ind = 1:length(DeltaF_breakin)
+    plot(DeltaF_breakin(c_ind),DeltaF_breakin_detrended(c_ind),'o','color',colors(c_ind,:),'markerfacecolor',colors(c_ind,:),'DisplayName',analysis_cell(c_ind).name);
+end
+
+scale = [min([DeltaF_breakin(:);DeltaF_breakin_detrended(:)]) , max([DeltaF_breakin(:);DeltaF_breakin_detrended(:)])];
+plot(scale,scale,':','color',[1 1 1]*.8);
+xlabel('Measured %\DeltaF/F')
+ylabel('%\DeltaF/F after detrend')
+title('\DeltaF/F: detrended vs measured')
+[RHO,PVAL] = corr(DeltaF_breakin(:),DeltaF_breakin_detrended(:));
+textbp(sprintf('rho = %.2f',RHO));
+
+eval(['export_fig ', ...
+    [savedir 'DetrendVsMeasured_DeltaF'],...
+    ' -pdf -transparent'])
 
 %% 
 % Plot DF_over_F vs holding potential
@@ -616,6 +652,30 @@ set(gcf,'tag','DFoverF_vs_DV_fig');
 
 eval(['export_fig ', ...
     [savedir 'DFoverF_vs_DV_model'],...
+    ' -pdf -transparent'])
+
+%% Detrended
+% Plot DF_over_F vs holding potential
+
+figure
+hold on
+for c_ind = 1:length(DeltaF_breakin)
+    plot(commandvoltage(c_ind),DeltaF_breakin_detrended(c_ind),'o','color',colors(c_ind,:),'markerfacecolor',colors(c_ind,:),'DisplayName',analysis_cell(c_ind).name);
+end
+legend(gca,'show','location','best')
+plot([0 0],get(gca,'ylim'),'k:')
+plot(get(gca,'xlim'),[0 0],'k:')
+xlim([-50,-20])
+title('Detrended \DeltaF/F');
+
+ylabel('% \DeltaF/F')
+xlabel('V_m (mV)');
+
+set(gcf,'tag','DFoverF_vs_DV_detrend');
+saveas(gcf,fullfile(regexprep(savedir,'''',''),'DFoverF_vs_DV_detrend'));
+
+eval(['export_fig ', ...
+    [savedir 'DFoverF_vs_DV_detrend'],...
     ' -pdf -transparent'])
 
 
@@ -685,41 +745,45 @@ for c_ind = 1:length(analysis_cell)
     
     parci = nlparci(coeffout(c_ind,:),resid,'jacobian',jacob);
 
-    deltaV_hyp = 1.5*min(dV(1,:)):.01: 1.5*max(dV(1,:));
-
+    deltaV_hyp = 2*min(dV(1,:)):.01: 2*max(dV(1,:));
     [dFprediction, delta] = nlpredci(@CaoBoltzmann,deltaV_hyp,coeffout(c_ind,:),resid,'covar',covab);
+    set(gca,'xlim',[deltaV_hyp(1) deltaV_hyp(end)],'ylim',[min(dFprediction-delta),max(dFprediction+delta)])
+
     hold on,
     plot(deltaV_hyp,dFprediction,'color',colors(c_ind,:),'linewidth',2)
     plot(deltaV_hyp,[dFprediction+delta;dFprediction-delta],'color',colors(c_ind,:),'linewidth',.5)
+    plot(get(gca,'xlim'),[DeltaF_breakin(c_ind) ,DeltaF_breakin(c_ind)],':','color',colors(c_ind,:));
     
-    deltaV_hyp_in_ci = false(size(deltaV_hyp));
-    for v_ind = 1:length(deltaV_hyp)
-        if DeltaF_breakin(c_ind) < dFprediction(v_ind) + delta(v_ind) && DeltaF_breakin(c_ind) > dFprediction(v_ind) - delta(v_ind)
-            deltaV_hyp_in_ci(v_ind) = true;
-        end
+    % at some point, moving from left to right, breakin deltaF is
+    % larger than the boltzman.
+    mid = find(dFprediction <= DeltaF_breakin(c_ind),1,'first');
+    midVm = deltaV_hyp(mid);
+    if isempty(mid)
+        mid = length(dFprediction);
+        midVm = deltaV_hyp(end);
     end
-    if sum(deltaV_hyp_in_ci)
-        left = find(deltaV_hyp_in_ci,1,'first');
-        right = find(diff(deltaV_hyp_in_ci)==-1,1,'first');
-        mid = find(dFprediction <= DeltaF_breakin(c_ind),1,'first')
-        if isempty(right)
-            
-        end
-        plot([deltaV_hyp(left) deltaV_hyp(left)], get(gca,'ylim'),'k','color',[.8 .8 .8]);
-        plot([deltaV_hyp(right) deltaV_hyp(right)], get(gca,'ylim'),'k','color',[.8 .8 .8]);
-        plot(deltaV_hyp(mid),DeltaF_breakin(c_ind),'o','color',colors(c_ind,:),'markerfacecolor',colors(c_ind,:));
-        plot(get(gca,'xlim'),[DeltaF_breakin(c_ind) ,DeltaF_breakin(c_ind)],':','color',colors(c_ind,:));
 
-        predci_delta(c_ind) = deltaV_hyp(right) - deltaV_hyp(left);
-
-        DeltaV_breakin(c_ind) = deltaV_hyp(mid);
-        out_of_range_cell(c_ind) = 0; 
+    % then find where the measurement crosses the prediction line
+    left = find(dFprediction(1:mid)-delta(1:mid)>= DeltaF_breakin(c_ind),1,'last');
+    leftVm = deltaV_hyp(left)-midVm;
+    if isempty(left)
+        leftVm = deltaV_hyp(1);
+    end
+    right = find(dFprediction(mid+1:end)+delta(mid+1:end)<= DeltaF_breakin(c_ind),1,'first');
+    if ~isempty(right)
+        right = mid+right;
+        rightVm = deltaV_hyp(right)-midVm;
     else
-        error
-        plot(get(gca,'xlim'),[DeltaF_breakin(c_ind) ,DeltaF_breakin(c_ind)],':','color',colors(c_ind,:));
-        DeltaV_breakin(c_ind) = min(dV(1,:));
-        out_of_range_cell(c_ind) = 1; 
+        rightVm = deltaV_hyp(end);
     end
+    
+    plot([midVm+leftVm midVm+leftVm], get(gca,'ylim'),'k','color',[.8 .8 .8]);
+    plot([midVm+rightVm midVm+rightVm], get(gca,'ylim'),'k','color',[.8 .8 .8]);
+    plot(midVm,DeltaF_breakin(c_ind),'o','color',colors(c_ind,:),'markerfacecolor',colors(c_ind,:));
+    
+    predci_delta(c_ind,:) = [leftVm rightVm];
+    
+    DeltaV_breakin(c_ind) = midVm;
     
     eval(['export_fig ', ...
         [savedir ['DeltaV_breakin_',dateID,'_',flynum,'_',cellnum]],...
@@ -731,16 +795,91 @@ end
 close all
 figure; hold on
 for c_ind = 1:length(analysis_cell)
-    if ~out_of_range_cell(c_ind)
         plot(DeltaF_breakin(c_ind) , DeltaV_breakin(c_ind),'o','color',colors(c_ind,:),'markerfacecolor',colors(c_ind,:));
-        errorbar(DeltaF_breakin(c_ind),DeltaV_breakin(c_ind),predci_delta(c_ind));
-    else
-        %plot(DeltaF_breakin(c_ind) , DeltaV_breakin(c_ind),'o','color',colors(c_ind,:));
-    end
+        errorbar(DeltaF_breakin(c_ind),DeltaV_breakin(c_ind),predci_delta(c_ind,1),predci_delta(c_ind,2));
 end
-
 xlabel('%\DeltaF/F')
 ylabel('Predicted \DeltaV (+/- ci)')
+
+eval(['export_fig ', ...
+    [savedir 'Predicted_dV_vs_dF'],...
+    ' -pdf -transparent'])
+
+%% Compare the tau of the quenching with the access resistance
+
+for c_ind = 1:length(analysis_cell)
+    clear obj
+    disp(analysis_cell(c_ind).name)   
+    trial = load(analysis_cell(c_ind).breakin_trial{1});
+        
+    % Find the Break-in point
+    t = makeInTime(trial.params);
+    current = trial.current(1:length(t));
+    baseline = t<.5;
+    current_baseline_std = std(trial.current(baseline));
+    threshold = 10;
+    
+    switch analysis_cell(c_ind).name
+        case '140206_F1_C1'
+            break_in = 595501;
+        case '140602_F1_C1'
+            break_in = 56500;
+        case '140602_F2_C1'
+            break_in = 89205;
+        otherwise
+            break_in = find(abs(current-current_baseline_std) > threshold*current_baseline_std,1);
+    end
+    
+    commandvoltage(c_ind) = mean(trial.voltage(t<break_in)); %#ok<SAGROW>
+    deltaT = t(break_in);
+
+    % Change the time base (exposure time and t);
+    t = t-(deltaT+.25);
+    current = trial.current(1:length(t));
+    current = current(t>=0 & t < 2);
+    voltage = trial.voltage(1:length(t));
+    voltage = voltage(t>=0 & t < 2);
+    t_ = t(t>=0 & t < 2);
+
+    upcrossings = false(size(t_));
+    upcrossings(diff(voltage>min(voltage(:)+2.5))>0) = true;
+    u_ind = find(upcrossings);
+    delta = min(diff(u_ind));
+    
+    transients = nan(delta,length(u_ind));
+    for i = 1:length(u_ind)
+        if u_ind(i)+delta>length(upcrossings)
+            continue
+        end
+        transients(:,i) = current(u_ind(i):u_ind(i)+delta-1);
+    end
+    
+    figure
+    plot(transients,'color',[.8 .8 .8]); hold on
+    transient = nanmean(transients,2);
+    plot(transient,'color',[0 0 0])
+    title(analysis_cell(c_ind).name)
+    
+    R_a(c_ind) = 5e-3/((max(transient)-transient(1))*1e-12);
+
+end
+%close all
+
+fig = figure;
+ax = subplot(1,1,1,'parent',fig); hold on;
+for c_ind = 1:length(R_a)
+    plot(R_a(c_ind),exp_coeffout(c_ind,3),'o','color',colors(c_ind,:),'markerfacecolor',colors(c_ind,:),'DisplayName',analysis_cell(c_ind).name);
+end
+
+legend(gca,'show','location','best')
+xlabel('Access R (Ohms)');
+ylabel('Quenching Time constant (s)');
+set(ax,'xlim',[1 15]*1e7)
+
+eval(['export_fig ', ...
+    [savedir 'Quench_vs_access'],...
+    ' -pdf -transparent'])
+
 
 %% Main Figure
 close all
@@ -767,22 +906,24 @@ UnabridgedSweep(sweepfig,obj,'Save','BGCorrectImages',false);
 roiFig = figure;
 roiFluoTrace(obj.trial,obj.trial.params,'NewROI','No','dFoFfig',roiFig,'MotionCorrection',true);
 
-tracesFig = open(fullfile(regexprep(savedir,'''',''),'Break-in_Fluorescence.fig'));
+tracesFig = open(fullfile(regexprep(savedir,'''',''),'Break-in_Fluo_detrend.fig'));
 
-dotsFig = open(fullfile(regexprep(savedir,'''',''),'DFoverF_vs_DV_fig.fig'));
+dotsFig = open(fullfile(regexprep(savedir,'''',''),'DFoverF_vs_DV_detrend.fig'));
 
-%%
-%close mainFig
+
+%% close mainFig
 mainFig = figure;
-
 set(mainFig,'color',[1 1 1],'position',[527   298   713   680])
+
 panl = panel(mainFig);
 panl.fontname = 'Arial';
+panl.fontsize = 10;
+panl.margin = [16 12 10 10]
 panl.pack('h',{1/2 1/2})  % response panel, stimulus panel
 
 panl(1).pack('v',{1/4 3/4})
 panl(1,2).pack('v',{1/3 1/3 1/3})
-panl(1,2).de.margin = 4;
+panl(1,2).de.margin = 8;
 
 panl(2).pack('v',{1/2 1/2});
 
@@ -804,11 +945,40 @@ xlims = [3.16 3.56];
 ax1 = panl(1,2,1).select();
 inax = findobj(sweepfig,'tag','quickshow_dFoverF_ax');
 l = copyobj(findobj(inax,'type','line'),ax1);
-time = get(l,'xdata');
-current = get(l,'ydata');
-set(l,'ydata',current - mean(current(time>=3 & time<=3.26)));
+et = get(l,'xdata');
+et = et(:);
+
+xlims = [3.0 3.96];
+
+et_window = et(et>=xlims(1) & et <= xlims(2));
+et_window = et_window-breakinDeltaT(c_ind);
+df = get(l,'ydata');
+df = df(:);
+detrend = df(et>=xlims(1) & et <= xlims(2));
+
+breakin_dF_model = [...
+    base_coeffout(c_ind,1)*et_window(et_window <= 0) + base_coeffout(c_ind,2); ...
+    exponential(exp_coeffout(c_ind,:),et_window(et_window > 0))];
+
+detrend(et_window <= 0) = ... % detrend baseline
+    detrend(et_window <= 0) - ...
+    breakin_dF_model(et_window <= 0);
+detrend(et_window <= 0) = ... % add back final baseline point
+    detrend(et_window <= 0) + ...
+    repmat(breakin_dF_model(find(et_window<=0,1,'last')),size(et_window(et_window <= 0)));
+detrend(et_window > 0) = ... % detrend baseline
+    detrend(et_window > 0) - ...
+    breakin_dF_model(et_window > 0);
+detrend(et_window > 0) = ... % add back final baseline point
+    detrend(et_window > 0) + ...
+    repmat(breakin_dF_model(find(et_window>0,1,'first')),size(et_window(et_window > 0)));
+detrend = detrend - mean(detrend(et_window <= 0),1);
+df(et>=xlims(1) & et <= xlims(2)) = detrend;
+set(l,'ydata',df);
 panl(1,2,1).ylabel('%\DeltaF/F')
 set(ax1,'YLim',[-2 5],'xtick',[],'xColor',[1 1 1]);
+
+xlims = [3.16 3.56];
 
 % current break in panel
 ax2 = panl(1,2,2).select();
@@ -864,7 +1034,15 @@ end
 fn = fullfile(regexprep(savedir,'''',''),'ArcLightMainFig.pdf');
 panl.export(fn, '-rp', '-a1.0');
 
+%% Big Fig for Gordon Conference poster % Would need to fix this!
+set(mainFig,'units','inches')
+set(mainFig,'position',[0 0   11   12])
 
+panl.fontname = 'Arial';
+panl.fontsize = 10;
+panl.margin = [24 24 10 10]
+
+export_fig 'C:\Users\Anthony Azevedo\RAnalysis_Data\Record_ArcLightImaging\MainFigBig.pdf'
 %%
 panl.margin = [18 10 2 10];
 panl(2).marginleft = 18;
@@ -998,8 +1176,35 @@ for c_ind = 1:length(reject_cells)
 end
 
 
+analysis_cell(5).name = '140205_F1_C1';
+analysis_cell(5).comment = {'Not a B1 cell, some spikes, smaller DF/F / DV'};
+analysis_cell(5).exampletrials = {...
+    'C:\Users\Anthony Azevedo\Raw_Data\140205\140205_F1_C1\Sweep_Raw_140205_F1_C1_3.mat';...
+    'C:\Users\Anthony Azevedo\Raw_Data\140205\140205_F1_C1\VoltagePlateau_Raw_140205_F1_C1_2.mat';...
+    };
+analysis_cell(5).breakin_trial = {...
+    'C:\Users\Anthony Azevedo\Raw_Data\140205\140205_F1_C1\Sweep_Raw_140205_F1_C1_3.mat';...
+    };
+analysis_cell(5).plateau_trial = {...
+    'C:\Users\Anthony Azevedo\Raw_Data\140205\140205_F1_C1\VoltagePlateau_Raw_140205_F1_C1_2.mat';...
+    };
+
+analysis_cell(7).name = '140207_F1_C2';
+analysis_cell(7).comment = {'Moving a lot!  Should be able to fix, Not sound responsive. Cell is pressed against others'};
+analysis_cell(7).exampletrials = {...
+    'C:\Users\Anthony Azevedo\Raw_Data\140207\140207_F1_C2\Sweep_Raw_140207_F1_C2_2.mat';...
+    'C:\Users\Anthony Azevedo\Raw_Data\140207\140207_F1_C2\VoltagePlateau_Raw_140207_F1_C2_5.mat';...
+    };
+analysis_cell(7).breakin_trial = {...
+    'C:\Users\Anthony Azevedo\Raw_Data\140207\140207_F1_C2\Sweep_Raw_140207_F1_C2_2.mat';...
+    };
+analysis_cell(7).plateau_trial = {...
+    'C:\Users\Anthony Azevedo\Raw_Data\140207\140207_F1_C2\VoltagePlateau_Raw_140207_F1_C2_5.mat';...
+    };
 
 
+% Note, in this commit, I lost the analysis_cell 140122 cell, for some
+% reason
 %%
 '131203_F1_C1'; % All Cells recorded in VT30609/ArcLight line
 '131203_F1_C2';

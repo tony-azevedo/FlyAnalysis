@@ -8,11 +8,11 @@
 % Low Frequency cell, down the row of middle amplitude % VT 30609
 close all
 figure(1)
-
-analysis_cell.name = {  % 131015_F3_C1
+clear analysis_cell
+analysis_cell.name = {...  % 131015_F3_C1
     '140128_F1_C1';
     };
-analysis_cell.comment = {
+analysis_cell.comment = {...
     'Low Frequency selective, very nice!'
     };
 analysis_cell.exampletrials = {...
@@ -21,7 +21,7 @@ analysis_cell.exampletrials = {...
     'C:\Users\Anthony Azevedo\Raw_Data\140128\140128_F1_C1\PiezoSine_Raw_140128_F1_C1_81.mat';
     'C:\Users\Anthony Azevedo\Raw_Data\140128\140128_F1_C1\PiezoStep_Raw_140128_F1_C1_1.mat';
     };
-analysis_cell.evidencecalls = {
+analysis_cell.evidencecalls = {...
     @UnabridgedSweep
     @PiezoSineMatrix
     @PiezoSineOsciRespVsFreq
@@ -785,56 +785,6 @@ obj.prtclData = prtclData.data;
 obj.prtclTrialNums = obj.currentTrialNum;
 
 
-% figA_old = PiezoSineMatrix([],obj,'');
-% figA = copyfig(figA_old);
-% 
-% ch = get(figA,'children');
-% 
-% low = ch(18);
-% mid = ch(28);
-% high = ch(38);
-% 
-% hs = [low mid high];
-% 
-% sps = {
-%     [1 3] 5
-%     [7 9] 11
-%     [13 15] 17
-% };
-% for p_ind = 1:length(hs)
-%     axs = get(hs(p_ind),'children');
-%     
-%     ax = subplot(12,2,sps{p_ind,1},'parent',4);
-%     pos2 = get(ax,'position');
-%     delete(ax);
-%     set(axs(2),'position',pos2,'parent',4);
-%     set(axs(2),'TickDir','out','XColor',[1 1 1],'XTick',[],'XTickLabel','');
-%     set(axs(2),'TickDir','out','YColor',[1 1 1],'YTick',[],'YTickLabel','');
-%     set(axs(2),'ylim',[-48.5390  -15])
-%     set(axs(2),'xlim',[-.1  .55])
-%     set(axs(2),'YTick',[-40 -20])
-%     set(axs(2),'Ycolor',[0 0 0])
-%     title(axs(2),'');
-%     ylabel(axs(2),'');
-%     
-%     ax = subplot(12,2,sps{p_ind,2},'parent',4);
-%     pos1 = get(ax,'position');
-%     pos1(4) = max(pos1(4),pos2(4)/2);
-%     delete(ax);
-%     set(axs(1),'position',pos1,'parent',4);
-%     set(axs(1),'xlim',[-.1  .4])
-%     delete(findobj(axs(1),'type','text'))
-%     title(axs(1),'');
-%     ylabel(axs(1),'');
-%     set(axs(1),'ylim',[4.54  5.4])
-%     set(axs(1),'xlim',[-.1  .55])
-%     set(axs(1),'YTick',[4.6 5.4])
-%     set(axs(1),'Ycolor',[0 0 0])
-% 
-% end
-% 
-% close(figA)
-
 PiezoSineDepolRespVsFreq([],obj,'');
 figB_old = 200;
 
@@ -852,7 +802,7 @@ title(axs,'');
 
 close(figB);
 
-open C:\Users\Anthony' Azevedo'\Dropbox\NRSA_Resubmit\Figures\AVLP_Sine_BWCS.fig
+open C:\Users\Anthony' Azevedo'\Projects\NRSA_Resubmit\Figures\Old\AVLP_Sine_BWCS.fig
 figB = gcf;
 
 axs = get(figB,'children');
@@ -900,56 +850,6 @@ prtclData = load(dfile);
 obj.prtclData = prtclData.data;
 obj.prtclTrialNums = obj.currentTrialNum;
 
-% figC_old = PiezoSineMatrix([],obj,'');
-
-%
-% figC = copyfig(figC_old);
-% 
-% ch = get(figC,'children');
-% 
-% low = ch(13);
-% mid = ch(19);
-% 
-% hs = [low mid];
-% 
-% sps = {
-%     [2 4] 6
-%     [8 10] 12
-% };
-% for p_ind = 1:length(hs)
-%     axs = get(hs(p_ind),'children');
-%     
-%     ax = subplot(12,2,sps{p_ind,1},'parent',4);
-%     pos2 = get(ax,'position');
-%     delete(ax);
-%     set(axs(2),'position',pos2,'parent',4);
-%     set(axs(2),'TickDir','out','XColor',[1 1 1],'XTick',[],'XTickLabel','');
-%     set(axs(2),'TickDir','out','YColor',[1 1 1],'YTick',[],'YTickLabel','');
-%     set(axs(2),'ylim',[-48.5390  -15])
-%     set(axs(2),'xlim',[-.1  .55])
-%     set(axs(2),'YTick',[-40 -20])
-%     set(axs(2),'Ycolor',[0 0 0])
-%     title(axs(2),'');
-%     ylabel(axs(2),'');
-%     
-%     ax = subplot(12,2,sps{p_ind,2},'parent',4);
-%     pos1 = get(ax,'position');
-%     pos1(4) = max(pos1(4),pos2(4)/2);
-%     delete(ax);
-%     set(axs(1),'position',pos1,'parent',4);
-%     set(axs(1),'xlim',[-.1  .4])
-%     delete(findobj(axs(1),'type','text'))
-%     title(axs(1),'');
-%     ylabel(axs(1),'');
-%     set(axs(1),'ylim',[4.54  5.4])
-%     set(axs(1),'xlim',[-.1  .55])
-%     set(axs(1),'YTick',[4.6 5.4])
-%     set(axs(1),'Ycolor',[0 0 0])
-% 
-% end
-% 
-% close(figC)
-
 PiezoSineDepolRespVsFreq([],obj,'');
 figD_old = 200;
 
@@ -965,7 +865,7 @@ set(axs,'ylim',[0 6]);
 set(axs,'TickDir','out')
 title(axs,'');
 
-open C:\Users\Anthony' Azevedo'\Dropbox\NRSA_Resubmit\Figures\AVLP_Pulse_BWCS.fig
+open C:\Users\Anthony' Azevedo'\Projects\NRSA_Resubmit\Figures\Old\AVLP_Pulse_BWCS.fig
 figD = gcf;
 
 axs = get(figD,'children');
@@ -991,6 +891,6 @@ set(axs(1),'ylim',[3.7773    5.8852]);
 set(axs(1),'xlim',[-.4    1.6]);
 
 %% Export fig
-export_fig C:\Users\Anthony' Azevedo'\Dropbox\NRSA_Resubmit\Figures\Figure_4 -pdf -transparent
+export_fig C:\Users\Anthony Azevedo\Projects\NRSA_Resubmit\Figures\Figure_4 -pdf -transparent
 
 

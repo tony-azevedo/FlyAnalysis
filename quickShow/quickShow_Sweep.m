@@ -19,7 +19,7 @@ ax1 = subplot(3,1,3,'parent',plotcanvas);
 set(ax1,'tag','quickshow_outax');
 
 if isfield(obj.trial.params,'recmode');
-    obj.trial.params.mode = obj.trial.params.recmode(1:6);
+    obj.trial.params.mode = obj.trial.params.recmode(1:min(6,length(obj.trial.params.recmode)));
     data = obj.trial;
     save(regexprep(data.name,'Acquisition','Raw_Data'), '-struct', 'data');
 end

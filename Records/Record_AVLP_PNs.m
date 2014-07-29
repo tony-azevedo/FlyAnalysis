@@ -126,7 +126,7 @@ analysis_cell(cnt).genotype = genotypoToFilename(IdentifyGenotype(getFlyGenotype
 
 %% Cells to Analyze:
 cnt = 0;
-
+clear analysis_cell
 cnt = cnt+1;
 analysis_cell(cnt).name = {
     '140110_F1_C1';

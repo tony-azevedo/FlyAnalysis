@@ -122,3 +122,9 @@ panl(1).pack('h',{1/3 2/3})
 [protocol,dateID,flynum,cellnum,trialnum] = extractRawIdentifiers(data.name);
     
 panl.title([protocol '\_' dateID '\_' flynum '\_' cellnum '\_' trialnum])
+
+%% colors
+
+ax = subplot(1,1,1); hold on
+colors = get(gca,'ColorOrder');
+colors = [colors; (2/3)*colors];

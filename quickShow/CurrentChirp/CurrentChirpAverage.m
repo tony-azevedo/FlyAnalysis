@@ -1,4 +1,4 @@
-function h = PiezoChirpAverage(h,handles,savetag)
+function h = CurrentChirpAverage(h,handles,savetag)
 
 % see also AverageLikeSongs
 if isfield(handles,'infoPanel')
@@ -40,12 +40,12 @@ xlim([-.1 trial.params.stimDurInSec+ min(.25,trial.params.postDurInSec)])
 xlabel('Time (s)');
 
 [prot,d,fly,cell,trialnum] = extractRawIdentifiers(trial.name);
-title(ax,sprintf('%s : %d-%d Hz %.2f \\mum',...
+title(ax,sprintf('%s : %d-%d Hz %.2f pA',...
     [prot '.' d '.' fly '.' cell '.' trialnum],...
     trial.params.freqStart,...
     trial.params.freqEnd,...
     trial.params.amp));
-%title([d ' ' fly ' ' cell ' ' prot ' '  num2str(trial.params.freq) ' Hz ' num2str(trial.params.displacement *.3) ' \mum'])
+
 box(ax,'off');
 set(ax,'TickDir','out');
 ylabel(ax,y_units);

@@ -1,4 +1,4 @@
-function transfer = PiezoChirpZAP(fig,handles,savetag,varargin)
+function transfer = CurrentChirpZAP(fig,handles,savetag,varargin)
 % works on Current Sine, there for the blocks have a rang of amps and freqs
 % see also TransferFunctionOfLike
 
@@ -62,7 +62,8 @@ if ip.Results.plot
     Z_mag = sqrt(real(Z.*conj(Z)));
     Z_phase = angle(Z);
     
-    freqBins = logspace(log10(handles.trial.params.freqStart),log10(handles.trial.params.freqEnd),100);
+    %freqBins = logspace(log10(handles.trial.params.freqStart),log10(handles.trial.params.freqEnd),100);
+    freqBins = handles.trial.params.freqStart:2.5:handles.trial.params.freqEnd;
     freqBins = sort(freqBins);
     fsampled = freqBins(1:end-1);
     Z_mag_sampled = freqBins(1:end-1);
@@ -80,7 +81,11 @@ if ip.Results.plot
         'parent',ax,'color',[0 1/length(handles.trial.params.amps) 0],...
         'tag',savetag);
     ylabel(ax,'Magnitude')
-    title(ax,'Stim to V transfer function')
+    [prot,d,fly,cell,trialnum] = extractRawIdentifiers(handles.trial.name);
+    title(ax,sprintf('%s : %s',...
+        [prot '.' d '.' fly '.' cell '.' trialnum],...
+        'Stim to V transfer function'));
+
     set(ax,'xlim',[...
         min(handles.trial.params.freqStart,handles.trial.params.freqEnd),...
         max(handles.trial.params.freqStart,handles.trial.params.freqEnd),...
@@ -102,5 +107,7 @@ if ip.Results.plot
         max(handles.trial.params.freqStart,handles.trial.params.freqEnd),...
         ])
     
-    set(get(fig,'children'),'xscale','log');
+    %set(get(fig,'children'),'xscale','log');
+    set(get(fig,'children'),'xscale','linear');
 end
+set(p.de.axis,'tickdir','out')
