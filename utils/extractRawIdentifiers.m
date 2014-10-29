@@ -1,5 +1,5 @@
 function varargout = extractRawIdentifiers(name)
-% [protocol,dateID,flynum,cellnum,trialnum,D,trialStem] = extractRawIdentifiers(name)
+% [protocol,dateID,flynum,cellnum,trialnum,D,trialStem,datastructfile] = extractRawIdentifiers(name)
 %   [mfilename '_' protocol '_' dateID '_' flynum '_' cellnum '_' trialnum]
 
 if isempty(strfind(name,'.mat'))

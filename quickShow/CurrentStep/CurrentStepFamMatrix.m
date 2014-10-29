@@ -32,6 +32,10 @@ newfig = layout_sub(f,...
     sprintf('%s Block %d: {%s}', [handles.currentPrtcl '.' dateID '.' flynum '.' cellnum],b,sprintf('%s; ',tags{:})),...
     'close');
 
+[protocol,dateID,flynum,cellnum,trialnum] = extractRawIdentifiers(handles.trial.name);
+set(newfig,'name',[dateID '_' flynum '_' cellnum '_' protocol '_Block' num2str(b) '_' mfilename sprintf('_%s',tags{:})])
+
+
 function varargout = layout_sub(f,name,varargin)
 dim = size(f);
 ax_from = findobj(f(1,1),'tag','response_ax');

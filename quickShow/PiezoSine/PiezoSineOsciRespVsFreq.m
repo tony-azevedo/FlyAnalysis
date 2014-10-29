@@ -80,5 +80,5 @@ varargout{3} = handles.trial.params.displacements;
 
 if ip.Results.plot
     axis(get(fig,'children'),'tight')
-    set(get(fig,'children'),'xscale','log');
+    %     set(get(fig,'children'),'xscale','log');
 end

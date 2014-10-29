@@ -1,16 +1,5 @@
 function h = CurrentChirpAverage(h,handles,savetag)
 
-% see also AverageLikeSongs
-if isfield(handles,'infoPanel')
-    notes = get(handles.infoPanel,'userdata');
-else
-    a = dir([handles.dir '\notes_*']);
-
-    fclose('all');
-    handles.notesfilename = fullfile(handles.dir,a.name);
-    notes = fileread(handles.notesfilename);
-end
-
 trials = findLikeTrials('name',handles.trial.name,'datastruct',handles.prtclData);
 if isempty(h) || ~ishghandle(h)
     h = figure(100+trials(1)); clf
@@ -36,7 +25,7 @@ end
 plot(ax,x,y,'color',[1, .7 .7],'tag',savetag); hold on
 plot(ax,x,mean(y,2),'color',[.7 0 0],'tag',savetag);
 axis(ax,'tight')
-xlim([-.1 trial.params.stimDurInSec+ min(.25,trial.params.postDurInSec)])
+%xlim([-.1 trial.params.stimDurInSec+ min(.25,trial.params.postDurInSec)])
 xlabel('Time (s)');
 
 [prot,d,fly,cell,trialnum] = extractRawIdentifiers(trial.name);
@@ -67,7 +56,7 @@ set(ax,'TickDir','out');
 axis(ax,'tight');
 ylabel('Hz');
 
-xlim([-.1 trial.params.stimDurInSec+ min(.25,trial.params.postDurInSec)])
+%xlim([-.1 trial.params.stimDurInSec+ min(.25,trial.params.postDurInSec)])
 set(ax,'tag','ramp_ax');
 
 ax = subplot(6,1,6,'parent',h);
@@ -77,6 +66,6 @@ box(ax,'off');
 set(ax,'TickDir','out');
 axis(ax,'tight');
 
-xlim([-.1 trial.params.stimDurInSec+ min(.25,trial.params.postDurInSec)])
+%xlim([-.1 trial.params.stimDurInSec+ min(.25,trial.params.postDurInSec)])
 set(ax,'tag','stimulus_ax');
 

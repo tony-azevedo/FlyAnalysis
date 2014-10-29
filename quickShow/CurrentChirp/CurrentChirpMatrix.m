@@ -35,6 +35,10 @@ newfig = layout_sub(f,...
     sprintf('%s Block %d: {%s}', [handles.currentPrtcl '.' dateID '.' flynum '.' cellnum],b,sprintf('%s; ',tags{:})),...
     'close');
 
+[protocol,dateID,flynum,cellnum,trialnum] = extractRawIdentifiers(handles.trial.name);
+set(newfig,'name',[dateID '_' flynum '_' cellnum '_' protocol '_Block' num2str(b) '_' mfilename sprintf('_%s',tags{:})])
+
+
 function varargout = layout_sub(f,name,varargin)
 dim = size(f);
 
@@ -114,7 +118,6 @@ p(2).de.fontsize = 8;
 
 p.title(name)
 
-
 h2 = figure;
 set(h2,'color',[1 1 1],'tag',[mfilename  'Stimuli'])
 p = panel(h2);
@@ -150,8 +153,8 @@ set(p(1).de.axis,'xcolor',[1 1 1])
 p(1).ylabel('Stimulus (V)')
 p(1).de.fontsize = 8;
 
-p.title([name '_ Stimuli'])
-
+p.title([regexprep(name,'_',' ') ' Stimuli']);
+set(h2,'name',[name '_stim'])
 
 if nargin>2 && strcmp(varargin{1},'close')
     close(f(:))

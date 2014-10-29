@@ -39,7 +39,7 @@ end
 plot(ax,x,y,'color',[1, .7 .7],'tag',savetag); hold on
 plot(ax,x,mean(y,2),'color',[.7 0 0],'tag',savetag);
 axis(ax,'tight')
-xlim(ax,[-.1 trial.params.stimDurInSec+ min(.15,trial.params.postDurInSec)])
+%xlim(ax,[-.2 trial.params.stimDurInSec+ min(.2,trial.params.postDurInSec)])
 
 %title([d ' ' fly ' ' cell ' ' prot ' '  num2str(trial.params.freq) ' Hz ' num2str(trial.params.displacement *.3) ' \mum'])
 box(ax,'off');
@@ -59,5 +59,5 @@ ylim(ax,ylims);
 box(ax,'off');
 set(ax,'TickDir','out');
 
-xlim(ax,[-.1 trial.params.stimDurInSec+ min(.15,trial.params.postDurInSec)])
+%xlim(ax,[-.2 trial.params.stimDurInSec+ min(.2,trial.params.postDurInSec)])
 %ylim([4.5 5.5])

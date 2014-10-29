@@ -1,7 +1,7 @@
 function newfig = PiezoSineMatrix(fig,handles,savetag)
 % see also AverageLikeSines
 
-[prot,datestr,fly,cellnum,trial,D] = extractRawIdentifiers(handles.trial.name);
+[protocol,dateID,flynum,cellnum,trialnum] = extractRawIdentifiers(handles.trial.name);
 
 blocktrials = findLikeTrials('name',handles.trial.name,'datastruct',handles.prtclData,'exclude',{'displacement','freq'});
 t = 1;
@@ -32,8 +32,12 @@ if isfield(handles.trial.params, 'trialBlock')
     b = handles.trial.params.trialBlock;
 end
 newfig = layout_sub(f,...
-    sprintf('%s Block %d: {%s}', [prot '.' datestr '.' fly '.' cellnum],b,sprintf('%s; ',tags{:})),...
+    sprintf('%s Block %d: {%s}', [handles.currentPrtcl '.' dateID '.' flynum '.' cellnum],b,sprintf('%s; ',tags{:})),...
     'close');
+
+[protocol,dateID,flynum,cellnum,trialnum] = extractRawIdentifiers(handles.trial.name);
+set(newfig,'name',[dateID '_' flynum '_' cellnum '_' protocol '_Block' num2str(b) '_' mfilename sprintf('_%s',tags{:})])
+
 
 function varargout = layout_sub(f,name,varargin)
 dim = size(f);
@@ -102,7 +106,7 @@ p(2).ylabel('Stimulus (V)')
 p(2).xlabel('Time (s)')
 p(2).de.fontsize = 8;
 
-p.title(name)
+p.title(name);
 
 
 h2 = figure;
@@ -140,8 +144,7 @@ set(p(1).de.axis,'xcolor',[1 1 1])
 p(1).ylabel('Stimulus (V)')
 p(1).de.fontsize = 8;
 
-p.title([name '_ Stimuli'])
-
+p.title([regexprep(name,'_',' ') ' Stimuli']);
 
 if nargin>2 && strcmp(varargin{1},'close')
     delete(f(:))
