@@ -1,4 +1,4 @@
-function h = PiezoSineScimStackAve(h,handles,savetag,varargin)
+function h = PiezoChirpScimStackAve(h,handles,savetag,varargin)
 
 % see also CurrentSineAverage
 p = inputParser;
@@ -65,7 +65,6 @@ xlim([exp_t(1) exp_t(end)])
 box(panl(1).select(),'off');
 set(panl(1).select(),'TickDir','out');
 ylabel(panl(1).select(),'%\DeltaF/F');
-set(panl(1).select(),'tag','imaging_ax');
 
 % plot(panl(2).select(),x,y,'color',[1, .7 .7],'tag',savetag); hold on
 % plot(panl(2).select(),x,mean(y,2),'color',[.7 0 0],'tag',savetag);

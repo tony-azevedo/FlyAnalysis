@@ -1,4 +1,4 @@
-function h = PiezoSineScimStackAve(h,handles,savetag,varargin)
+function h = PiezoStimulusScimStackAve(h,handles,savetag,varargin)
 
 % see also CurrentSineAverage
 p = inputParser;
@@ -8,11 +8,10 @@ parse(p,varargin{:});
 
 % setupStimulus
 panl = panel(h);
-panl.pack('v',{1/2 1/4 1/4})  % response panel, stimulus panel
+panl.pack('v',{2/3 1/3})  % response panel, stimulus panel
 panl.margin = [18 16 2 10];
 panl.fontname = 'Arial';
 panl(1).marginbottom = 2;
-panl(2).marginbottom = 2;
 
 trials = findLikeTrials('name',handles.trial.name,'datastruct',handles.prtclData);
 if isempty(h) || ~ishghandle(h)
@@ -49,8 +48,9 @@ for t = 1:length(trials)
     %     greentraces(:,t) = trial.(stackTraceName)(:,2);
 end
 
-[prot,d,fly,cell,trialnum] = extractRawIdentifiers(trial.name);
-panl.title([mfilename '\_' d '\_' fly '\_' cell '\_' trialnum])
+tags = getTrialTags(trials,handles.prtclData);
+[protocol,dateID,flynum,cellnum,trialnum,D,trialStem] = extractRawIdentifiers(handles.trial.name);
+panl.title(sprintf('%s: {%s}', [protocol '.' dateID '.' flynum '.' cellnum],sprintf('%s; ',tags{:})));
 
 %plot(panl(1).select(),exp_t,traces(:,1),'color',[1, 0 1],'tag',savetag); hold on
 plot(panl(1).select(),exp_t,greentraces,'color',[.6, 1 .6],'tag',savetag); hold on
@@ -65,24 +65,14 @@ xlim([exp_t(1) exp_t(end)])
 box(panl(1).select(),'off');
 set(panl(1).select(),'TickDir','out');
 ylabel(panl(1).select(),'%\DeltaF/F');
-set(panl(1).select(),'tag','imaging_ax');
 
-% plot(panl(2).select(),x,y,'color',[1, .7 .7],'tag',savetag); hold on
-% plot(panl(2).select(),x,mean(y,2),'color',[.7 0 0],'tag',savetag);
-% axis(panl(2).select(),'tight')
-% xlim([exp_t(1) exp_t(end)])
-% box(panl(2).select(),'off');
-% set(panl(2).select(),'TickDir','out');
-% ylabel(panl(2).select(),y_units);
-% set(panl(2).select(),'tag','response_ax');
-
-plot(panl(3).select(),x,trial.(outname)(1:length(x)),'color',[0 0 .5],'tag',savetag); hold on;
-axis(panl(3).select(),'tight')
-box(panl(3).select(),'off');
-set(panl(3).select(),'TickDir','out');
+plot(panl(2).select(),x,trial.(outname)(1:length(x)),'color',[0 0 .5],'tag',savetag); hold on;
+axis(panl(2).select(),'tight')
+box(panl(2).select(),'off');
+set(panl(2).select(),'TickDir','out');
 xlim([exp_t(1) exp_t(end)])
-set(panl(3).select(),'tag','stimulus_ax');
-xlabel(panl(3).select(),'Time (s)');
-ylabel(panl(3).select(),'pA');
+set(panl(2).select(),'tag','stimulus_ax');
+xlabel(panl(2).select(),'Time (s)');
+ylabel(panl(2).select(),'pA');
 
 

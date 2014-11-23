@@ -1,4 +1,4 @@
-function newfig = PiezoBWSongScimFamily(h,handles,savetag)
+function newfig = PiezoSongScimFamily(h,handles,savetag)
 % see also AverageLikeSines
 
 [protocol,dateID,flynum,cellnum,trialnum,D,trialStem] = extractRawIdentifiers(handles.trial.name);
@@ -10,10 +10,11 @@ else
 end
 
 pnl = panel(h);
-pnl.pack('v',{5/6 1/6})  % response panel, stimulus panel
+pnl.pack(1)  % response panel, stimulus panel
 pnl.margin = [18 16 16 16];
 
 blocktrials = findLikeTrials('name',handles.trial.name,'datastruct',handles.prtclData,'exclude',{'displacement'});
+blocktrials = excludeTrials('trials',blocktrials,'name',handles.trial.name);
 t = 1;
 while t <= length(blocktrials)
     trials = findLikeTrials('trial',blocktrials(t),'datastruct',handles.prtclData);
@@ -33,6 +34,7 @@ for bt = blocktrials;
 
     handles.trial = load(fullfile(handles.dir,sprintf(handles.trialStem,bt)));
     trials = findLikeTrials('trial',bt,'datastruct',handles.prtclData);
+    trials = excludeTrials('trials',trials,'name',handles.trial.name);
 
     scimtraces = nan(length(trials),length(handles.trial.exposureTimes));
     for t_ind = 1:length(trials)
@@ -70,11 +72,4 @@ pnl(1).ylabel('% \DeltaF/F_0');
 pnl(1).xlabel('Time(s)');
 pnl(1).title(sprintf('%s Block %d: {%s}', [handles.currentPrtcl '.' dateID '.' flynum '.' cellnum],b,sprintf('%s; ',tags{:})));
 
-line(makeInTime(handles.trial.params),handles.trial.sgsmonitor,...
-    'parent',pnl(2).select(),...
-    'color',[0 0 1]);
 
-axis(pnl(2).select(),'tight');
-
-pnl(2).ylabel('SGS (V)');
-pnl(2).xlabel('Time(s)');

@@ -1,4 +1,4 @@
-function newfig = PiezoBWSongScimFamily(h,handles,savetag)
+function newfig = PiezoStimulusScimStackFamily(h,handles,savetag)
 % see also AverageLikeSines
 
 [protocol,dateID,flynum,cellnum,trialnum,D,trialStem] = extractRawIdentifiers(handles.trial.name);
@@ -67,8 +67,7 @@ legend(pnl(1).select(),'show','location','best');
 legend('boxoff');
 
 pnl(1).ylabel('% \DeltaF/F_0');
-pnl(1).xlabel('Time(s)');
-pnl(1).title(sprintf('%s Block %d: {%s}', [handles.currentPrtcl '.' dateID '.' flynum '.' cellnum],b,sprintf('%s; ',tags{:})));
+pnl(1).title(sprintf('%s Block %d: {%s}', [handles.trial.params.stimulusName '.' dateID '.' flynum '.' cellnum],b,sprintf('%s; ',tags{:})));
 
 line(makeInTime(handles.trial.params),handles.trial.sgsmonitor,...
     'parent',pnl(2).select(),...

@@ -786,16 +786,17 @@ for a_ind = 1:length(a)
         break
     end
 end
-javaaddpath 'C:\Program Files (x86)\MATLAB\R2013b\java\jar\ij-1.49g.jar'
-javaaddpath 'C:\Program Files (x86)\MATLAB\R2013b\java\jar\mij.jar'
-try a = MIJ.help;
-catch
-    Miji
-end
-
-pathstr = regexprep(sprintf('path=[%s]',fullfile(imdir,fn)),'\\','\\\');
-MIJ.run('Open...', pathstr);
-guidata(hObject,handles)
+winopen(imdir);
+% javaaddpath 'C:\Program Files (x86)\MATLAB\R2013b\java\jar\ij-1.49g.jar'
+% javaaddpath 'C:\Program Files (x86)\MATLAB\R2013b\java\jar\mij.jar'
+% try a = MIJ.help;
+% catch
+%     Miji
+% end
+% 
+% pathstr = regexprep(sprintf('path=[%s]',fullfile(imdir,fn)),'\\','\\\');
+% MIJ.run('Open...', pathstr);
+% guidata(hObject,handles)
 
 
 % --- Executes on button press in tag_button.

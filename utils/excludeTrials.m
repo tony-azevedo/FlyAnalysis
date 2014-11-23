@@ -18,7 +18,7 @@ end
 exclude = false(size(trials));
 for t_ind = 1:length(trials)
     trial = load(fullfile(D,sprintf(trialStem,trials(t_ind))));
-    if trial.excluded
+    if isfield(trial,'excluded') && trial.excluded
         fprintf('Trial %g excluded\n',trial.params.trial);
         exclude(trials == trial.params.trial) = true;
     end
