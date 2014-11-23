@@ -1,4 +1,4 @@
-function newfig = PiezoSineMatrix(fig,handles,savetag)
+function newfig = PiezoSineScimStackMatrix(fig,handles,savetag)
 % see also AverageLikeSines
 
 [protocol,dateID,flynum,cellnum,trialnum] = extractRawIdentifiers(handles.trial.name);
@@ -15,7 +15,8 @@ clear f
 cnt = 1;
 for bt = blocktrials;
     handles.trial = load(fullfile(handles.dir,sprintf(handles.trialStem,bt)));
-    f(cnt) = PiezoSineAverage([],handles,savetag);
+    f(cnt) = figure;
+    f(cnt) = PiezoSineScimStackAve(f(cnt),handles,savetag);
     cnt = cnt+1;
 end
 f = unique(f);
@@ -59,7 +60,7 @@ for y = 1:dim(1)
     for x = 1:dim(2)
         ax_to = p(1,y,x).select();
 
-        ax_from = findobj(f(y,x),'tag','response_ax'); 
+        ax_from = findobj(f(y,x),'tag','imaging_ax'); 
         delete(get(ax_from,'xlabel'));
         delete(get(ax_from,'ylabel'));
         delete(get(ax_from,'zlabel'));

@@ -20,7 +20,7 @@ function varargout = quickShow(varargin)
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 
-% Last Modified by GUIDE v2.5 07-Jun-2014 20:31:51
+% Last Modified by GUIDE v2.5 02-Oct-2014 19:49:25
 
 %% Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -283,6 +283,35 @@ set(handles.exclude,'value',handles.trial.excluded);
 set(handles.allow_excluding,'value',0);
 set(handles.exclude,'enable','off');
 
+imdir = regexprep(handles.trial.name,{'Raw','.mat','Acquisition'},{'Images','','Raw_Data'});
+if ~isdir(imdir) || length(dir(imdir))==2
+    set(handles.image_button,'enable','off');
+    set(handles.image_info,'String','');
+elseif isdir(imdir) && length(dir(imdir))>2
+    set(handles.image_button,'enable','on');
+    imagefiles = dir(imdir);
+    i_info = imfinfo(fullfile(imdir,imagefiles(3).name));
+    if isempty(strfind(i_info(1).ImageDescription,'Hamamatsu'))
+        chan = str2num(i_info(1).ImageDescription(regexp(i_info(1).ImageDescription,'state.acq.numberOfChannelsSave=','end')+1));
+        imstr = sprintf('Image: %d x %d x %d chan x %d',...
+            i_info(1).Width,...
+            i_info(1).Height,...
+            chan,...
+            length(i_info)/chan);
+    elseif ~isempty(strfind(i_info(1).ImageDescription,'Hamamatsu'))
+        imstr = sprintf('Image: %d x %d',...
+            i_info(1).Width,...
+            i_info(1).Height);        
+    end
+        
+    set(handles.image_info,'String',imstr);
+end
+if ~isfield(handles.trial,'ROI')
+    set(handles.clear_ROI_button,'enable','off');
+elseif isfield(handles.trial,'ROI')
+    set(handles.clear_ROI_button,'enable','on');
+end
+
 guidata(hObject,handles)
 quickShow_Protocol(hObject, eventdata, handles)
 
@@ -336,15 +365,13 @@ else
         obj2 = findobj(get(handles.clearcanvas,'parent'),'tag','image');
         delete(obj2);
     end
-    ax = titlesubplot(handles.quickShowPanel);
-    [prot,d,fly,cell,trial] = extractRawIdentifiers(handles.trial.name);
-    title(ax,sprintf('%s', [prot '.' d '.' fly '.' cell '.' trial]));
-    
+    if get(handles.analyses_chckbox,'value')
+        analysis_popup_Callback(hObject, eventdata, handles)
+    end
+
 end
     
     
-
-
 function showMenu_Callback(hObject, eventdata, handles)
 showfunctions = get(handles.showMenu,'string');
 handles.quickShowFunction = showfunctions{get(handles.showMenu,'value')};
@@ -365,7 +392,6 @@ updateInfoPanel(handles);
 handles = guidata(hObject);
 feval(str2func(handles.quickShowFunction),handles.quickShowPanel,handles,savetag);
 % quickShow_Protocol(hObject, eventdata, handles)
-
 
 
 function showMenu_CreateFcn(hObject, eventdata, handles)
@@ -413,6 +439,7 @@ end
 for chi = length(childs):-1:1
     if ~isempty(get(get(childs(1),'title'),'string'))
         set(fig,'fileName',regexprep(get(get(childs(1),'title'),'string'),'\.','_'))
+        set(fig,'name',regexprep(get(get(childs(1),'title'),'string'),'\.','_'))
     end
 end
 
@@ -425,6 +452,45 @@ trialnum_Callback(handles.trialnum,[],handles)
 
 function epsButton_Callback(hObject, eventdata, handles)
 
+fig = figure('color',[1 1 1]);
+childs = get(handles.quickShowPanel,'children');
+copyobj(childs,repmat(fig,size(childs)));
+findobj(fig,'ButtonDownFcn',@showClickedImage);
+
+% cp = uipanel('Title',handles.currentPrtcl,'FontSize',12,...
+%                 'BackgroundColor',[1 1 1],...
+%                 'Position',[0 0 .75 1],'parent',fig,'bordertype','none');
+% copyobj(childs,repmat(cp,size(childs)));
+linax = findobj(fig,'xscale','linear');
+if length(linax)>1
+    linkaxes(linax,'x');
+end
+
+for chi = length(childs):-1:1
+    if ~isempty(get(get(childs(1),'title'),'string'))
+        set(fig,'fileName',regexprep(get(get(childs(1),'title'),'string'),'\.','_'))
+    end
+end
+
+infoStr = get(handles.infoPanel,'string');
+fprintf('%s\n',infoStr{:});
+
+% [protocol,dateID,flynum,cellnum,trialnum] = extractRawIdentifiers(handles.trial.name);
+% set(newfig,'name',[dateID '_' flynum '_' cellnum '_' protocol '_Block' num2str(b) '_' mfilename sprintf('_%s',tags{:})])
+
+nameguess = regexprep(handles.trialStem,...
+    {handles.currentPrtcl,'_Raw_','%d','.mat'},...
+    {'','',[handles.quickShowFunction '_' num2str(handles.currentTrialNum)  sprintf('_%s',handles.trial.tags{:})],'.pdf'});
+
+nameguess = regexprep(nameguess,' ','_');
+set(fig,'name')
+
+[FileName,PathName,FilterIndex] = uiputfile('*.*','File Path',['C:\Users\Anthony Azevedo\Desktop\Weekly_Record\' nameguess]);
+set(fig,'name',FileName)
+
+if ~FileName, return, end
+eval(['export_fig ' regexprep(fullfile(PathName,FileName),'\sAzevedo',''' Azevedo''')]);
+%panl.export(fn, '-rp');
 
 function savetraces_button_Callback(hObject, eventdata, handles)
 if get(handles.savetraces_button,'value')
@@ -545,8 +611,9 @@ fprintf('title(ax,''%s'')\n',trialinfo(1:end-3));
 
 % --- Executes on selection change in analysis_popup.
 function analysis_popup_Callback(hObject, eventdata, handles)
-funcs = get(hObject,'string');
-func = str2func(funcs{get(hObject,'value')});
+handles = guidata(hObject);
+funcs = get(handles.analysis_popup,'string');
+func = str2func(funcs{get(handles.analysis_popup,'value')});
 feval(func,handles.trial,handles.trial.params);
 handles.trial = load(fullfile(handles.dir, sprintf(handles.trialStem,handles.currentTrialNum)));
 guidata(hObject,handles);
@@ -604,7 +671,9 @@ trialImages_Callback(l, eventdata, handles)
 
 % --- Executes on button press in showmenu_chkbx.
 function showmenu_chkbx_Callback(hObject, eventdata, handles) %#ok<*INUSD>
-
+handles = guidata(hObject);
+set(handles.analyses_chckbox,'value',0);
+guidata(hObject, handles);
 
 % --- Executes on button press in trialpath.
 function trialpath_Callback(hObject, eventdata, handles) %#ok<*INUSL>
@@ -704,3 +773,58 @@ else
 end
 guidata(hObject,handles)
 
+
+
+% --- Executes on button press in image_button.
+function image_button_Callback(hObject, eventdata, handles)
+handles = guidata(hObject);
+imdir = regexprep(handles.trial.name,{'Raw','.mat','Acquisition'},{'Images','','Raw_Data'});
+a = dir(imdir);
+for a_ind = 1:length(a)
+    if ~a(a_ind).isdir
+        fn = a(a_ind).name;
+        break
+    end
+end
+winopen(imdir);
+% javaaddpath 'C:\Program Files (x86)\MATLAB\R2013b\java\jar\ij-1.49g.jar'
+% javaaddpath 'C:\Program Files (x86)\MATLAB\R2013b\java\jar\mij.jar'
+% try a = MIJ.help;
+% catch
+%     Miji
+% end
+% 
+% pathstr = regexprep(sprintf('path=[%s]',fullfile(imdir,fn)),'\\','\\\');
+% MIJ.run('Open...', pathstr);
+% guidata(hObject,handles)
+
+
+% --- Executes on button press in tag_button.
+function tag_button_Callback(hObject, eventdata, handles)
+
+
+
+% --- Executes on button press in clear_ROI_button.
+function clear_ROI_button_Callback(hObject, eventdata, handles)
+handles = guidata(hObject);
+if strcmp(get(handles.image_button,'enable'),'on') && isfield(handles.trial,'ROI')
+    handles.trial = rmfield(handles.trial,'ROI');
+    trial = handles.trial;
+    save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
+    guidata(hObject,handles);
+end
+trialnum_Callback(handles.trialnum,[],handles)
+
+
+
+% --- Executes on button press in analyses_chckbox.
+function analyses_chckbox_Callback(hObject, eventdata, handles)
+handles = guidata(hObject);
+set(handles.showmenu_chkbx,'value',0);
+guidata(hObject, handles);
+
+
+% --- Executes on button press in notes_button.
+function notes_button_Callback(hObject, eventdata, handles)
+handles = guidata(hObject);
+edit(handles.notesfilename);

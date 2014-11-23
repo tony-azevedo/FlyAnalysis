@@ -1,10 +1,11 @@
-function area = PiezoSineDepolRespVsFreq(fig,handles,savetag)
+function varargout = PiezoSineDepolRespVsFreq(fig,handles,savetag)
 % works on Current Sine, there for the blocks have a rang of amps and freqs
 % see also TransferFunctionOfLike
 
 if isempty(fig) || ~ishghandle(fig)
     fig = figure(200); clf
 else
+    delete(get(fig,'children'));
 end
 set(fig,'tag',mfilename);
 
@@ -45,8 +46,14 @@ for ii = 1:length(dispexamples)
         'tag',savetag);
     ylabel(ax,'Area (mV s)')
     title(ax,'Freq Selectivity')
+    set(ax,'tag','magnitude_ax');
 
     xlabel(ax,'Frequency (Hz)')
 end
 axis(get(fig,'children'),'tight')
 set(get(fig,'children'),'xscale','log');
+
+varargout{1} = area;
+varargout{2} = handles.trial.params.freqs;
+varargout{3} = handles.trial.params.displacements;
+varargout{4} = amp;

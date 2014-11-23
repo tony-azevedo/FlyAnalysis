@@ -3,18 +3,22 @@ function varargout = PiezoSineOsciTransFunc(fig,handles,savetag, varargin)
 p = inputParser;
 p.PartialMatching = 0;
 p.addParameter('closefig',1,@isnumeric);
+p.addParameter('plot',1,@isnumeric);
 parse(p,varargin{:});
 
 trials = findLikeTrials('name',handles.trial.name,'datastruct',handles.prtclData);
-if isempty(fig) && p.Results.closefig 
-    fig = figure(101); clf
-elseif isempty(fig) || ~ishghandle(fig) 
-    fig = figure(100+trials(1)); clf
-else
+if p.Results.plot
+    if isempty(fig) && p.Results.closefig
+        fig = figure(101); clf
+    elseif isempty(fig) || ~ishghandle(fig)
+        fig = figure(100+trials(1)); clf
+    else
+    end
+    
+    set(fig,'tag',mfilename);
+    if strcmp(get(fig,'type'),'figure'), set(fig,'name',mfilename);end
 end
 
-set(fig,'tag',mfilename);
-if strcmp(get(fig,'type'),'figure'), set(fig,'name',mfilename);end
 trial = load(fullfile(handles.dir,sprintf(handles.trialStem,trials(1))));
 x = makeTime(trial.params);
 
@@ -70,45 +74,32 @@ else
 end
 
 u_ideal = trial.params.displacement*exp(1i * (2*pi*trial.params.freq * (x-t_del) - pi/2));
+if p.Results.plot
+    ax = subplot(3,1,[1 2],'parent',fig);
+    delete(ax)
+    ax = subplot(3,1,[1 2],'parent',fig);
+    semilogx(ax,f,real(YC.*conj(YC)),'color',[.7 0 0],'tag',savetag); hold on
+    semilogx(ax,f,real(max(YC.*conj(YC)))/real(max(UC.*conj(UC)))* real(UC.*conj(UC)),'color',[0 0 .7],'tag',savetag); hold on
+    axis(ax,'tight');
+    ylims = get(ax,'ylim');
+    ylims = [ylims(1)-.05*(ylims(2)-ylims(1)) ylims(2)+.05*(ylims(2)-ylims(1)) ];
+    ylim(ax,ylims);
+    title([handles.currentPrtcl ' - ' num2str(handles.trial.params.freq) ' Hz, ' num2str(handles.trial.params.displacement) ' V'])
+    box(ax,'off');
+    set(ax,'TickDir','out');
+    
+    ax = subplot(3,1,3,'parent',fig);
+    cla(ax)
+    plot(ax,x,y,'color',[1, .7 .7],'tag',savetag); hold on
+    plot(ax,x,real(transfer * u_ideal) + base,'color',[.7 .7 1],'tag',savetag); hold on;
+    plot(ax,x, mean(y,2),'color',[.7 0 0],'tag',savetag);
+    axis(ax,'tight')
+    xlim([-.1 trial.params.stimDurInSec+ min(.15,trial.params.postDurInSec)])
+    
+    title([])
+    box(ax,'off');
+    set(ax,'TickDir','out');
+    xlim(ax,[-.1 trial.params.stimDurInSec+ min(.15,trial.params.postDurInSec)])
+    drawnow
+end
 
-ax = subplot(3,1,[1 2],'parent',fig);
-delete(ax)
-ax = subplot(3,1,[1 2],'parent',fig);
-semilogx(ax,f,real(YC.*conj(YC)),'color',[.7 0 0],'tag',savetag); hold on
-semilogx(ax,f,real(max(YC.*conj(YC)))/real(max(UC.*conj(UC)))* real(UC.*conj(UC)),'color',[0 0 .7],'tag',savetag); hold on
-axis(ax,'tight');
-ylims = get(ax,'ylim');
-ylims = [ylims(1)-.05*(ylims(2)-ylims(1)) ylims(2)+.05*(ylims(2)-ylims(1)) ];
-ylim(ax,ylims);
-title([handles.currentPrtcl ' - ' num2str(handles.trial.params.freq) ' Hz, ' num2str(handles.trial.params.displacement) ' V'])
-box(ax,'off');
-set(ax,'TickDir','out');
-
-ax = subplot(3,1,3,'parent',fig);
-cla(ax)
-plot(ax,x,y,'color',[1, .7 .7],'tag',savetag); hold on
-plot(ax,x,real(transfer * u_ideal) + base,'color',[.7 .7 1],'tag',savetag); hold on;
-plot(ax,x, mean(y,2),'color',[.7 0 0],'tag',savetag);
-axis(ax,'tight')
-xlim([-.1 trial.params.stimDurInSec+ min(.15,trial.params.postDurInSec)])
-
-title([])
-box(ax,'off');
-set(ax,'TickDir','out');
-% ylabel(ax,y_units);
-% 
-% ax = subplot(6,1,[5 6],'parent',fig);
-% cla(ax)
-% plot(ax,x,real(transfer/abs(transfer) * u_ideal)+offset,'color',[.7 .7 1],'tag',savetag); hold on;
-% plot(ax,x,mean(u,2),'color',[0 0 .7],'tag',savetag); hold on;
-% 
-% box(ax,'off');
-% set(ax,'TickDir','out');
-% 
-% % set(ax,'TickDir','out','XColor',[1 1 1],'XTick',[],'XTickLabel','');
-% % set(ax,'TickDir','out','YColor',[1 1 1],'YTick',[],'YTickLabel','');
-
-xlim(ax,[-.1 trial.params.stimDurInSec+ min(.15,trial.params.postDurInSec)])
-%ylim([4.5 5.5])
-% linkaxes(findobj(fig,'xscale','linear'),'x');
-drawnow

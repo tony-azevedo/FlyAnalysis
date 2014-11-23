@@ -1,4 +1,4 @@
-function transfer = PiezoChirpZAP(fig,handles,savetag,varargin)
+function varargout = PiezoChirpZAP(fig,handles,savetag,varargin)
 % works on Current Sine, there for the blocks have a rang of amps and freqs
 % see also TransferFunctionOfLike
 
@@ -7,22 +7,6 @@ ip.PartialMatching = 0;
 ip.addParameter('plot',1,@isnumeric);
 
 parse(ip,varargin{:});
-
-if isempty(fig) || ~ishghandle(fig)
-    fig = figure(200); clf
-else
-end
-set(fig,'tag',mfilename);
-if strcmp(get(fig,'type'),'figure')
-    set(fig,'color',[1 1 1])
-else
-    delete(get(fig,'children'));
-end
-p = panel(fig);
-p.pack('v',{2/3  1/3})  % response panel, stimulus panel
-p.margin = [16 16 2 10];
-p(1).marginbottom = 2;
-p(2).marginleft = 13;
 
 % for each displacement example, get all the trials
 trials = findLikeTrials('name',handles.trial.name,'datastruct',handles.prtclData);
@@ -56,22 +40,38 @@ u = u - mean(u);
 % ZAP calculation
 Z = fft(y(xwindow)) ./ fft(u(xwindow));
 f = trial.params.sampratein/length(x(xwindow))*[0:length(x(xwindow))/2]; f = [f, fliplr(f(2:end-1))];
-transfer = {Z,f};
+
+Z_mag = sqrt(real(Z.*conj(Z)));
+Z_phase = angle(Z);
+
+freqBins = logspace(log10(handles.trial.params.freqStart),log10(handles.trial.params.freqEnd),100);
+freqBins = sort(freqBins);
+fsampled = freqBins(1:end-1);
+Z_mag_sampled = freqBins(1:end-1);
+for fb = 1:length(freqBins)-1
+    f_wind = f >= freqBins(fb) & f<freqBins(fb+1);
+    fsampled(fb) = 10^(mean(log10(f(f_wind))));
+    Z_mag_sampled(fb) = mean(Z_mag(f_wind));
+end
+varargout = {Z,f,Z_mag_sampled,fsampled};
 
 if ip.Results.plot
-    Z_mag = sqrt(real(Z.*conj(Z)));
-    Z_phase = angle(Z);
-    
-    freqBins = logspace(log10(handles.trial.params.freqStart),log10(handles.trial.params.freqEnd),100);
-    freqBins = sort(freqBins);
-    fsampled = freqBins(1:end-1);
-    Z_mag_sampled = freqBins(1:end-1);
-    for fb = 1:length(freqBins)-1
-        f_wind = f >= freqBins(fb) & f<freqBins(fb+1);
-        fsampled(fb) = 10^(mean(log10(f(f_wind))));
-        Z_mag_sampled(fb) = mean(Z_mag(f_wind));
+    if (isempty(fig) || ~ishghandle(fig)) && ip.Results.plot
+        fig = figure(200); clf
+    else
     end
-    
+    set(fig,'tag',mfilename);
+    if strcmp(get(fig,'type'),'figure')
+        set(fig,'color',[1 1 1])
+    else
+        delete(get(fig,'children'));
+    end
+    p = panel(fig);
+    p.pack('v',{2/3  1/3})  % response panel, stimulus panel
+    p.margin = [16 16 2 10];
+    p(1).marginbottom = 2;
+    p(2).marginleft = 13;
+
     ax = p(1).select();
     line(f,Z_mag,...
         'parent',ax,'color',[0 1 0],...
@@ -80,7 +80,10 @@ if ip.Results.plot
         'parent',ax,'color',[0 1/length(handles.trial.params.displacements) 0],...
         'tag',savetag);
     ylabel(ax,'Magnitude')
-    title(ax,'Stim to V transfer function')
+    [prot,d,fly,cell,trialnum] = extractRawIdentifiers(handles.trial.name);
+    title(ax,sprintf('%s : %s',...
+        [prot '.' d '.' fly '.' cell '.' trialnum],...
+        'Stim to V transfer function'));
     set(ax,'xlim',[...
         min(handles.trial.params.freqStart,handles.trial.params.freqEnd),...
         max(handles.trial.params.freqStart,handles.trial.params.freqEnd),...

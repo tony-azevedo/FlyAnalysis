@@ -46,6 +46,9 @@ h = layout_sub(f,...
     sprintf('%s Block %d: {%s}', [prot '.' datestr '.' fly '.' cellnum],b,sprintf('%s; ',tags{:})),...
     'close');
 
+[protocol,dateID,flynum,cellnum,trialnum] = extractRawIdentifiers(handles.trial.name);
+set(h,'name',[dateID '_' flynum '_' cellnum '_' protocol '_' trialnum '_' mfilename sprintf('%s; ',tags{:})])
+
 varargout{1} = h;
 %varargout{2} = p;
 
@@ -75,7 +78,7 @@ if multi
         b = handles.trial.params.trialBlock;
     end
     h = layout_sub(f,...
-        sprintf('%s Block %d: {%s}', [prot '.' datestr '.' fly '.' cellnum],b,sprintf('%s; ',tags{:})),...
+        sprintf('%s Block %d: %s', [prot '.' datestr '.' fly '.' cellnum],b,sprintf('%s; ',tags{:})),...
         'close');
     varargout{1} = [varargout{1},h];
     %     varargout{4} = p;

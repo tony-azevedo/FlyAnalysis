@@ -1,4 +1,4 @@
-function h = PiezoSineAverage(h,handles,savetag)
+function h = PiezoSineSTD(h,handles,savetag)
 
 trials = findLikeTrials('name',handles.trial.name,'datastruct',handles.prtclData);
 if isempty(h) || ~ishghandle(h)
@@ -33,8 +33,7 @@ for t = 1:length(trials)
     trial = load(fullfile(handles.dir,sprintf(handles.trialStem,trials(t))));
     y(:,t) = trial.(y_name)(1:length(x));
 end
-plot(ax,x,y,'color',[1, .7 .7],'tag',savetag); hold on
-plot(ax,x,mean(y,2),'color',[.7 0 0],'tag',savetag);
+plot(ax,x,std(y,0,2),'color',[.7 0 0],'tag',savetag);
 axis(ax,'tight')
 xlim([-.1 trial.params.stimDurInSec+ min(.25,trial.params.postDurInSec)])
 text(-.09,mean(mean(y(x<0),2),1),...

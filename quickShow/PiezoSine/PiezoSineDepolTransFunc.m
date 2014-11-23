@@ -44,6 +44,7 @@ yc = yc-base;
 response_area = trapz(...
     x(x>=0 & x <trial.params.stimDurInSec-eps),...
     yc(x>=0 & x <trial.params.stimDurInSec-eps));
+response_area = response_area/trial.params.stimDurInSec;
 
 response_area_ext = trapz(x(x>=0),yc(x>=0));
 
