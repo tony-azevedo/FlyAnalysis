@@ -1,7 +1,7 @@
 function quickShow_CurrentChirp(plotcanvas,obj,savetag)
 
 % setupStimulus
-x = ((1:obj.trial.params.sampratein*obj.params.durSweep) - obj.trial.params.preDurInSec*obj.trial.params.sampratein)/obj.trial.params.sampratein;
+x = ((1:obj.trial.params.sampratein*obj.trial.params.durSweep) - obj.trial.params.preDurInSec*obj.trial.params.sampratein)/obj.trial.params.sampratein;
 voltage = obj.trial.voltage(1:length(x));
 current = obj.trial.current(1:length(x));
 

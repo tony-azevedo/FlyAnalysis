@@ -1,4 +1,4 @@
-function quickShow_PiezoBWCourtshipSong(plotcanvas,obj,savetag)
+function quickShow_PiezoStimulus(plotcanvas,obj,savetag)
 
 % setupStimulus
 panl = panel(plotcanvas);

@@ -122,3 +122,26 @@ panl(1).pack('h',{1/3 2/3})
 [protocol,dateID,flynum,cellnum,trialnum] = extractRawIdentifiers(data.name);
     
 panl.title([protocol '\_' dateID '\_' flynum '\_' cellnum '\_' trialnum])
+
+[protocol,dateID,flynum,cellnum,trialnum] = extractRawIdentifiers(data.name);
+
+panl.title([protocol '\_' dateID '\_' flynum '\_' cellnum '\_' trialnum '\_' mfilename])
+set(h,'name',[dateID '_' flynum '_' cellnum '_' protocol '_' trialnum '_' mfilename])
+
+
+%% colors
+
+ax = subplot(1,1,1); hold on
+colors = get(gca,'ColorOrder');
+colors = [colors; (2/3)*colors];
+
+%% figure names
+tags = getTrialTags(blocktrials,handles.prtclData);
+
+b = nan;
+if isfield(handles.trial.params, 'trialBlock')
+    b = handles.trial.params.trialBlock;
+end
+[protocol,dateID,flynum,cellnum,trialnum] = extractRawIdentifiers(data.name);
+name = sprintf('%s Block %d: {%s}', [protocol '.' dateID '.' flynum '.' cellnum],b,sprintf('%s; ',tags{:}));
+

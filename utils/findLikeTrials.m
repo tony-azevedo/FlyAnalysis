@@ -15,7 +15,7 @@ window = p.Results.window;
 datastruct = p.Results.datastruct;
 excludedFields = p.Results.exclude;
 
-excludedFields = union(excludedFields,'trial');
+excludedFields = union(excludedFields,{'trial','gain','mode'});
 
 if ~isempty(name);
     [prot,d,fly,cell,trial,D] = extractRawIdentifiers(name);

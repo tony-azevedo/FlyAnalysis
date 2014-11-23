@@ -1,4 +1,4 @@
-function plotcanvas = quickShow_Sweep(plotcanvas,obj,savetag,varargin)
+function plotcanvas = quickShow_VoltageCommand(plotcanvas,obj,savetag,varargin)
 
 p = inputParser;
 p.PartialMatching = 0;
