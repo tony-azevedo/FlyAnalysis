@@ -20,7 +20,7 @@ function varargout = quickShow(varargin)
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 
-% Last Modified by GUIDE v2.5 02-Oct-2014 19:49:25
+% Last Modified by GUIDE v2.5 11-Dec-2014 16:28:33
 
 %% Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -801,7 +801,8 @@ winopen(imdir);
 
 % --- Executes on button press in tag_button.
 function tag_button_Callback(hObject, eventdata, handles)
-
+handles = guidata(hObject);
+tags = handles.trial.tags;
 
 
 % --- Executes on button press in clear_ROI_button.
@@ -828,3 +829,10 @@ guidata(hObject, handles);
 function notes_button_Callback(hObject, eventdata, handles)
 handles = guidata(hObject);
 edit(handles.notesfilename);
+
+
+% --- Executes on button press in clicky_button.
+function clicky_button_Callback(hObject, eventdata, handles)
+handles = guidata(hObject);
+
+

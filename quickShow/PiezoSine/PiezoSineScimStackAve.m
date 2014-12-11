@@ -53,15 +53,30 @@ end
 panl.title([mfilename '\_' d '\_' fly '\_' cell '\_' trialnum])
 
 %plot(panl(1).select(),exp_t,traces(:,1),'color',[1, 0 1],'tag',savetag); hold on
-plot(panl(1).select(),exp_t,greentraces,'color',[.6, 1 .6],'tag',savetag); hold on
+%plot(panl(1).select(),exp_t,greentraces,'color',[.6, 1 .6],'tag',savetag); hold on
+greentraces_sem = std(greentraces,[],2)/sqrt(size(greentraces,2));
+greentrace = mean(greentraces,2);
 
+sem_up = greentrace+greentraces_sem;
+sem_dn = greentrace-greentraces_sem;
+
+ptch = patch(...
+    [trial.exposureTimes';flipud(trial.exposureTimes')],...
+    [sem_dn;flipud(sem_up)],...
+    [.9 .9 .9],...
+    'EdgeColor','none','parent',panl(1).select(),'displayname','SEM');
+hold(panl(1).select(),'on')
+    
 %plot(panl(1).select(),exp_t,traces(:,1),'color',[1, 0 1],'tag',savetag); hold on
 plot(panl(1).select(),exp_t,nanmean(greentraces,2),'color',[0, .6 0],'tag',savetag); hold on
 %plot(panl(1).select(),exp_t,nanmean(redtraces,2),'color',[1, .4 .4 ],'tag',savetag); hold on
 
+ylims = [...
+    min(sem_dn(trial.exposureTimes>exp_t(1)+.5 & trial.exposureTimes<exp_t(end)-.5)),...
+    max(sem_up(trial.exposureTimes>exp_t(1)+.5 & trial.exposureTimes<exp_t(end)-.5))];
 axis(panl(1).select(),'tight')
-xlim([exp_t(1) exp_t(end)])
-%ylim([80 150])
+
+ylim(ylims);
 box(panl(1).select(),'off');
 set(panl(1).select(),'TickDir','out');
 ylabel(panl(1).select(),'%\DeltaF/F');
@@ -80,9 +95,10 @@ plot(panl(3).select(),x,trial.(outname)(1:length(x)),'color',[0 0 .5],'tag',save
 axis(panl(3).select(),'tight')
 box(panl(3).select(),'off');
 set(panl(3).select(),'TickDir','out');
-xlim([exp_t(1) exp_t(end)])
+xlim([exp_t(1)+.5 exp_t(end)-.5])
 set(panl(3).select(),'tag','stimulus_ax');
 xlabel(panl(3).select(),'Time (s)');
 ylabel(panl(3).select(),'pA');
+text(exp_t(1),4.7,[sprintf('%.2f Hz',trial.params.freq)],'fontsize',8)
 
 

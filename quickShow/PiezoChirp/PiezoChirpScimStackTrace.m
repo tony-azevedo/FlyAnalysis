@@ -12,7 +12,7 @@ p.addParameter('callingfile','',@ischar);
 parse(p,varargin{:});
 
 panl = panel(h);
-panl.pack('v',{1/2 1/4 1/4})  % response panel, stimulus panel
+pnl.pack('v',{4/6 1/6 1/6})  % response panel, stimulus panel
 panl.margin = [18 16 2 10];
 panl.fontname = 'Arial';
 panl(1).marginbottom = 2;
@@ -54,15 +54,17 @@ box(panl(1).select(),'off');
 set(panl(1).select(),'TickDir','out');
 ylabel(panl(1).select(),'%\DeltaF/F');
 
-% plot(panl(2).select(),x,y,'color',[1, 0 0],'tag',savetag); hold on
-% axis(panl(2).select(),'tight')
-% xlim([exp_t(1) exp_t(end)])
-% box(panl(2).select(),'off');
-% set(panl(2).select(),'TickDir','out');
-% ylabel(panl(2).select(),y_units);
-% [prot,d,fly,cell,trialnum] = extractRawIdentifiers(trial.name);
-% panl.title([mfilename '\_' d '\_' fly '\_' cell '\_' trialnum])
-% set(panl(2).select(),'tag','response_ax');
+freq_value = zeros(size(x));
+freq_value(x>=0 & x< trial.params.stimDurInSec) = ...
+    (trial.params.freqEnd-trial.params.freqStart)/trial.params.stimDurInSec * ....
+    x(x>=0 & x< trial.params.stimDurInSec) + ...
+    trial.params.freqStart;
+plot(panl(2).select(),x,freq_value,'color',[0 0 .5],'tag',savetag); hold on
+axis(panl(2).select(),'tight')
+box(panl(2).select(),'off');
+set(panl(2).select(),'TickDir','out');
+ylabel(panl(2).select(),'Hz');
+set(panl(2).select(),'tag','freq_ax');
 
 plot(panl(3).select(),x,trial.(outname)(1:length(x)),'color',[0 0 .5],'tag',savetag); hold on;
 axis(panl(3).select(),'tight')

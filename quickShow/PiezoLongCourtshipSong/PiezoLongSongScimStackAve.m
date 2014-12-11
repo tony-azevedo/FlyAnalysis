@@ -1,4 +1,4 @@
-function h = PiezoStimulusScimStackAve(h,handles,savetag,varargin)
+function h = PiezoLongSongScimStackAve(h,handles,savetag,varargin)
 
 % see also CurrentSineAverage
 p = inputParser;
