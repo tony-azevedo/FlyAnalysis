@@ -17,11 +17,14 @@ analysis_cell(cnt).exampletrials = {...
 'C:\Users\Anthony Azevedo\Raw_Data\141209\141209_F1_C1\PiezoChirp_Raw_141209_F1_C1_17.mat'; % distal 'down'
 % 'C:\Users\Anthony Azevedo\Raw_Data\141209\141209_F1_C1\PiezoChirp_Raw_141209_F1_C1_19.mat'; % proximal 'up'
 % 'C:\Users\Anthony Azevedo\Raw_Data\141209\141209_F1_C1\PiezoChirp_Raw_141209_F1_C1_27.mat'; % proximal 'down'
-
 'C:\Users\Anthony Azevedo\Raw_Data\141209\141209_F1_C1\PiezoLongCourtshipSong_Raw_141209_F1_C1_5.mat';
 %'C:\Users\Anthony Azevedo\Raw_Data\141209\141209_F1_C1\PiezoLongCourtshipSong_Raw_141209_F1_C1_8.mat'; % proximal
 'C:\Users\Anthony Azevedo\Raw_Data\141209\141209_F1_C1\PiezoSine_Raw_141209_F1_C1_1.mat'; % distal 
 %'C:\Users\Anthony Azevedo\Raw_Data\141209\141209_F1_C1\PiezoSine_Raw_141209_F1_C1_55.mat'; % proximal
+
+'C:\Users\Anthony Azevedo\Raw_Data\141209\141209_F1_C1\PiezoLongCourtshipSong_Raw_141209_F1_C1_5.mat'; % distal 
+%'C:\Users\Anthony Azevedo\Raw_Data\141209\141209_F1_C1\PiezoLongCourtshipSong_Raw_141209_F1_C1_8.mat'; % proximal
+>>>>>>> origin/master
 };
 analysis_cell(cnt).genotype = '20XUAS-IVS-GCaMP6s(attP40)R45D07-Gal4';
 analysis_cell(cnt).comment = {
@@ -138,7 +141,7 @@ analysis_cell(cnt).comment = {
 
 %% PiezoChirp Up
 
-c_ind = 1;
+for c_ind = 1:length(analysis_cell)
 t_ind = 1;
 
 trial = load(analysis_cell(c_ind).exampletrials{t_ind});
@@ -151,7 +154,7 @@ prtclData = load(dfile);
 obj.prtclData = prtclData.data;
 obj.prtclTrialNums = obj.currentTrialNum;
 
-f = PiezoChirpScimStackFamily([],obj,'');
+f(c_ind) = PiezoChirpScimStackFamily([],obj,'');
 
 genotypedir = fullfile(savedir,analysis_cell(c_ind).genotype);
 if ~isdir(genotypedir), mkdir(genotypedir); end
@@ -165,6 +168,8 @@ fn = fullfile(genotypedir,['CaIm_', ...
     '.pdf']);
 
 export_fig C:\Users\Anthony' Azevedo'\RAnalysis_Data\Record_GCaMP6s_Imaging\20XUAS-IVS-GCaMP6s(attP40)R45D07-Gal4\CaIm_141209_F1_C1_3_ChirpScim.pdf -pdf -transparent
+end
+
 
 %% PiezoChirp Down
 
