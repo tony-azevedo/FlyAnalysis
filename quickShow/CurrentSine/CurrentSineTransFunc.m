@@ -29,7 +29,8 @@ elseif sum(strcmp('VClamp',trial.params.mode))
     outname = 'voltage';
     outunits = 'mV';
 end
-
+if trial.params.mode
+    
 y = zeros(length(x),length(trials));
 u = zeros(length(x),length(trials));
 for t = 1:length(trials)

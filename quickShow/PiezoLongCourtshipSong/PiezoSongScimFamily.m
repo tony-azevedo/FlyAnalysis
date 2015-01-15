@@ -1,5 +1,6 @@
 function newfig = PiezoSongScimFamily(h,handles,savetag)
 % see also AverageLikeSines
+trials = findLikeTrials('name',handles.trial.name,'datastruct',handles.prtclData);
 
 [protocol,dateID,flynum,cellnum,trialnum,D,trialStem] = extractRawIdentifiers(handles.trial.name);
 if isempty(h) || ~ishghandle(h)
@@ -90,3 +91,5 @@ axis(pnl(2).select(),'tight');
 
 pnl(2).ylabel('SGS (V)');
 pnl(2).xlabel('Time(s)');
+
+newfig = h;

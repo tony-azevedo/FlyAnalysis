@@ -15,14 +15,13 @@ analysis_cell(cnt).name = {
 analysis_cell(cnt).exampletrials = {...
 'C:\Users\Anthony Azevedo\Raw_Data\141209\141209_F1_C1\PiezoChirp_Raw_141209_F1_C1_5.mat'; % distal 'up'
 'C:\Users\Anthony Azevedo\Raw_Data\141209\141209_F1_C1\PiezoChirp_Raw_141209_F1_C1_17.mat'; % distal 'down'
-'C:\Users\Anthony Azevedo\Raw_Data\141209\141209_F1_C1\PiezoChirp_Raw_141209_F1_C1_19.mat'; % proximal 'up'
-'C:\Users\Anthony Azevedo\Raw_Data\141209\141209_F1_C1\PiezoChirp_Raw_141209_F1_C1_27.mat'; % proximal 'down'
+% 'C:\Users\Anthony Azevedo\Raw_Data\141209\141209_F1_C1\PiezoChirp_Raw_141209_F1_C1_19.mat'; % proximal 'up'
+% 'C:\Users\Anthony Azevedo\Raw_Data\141209\141209_F1_C1\PiezoChirp_Raw_141209_F1_C1_27.mat'; % proximal 'down'
 
+'C:\Users\Anthony Azevedo\Raw_Data\141209\141209_F1_C1\PiezoLongCourtshipSong_Raw_141209_F1_C1_5.mat';
+%'C:\Users\Anthony Azevedo\Raw_Data\141209\141209_F1_C1\PiezoLongCourtshipSong_Raw_141209_F1_C1_8.mat'; % proximal
 'C:\Users\Anthony Azevedo\Raw_Data\141209\141209_F1_C1\PiezoSine_Raw_141209_F1_C1_1.mat'; % distal 
-'C:\Users\Anthony Azevedo\Raw_Data\141209\141209_F1_C1\PiezoSine_Raw_141209_F1_C1_55.mat'; % proximal
-
-'C:\Users\Anthony Azevedo\Raw_Data\141209\141209_F1_C1\PiezoLongCourtshipSong_Raw_141209_F1_C1_5.mat'; % distal 
-'C:\Users\Anthony Azevedo\Raw_Data\141209\141209_F1_C1\PiezoLongCourtshipSong_Raw_141209_F1_C1_8.mat'; % proximal
+%'C:\Users\Anthony Azevedo\Raw_Data\141209\141209_F1_C1\PiezoSine_Raw_141209_F1_C1_55.mat'; % proximal
 };
 analysis_cell(cnt).genotype = '20XUAS-IVS-GCaMP6s(attP40)R45D07-Gal4';
 analysis_cell(cnt).comment = {
@@ -30,31 +29,32 @@ analysis_cell(cnt).comment = {
     };
 
 
-clear analysis_cell
 cnt = 2;
 analysis_cell(cnt).name = {
     '141210_F1_C1';
     };
 analysis_cell(cnt).exampletrials = {...
+'C:\Users\Anthony Azevedo\Raw_Data\141210\141210_F1_C1\PiezoChirp_Raw_141210_F1_C1_1.mat';
+'C:\Users\Anthony Azevedo\Raw_Data\141210\141210_F1_C1\PiezoChirp_Raw_141210_F1_C1_9.mat';
+'C:\Users\Anthony Azevedo\Raw_Data\141210\141210_F1_C1\PiezoLongCourtshipSong_Raw_141210_F1_C1_1.mat';
 };
 analysis_cell(cnt).genotype = '20XUAS-IVS-GCaMP6s(attP40)R45D07-Gal4';
 analysis_cell(cnt).comment = {
     'Complete over harmonics, slight band pass';
     };
 
-clear analysis_cell
 cnt = 3;
 analysis_cell(cnt).name = {
     '141210_F2_C1';
     };
 analysis_cell(cnt).exampletrials = {...
+'C:\Users\Anthony Azevedo\Raw_Data\141210\141210_F2_C1\PiezoChirp_Raw_141210_F2_C1_1.mat';
 };
 analysis_cell(cnt).genotype = '20XUAS-IVS-GCaMP6s(attP40)R45D07-Gal4';
 analysis_cell(cnt).comment = {
     'Complete over harmonics, slight band pass';
     };
 
-clear analysis_cell
 cnt = 4;
 analysis_cell(cnt).name = {
     '141210_F3_C1';
@@ -74,8 +74,7 @@ analysis_cell(cnt).comment = {
     'Good cell, clear signals';
     };
 
-clear analysis_cell
-cnt = 4;
+cnt = 5;
 analysis_cell(cnt).name = {
     '141211_F1_C1';
     };
@@ -92,8 +91,7 @@ analysis_cell(cnt).comment = {
     'Complete over harmonics, slight band pass';
     };
 
-clear analysis_cell
-cnt = 4;
+cnt = 6;
 analysis_cell(cnt).name = {
     '141211_F2_C1';
     };
@@ -110,18 +108,27 @@ analysis_cell(cnt).comment = {
     'decent movement, but no response to courtship song';
     };
 
-clear analysis_cell
-cnt = 4;
+cnt = 7;
 analysis_cell(cnt).name = {
     '141211_F3_C1';
     };
 analysis_cell(cnt).exampletrials = {...
 'C:\Users\Anthony Azevedo\Raw_Data\141211\141211_F3_C1\PiezoChirp_Raw_141211_F3_C1_1.mat';
 'C:\Users\Anthony Azevedo\Raw_Data\141211\141211_F3_C1\PiezoChirp_Raw_141211_F3_C1_18.mat';
+'C:\Users\Anthony Azevedo\Raw_Data\141211\141211_F3_C1\PiezoLongCourtshipSong_Raw_141211_F3_C1_1.mat';
 
 'C:\Users\Anthony Azevedo\Raw_Data\141211\141211_F3_C1\PiezoSine_Raw_141211_F3_C1_1.mat';
+};
+analysis_cell(cnt).genotype = '20XUAS-IVS-GCaMP6s(attP40)R45D07-Gal4';
+analysis_cell(cnt).comment = {
+    'No signal.  Likely the connection was shitty';
+    };
 
-'C:\Users\Anthony Azevedo\Raw_Data\141211\141211_F3_C1\PiezoLongCourtshipSong_Raw_141211_F3_C1_1.mat';
+cnt = 8;
+analysis_cell(cnt).name = {
+    '150106_F1_C1';
+    };
+analysis_cell(cnt).exampletrials = {...
 };
 analysis_cell(cnt).genotype = '20XUAS-IVS-GCaMP6s(attP40)R45D07-Gal4';
 analysis_cell(cnt).comment = {
@@ -189,6 +196,36 @@ fn = fullfile(genotypedir,['CaIm_', ...
 
 export_fig C:\Users\Anthony' Azevedo'\RAnalysis_Data\Record_GCaMP6s_Imaging\20XUAS-IVS-GCaMP6s(attP40)R45D07-Gal4\CaIm_141209_F1_C1_3_ChirpScim.pdf -pdf -transparent
 
+%% PiezoLongSong
+for c_ind = 1:length(analysis_cell)
+    t_ind = 3;
+    
+    trial = load(analysis_cell(c_ind).exampletrials{t_ind});
+    obj.trial = trial;
+    
+    [obj.currentPrtcl,dateID,flynum,cellnum,obj.currentTrialNum,obj.dir,obj.trialStem,dfile] = ...
+        extractRawIdentifiers(trial.name);
+    
+    prtclData = load(dfile);
+    obj.prtclData = prtclData.data;
+    obj.prtclTrialNums = obj.currentTrialNum;
+    
+    f = PiezoSongScimFamily([],obj,'');
+    
+    genotypedir = fullfile(savedir,analysis_cell(c_ind).genotype);
+    if ~isdir(genotypedir), mkdir(genotypedir); end
+    
+    fn = fullfile(genotypedir,['CaIm_', ...
+        dateID '_', ...
+        flynum '_', ...
+        cellnum '_', ...
+        num2str(obj.trial.params.trialBlock) '_',...
+        'SongScim']);
+    
+    eval(['export_fig ',...
+        regexprep(fn,'Anthony Azevedo','Anthony'' Azevedo'''),...
+        ' -pdf -transparent'])
+end
 
 %%
 % %% 45D07-Gal4

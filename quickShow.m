@@ -834,5 +834,5 @@ edit(handles.notesfilename);
 % --- Executes on button press in clicky_button.
 function clicky_button_Callback(hObject, eventdata, handles)
 handles = guidata(hObject);
-
-
+I = getScimImageStack(handles.trial,handles.trial.params);
+clicky(I);
