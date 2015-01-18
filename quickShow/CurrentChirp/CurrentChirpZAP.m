@@ -1,4 +1,4 @@
-function transfer = CurrentChirpZAP(fig,handles,savetag,varargin)
+function varargout = CurrentChirpZAP(fig,handles,savetag,varargin)
 % works on Current Sine, there for the blocks have a rang of amps and freqs
 % see also TransferFunctionOfLike
 
@@ -8,22 +8,23 @@ ip.addParameter('plot',1,@isnumeric);
 
 parse(ip,varargin{:});
 
-if isempty(fig) || ~ishghandle(fig)
-    fig = figure(200); clf
-else
+if ip.Results.plot
+    if isempty(fig) || ~ishghandle(fig)
+        fig = figure(200); clf
+    else
+    end
+    set(fig,'tag',mfilename);
+    if strcmp(get(fig,'type'),'figure')
+        set(fig,'color',[1 1 1])
+    else
+        delete(get(fig,'children'));
+    end
+    p = panel(fig);
+    p.pack('v',{2/3  1/3})  % response panel, stimulus panel
+    p.margin = [16 16 2 10];
+    p(1).marginbottom = 2;
+    p(2).marginleft = 13;
 end
-set(fig,'tag',mfilename);
-if strcmp(get(fig,'type'),'figure')
-    set(fig,'color',[1 1 1])
-else
-    delete(get(fig,'children'));
-end
-p = panel(fig);
-p.pack('v',{2/3  1/3})  % response panel, stimulus panel
-p.margin = [16 16 2 10];
-p(1).marginbottom = 2;
-p(2).marginleft = 13;
-
 % for each displacement example, get all the trials
 trials = findLikeTrials('name',handles.trial.name,'datastruct',handles.prtclData);
 x = makeTime(handles.trial.params);
@@ -41,22 +42,24 @@ if length(handles.trial.(y_name))<length(x)
     x = x(1:length(handles.trial.(y_name)));
 end
 y = zeros(length(x),length(trials));
-u = y;
+protocolInstance = eval(handles.trial.params.protocol);
+pr = handles.trial.params;
+pr.amps = pr.amp;
+protocolInstance.setParams('-q',pr);
+u = protocolInstance.getStimulus().current;
 for t = 1:length(trials)
     trial = load(fullfile(handles.dir,sprintf(handles.trialStem,trials(t))));
     y(:,t) = trial.(y_name)(1:length(x));
-    u(:,t) = trial.(out_name)(1:length(x));
 end
 y = mean(y,2);
-u = mean(u,2);
 
 y = y - mean(y);
-u = u - mean(u);
+u = u - mean(u(x<=0));
 
 % ZAP calculation
 Z = fft(y(xwindow)) ./ fft(u(xwindow));
 f = trial.params.sampratein/length(x(xwindow))*[0:length(x(xwindow))/2]; f = [f, fliplr(f(2:end-1))];
-transfer = {Z,f};
+varargout = {Z,f,x,y,u};
 
 if ip.Results.plot
     Z_mag = sqrt(real(Z.*conj(Z)));
@@ -109,5 +112,5 @@ if ip.Results.plot
     
     %set(get(fig,'children'),'xscale','log');
     set(get(fig,'children'),'xscale','linear');
+    set(p.de.axis,'tickdir','out')
 end
-set(p.de.axis,'tickdir','out')

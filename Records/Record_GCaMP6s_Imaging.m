@@ -5,10 +5,88 @@ if ~isdir(savedir)
 end
 save = 1
 
-%% For the figure
+%% GCaMP6s cells all
+'150107_F1_C1'
+'150106_F1_C1'
+'141211_F3_C1'
+'141211_F1_C1'
+'141211_F2_C1'
+'141210_F3_C1'
+'141210_F2_C1'
+'141210_F1_C1'
+'141201_F1_C1'
+'141125_F1_C1'
+'141124_F1_C1'
+'141123_F1_C1'
+'141123_F2_C1'
+'141120_F1_C1'
+'141119_F1_C1'
+'141118_F1_C1'
+'141029_F2_C1'
+'141029_F1_C1'
+'141028_F2_C1'
+'141028_F1_C1'
+'141027_F1_C1'
+'141027_F2_C1'
+'141025_F1_C1'
+
+%% Checklist
+'141211_F2_C1'
+'141211_F1_C1'
+'141210_F3_C1'
+'141210_F2_C1'
+'141210_F1_C1'
+'141201_F1_C1'
+'141125_F1_C1'
+'141124_F1_C1'
+'141123_F1_C1'
+'141123_F2_C1'
+'141120_F1_C1'
+'141119_F1_C1'
+'141118_F1_C1'
+'141029_F2_C1'
+'141029_F1_C1'
+'141028_F2_C1'
+'141028_F1_C1'
+'141027_F1_C1'
+'141027_F2_C1'
+'141025_F1_C1'
+
+
+%% Rejected
+reject_cells = {...
+    '150106_F1_C1'; 'Very bright terminals, probably due to damage, no responses';
+    '141211_F3_C1'; 'No signal.  Antenna was oriented in the wrong way wasn''t able to move correctly. Led to decision to reject quickly';
+    };
+};
+
+%% Analysis cells
+analysis_cells = {...
+    '150107_F1_C1'
+};
 
 clear analysis_cell
+for c = 1:length(analysis_cells)
+    analysis_cell(cnt).name = {
+        analysis_cells{c}
+    };
+end
+
+%% For the figure
+
 cnt = 1;
+analysis_cell(cnt).exampletrials = {...
+    'C:\Users\Anthony Azevedo\Raw_Data\150107\150107_F1_C1\PiezoChirp_Raw_150107_F1_C1_1.mat';
+    %'C:\Users\Anthony Azevedo\Raw_Data\150107\150107_F1_C1\PiezoChirp_Raw_150107_F1_C1_11.mat'; % 17 Hz to 800 Hz
+    'C:\Users\Anthony Azevedo\Raw_Data\150107\150107_F1_C1\PiezoChirp_Raw_150107_F1_C1_14.mat';
+    'C:\Users\Anthony Azevedo\Raw_Data\150107\150107_F1_C1\PiezoLongCourtshipSong_Raw_150107_F1_C1_1.mat';  % Not great
+};
+analysis_cell(cnt).genotype = '20XUAS-IVS-GCaMP6s(attP40)R45D07-Gal4';
+analysis_cell(cnt).comment = {
+    'Great chirp signal, but the other stimuli were not delivered well. probe not connected';
+    };
+
+cnt = 2;
 analysis_cell(cnt).name = {
     '141209_F1_C1';
     };
@@ -21,11 +99,8 @@ analysis_cell(cnt).exampletrials = {...
 %'C:\Users\Anthony Azevedo\Raw_Data\141209\141209_F1_C1\PiezoLongCourtshipSong_Raw_141209_F1_C1_8.mat'; % proximal
 'C:\Users\Anthony Azevedo\Raw_Data\141209\141209_F1_C1\PiezoSine_Raw_141209_F1_C1_1.mat'; % distal 
 %'C:\Users\Anthony Azevedo\Raw_Data\141209\141209_F1_C1\PiezoSine_Raw_141209_F1_C1_55.mat'; % proximal
-
-'C:\Users\Anthony Azevedo\Raw_Data\141209\141209_F1_C1\PiezoLongCourtshipSong_Raw_141209_F1_C1_5.mat'; % distal 
-%'C:\Users\Anthony Azevedo\Raw_Data\141209\141209_F1_C1\PiezoLongCourtshipSong_Raw_141209_F1_C1_8.mat'; % proximal
->>>>>>> origin/master
 };
+
 analysis_cell(cnt).genotype = '20XUAS-IVS-GCaMP6s(attP40)R45D07-Gal4';
 analysis_cell(cnt).comment = {
     'Complete over harmonics, slight band pass';
@@ -109,33 +184,6 @@ analysis_cell(cnt).exampletrials = {...
 analysis_cell(cnt).genotype = '20XUAS-IVS-GCaMP6s(attP40)R45D07-Gal4';
 analysis_cell(cnt).comment = {
     'decent movement, but no response to courtship song';
-    };
-
-cnt = 7;
-analysis_cell(cnt).name = {
-    '141211_F3_C1';
-    };
-analysis_cell(cnt).exampletrials = {...
-'C:\Users\Anthony Azevedo\Raw_Data\141211\141211_F3_C1\PiezoChirp_Raw_141211_F3_C1_1.mat';
-'C:\Users\Anthony Azevedo\Raw_Data\141211\141211_F3_C1\PiezoChirp_Raw_141211_F3_C1_18.mat';
-'C:\Users\Anthony Azevedo\Raw_Data\141211\141211_F3_C1\PiezoLongCourtshipSong_Raw_141211_F3_C1_1.mat';
-
-'C:\Users\Anthony Azevedo\Raw_Data\141211\141211_F3_C1\PiezoSine_Raw_141211_F3_C1_1.mat';
-};
-analysis_cell(cnt).genotype = '20XUAS-IVS-GCaMP6s(attP40)R45D07-Gal4';
-analysis_cell(cnt).comment = {
-    'No signal.  Likely the connection was shitty';
-    };
-
-cnt = 8;
-analysis_cell(cnt).name = {
-    '150106_F1_C1';
-    };
-analysis_cell(cnt).exampletrials = {...
-};
-analysis_cell(cnt).genotype = '20XUAS-IVS-GCaMP6s(attP40)R45D07-Gal4';
-analysis_cell(cnt).comment = {
-    'No signal.  Likely the connection was shitty';
     };
 
 

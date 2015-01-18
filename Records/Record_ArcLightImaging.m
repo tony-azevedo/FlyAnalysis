@@ -161,6 +161,21 @@ analysis_cell(cnt).plateau_trial = {...
 'C:\Users\Anthony Azevedo\Raw_Data\140603\140603_F1_C1\VoltagePlateau_Raw_140603_F1_C1_1.mat';
     };
 
+cnt = 11;
+analysis_cell(cnt).name = '150117_F3_C1';
+analysis_cell(cnt).comment = {
+'Break in at -50, Not sure this is a B1 neuron, no sound responses, have to image the cell'
+};
+analysis_cell(cnt).exampletrials = {...
+'C:\Users\Anthony Azevedo\Raw_Data\150117\150117_F3_C1\Sweep_Raw_150117_F3_C1_1.mat';
+'C:\Users\Anthony Azevedo\Raw_Data\150117\150117_F3_C1\VoltagePlateau_Raw_150117_F3_C1_1.mat';
+    };
+analysis_cell(cnt).breakin_trial = {...
+'C:\Users\Anthony Azevedo\Raw_Data\150117\150117_F3_C1\Sweep_Raw_150117_F3_C1_1.mat';
+    };
+analysis_cell(cnt).plateau_trial = {...
+'C:\Users\Anthony Azevedo\Raw_Data\150117\150117_F3_C1\VoltagePlateau_Raw_150117_F3_C1_1.mat';
+    };
 
 fprintf('Currently analyzing %d cells.\n\n',length(analysis_cell))
 for c_ind = 1:length(analysis_cell)
@@ -446,9 +461,9 @@ for c_ind = 1:length(analysis_cell)
     breakin_dF_dF(c_ind,:) = breakin_dF - mean(breakin_dF(et_window<=0)); %#ok<SAGROW>
     breakin_exposure_time_windows(c_ind,:) = et_window; %#ok<SAGROW>
     
-%     eval(['export_fig ', ...
-%         [savedir ['break-in_long_',dateID,'_',flynum,'_',cellnum]],...
-%         ' -pdf -transparent'])
+    eval(['export_fig ', ...
+        [savedir ['break-in_long_',dateID,'_',flynum,'_',cellnum]],...
+        ' -pdf -transparent'])
 
     axs = findobj(gcf,'type','axes');
     for ax = axs'
@@ -457,9 +472,9 @@ for c_ind = 1:length(analysis_cell)
     end
     set(dfofax,'ylim',[min(dFtrace(frame_window)), max(dFtrace(frame_window))]);
 
-%     eval(['export_fig ', ...
-%         [savedir ['break-in_',dateID,'_',flynum,'_',cellnum]],...
-%         ' -pdf -transparent'])
+    eval(['export_fig ', ...
+        [savedir ['break-in_',dateID,'_',flynum,'_',cellnum]],...
+        ' -pdf -transparent'])
     
 end
 
