@@ -41,10 +41,10 @@ for ii = 1:length(dispexamples)
     end
 
     ax = p(1).select();
-    line(handles.trial.params.freqs',abs(area(:,ii)),...
+    line(handles.trial.params.freqs',amp(:,ii),... abs(area(:,ii))
         'parent',ax,'color',[0 1/length(handles.trial.params.displacements) 0]*ii,...
         'tag',savetag);
-    ylabel(ax,'Area (mV s)')
+    ylabel(ax,'Peak (mV)') % 'Area (mV s)'
     title(ax,'Freq Selectivity')
     set(ax,'tag','magnitude_ax');
 

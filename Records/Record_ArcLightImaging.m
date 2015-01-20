@@ -162,19 +162,19 @@ analysis_cell(cnt).plateau_trial = {...
     };
 
 cnt = 11;
-analysis_cell(cnt).name = '150117_F3_C1';
+analysis_cell(cnt).name = '150119_F1_C1';
 analysis_cell(cnt).comment = {
 'Break in at -50, Not sure this is a B1 neuron, no sound responses, have to image the cell'
 };
 analysis_cell(cnt).exampletrials = {...
-'C:\Users\Anthony Azevedo\Raw_Data\150117\150117_F3_C1\Sweep_Raw_150117_F3_C1_1.mat';
-'C:\Users\Anthony Azevedo\Raw_Data\150117\150117_F3_C1\VoltagePlateau_Raw_150117_F3_C1_1.mat';
+'C:\Users\Anthony Azevedo\Raw_Data\150119\150119_F1_C1\Sweep_Raw_150119_F1_C1_1.mat';
+'C:\Users\Anthony Azevedo\Raw_Data\150119\150119_F1_C1\VoltagePlateau_Raw_150119_F1_C1_1.mat';
     };
 analysis_cell(cnt).breakin_trial = {...
-'C:\Users\Anthony Azevedo\Raw_Data\150117\150117_F3_C1\Sweep_Raw_150117_F3_C1_1.mat';
+'C:\Users\Anthony Azevedo\Raw_Data\150119\150119_F1_C1\Sweep_Raw_150119_F1_C1_1.mat';
     };
 analysis_cell(cnt).plateau_trial = {...
-'C:\Users\Anthony Azevedo\Raw_Data\150117\150117_F3_C1\VoltagePlateau_Raw_150117_F3_C1_1.mat';
+'C:\Users\Anthony Azevedo\Raw_Data\150119\150119_F1_C1\VoltagePlateau_Raw_150119_F1_C1_1.mat';
     };
 
 fprintf('Currently analyzing %d cells.\n\n',length(analysis_cell))
@@ -274,7 +274,6 @@ figure
 trial = load(analysis_cell(6).exampletrials{1});
 roiFluoTrace(trial,trial.params,'NewROI','No','dFoFfig',gcf,'MotionCorrection',true);
 
-
 %% Save all the roiFluoTraces
 close all
 roiFluoTraceSavedir = 'C:\Users\Anthony'' Azevedo''\RAnalysis_Data\Record_ArcLightImaging\RoiFluoTraces\';
@@ -284,43 +283,12 @@ roiFluoTraceSavedir = 'C:\Users\Anthony'' Azevedo''\RAnalysis_Data\Record_ArcLig
 proplist =  getpref('AnalysisFigures','roiFluoTrace');
 fig = figure(proplist{:});
 
+c_ind = 11;
 for c_ind = 1:length(analysis_cell)
     fig = figure(proplist{:});
     
     trial = load(analysis_cell(c_ind).breakin_trial{1});
-    roiFluoTrace(trial,trial.params,'NewROI','No','dFoFfig',fig,'MotionCorrection',true);
-
-    [currentPrtcl,dateID,flynum,cellnum] = ...
-            extractRawIdentifiers(trial.name);
-
-    eval(['export_fig ', ...
-        [roiFluoTraceSavedir [dateID,'_',flynum,'_',cellnum,'_',currentPrtcl,'_',num2str(trial.params.trial)]],...
-        ' -pdf -transparent'])
-    close(fig)
-    
-    trial = load(analysis_cell(c_ind).plateau_trial{1});
-
-    [currentPrtcl,dateID,flynum,cellnum,currentTrialNum,celldir,trialStem,dfile] = ...
-        extractRawIdentifiers(trial.name);
-    
-    prtclData = load(dfile);
-    prtclData = prtclData.data;
-    trials = findLikeTrials('name',trial.name,'datastruct',prtclData);
-
-    for t_ind = 1:length(trials)
-        fig = figure(proplist{:});
-        trial = load(fullfile(celldir,sprintf(trialStem,trials(t_ind))));
-        try roiFluoTrace(trial,trial.params,'NewROI','No','dFoFfig',fig,'MotionCorrection',true);
-        catch
-            close(fig)
-            continue
-        end
-        eval(['export_fig ', ...
-            [roiFluoTraceSavedir [dateID,'_',flynum,'_',cellnum,'_',currentPrtcl,'_',num2str(trial.params.trial)]],...
-            ' -pdf -transparent'])
-        
-        close(fig)
-    end
+    Script_ArcLight_roiFluoTrace;
 end
 
 %% Fluorescence Changes at Break-in
@@ -336,145 +304,14 @@ dT_exposure_window = .2;
 % breakin_dF_dF = breakin_dF_traces;
 % breakin_dF_model_traces = breakin_dF_dF;
 % breakin_framewindows = zeros(length(analysis_cell),dFrame*2+1);
-
+c_ind = 11;
 for c_ind = 1:length(analysis_cell)
     clear obj
-    disp(analysis_cell(c_ind).name)   
+    disp(analysis_cell(c_ind).name)
+    
     trial = load(analysis_cell(c_ind).exampletrials{1});
-    obj.trial = trial;
-    [obj.currentPrtcl,dateID,flynum,cellnum,obj.currentTrialNum,obj.dir,obj.trialStem,dfile] = ...
-        extractRawIdentifiers(trial.name);
     
-    % Bring up the quickShow_sweep Fig
-    figure
-    if backgroundCorrectionFlag
-        quickShow_Sweep(gcf,obj,'No Save','BGCorrectImages',true);
-    else
-        quickShow_Sweep(gcf,obj,'No Save','BGCorrectImages',false);
-    end
-    
-    dfofax = findobj(gcf,'tag','quickshow_dFoverF_ax');
-    dFtrace = get(findobj(dfofax,'type','line'),'ydata');
-
-    % Find the Break-in point
-    t = makeInTime(trial.params);
-    current = trial.current(1:length(t));
-    baseline = t<.5;
-    current_baseline_std = std(trial.current(baseline));
-    threshold = 10;
-    
-    switch analysis_cell(c_ind).name
-        case '140206_F1_C1'
-            break_in = 595501;
-        case '140602_F1_C1'
-            break_in = 56500;
-        case '140602_F2_C1'
-            break_in = 89205;
-        otherwise
-            break_in = find(abs(current-current_baseline_std) > threshold*current_baseline_std,1);
-    end
-    
-    commandvoltage(c_ind) = mean(trial.voltage(t<break_in)); %#ok<SAGROW>
-    deltaT = t(break_in);
-    breakinDeltaT(c_ind) = deltaT;
-    
-    % Change the time base (exposure time and t);
-    et = trial.exposure_time-deltaT;
-    t = t-deltaT;
-    
-    % The exposures are within 20 ms of break-in
-    % This is regardless of sampling rate
-    frame_window = et >= -dT_exposure_window & et <= dT_exposure_window;
-    et_window = et(frame_window);
-    et_window = et_window(:);
-    frame_window = find(frame_window);
-    
-    figure(gcf)
-    subplot(3,1,1), hold on
-    plot(t+deltaT,ones(size(t)) * threshold*current_baseline_std,'k:');
-    plot(t+deltaT,ones(size(t)) * -threshold*current_baseline_std,'k:');
-    
-    if backgroundCorrectionFlag
-        breakin_dF = dFoverF_bgcorr_trace(obj.trial);
-    else
-        breakin_dF = dFoverF_withbg_trace(obj.trial);
-    end
-    
-    % Fit a line to baseline and an exponential to the decay.  Subtract off the decay from the initial points
-    coef = [-40, 40,3];            
-    exp_base = et(et>0 & et<4);
-
-    [exp_coeffout(c_ind,:),resid,jacob,covab,mse] = nlinfit(...
-        exp_base(:)',...
-        breakin_dF(et>0 & et<4),...
-        @exponential,coef); %#ok<SAGROW>
-    parci = nlparci(exp_coeffout(c_ind,:),resid,'jacobian',jacob);
-    
-    base_base = et(et>-.5 & et<0);
-    base_coeffout(c_ind,:) = polyfit(...
-        base_base(:)',...
-        breakin_dF(et>-.5 & et<0),...
-        1);
-    breakin_dF_model = [...
-        base_coeffout(c_ind,1)*et_window(et_window <= 0) + base_coeffout(c_ind,2); ...
-        exponential(exp_coeffout(c_ind,:),et_window(et_window > 0))];
-    
-    % Plot
-    subplot(3,1,2), hold on
-    plot(...
-        et(et>-.5 & et<0)+deltaT,...
-        base_coeffout(c_ind,1)*et(et>-.5 & et<0) + base_coeffout(c_ind,2));
-    plot(...
-        et(et>-.5 & et<0)+deltaT,...
-        breakin_dF(et>-.5 & et<0),'m');
-    
-    subplot(3,1,2), hold on
-    plot(...
-        et(et>0)+deltaT,...
-        exponential(exp_coeffout(c_ind,:),et(et>0)));
-    plot(...
-        et(et>0)+deltaT,...
-        breakin_dF(et>0),'g');
-    
-
-    breakin_dF = breakin_dF(frame_window);
-    breakin_dF_traces(c_ind,:) = breakin_dF; %#ok<SAGROW>
-    
-    detrend = breakin_dF(:);
-    detrend(et_window <= 0) = ... % detrend baseline
-        detrend(et_window <= 0) - ...
-        breakin_dF_model(et_window <= 0);
-    detrend(et_window <= 0) = ... % add back final baseline point
-        detrend(et_window <= 0) + ...
-        repmat(breakin_dF_model(find(et_window<=0,1,'last')),size(et_window(et_window <= 0)));
-    detrend(et_window > 0) = ... % detrend baseline
-        detrend(et_window > 0) - ...
-        breakin_dF_model(et_window > 0);
-    detrend(et_window > 0) = ... % add back final baseline point
-        detrend(et_window > 0) + ...
-        repmat(breakin_dF_model(find(et_window>0,1,'first')),size(et_window(et_window > 0)));
-    
-    breakin_dF_detrended(c_ind,:) = detrend;
-    breakin_dF_dF_detrended(c_ind,:) = detrend-mean(detrend(et_window<=0),1);
-    
-    breakin_dF_model_traces(c_ind,:) = breakin_dF_model' - breakin_dF_model(find(et_window<=0,1,'last')); %#ok<SAGROW>
-    breakin_dF_dF(c_ind,:) = breakin_dF - mean(breakin_dF(et_window<=0)); %#ok<SAGROW>
-    breakin_exposure_time_windows(c_ind,:) = et_window; %#ok<SAGROW>
-    
-    eval(['export_fig ', ...
-        [savedir ['break-in_long_',dateID,'_',flynum,'_',cellnum]],...
-        ' -pdf -transparent'])
-
-    axs = findobj(gcf,'type','axes');
-    for ax = axs'
-        %ax
-        set(ax,'xlim',[et_window(1)+deltaT   et_window(end)+deltaT]);
-    end
-    set(dfofax,'ylim',[min(dFtrace(frame_window)), max(dFtrace(frame_window))]);
-
-    eval(['export_fig ', ...
-        [savedir ['break-in_',dateID,'_',flynum,'_',cellnum]],...
-        ' -pdf -transparent'])
+    Script_ArcLight_Break_in;
     
 end
 
@@ -718,92 +555,7 @@ pf = figure;
 for c_ind = 1:length(analysis_cell)
     disp(analysis_cell(c_ind).name)
     trial = load(analysis_cell(c_ind).plateau_trial{1});
-    obj.trial = trial;
-    [obj.currentPrtcl,dateID,flynum,cellnum,obj.currentTrialNum,obj.dir,obj.trialStem,dfile] = ...
-        extractRawIdentifiers(trial.name);
-
-    prtclData = load(dfile);
-    obj.prtclData = prtclData.data;
-    
-    figure
-    if backgroundCorrectionFlag
-        VoltagePlateauxAverageDFoverF(gcf,obj,'No Save','BGCorrectImages',true);
-    else
-        VoltagePlateauxAverageDFoverF(gcf,obj,'No Save','BGCorrectImages',false);
-    end
-    
-    eval(['export_fig ', ...
-        [savedir ['AverageDFoverF_',dateID,'_',flynum,'_',cellnum]],...
-        ' -pdf -transparent'])
-    
-    figure
-
-    if backgroundCorrectionFlag
-        [h,dV,dF] = DFoverFoverDV_off(gcf,obj,'No Save','BGCorrectImages',true);
-    else
-        [h,dV,dF] = DFoverFoverDV_off(gcf,obj,'No Save','BGCorrectImages',false);
-    end
-
-    set(findobj(h,'color',[.3 1 .3]),'color',[.8 .8 .8])
-    set(findobj(h,'color',[0 .7 0]),'color',[.8 .8 .8],'markerfacecolor',[.8 .8 .8])
-    
-    coef = [16.0664  943.8559   63.7402  256.1001]; 
-    
-    [coeffout(c_ind,:)] = nlinfit(dV(:)',dF(:)',@CaoBoltzmann,coef);
-
-    lastwarn('');
-    [coeffout(c_ind,:),resid,jacob,covab,mse] = nlinfit(dV(:)',dF(:)',@CaoBoltzmann,coeffout(c_ind,:));
-    [lastmsg, lastid] = lastwarn();
-    if ~isempty(lastmsg)
-        textbp('Illconditioned NLinFit')
-    end
-    
-    parci = nlparci(coeffout(c_ind,:),resid,'jacobian',jacob);
-
-    deltaV_hyp = 2*min(dV(1,:)):.01: 2*max(dV(1,:));
-    [dFprediction, delta] = nlpredci(@CaoBoltzmann,deltaV_hyp,coeffout(c_ind,:),resid,'covar',covab);
-    set(gca,'xlim',[deltaV_hyp(1) deltaV_hyp(end)],'ylim',[min(dFprediction-delta),max(dFprediction+delta)])
-
-    hold on,
-    plot(deltaV_hyp,dFprediction,'color',colors(c_ind,:),'linewidth',2)
-    plot(deltaV_hyp,[dFprediction+delta;dFprediction-delta],'color',colors(c_ind,:),'linewidth',.5)
-    plot(get(gca,'xlim'),[DeltaF_breakin(c_ind) ,DeltaF_breakin(c_ind)],':','color',colors(c_ind,:));
-    
-    % at some point, moving from left to right, breakin deltaF is
-    % larger than the boltzman.
-    mid = find(dFprediction <= DeltaF_breakin(c_ind),1,'first');
-    midVm = deltaV_hyp(mid);
-    if isempty(mid)
-        mid = length(dFprediction);
-        midVm = deltaV_hyp(end);
-    end
-
-    % then find where the measurement crosses the prediction line
-    left = find(dFprediction(1:mid)-delta(1:mid)>= DeltaF_breakin(c_ind),1,'last');
-    leftVm = deltaV_hyp(left)-midVm;
-    if isempty(left)
-        leftVm = deltaV_hyp(1);
-    end
-    right = find(dFprediction(mid+1:end)+delta(mid+1:end)<= DeltaF_breakin(c_ind),1,'first');
-    if ~isempty(right)
-        right = mid+right;
-        rightVm = deltaV_hyp(right)-midVm;
-    else
-        rightVm = deltaV_hyp(end);
-    end
-    
-    plot([midVm+leftVm midVm+leftVm], get(gca,'ylim'),'k','color',[.8 .8 .8]);
-    plot([midVm+rightVm midVm+rightVm], get(gca,'ylim'),'k','color',[.8 .8 .8]);
-    plot(midVm,DeltaF_breakin(c_ind),'o','color',colors(c_ind,:),'markerfacecolor',colors(c_ind,:));
-    
-    predci_delta(c_ind,:) = [leftVm rightVm];
-    
-    DeltaV_breakin(c_ind) = midVm;
-    
-    eval(['export_fig ', ...
-        [savedir ['DeltaV_breakin_',dateID,'_',flynum,'_',cellnum]],...
-        ' -pdf -transparent'])
-
+    Script_ArcLight_DeltaFvsDeltaV;
 end
 
 %%
@@ -1072,6 +824,7 @@ panl(2).marginleft = 18;
 % # patching failed
 % # fluorescence changes in response to voltage steps were not imaged
 % # the cell was not isolated from the surrounding cells
+% # The movement of the tissue was unmanagable
 
 cnt = 0;
 
@@ -1217,6 +970,20 @@ analysis_cell(7).plateau_trial = {...
     'C:\Users\Anthony Azevedo\Raw_Data\140207\140207_F1_C2\VoltagePlateau_Raw_140207_F1_C2_5.mat';...
     };
 
+analysis_cell(cnt).name = '150117_F3_C1';
+analysis_cell(cnt).comment = {
+'Break in at -50, Not sure this is a B1 neuron, no sound responses, have to image the cell'
+};
+analysis_cell(cnt).exampletrials = {...
+'C:\Users\Anthony Azevedo\Raw_Data\150117\150117_F3_C1\Sweep_Raw_150117_F3_C1_1.mat';
+'C:\Users\Anthony Azevedo\Raw_Data\150117\150117_F3_C1\VoltagePlateau_Raw_150117_F3_C1_1.mat';
+    };
+analysis_cell(cnt).breakin_trial = {...
+'C:\Users\Anthony Azevedo\Raw_Data\150117\150117_F3_C1\Sweep_Raw_150117_F3_C1_1.mat';
+    };
+analysis_cell(cnt).plateau_trial = {...
+'C:\Users\Anthony Azevedo\Raw_Data\150117\150117_F3_C1\VoltagePlateau_Raw_150117_F3_C1_1.mat';
+    };
 
 % Note, in this commit, I lost the analysis_cell 140122 cell, for some
 % reason
