@@ -80,7 +80,7 @@ end
 set(p(1).de.axis,'xlim',xlims,'ylim',ylims)
 set(p(1).de.axis,'xtick',[])
 set(p(1).de.axis,'xcolor',[1 1 1])
-p(1).ylabel('Response (mV)')
+p(1).ylabel('\DeltaF/F %')
 p(1).de.fontsize = 8;
 
 

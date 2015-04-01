@@ -20,7 +20,7 @@ function varargout = quickShow(varargin)
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 
-% Last Modified by GUIDE v2.5 11-Dec-2014 16:28:33
+% Last Modified by GUIDE v2.5 01-Mar-2015 17:42:52
 
 %% Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -478,9 +478,14 @@ fprintf('%s\n',infoStr{:});
 % [protocol,dateID,flynum,cellnum,trialnum] = extractRawIdentifiers(handles.trial.name);
 % set(newfig,'name',[dateID '_' flynum '_' cellnum '_' protocol '_Block' num2str(b) '_' mfilename sprintf('_%s',tags{:})])
 
-nameguess = regexprep(handles.trialStem,...
-    {handles.currentPrtcl,'_Raw_','%d','.mat'},...
-    {'','',[handles.quickShowFunction '_' num2str(handles.currentTrialNum)  sprintf('_%s',handles.trial.tags{:})],'.pdf'});
+try nameguess = regexprep(handles.trialStem,...
+        {handles.currentPrtcl,'_Raw_','%d','.mat'},...
+        {'','',[handles.quickShowFunction '_' num2str(handles.currentTrialNum)  sprintf('_%s',handles.trial.tags{:})],'.pdf'});
+catch
+    nameguess = regexprep(handles.trialStem,...
+        {handles.currentPrtcl,'_Raw_','%d','.mat'},...
+        {'','',[handles.quickShowFunction '_' num2str(handles.currentTrialNum)],'.pdf'});
+end
 
 nameguess = regexprep(nameguess,' ','_');
 set(fig,'name')
@@ -803,6 +808,27 @@ winopen(imdir);
 function tag_button_Callback(hObject, eventdata, handles)
 handles = guidata(hObject);
 tags = handles.trial.tags;
+def = '';
+for t_ind = 1:length(tags)
+    def = [def tags{t_ind} '; '];
+end
+prompt = {'Edit trial tags ('';''-delimited, '';'' to clear tags):'};
+dlg_title = 'Tag Trial';
+num_lines = 1;
+def = {def};
+answer = inputdlg(prompt,dlg_title,num_lines,def);
+if isempty(answer)
+    return
+end   
+pat = ';\s*';
+s = regexp(answer, pat, 'split');
+s = s{1};
+if isempty(s{end}) || isempty(regexp(s{end},'\S'))
+    s = s(1:end-1);
+end
+handles.trial.tags = s;
+trial = handles.trial;
+save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
 
 
 % --- Executes on button press in clear_ROI_button.
@@ -812,8 +838,21 @@ if strcmp(get(handles.image_button,'enable'),'on') && isfield(handles.trial,'ROI
     handles.trial = rmfield(handles.trial,'ROI');
     trial = handles.trial;
     save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
-    guidata(hObject,handles);
 end
+button = questdlg('Clear ROI for block?','Clear ROI','Yes');
+if ~(strcmp(button,'No') || strcmp(button,'Cancel'))
+    blockTrials = findLikeTrials('name',trial.name,'datastruct',handles.prtclData);
+    for bt = blockTrials
+        data_block = load(fullfile(handles.dir,sprintf(handles.trialStem,bt)));
+        if isfield(data_block,'ROI')
+            data_block = rmfield(data_block,'ROI');
+            trial = data_block;
+            save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
+        end
+    end
+end
+guidata(hObject,handles);
+
 trialnum_Callback(handles.trialnum,[],handles)
 
 
@@ -836,3 +875,31 @@ function clicky_button_Callback(hObject, eventdata, handles)
 handles = guidata(hObject);
 I = getScimImageStack(handles.trial,handles.trial.params);
 clicky(I);
+
+
+function save_data_struct_button_Callback(hObject, eventdata, handles)
+handles = guidata(hObject);
+createDataFileFromRaw(handles.prtclDataFileName);
+d = load(handles.prtclDataFileName);
+handles.prtclData = d.data;
+guidata(hObject, handles);
+
+
+
+% --------------------------------------------------------------------
+function quickShowPanel_ButtonDownFcn(hObject, eventdata, handles)
+persistent chk
+if isempty(chk)
+      chk = 1;
+      pause(0.5); %Add a delay to distinguish single click from a double click
+      if chk == 1
+          fprintf(1,'\nI am doing a single-click.\n\n');
+          chk = [];
+      end
+else
+      chk = [];
+      figs = findobj('type','figure');
+      figs = figs(figs ~= get(hObject,'parent'));
+      close(figs);
+end
+    

@@ -48,11 +48,18 @@ for bt = blocktrials;
         end
     end
     
-    scimtraces_sem = std(scimtraces,1)/sqrt(size(scimtraces,1));
-    scimtraces = mean(scimtraces,1);
+    scimtraces_sem = smooth(std(scimtraces,1)/sqrt(size(scimtraces,1)));
+    scimtraces = smooth(mean(scimtraces,1));
     
-    scimtraces_sem = scimtraces_sem / mean(scimtraces(handles.trial.exposureTimes<=0)) * 100;
-    scimtraces = (scimtraces / mean(scimtraces(handles.trial.exposureTimes<=0)) - 1)*100;
+    scimtraces_sem = scimtraces_sem / mean(scimtraces...
+        (handles.trial.exposureTimes<=0&handles.trial.exposureTimes>=-2))...
+        * 100;
+    scimtraces = (scimtraces / mean(scimtraces...
+        (handles.trial.exposureTimes<=0&handles.trial.exposureTimes>=-2))...
+        - 1)*100;
+    
+    scimtraces_sem = scimtraces_sem(:)';
+    scimtraces = scimtraces(:)';
     
     ptch = patch(...
         [handles.trial.exposureTimes,fliplr(handles.trial.exposureTimes)],...
@@ -81,7 +88,9 @@ legend('boxoff');
 pnl(1).ylabel('% \DeltaF/F_0');
 pnl(1).xlabel('Time(s)');
 
-pnl(1).title(sprintf('%s Block %d: {%s}', [handles.currentPrtcl '.' dateID '.' flynum '.' cellnum],b,sprintf('%s; ',tags{:})));
+pnl(1).title(sprintf('%s %s Block %d: {%s}',...
+    [handles.currentPrtcl '.' dateID '.' flynum '.' cellnum],...
+    st_name,b,sprintf('%s; ',tags{:})));
 
 line(makeInTime(handles.trial.params),handles.trial.sgsmonitor,...
     'parent',pnl(2).select(),...

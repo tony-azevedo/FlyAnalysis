@@ -33,6 +33,7 @@ for bt = blocktrials;
 
     handles.trial = load(fullfile(handles.dir,sprintf(handles.trialStem,bt)));
     trials = findLikeTrials('trial',bt,'datastruct',handles.prtclData);
+    trials = excludeTrials('trials',trials,'name',handles.trial.name);
 
     scimtraces = nan(length(trials),length(handles.trial.exposureTimes));
     for t_ind = 1:length(trials)
@@ -46,11 +47,18 @@ for bt = blocktrials;
     end
     
     
-    scimtraces_sem = std(scimtraces,1)/sqrt(size(scimtraces,1));
-    scimtraces = mean(scimtraces,1);
+    scimtraces_sem = smooth(std(scimtraces,1)/sqrt(size(scimtraces,1)));
+    scimtraces = smooth(mean(scimtraces,1));
     
-    scimtraces_sem = scimtraces_sem / mean(scimtraces(handles.trial.exposureTimes<=0)) * 100;
-    scimtraces = (scimtraces / mean(scimtraces(handles.trial.exposureTimes<=0)) - 1)*100;
+    scimtraces_sem = scimtraces_sem / mean(scimtraces...
+        (handles.trial.exposureTimes<=0&handles.trial.exposureTimes>=-2))...
+        * 100;
+    scimtraces = (scimtraces / mean(scimtraces...
+        (handles.trial.exposureTimes<=0&handles.trial.exposureTimes>=-2))...
+        - 1)*100;
+    
+    scimtraces_sem = scimtraces_sem(:)';
+    scimtraces = scimtraces(:)';
     
     ptch = patch(...
         [handles.trial.exposureTimes,fliplr(handles.trial.exposureTimes)],...
@@ -69,6 +77,15 @@ for bt = blocktrials;
     cnt = cnt+1;
 
 end
+chi = get(pnl(1).select(),'children');
+for indx = 2:2:length(chi)
+    temp(indx/2) = chi(indx);
+    chi(indx/2) = chi(indx-1);
+end
+chi(end/2+1:end) = temp;
+set(pnl(1).select(),'children',chi)
+drawnow
+
 axis('tight');
 
 tags = getTrialTags(blocktrials,handles.prtclData);
@@ -83,7 +100,7 @@ legend('boxoff');
 
 pnl(1).ylabel('% \DeltaF/F_0');
 %pnl(1).xlabel('Time(s)');
-pnl(1).title(sprintf('%s Block %d: {%s}', [handles.currentPrtcl '.' dateID '.' flynum '.' cellnum],b,sprintf('%s; ',tags{:})));
+pnl(1).title(sprintf('%s %s Block %d: {%s}', [handles.currentPrtcl '.' dateID '.' flynum '.' cellnum],st_name,b,sprintf('%s; ',tags{:})));
 
 x = makeInTime(handles.trial.params);
 freq_value = zeros(size(x));

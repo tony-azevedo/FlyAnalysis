@@ -1,5 +1,8 @@
 function tags = getTrialTags(nums,id)
-
+if ~isfield(id,'tags')
+    tags = {};
+    return
+end
 if isstruct(id)
     tags = {};
     for n = 1:length(nums)

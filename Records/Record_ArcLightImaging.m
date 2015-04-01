@@ -177,6 +177,23 @@ analysis_cell(cnt).plateau_trial = {...
 'C:\Users\Anthony Azevedo\Raw_Data\150119\150119_F1_C1\VoltagePlateau_Raw_150119_F1_C1_1.mat';
     };
 
+cnt = 12;
+analysis_cell(cnt).name = '150220_F1_C1';
+analysis_cell(cnt).comment = {
+'Break in at -37, nonspiking band-pass low'
+};
+analysis_cell(cnt).exampletrials = {...
+'C:\Users\Anthony Azevedo\Raw_Data\150220\150220_F1_C1\Sweep_Raw_150220_F1_C1_1.mat';
+'C:\Users\Anthony Azevedo\Raw_Data\150220\150220_F1_C1\VoltagePlateau_Raw_150220_F1_C1_1.mat';
+    };
+analysis_cell(cnt).breakin_trial = {...
+'C:\Users\Anthony Azevedo\Raw_Data\150220\150220_F1_C1\Sweep_Raw_150220_F1_C1_1.mat';
+    };
+analysis_cell(cnt).plateau_trial = {...
+'C:\Users\Anthony Azevedo\Raw_Data\150220\150220_F1_C1\VoltagePlateau_Raw_150220_F1_C1_1.mat';
+    };
+
+
 fprintf('Currently analyzing %d cells.\n\n',length(analysis_cell))
 for c_ind = 1:length(analysis_cell)
     fprintf('Cell %d ID: %s\n', c_ind,analysis_cell(c_ind).name);
@@ -283,7 +300,7 @@ roiFluoTraceSavedir = 'C:\Users\Anthony'' Azevedo''\RAnalysis_Data\Record_ArcLig
 proplist =  getpref('AnalysisFigures','roiFluoTrace');
 fig = figure(proplist{:});
 
-c_ind = 11;
+c_ind = 13;
 for c_ind = 1:length(analysis_cell)
     fig = figure(proplist{:});
     
@@ -304,7 +321,7 @@ dT_exposure_window = .2;
 % breakin_dF_dF = breakin_dF_traces;
 % breakin_dF_model_traces = breakin_dF_dF;
 % breakin_framewindows = zeros(length(analysis_cell),dFrame*2+1);
-c_ind = 11;
+c_ind = 13;
 for c_ind = 1:length(analysis_cell)
     clear obj
     disp(analysis_cell(c_ind).name)
@@ -670,12 +687,33 @@ end
 sweepfig = figure;
 UnabridgedSweep(sweepfig,obj,'Save','BGCorrectImages',false);
 
+c_ind = 12;
+
+disp(analysis_cell(c_ind).name)
+trial = load(analysis_cell(c_ind).exampletrials{1});
+obj.trial = trial;
+[obj.currentPrtcl,dateID,flynum,cellnum,trialNum,obj.dir,obj.trialStem,dfile] = ...
+    extractRawIdentifiers(trial.name);
+obj.currentTrialNum = str2num(trialNum);
+prtclData = load(dfile);
+obj.prtclData = prtclData.data;
+obj.prtclTrialNums = nan(size(obj.prtclData));
+for i = 1:length(obj.prtclData)
+    obj.prtclTrialNums(i) = obj.prtclData(i).trial;
+end 
+c_ind = 2;
+
+% Bring up the quickShow_sweep Fig
 roiFig = figure;
 roiFluoTrace(obj.trial,obj.trial.params,'NewROI','No','dFoFfig',roiFig,'MotionCorrection',true);
 
 tracesFig = open(fullfile(regexprep(savedir,'''',''),'Break-in_Fluo_detrend.fig'));
 
 dotsFig = open(fullfile(regexprep(savedir,'''',''),'DFoverF_vs_DV_detrend.fig'));
+
+breakinDeltaT = [2.91198000000000,3.27442000000000,1.91542000000000,11.9100000000000,1.56502000000000,3.49674000000000,2.52138000000000,1.12998000000000,1.78408000000000,4.03114000000000,2.23716000000000,2.71376000000000];
+base_coeffout = [-0.769015655040183,1.77785936262991;-0.770158284290286,-3.77226428179149;0.0857622188969272,-1.40885364673638;-0.144805445459890,-8.32569462630583;-2.81975047162087,-2.29260221444858;-1.44691249561201,-3.52355908631020;-0.898213072544603,-2.52993306014564;-0.908070220912778,-0.781524624945376;2.11726830087980,-1.78389707045849;-2.78390859862825,-2.67440006534934;-1.10477405293482,-2.66892546014037;-0.517597396205579,-1.72235450744712];
+
 
 
 %% close mainFig
@@ -688,14 +726,14 @@ panl.fontsize = 10;
 panl.margin = [16 12 10 10]
 panl.pack('h',{1/2 1/2})  % response panel, stimulus panel
 
-panl(1).pack('v',{1/4 3/4})
-panl(1,2).pack('v',{1/3 1/3 1/3})
-panl(1,2).de.margin = 8;
-
-panl(2).pack('v',{1/2 1/2});
+panl(1).pack('v',{7/11 4/11})
+panl(1,1).pack('v',{1/2 1/2})
+panl(1,2).pack('v',{1/2 1/2})
+panl(1).de.margin = 8;
+panl(2).pack('v',{4/7 3/7});
 
 % Cell image panel4
-ax = panl(1,1).select();
+ax = panl(1,1,1).select();
 roipanl = panel.recover(roiFig);
 roiax = roipanl(1,1).select();
 cellimage = findobj(roiax,'type','image');
@@ -704,12 +742,12 @@ xy = get(cellimage,'cdata');
 imshow(xy,[0 max(xy(:))],'initialmagnification','fit','parent',ax);
 %copyobj(findobj(roiax,'type','line'),ax);
 
-xlim(ax,[1 64]);
-ylim(ax,[1 64]);
+xlim(ax,[1 128]);
+ylim(ax,[1 128]);
 xlims = [3.16 3.56];
 
 % \DeltaF break in panel
-ax1 = panl(1,2,1).select();
+ax1 = panl(1,1,2).select();
 inax = findobj(sweepfig,'tag','quickshow_dFoverF_ax');
 l = copyobj(findobj(inax,'type','line'),ax1);
 et = get(l,'xdata');
@@ -742,25 +780,25 @@ detrend(et_window > 0) = ... % add back final baseline point
 detrend = detrend - mean(detrend(et_window <= 0),1);
 df(et>=xlims(1) & et <= xlims(2)) = detrend;
 set(l,'ydata',df);
-panl(1,2,1).ylabel('%\DeltaF/F')
-set(ax1,'YLim',[-2 5],'xtick',[],'xColor',[1 1 1]);
+panl(1,1,2).ylabel('\DeltaF/F (%)')
+set(ax1,'YLim',[-1 5],'xtick',[],'xColor',[1 1 1]);
 
 xlims = [3.16 3.56];
 
 % current break in panel
-ax2 = panl(1,2,2).select();
+ax2 = panl(1,2,1).select();
 inax = findobj(sweepfig,'tag','quickshow_inax');
 copyobj(findobj(inax,'type','line'),ax2);
-panl(1,2,2).ylabel('pA')
-set(ax2,'ylim',[-300 300],'xtick',[],'xColor',[1 1 1]);
+panl(1,2,1).ylabel('pA')
+set(ax2,'ylim',[-200 200],'xtick',[],'xColor',[1 1 1]);
 
 % V break in panel
-ax3 = panl(1,2,3).select();
+ax3 = panl(1,2,2).select();
 outax = findobj(sweepfig,'tag','quickshow_outax');
 copyobj(findobj(outax,'type','line'),ax3);
-panl(1,2,3).ylabel('mV')
+panl(1,2,2).ylabel('mV')
 set(ax3,'ylim',[-51 -44]);
-panl(1,2,3).xlabel('Time (s)')
+panl(1,2,2).xlabel('Time (s)')
 
 set([ax1,ax2,ax3],'xlim',xlims,'Tickdir','out');
 set(findobj([ax1,ax2,ax3],'type','line'),'color',[0 0 0]);
@@ -770,7 +808,7 @@ ax4 = panl(2,1).select();
 traces_ax = get(tracesFig,'children');
 copyobj(get(traces_ax,'children'),ax4);
 panl(2,1).xlabel('Time from patch (s)')
-panl(2,1).ylabel('%\DeltaF/F')
+panl(2,1).ylabel('\DeltaF/F (%)')
 set(ax4,'xlim',[-.18 .18],'Tickdir','out');
 
 traces = findobj(ax4,'type','line','linestyle','-');
@@ -780,14 +818,16 @@ ax5 = panl(2,2).select();
 dots_ax = findobj(dotsFig,'type','axes','-not','tag','legend');
 copyobj(get(dots_ax,'children'),ax5);
 panl(2,2).xlabel('V_{hold} (mV)')
-panl(2,2).ylabel('%\DeltaF/F')
+panl(2,2).ylabel('\DeltaF/F (%)')
 legend(ax5,'hide');
 set(ax5,'xlim',[-52 -20],'Tickdir','out')
 
 dots = findobj(ax5,'type','line','Marker','o');
 x = dots;
+y = dots;
 for i = 1:length(x)
     x(i) = get(dots(i),'xdata');
+    y(i) = get(dots(i),'ydata');
 end
 mV = repmat(x(:),1,3);
 
@@ -798,26 +838,107 @@ for i = 1:length(x)
     set(dots(i),'markerFaceColor',greys(i,:),'markerEdgeColor',greys(i,:));
     set(findobj(traces,'displayname',get(dots(i),'displayname')),'color',greys(i,:));
 end
+
+[p,s] = polyfit(x,y,1);
+line([min(x) max(x)],p(1)*[min(x) max(x)]+p(2),'parent',ax5,'linestyle','-','color',[.8 .8 .8]);
+% bootStrapLineFit
+% line([min(x) max(x)],m_95(1)*[min(x) max(x)]+m_b95(1),'parent',ax5,'linestyle','-','color',[1 .8 .8]);
+% line([min(x) max(x)],m_95(1)*[min(x) max(x)]+m_b95(2),'parent',ax5,'linestyle','-','color',[1 .8 .8]);
+% line([min(x) max(x)],b_m95(2)*[min(x) max(x)]+b_95(1),'parent',ax5,'linestyle','-','color',[1 .8 .8]);
+% line([min(x) max(x)],b_m95(2)*[min(x) max(x)]+b_95(2),'parent',ax5,'linestyle','-','color',[1 .8 .8]);
+
+
 fn = fullfile(regexprep(savedir,'''',''),'ArcLightMainFig.pdf');
+saveas(mainFig,fullfile(regexprep(savedir,'''',''),'ArcLightMainFig'))
 panl.export(fn, '-rp', '-a1.0');
 
 %% Big Fig for Gordon Conference poster % Would need to fix this!
 set(mainFig,'units','inches')
-set(mainFig,'position',[0 0   11   12])
+set(mainFig,'position',[0 0   10.3   7])
 
 panl.fontname = 'Arial';
-panl.fontsize = 10;
+panl.fontsize = 18;
 panl.margin = [24 24 10 10]
 
-export_fig 'C:\Users\Anthony Azevedo\RAnalysis_Data\Record_ArcLightImaging\MainFigBig.pdf'
+export_fig 'C:\Users\Anthony Azevedo\RAnalysis_Data\Record_ArcLightImaging\MainFigPoster.pdf'
 %%
 panl.margin = [18 10 2 10];
 panl(2).marginleft = 18;
 %panl(2).margintop = 8;
 
+%% Fig for Allen Talk
+% uiopen('C:\Users\Anthony Azevedo\RAnalysis_Data\Record_ArcLightImaging\NoCorrection\ArcLightMainFig.fig',1)
+panl.fontsize = 14
+panl.margin = [20 20 4 2];
+export_fig 'C:\Users\Anthony Azevedo\RAnalysis_Data\Record_ArcLightImaging\MainFigPPT.pdf'
+
+
+%% Nice little spike figure
+close all
+trial = load('C:\Users\Anthony Azevedo\Raw_Data\140121\140121_F2_C1\CurrentStep_Raw_140121_F2_C1_6.mat');
+obj.trial = trial;
+[obj.currentPrtcl,dateID,flynum,cellnum,obj.currentTrialNum,obj.dir,obj.trialStem,dfile] = ...
+    extractRawIdentifiers(trial.name);
+
+prtclData = load(dfile);
+obj.prtclData = prtclData.data;
+
+figure
+CurrentStepAverageDFoverF(gcf,obj,'');
+Spikes = gcf;
+axs = get(Spikes,'children');
+spikesax = axs(3);
+fluoax = axs(2);
+stimax = axs(1);
+
+SpikeFig = figure();
+set(SpikeFig,'units','inches','position',[3 2 6  6])
+panl = panel(SpikeFig);
+panl.pack({[0 0 1 .15 ] [ 0 .28 1 .3] [ 0 .7 1 .3]});
+panl.marginleft = 24
+ax_spikes = panl(3).select();
+ax_fluo = panl(2).select();
+ax_stim = panl(1).select();
+set(ax_fluo,'TickDir','out')
+set(ax_spikes,'TickDir','out')
+set(ax_stim,'TickDir','out')
+
+panl.fontsize = 14;
+panl.fontname = 'Arial';
+
+spikes = get(spikesax,'children');
+copyobj(spikes(2),ax_spikes);
+axis(ax_spikes,'tight')
+
+fluotraces = get(fluoax,'children');
+copyobj(fluotraces(2),ax_fluo);
+axis(ax_fluo,'tight')
+ylim(ax_fluo,[-2.5 1])
+
+inj = get(stimax,'children');
+copyobj(inj(2),ax_stim);
+axis(ax_stim,'tight')
+
+linkaxes([ax_stim,ax_fluo,ax_spikes],'x');
+xlim(ax_fluo,[-.1 .18])
+
+panl(3).ylabel('mV')
+panl(2).ylabel('\DeltaF/F (%)')
+panl(1).ylabel('pA')
+panl(1).xlabel('Time (s)')
+
+cd('C:\Users\Anthony Azevedo\RAnalysis_Data\Record_ArcLightImaging\')
+fn = ['SpikeSlide_', ...
+    '.pdf'];
+
+eval(['export_fig ''' fn '''  -pdf -transparent'])
+saveas(SpikeFig, fn(1:end-4),'fig')
+%close(SpikeFig)
 
 %% Rejected cells
 % Cells were rejected if: 
+
+
 %%
 % # the cell was clearly not a B1 cell (al PN or confirmed not green)
 % # images were lost because of bugs in the code
@@ -983,6 +1104,28 @@ analysis_cell(cnt).breakin_trial = {...
     };
 analysis_cell(cnt).plateau_trial = {...
 'C:\Users\Anthony Azevedo\Raw_Data\150117\150117_F3_C1\VoltagePlateau_Raw_150117_F3_C1_1.mat';
+    };
+
+cnt = cnt+1;
+reject_cells(cnt).name = '150217_F1_C1';
+reject_cells(cnt).reason = 'Not a B1 cell, see the image';
+reject_cells(cnt).exampletrial = 'C:\Users\Anthony Azevedo\Raw_Data\150217\150217_F1_C1\Sweep_Raw_150217_F1_C1_1.mat';
+
+
+cnt = 12;
+analysis_cell(cnt).name = '150217_F1_C1';
+analysis_cell(cnt).comment = {
+'Break in at -37, Not a B1 neuron, no sound responses, have to image the cell'
+};
+analysis_cell(cnt).exampletrials = {...
+'C:\Users\Anthony Azevedo\Raw_Data\150217\150217_F1_C1\Sweep_Raw_150217_F1_C1_1.mat';
+'C:\Users\Anthony Azevedo\Raw_Data\150217\150217_F1_C1\VoltagePlateau_Raw_150217_F1_C1_12.mat';
+    };
+analysis_cell(cnt).breakin_trial = {...
+'C:\Users\Anthony Azevedo\Raw_Data\150217\150217_F1_C1\Sweep_Raw_150217_F1_C1_1.mat';
+    };
+analysis_cell(cnt).plateau_trial = {...
+'C:\Users\Anthony Azevedo\Raw_Data\150217\150217_F1_C1\VoltagePlateau_Raw_150217_F1_C1_12.mat';
     };
 
 % Note, in this commit, I lost the analysis_cell 140122 cell, for some

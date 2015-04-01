@@ -15,6 +15,7 @@ panl(1).marginbottom = 2;
 panl(2).marginbottom = 2;
 
 trials = findLikeTrials('name',handles.trial.name,'datastruct',handles.prtclData);
+trials = excludeTrials('trials',trials,'name',handles.trial.name);
 if isempty(h) || ~ishghandle(h)
     h = figure(100+trials(1)); clf
 else
@@ -28,10 +29,10 @@ x = makeTime(trial.params);
 outname = 'sgsmonitor';
 outunits = 'V';
 stackTraceName = 'scimStackTrace';
-if isfield(trial,'roiScimStackTrace') 
-    stackTraceName = 'roiScimStackTrace';
-    handles.trial.roiScimStackTrace = squeeze(handles.trial.roiScimStackTrace(:,:,1));
-end
+% if isfield(trial,'roiScimStackTrace') 
+%     stackTraceName = 'roiScimStackTrace';
+%     handles.trial.roiScimStackTrace = squeeze(handles.trial.roiScimStackTrace(:,:,1));
+% end
 
 %y = zeros(length(x),length(trials));
 exp_t = handles.trial.exposureTimes;

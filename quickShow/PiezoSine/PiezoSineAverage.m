@@ -1,9 +1,17 @@
-function h = PiezoSineAverage(h,handles,savetag)
+function h = PiezoSineAverage(h,handles,savetag,varargin)
 
-trials = findLikeTrials('name',handles.trial.name,'datastruct',handles.prtclData);
-if isempty(h) || ~ishghandle(h)
-    h = figure(100+trials(1)); clf
-else
+p = inputParser;
+p.PartialMatching = 0;
+p.addParameter('trials',[],@isnumeric);
+parse(p,varargin{:});
+
+if isempty(p.Results.trials)
+    trials = findLikeTrials('name',handles.trial.name,'datastruct',handles.prtclData);
+
+    if isempty(h) || ~ishghandle(h)
+        h = figure(100+trials(1)); clf
+    else
+    end
 end
 
 set(h,'tag',mfilename);

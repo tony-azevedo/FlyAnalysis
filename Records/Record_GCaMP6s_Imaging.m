@@ -6,6 +6,7 @@ end
 save = 1
 
 %% GCaMP6s cells all
+list = {...
 '150107_F1_C1'
 '150106_F1_C1'
 '141211_F3_C1'
@@ -19,350 +20,372 @@ save = 1
 '141124_F1_C1'
 '141123_F1_C1'
 '141123_F2_C1'
-'141120_F1_C1'
+'141120_F1_C1'  GH86
 '141119_F1_C1'
 '141118_F1_C1'
 '141029_F2_C1'
 '141029_F1_C1'
-'141028_F2_C1'
+'141028_F2_C1'  GH86
 '141028_F1_C1'
-'141027_F1_C1'
-'141027_F2_C1'
-'141025_F1_C1'
-
-%% Checklist
-'141211_F2_C1'
-'141211_F1_C1'
-'141210_F3_C1'
-'141210_F2_C1'
-'141210_F1_C1'
-'141201_F1_C1'
-'141125_F1_C1'
-'141124_F1_C1'
-'141123_F1_C1'
-'141123_F2_C1'
-'141120_F1_C1'
-'141119_F1_C1'
-'141118_F1_C1'
-'141029_F2_C1'
-'141029_F1_C1'
-'141028_F2_C1'
-'141028_F1_C1'
-'141027_F1_C1'
-'141027_F2_C1'
-'141025_F1_C1'
-
-
-%% Rejected
-reject_cells = {...
-    '150106_F1_C1'; 'Very bright terminals, probably due to damage, no responses';
-    '141211_F3_C1'; 'No signal.  Antenna was oriented in the wrong way wasn''t able to move correctly. Led to decision to reject quickly';
-    };
+'141027_F1_C1'  GH86
+'141027_F2_C1'  GH86
+'141025_F1_C1'  GH86
 };
 
-%% Analysis cells
-analysis_cells = {...
-    '150107_F1_C1'
-};
 
+%% Ipsilateral stimulation
 clear analysis_cell
-for c = 1:length(analysis_cells)
-    analysis_cell(cnt).name = {
-        analysis_cells{c}
-    };
-end
+SidePart = 'IpsiTerminals';
+Record_GCaMP6s_Imaging_Ipsilateral
+Script_GCaMP6s_Imaging
 
-%% For the figure
+%% Ipsilateral stimulation
+clear analysis_cell
+SidePart = 'IpsiAMMC';
+Record_GCaMP6s_Imaging_IpsilateralAMMC
+Script_GCaMP6s_Imaging
 
-cnt = 1;
-analysis_cell(cnt).exampletrials = {...
-    'C:\Users\Anthony Azevedo\Raw_Data\150107\150107_F1_C1\PiezoChirp_Raw_150107_F1_C1_1.mat';
-    %'C:\Users\Anthony Azevedo\Raw_Data\150107\150107_F1_C1\PiezoChirp_Raw_150107_F1_C1_11.mat'; % 17 Hz to 800 Hz
-    'C:\Users\Anthony Azevedo\Raw_Data\150107\150107_F1_C1\PiezoChirp_Raw_150107_F1_C1_14.mat';
-    'C:\Users\Anthony Azevedo\Raw_Data\150107\150107_F1_C1\PiezoLongCourtshipSong_Raw_150107_F1_C1_1.mat';  % Not great
-};
-analysis_cell(cnt).genotype = '20XUAS-IVS-GCaMP6s(attP40)R45D07-Gal4';
-analysis_cell(cnt).comment = {
-    'Great chirp signal, but the other stimuli were not delivered well. probe not connected';
-    };
+%% Contralateral stimulation
+clear analysis_cell
+SidePart = 'ContraTerminals';
+Record_GCaMP6s_Imaging_Contralateral
+Script_GCaMP6s_Imaging
 
-cnt = 2;
-analysis_cell(cnt).name = {
-    '141209_F1_C1';
-    };
-analysis_cell(cnt).exampletrials = {...
-'C:\Users\Anthony Azevedo\Raw_Data\141209\141209_F1_C1\PiezoChirp_Raw_141209_F1_C1_5.mat'; % distal 'up'
-'C:\Users\Anthony Azevedo\Raw_Data\141209\141209_F1_C1\PiezoChirp_Raw_141209_F1_C1_17.mat'; % distal 'down'
-% 'C:\Users\Anthony Azevedo\Raw_Data\141209\141209_F1_C1\PiezoChirp_Raw_141209_F1_C1_19.mat'; % proximal 'up'
-% 'C:\Users\Anthony Azevedo\Raw_Data\141209\141209_F1_C1\PiezoChirp_Raw_141209_F1_C1_27.mat'; % proximal 'down'
-'C:\Users\Anthony Azevedo\Raw_Data\141209\141209_F1_C1\PiezoLongCourtshipSong_Raw_141209_F1_C1_5.mat';
-%'C:\Users\Anthony Azevedo\Raw_Data\141209\141209_F1_C1\PiezoLongCourtshipSong_Raw_141209_F1_C1_8.mat'; % proximal
-'C:\Users\Anthony Azevedo\Raw_Data\141209\141209_F1_C1\PiezoSine_Raw_141209_F1_C1_1.mat'; % distal 
-%'C:\Users\Anthony Azevedo\Raw_Data\141209\141209_F1_C1\PiezoSine_Raw_141209_F1_C1_55.mat'; % proximal
-};
-
-analysis_cell(cnt).genotype = '20XUAS-IVS-GCaMP6s(attP40)R45D07-Gal4';
-analysis_cell(cnt).comment = {
-    'Complete over harmonics, slight band pass';
-    };
-
-
-cnt = 2;
-analysis_cell(cnt).name = {
-    '141210_F1_C1';
-    };
-analysis_cell(cnt).exampletrials = {...
-'C:\Users\Anthony Azevedo\Raw_Data\141210\141210_F1_C1\PiezoChirp_Raw_141210_F1_C1_1.mat';
-'C:\Users\Anthony Azevedo\Raw_Data\141210\141210_F1_C1\PiezoChirp_Raw_141210_F1_C1_9.mat';
-'C:\Users\Anthony Azevedo\Raw_Data\141210\141210_F1_C1\PiezoLongCourtshipSong_Raw_141210_F1_C1_1.mat';
-};
-analysis_cell(cnt).genotype = '20XUAS-IVS-GCaMP6s(attP40)R45D07-Gal4';
-analysis_cell(cnt).comment = {
-    'Complete over harmonics, slight band pass';
-    };
-
-cnt = 3;
-analysis_cell(cnt).name = {
-    '141210_F2_C1';
-    };
-analysis_cell(cnt).exampletrials = {...
-'C:\Users\Anthony Azevedo\Raw_Data\141210\141210_F2_C1\PiezoChirp_Raw_141210_F2_C1_1.mat';
-};
-analysis_cell(cnt).genotype = '20XUAS-IVS-GCaMP6s(attP40)R45D07-Gal4';
-analysis_cell(cnt).comment = {
-    'Complete over harmonics, slight band pass';
-    };
-
-cnt = 4;
-analysis_cell(cnt).name = {
-    '141210_F3_C1';
-    };
-analysis_cell(cnt).exampletrials = {...
-'C:\Users\Anthony Azevedo\Raw_Data\141210\141210_F3_C1\PiezoChirp_Raw_141210_F3_C1_1.mat'; % up
-'C:\Users\Anthony Azevedo\Raw_Data\141210\141210_F3_C1\PiezoChirp_Raw_141210_F3_C1_9.mat'; % down
-    
-'C:\Users\Anthony Azevedo\Raw_Data\141210\141210_F3_C1\PiezoSine_Raw_141210_F3_C1_48.mat'; 
-
-'C:\Users\Anthony Azevedo\Raw_Data\141210\141210_F3_C1\PiezoLongCourtshipSong_Raw_141210_F3_C1_1.mat';
-
-'C:\Users\Anthony Azevedo\Raw_Data\141210\141210_F3_C1\PiezoStimulus_Raw_141210_F3_C1_1.mat';
-};
-analysis_cell(cnt).genotype = '20XUAS-IVS-GCaMP6s(attP40)R45D07-Gal4';
-analysis_cell(cnt).comment = {
-    'Good cell, clear signals';
-    };
-
-cnt = 5;
-analysis_cell(cnt).name = {
-    '141211_F1_C1';
-    };
-analysis_cell(cnt).exampletrials = {...
-'C:\Users\Anthony Azevedo\Raw_Data\141211\141211_F1_C1\PiezoChirp_Raw_141211_F1_C1_1.mat';
-'C:\Users\Anthony Azevedo\Raw_Data\141211\141211_F1_C1\PiezoChirp_Raw_141211_F1_C1_18.mat';
-
-'C:\Users\Anthony Azevedo\Raw_Data\141211\141211_F1_C1\PiezoSine_Raw_141211_F1_C1_1.mat';
-
-'C:\Users\Anthony Azevedo\Raw_Data\141211\141211_F1_C1\PiezoLongCourtshipSong_Raw_141211_F1_C1_1.mat';
-};
-analysis_cell(cnt).genotype = '20XUAS-IVS-GCaMP6s(attP40)R45D07-Gal4';
-analysis_cell(cnt).comment = {
-    'Complete over harmonics, slight band pass';
-    };
-
-cnt = 6;
-analysis_cell(cnt).name = {
-    '141211_F2_C1';
-    };
-analysis_cell(cnt).exampletrials = {...
-'C:\Users\Anthony Azevedo\Raw_Data\141211\141211_F2_C1\PiezoChirp_Raw_141211_F2_C1_2.mat';
-'C:\Users\Anthony Azevedo\Raw_Data\141211\141211_F2_C1\PiezoChirp_Raw_141211_F2_C1_17.mat';
-
-'C:\Users\Anthony Azevedo\Raw_Data\141211\141211_F2_C1\PiezoSine_Raw_141211_F2_C1_1.mat';
-
-'C:\Users\Anthony Azevedo\Raw_Data\141211\141211_F2_C1\PiezoLongCourtshipSong_Raw_141211_F2_C1_1.mat';
-};
-analysis_cell(cnt).genotype = '20XUAS-IVS-GCaMP6s(attP40)R45D07-Gal4';
-analysis_cell(cnt).comment = {
-    'decent movement, but no response to courtship song';
-    };
-
-
-%% PiezoChirp Up
-
-for c_ind = 1:length(analysis_cell)
-t_ind = 1;
-
-trial = load(analysis_cell(c_ind).exampletrials{t_ind});
-obj.trial = trial;
-
-[obj.currentPrtcl,dateID,flynum,cellnum,obj.currentTrialNum,obj.dir,obj.trialStem,dfile] = ...
-    extractRawIdentifiers(trial.name);
-
-prtclData = load(dfile);
-obj.prtclData = prtclData.data;
-obj.prtclTrialNums = obj.currentTrialNum;
-
-f(c_ind) = PiezoChirpScimStackFamily([],obj,'');
-
-genotypedir = fullfile(savedir,analysis_cell(c_ind).genotype);
-if ~isdir(genotypedir), mkdir(genotypedir); end
-
-fn = fullfile(genotypedir,['CaIm_', ...
-    dateID '_', ...
-    flynum '_', ...
-    cellnum '_', ...
-    num2str(obj.trial.params.trialBlock) '_',...
-    'ChirpScim', ...
-    '.pdf']);
-
-export_fig C:\Users\Anthony' Azevedo'\RAnalysis_Data\Record_GCaMP6s_Imaging\20XUAS-IVS-GCaMP6s(attP40)R45D07-Gal4\CaIm_141209_F1_C1_3_ChirpScim.pdf -pdf -transparent
-end
-
-
-%% PiezoChirp Down
-
-c_ind = 1;
-t_ind = 2;
-
-trial = load(analysis_cell(c_ind).exampletrials{t_ind});
-obj.trial = trial;
-
-[obj.currentPrtcl,dateID,flynum,cellnum,obj.currentTrialNum,obj.dir,obj.trialStem,dfile] = ...
-    extractRawIdentifiers(trial.name);
-
-prtclData = load(dfile);
-obj.prtclData = prtclData.data;
-obj.prtclTrialNums = obj.currentTrialNum;
-
-f = PiezoChirpScimStackFamily([],obj,'');
-
-genotypedir = fullfile(savedir,analysis_cell(c_ind).genotype);
-if ~isdir(genotypedir), mkdir(genotypedir); end
-
-fn = fullfile(genotypedir,['CaIm_', ...
-    dateID '_', ...
-    flynum '_', ...
-    cellnum '_', ...
-    num2str(obj.trial.params.trialBlock) '_',...
-    'ChirpScim', ...
-    '.pdf']);
-
-export_fig C:\Users\Anthony' Azevedo'\RAnalysis_Data\Record_GCaMP6s_Imaging\20XUAS-IVS-GCaMP6s(attP40)R45D07-Gal4\CaIm_141209_F1_C1_3_ChirpScim.pdf -pdf -transparent
-
-%% PiezoLongSong
-for c_ind = 1:length(analysis_cell)
-    t_ind = 3;
-    
-    trial = load(analysis_cell(c_ind).exampletrials{t_ind});
-    obj.trial = trial;
-    
-    [obj.currentPrtcl,dateID,flynum,cellnum,obj.currentTrialNum,obj.dir,obj.trialStem,dfile] = ...
-        extractRawIdentifiers(trial.name);
-    
-    prtclData = load(dfile);
-    obj.prtclData = prtclData.data;
-    obj.prtclTrialNums = obj.currentTrialNum;
-    
-    f = PiezoSongScimFamily([],obj,'');
-    
-    genotypedir = fullfile(savedir,analysis_cell(c_ind).genotype);
-    if ~isdir(genotypedir), mkdir(genotypedir); end
-    
-    fn = fullfile(genotypedir,['CaIm_', ...
-        dateID '_', ...
-        flynum '_', ...
-        cellnum '_', ...
-        num2str(obj.trial.params.trialBlock) '_',...
-        'SongScim']);
-    
-    eval(['export_fig ',...
-        regexprep(fn,'Anthony Azevedo','Anthony'' Azevedo'''),...
-        ' -pdf -transparent'])
-end
-
-%%
-% %% 45D07-Gal4
-% % 141028_F1_C1 % Reject: no data
-% % 141029_F2_C1 % Reject: Antennal movement, probe potentially touching the objective.
-% 
+% AMMC
 % clear analysis_cell
-% cnt = 1;
-% analysis_cell(cnt).name = {
-%     '141118_F1_C1';
-%     };
-% analysis_cell(cnt).exampletrials = {...
-% 'C:\Users\Anthony Azevedo\Raw_Data\141118\141118_F1_C1\PiezoChirp_Raw_141118_F1_C1_9.mat'; % terminals clear movement up and down in z
-% 'C:\Users\Anthony Azevedo\Raw_Data\141118\141118_F1_C1\PiezoChirp_Raw_141118_F1_C1_19.mat'; % ammc
-% };
-% 
-% % 141119_F1_C1
-% % 141123_F1_C1
-% % 141123_F2_C1
-% % 141124_F1_C1
+% SidePart = 'ContraAMMC';
+% Record_GCaMP6s_Imaging_ContralateralAMMC
+% Script_GCaMP6s_Imaging
+
+%% Compare Contra and Ipsi and AMMC stimuluation
+close all
+
+ComparisonFig = figure();
+
+set(ComparisonFig,'color',[1 1 1]);
+%set(ComparisonFig,'units','pixels','position',[300 200 1024  768])
+set(ComparisonFig,'units','inches','position',[1 1 10.3 6.3])
+
+panl = panel(ComparisonFig);
+panl.pack('v',{1/3,2/3});
+panl(1).pack('h',{1/3,1/3,1/3});
+panl(2).pack('h',{3/5, 2/5});
+panl(2,1).pack('v',{2/3,1/6,1/6});
+
+panl.fontsize = 18;
+panl.fontname = 'Arial';
+%panl(1,2,1,2).fontsize = 10;
 
 
-% c_ind = 1;
-% t_ind = 2;
+% image
+uiopen('C:\Users\Anthony Azevedo\RAnalysis_Data\Record_GCaMP6s_Imaging\20XUAS-IVS-GCaMP6s(attP40)R45D07-Gal4\IpsiAMMC_Mask_150211_F2_C1_8_.fig',1)
+AxonROI = gcf;
+
+ax_ROI = panl(1,2).select();
+cla(ax_ROI);
+axs = findobj(get(AxonROI,'children'),'type','axes');
+imgax = axs(2);
+axonroi = findobj(imgax,'type','line');
+axonimgobj = findobj(imgax,'type','image');
+axonimg = get(axonimgobj,'Cdata');
+imshow(axonimg,[],'initialmagnification','fit','parent',ax_ROI)
+hold(ax_ROI,'on')
+plot(ax_ROI,get(axonroi,'xdata'),get(axonroi,'ydata'),'color',[0 1 0]);
+close(AxonROI)
+
+uiopen('C:\Users\Anthony Azevedo\RAnalysis_Data\Record_GCaMP6s_Imaging\20XUAS-IVS-GCaMP6s(attP40)R45D07-Gal4\IpsiTerminals_Mask_150211_F4_C1_9_.fig',1)
+AxonROI = gcf;
+
+ax_ROI = panl(1,1).select();
+cla(ax_ROI);
+axs = findobj(get(AxonROI,'children'),'type','axes');
+imgax = axs(2);
+axonroi = findobj(imgax,'type','line');
+axonimgobj = findobj(imgax,'type','image');
+axonimg = get(axonimgobj,'Cdata');
+imshow(axonimg,[],'initialmagnification','fit','parent',ax_ROI)
+hold(ax_ROI,'on')
+plot(ax_ROI,get(axonroi,'xdata'),get(axonroi,'ydata'),'color',[0 1 0]);
+close(AxonROI)
+
+uiopen('C:\Users\Anthony Azevedo\RAnalysis_Data\Record_GCaMP6s_Imaging\20XUAS-IVS-GCaMP6s(attP40)R45D07-Gal4\ContraTerminals_Mask_150203_F2_C1_5_.fig',1)
+AxonROI = gcf;
+
+ax_ROI = panl(1,3).select();
+cla(ax_ROI);
+axs = findobj(get(AxonROI,'children'),'type','axes');
+imgax = axs(2);
+axonroi = findobj(imgax,'type','line');
+axonimgobj = findobj(imgax,'type','image');
+axonimg = get(axonimgobj,'Cdata');
+imshow(axonimg,[],'initialmagnification','fit','parent',ax_ROI)
+hold(ax_ROI,'on')
+plot(ax_ROI,get(axonroi,'xdata'),get(axonroi,'ydata'),'color',[0 1 0]);
+close(AxonROI)
+
+panl(1).margin = 2;
+
+
+% uiopen('C:\Users\Anthony Azevedo\RAnalysis_Data\Record_GCaMP6s_Imaging\20XUAS-IVS-GCaMP6s(attP40)R45D07-Gal4\ContraTerminals_ROI_150203_F1_C1_4_BoutonExample.fig',1)
+% BoutonROI = gcf;
+% axs = get(BoutonROI,'children');
+% imgax = axs(2);
+% boutonroi = findobj(imgax,'type','line');
+% plot(ax_ROI,get(boutonroi,'xdata'),get(boutonroi,'ydata'),'color',[.5 1 .5]);
+% close(BoutonROI)
+
+figure(ComparisonFig)
+
+%uiopen('C:\Users\Anthony Azevedo\RAnalysis_Data\Record_GCaMP6s_Imaging\20XUAS-IVS-GCaMP6s(attP40)R45D07-Gal4\ContraTerminals_ChirpScimUp_150203_F2_C1_5_.fig',1)
+uiopen('C:\Users\Anthony Azevedo\RAnalysis_Data\Record_GCaMP6s_Imaging\20XUAS-IVS-GCaMP6s(attP40)R45D07-Gal4\ContraTerminals_ChirpScimUp_150203_F1_C1_4_.fig',1)
+AxonFluo = gcf;
+
+axs = findobj(get(AxonFluo,'children'),'type','axes');
+fluoax = axs(4);
+freqax = axs(2);
+stimax = axs(1);
+
+ax_fluo = panl(2,1,1).select();
+panl(2,1,1).marginbottom = 2;
+cla(ax_fluo);
+% ax_fluo_inset = panl(1,2,1,2).select();
+% cla(ax_fluo_inset);
+
+ax_freq = panl(2,1,3).select();
+panl(2,1,3).margintop = 2;
+cla(ax_freq);
+
+ax_stim = panl(2,1,2).select();
+panl(2,1,2).marginbottom = 2;
+panl(2,1,2).margintop = 2;
+cla(ax_stim);
+
+% %% aside to Make a stimulus figure
 % 
-% trial = load(analysis_cell(c_ind).exampletrials{t_ind});
-% obj.trial = trial;
+% StimulusFig = figure();
 % 
-% [obj.currentPrtcl,dateID,flynum,cellnum,obj.currentTrialNum,obj.dir,obj.trialStem,dfile] = ...
-%     extractRawIdentifiers(trial.name);
+% set(StimulusFig,'color',[1 1 1]);
+% set(StimulusFig,'units','inches','position',[3 2 8.83  7.5])
+% %set(ComparisonFig,'units','pixels','position',[300 200 768 678])
 % 
-% prtclData = load(dfile);
-% obj.prtclData = prtclData.data;
-% obj.prtclTrialNums = obj.currentTrialNum;
+% panl = panel(StimulusFig);
+% panl.pack({[0 0 .45 .2] [.55 0 .45 .2]});
 % 
-% f = PiezoChirpScimStackFamily([],obj,'');
+% panl.fontsize = 18;
+% panl.fontname = 'Arial';
 % 
-% genotypedir = fullfile(savedir,analysis_cell(c_ind).genotype);
-% if ~isdir(genotypedir), mkdir(genotypedir); end
+% axstart_stim = panl(1).select();
+% c = copyobj(get(stimax,'children'), axstart_stim);
 % 
-% fn = fullfile(genotypedir,['LF_', ...
-%     dateID '_', ...
-%     flynum '_', ...
-%     cellnum '_', ...
-%     num2str(obj.trial.params.trialBlock) '_',...
-%     'PiezoSineMatrix', ...
-%     '.pdf']);
+% axend_stim = panl(2).select();
+% c = copyobj(get(stimax,'children'), axend_stim);
+% 
+% xlim(axstart_stim,[-.1 .2])
+% xlim(axend_stim,[9.5 10.1])
+% set(axstart_stim,'TickDir','out')
+% set(axend_stim,'TickDir','out')
+% 
+% panl(1).ylabel('V')
+% panl(1).xlabel('Time (s)')
 % 
 % 
-% %% GH86-Gal4
+% cd(savedir)
+% fn = ['ChirpStimulus_Poster_', ...
+%     '.pdf'];
 % 
-% % 2014-10-27	F2C1 % Reject: Antennal movement, probe potentially touching the objective.
-% 
-% clear analysis_cell
-% cnt = 1;
-% analysis_cell(cnt).name = {
-%     '141120_F1_C1';
-%     };
-% analysis_cell(cnt).exampletrials = {...
-% 'C:\Users\Anthony Azevedo\Raw_Data\141120\141120_F1_C1\PiezoChirp_Raw_141120_F1_C1_30.mat'; % terminals
-% };
-% analysis_cell(cnt).genotype = genotypoToFilename(IdentifyGenotype(getFlyGenotype(analysis_cell(1).exampletrials{1})));
-% analysis_cell(cnt).comment = {
-%     'Complete over harmonics, slight band pass';
-%     };
-% 
-% % terminals
-% c_ind = 1;
-% t_ind = 1;
+% eval(['export_fig ''' fn '''  -pdf -transparent'])
+% saveas(StimulusFig, fn(1:end-4),'fig')
+% close(StimulusFig)
 % 
 % %%
-% trial = load(analysis_cell(c_ind).exampletrials{t_ind});
-% obj.trial = trial;
+
+c = copyobj(findobj(get(fluoax,'children'),'-not','type', 'text'), ax_fluo);
+c = copyobj(findobj(get(freqax,'children'),'-not','type', 'text'), ax_freq);
+c = copyobj(findobj(get(stimax,'children'),'-not','type', 'text'), ax_stim);
+
+linkaxes([ax_fluo ax_freq ax_stim],'x');
+axis(ax_fluo,'tight')
+xlim(ax_fluo,[-3 14])
+line(get(ax_fluo,'xlim'),[0 0],'color',[.8 .8 .8],'parent',ax_fluo)
+
+ylim(ax_fluo,lesstight(get(ax_fluo,'ylim')));
+ylim(ax_freq,[-.001 800])
+set(ax_fluo,'TickDir','out','xtick',[])
+set(ax_freq,'TickDir','out')
+set(ax_stim,'xtick',[])
+panl(2,1,1).ylabel('\DeltaF/F (%)'); 
+% panl(1,2,1,2).ylabel('\DeltaF/F (%)'); 
+panl(2,1,3).ylabel('Hz'); 
+panl(2,1,3).xlabel('Time (s)'); 
+
+
+% axs = get(BoutonFluo,'children');
+% fluoax = axs(4);
+% freqax = axs(2);
+% stimax = axs(1);
 % 
-% [obj.currentPrtcl,dateID,flynum,cellnum,obj.currentTrialNum,obj.dir,obj.trialStem,dfile] = ...
-%     extractRawIdentifiers(trial.name);
+% c = copyobj(get(fluoax,'children'), ax_fluo_inset);
+% axis(ax_fluo_inset,'tight')
+% xlim(ax_fluo_inset,[-3 14])
+% ylim(ax_fluo_inset,[-10 max(get(ax_fluo_inset,'ylim'))])
 % 
-% if ~isempty(strfind('PiezoSineMatrix',obj.currentPrtcl))
-%     prtclData = load(dfile);
-%     obj.prtclData = prtclData.data;
-%     obj.prtclTrialNums = obj.currentTrialNum;
-%     
-%     
-%     f = PiezoSineMatrix([],obj,'');
-% end
-% 
-% 
+% set(ax_fluo_inset,'TickDir','out')
+
+
+close(AxonFluo)
+% close(BoutonFluo)
+figure(ComparisonFig)
+
+% uiopen('C:\Users\Anthony Azevedo\RAnalysis_Data\Record_GCaMP6s_Imaging\20XUAS-IVS-GCaMP6s(attP40)R45D07-Gal4\ContraTerminals_ChirpScimUp_150203_F1_C1_4_BoutonExampleFamily.fig',1)
+%uiopen('C:\Users\Anthony Azevedo\RAnalysis_Data\Record_GCaMP6s_Imaging\20XUAS-IVS-GCaMP6s(attP40)R45D07-Gal4\IpsiTerminals_ROI_150212_F2_C1_5_.fig',1)
+
+ax_comp = panl(2,2).select();
+cla(ax_comp);
+
+uiopen('C:\Users\Anthony Azevedo\RAnalysis_Data\Record_GCaMP6s_Imaging\20XUAS-IVS-GCaMP6s(attP40)R45D07-Gal4\IpsiAMMC_Peaks_Troughs_Up.fig',1);
+IpsiAMMC_up_fig = gcf;
+axs = findobj(get(IpsiAMMC_up_fig,'children'),'type','axes');
+ax_fluo = axs(4); ax_freq = axs(3); %#ok<NASGU>
+peak_point = 1; trough_point = 2; leftfreq = 0;%#ok<*NASGU>
+Script_GCaMP6s_Imaging_DotBox
+close(IpsiAMMC_up_fig)
+figure(ComparisonFig)
+
+%
+uiopen('C:\Users\Anthony Azevedo\RAnalysis_Data\Record_GCaMP6s_Imaging\20XUAS-IVS-GCaMP6s(attP40)R45D07-Gal4\IpsiTerminals_Peaks_Troughs_Up.fig',1);
+IpsiTerminals_up_fig = gcf;
+axs = findobj(get(IpsiTerminals_up_fig,'children'),'type','axes');
+ax_fluo = axs(4);ax_freq = axs(3);
+peak_point = 3;trough_point = 4;leftfreq = 1000;
+Script_GCaMP6s_Imaging_DotBox
+close(IpsiTerminals_up_fig)
+figure(ComparisonFig)
+
+%
+uiopen('C:\Users\Anthony Azevedo\RAnalysis_Data\Record_GCaMP6s_Imaging\20XUAS-IVS-GCaMP6s(attP40)R45D07-Gal4\ContraTerminals_Peaks_Troughs_Up.fig',1);
+ContraTerminals_up_fig = gcf;
+axs = findobj(get(ContraTerminals_up_fig,'children'),'type','axes');
+ax_fluo = axs(4);ax_freq = axs(3);
+peak_point = 5;trough_point = 6; leftfreq = 2000;
+Script_GCaMP6s_Imaging_DotBox
+close(ContraTerminals_up_fig)
+figure(ComparisonFig)
+
+hold(ax_comp,'on')
+plot(ax_comp,[.5 6.5],[0 0],'color',[1 1 1]*.8,'linestyle','--'), axis(ax_comp,'tight')
+set(ax_comp,'xColor',[1 1 1]*0,'box','off','TickDir','out','xTick',[0 800 1000 2000],'xticklabel',{'0' '800'},'xlim',[-20 3000])
+panl(2,2).ylabel('\DeltaF/F (%)'); 
+panl(2,2).xlabel('Hz'); 
+
+cd(savedir)
+fn = ['ContraTerminal_poster_2_', ...
+    '.pdf'];
+
+eval(['export_fig ''' fn '''  -pdf'])
+saveas(ComparisonFig, fn(1:end-4),'fig')
+
+
+%% Format fig for poster
+set(ComparisonFig,'position',[0 0   10.3   7])
+
+panl.fontname = 'Arial';
+panl.fontsize = 18;
+panl.margin = [24 24 10 10];
+
+%% Comparison of sizes
+cd('C:\Users\Anthony Azevedo\RAnalysis_Data\Record_GCaMP6s_Imaging\20XUAS-IVS-GCaMP6s(attP40)R45D07-Gal4')
+
+SizeFigure = figure;
+
+set(SizeFigure,'color',[1 1 1]);
+%set(ComparisonFig,'units','pixels','position',[300 200 1024  768])
+set(SizeFigure,'units','inches','position',[1 1 13 6.3])
+
+panl = panel(SizeFigure);
+panl.pack('v',{1/3,1/3 1/3});
+array = 1/10 * ones(1,10);
+array = num2cell(array);
+panl(1).pack('h',array);
+panl(2).pack('h',array);
+panl(3).pack('h',array);
+panl.margin = [1 1 1 1];
+
+fn = {'Record_GCaMP6s_Imaging_IpsilateralAMMC'; 'Record_GCaMP6s_Imaging_Ipsilateral';'Record_GCaMP6s_Imaging_Contralateral'};
+pxls_per_um_1024x1024_5x = 664/50 % count pixels in imgj for the micrometer at 1024x1024(Mehmet)
+pxls_per_um_1024x1024 = pxls_per_um_1024x1024_5x/5;  % 
+pxls_per_um_64x64 = pxls_per_um_1024x1024/1024 * 64;  % 
+for panel_row = 1:3
+    clear analysis_cell zoomfactor roi_areas
+    eval(fn{panel_row});
+    for cnt = 1:length(analysis_cell)
+        if isempty(analysis_cell(cnt).ChirpUpTrial)
+            continue
+        end
+        trial = load(analysis_cell(cnt).ChirpUpTrial);
+        obj.trial = trial;
+        
+        [obj.currentPrtcl,dateID,flynum,cellnum,obj.currentTrialNum,obj.dir,obj.trialStem,dfile] = ...
+            extractRawIdentifiers(trial.name);
+        
+        prtclData = load(dfile);
+        obj.prtclData = prtclData.data;
+        obj.prtclTrialNums = obj.currentTrialNum;
+        
+        [f,i_info] = scimStackChan2Mask_Fig(obj.trial,obj.trial.params);
+        descript = i_info.ImageDescription;
+        ind_i = regexp(descript,'state.acq.zoomFactor=','end');
+        ind_f = regexp(descript,'state.acq.zoomFactor=\d+','end');
+        zoomfactor{cnt} = descript(ind_i+1:ind_f);
+        
+        panl_0 = panel.recover(f);
+        imgax = panl_0(2).select();
+        ax_ROI = panl(panel_row,cnt).select();
+        
+        roi = findobj(imgax,'type','line');
+        x = get(roi,'xdata');
+        y = get(roi,'ydata');
+        roi_area = polyarea(get(roi,'xdata'),get(roi,'ydata'));
+        roi_areas(cnt) = roi_area / (pxls_per_um_64x64 * str2double(zoomfactor{cnt}))^2;
+        imgobj = findobj(imgax,'type','image');
+        img = get(imgobj,'Cdata');
+        %imshow(img,[],'initialmagnification',100*str2double(zoomfactor{cnt})/17,'parent',ax_ROI)
+        imshow(img,[],'initialmagnification','fit','parent',ax_ROI)
+        
+        col = [1 1 0]+(cnt-1)/length(analysis_cell)*[-1 -1 1];
+        line(get(roi,'xdata'),get(roi,'ydata'),'parent',ax_ROI,'color',col);
+        panl(panel_row,cnt).title(['19/' zoomfactor{cnt}]);
+        
+        close(f)
+        
+        col = [1 1 0]+(cnt-1)/length(analysis_cell)*[-1 -1 1];
+        area_ax = panl(panel_row,10).select();
+        line(roi_areas(cnt),0,'linestyle','none','marker','o','markeredgecolor',col,'markerfacecolor','none','parent',area_ax);
+    end
+    line([mean(roi_areas),mean(roi_areas)],[-1 1],'linestyle','-','parent',area_ax);
+    set(area_ax,'xlim',[0 200])
+end
+cd ..
+fn = ['SizeCompFigure_', ...
+    '.pdf'];
+
+eval(['export_fig ''' fn '''  -pdf'])
+saveas(SizeFigure, fn(1:end-4),'fig')
+
+
+
+%%
+
+% uiopen('C:\Users\Anthony Azevedo\RAnalysis_Data\Record_GCaMP6s_Imaging\20XUAS-IVS-GCaMP6s(attP40)R45D07-Gal4\ContraTerminals_Peaks_Troughs_Down.fig',1);
+% ContraTerminals_down_fig = gcf;
+% uiopen('C:\Users\Anthony Azevedo\RAnalysis_Data\Record_GCaMP6s_Imaging\20XUAS-IVS-GCaMP6s(attP40)R45D07-Gal4\ContraTerminals_Peaks_Troughs_Song.fig',1);
+% ContraTerminals_song_fig = gcf;
+
+% uiopen('C:\Users\Anthony Azevedo\RAnalysis_Data\Record_GCaMP6s_Imaging\20XUAS-IVS-GCaMP6s(attP40)R45D07-Gal4\IpsiAMMC_Peaks_Troughs_Down.fig',1);
+% IpsiAMMC_down_fig = gcf;
+% uiopen('C:\Users\Anthony Azevedo\RAnalysis_Data\Record_GCaMP6s_Imaging\20XUAS-IVS-GCaMP6s(attP40)R45D07-Gal4\IpsiAMMC_Peaks_Troughs_Song.fig',1);
+% IpsiAMMC_song_fig = gcf;
+
+% uiopen('C:\Users\Anthony Azevedo\RAnalysis_Data\Record_GCaMP6s_Imaging\20XUAS-IVS-GCaMP6s(attP40)R45D07-Gal4\IpsiTerminals_Peaks_Troughs_Down.fig',1);
+% IpsiTerminals_down_fig = gcf;
+% uiopen('C:\Users\Anthony Azevedo\RAnalysis_Data\Record_GCaMP6s_Imaging\20XUAS-IVS-GCaMP6s(attP40)R45D07-Gal4\IpsiTerminals_Peaks_Troughs_Song.fig',1);
+% IpsiTerminals_song_fig = gcf;

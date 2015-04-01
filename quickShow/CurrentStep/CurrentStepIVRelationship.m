@@ -94,6 +94,6 @@ RC = .02;
 A = -(V_mean - V_base);
 B = V_mean;
 coef = [B A RC];
-coef = nlinfit(x(x>=0 & x<trial.params.stimDurInSec),V(x>=0 & x<trial.params.stimDurInSec),@exponential,coef);
+%coef = nlinfit(x(x>=0 & x<trial.params.stimDurInSec),V(x>=0 & x<trial.params.stimDurInSec),@exponential,coef);
 
 varargout = {V_base,V_mean,dV,coef(3)};

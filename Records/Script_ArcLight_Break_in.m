@@ -1,3 +1,5 @@
+%% from Record_ArclightImaging
+
 obj.trial = trial;
 [obj.currentPrtcl,dateID,flynum,cellnum,obj.currentTrialNum,obj.dir,obj.trialStem,dfile] = ...
     extractRawIdentifiers(trial.name);
@@ -32,6 +34,10 @@ switch analysis_cell(c_ind).name
 end
 
 commandvoltage(c_ind) = mean(trial.voltage(t<break_in)); %#ok<SAGROW>
+if strcmp(analysis_cell(c_ind).name,'150217_F1_C1')
+    commandvoltage(c_ind) = mean(trial.voltage(t<break_in & t>1.8));
+end
+    
 deltaT = t(break_in);
 breakinDeltaT(c_ind) = deltaT;
 

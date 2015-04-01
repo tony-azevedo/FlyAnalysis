@@ -52,7 +52,7 @@ xlim([exp_t(1) exp_t(end)])
 %ylim([80 150])
 box(panl(1).select(),'off');
 set(panl(1).select(),'TickDir','out');
-ylabel(panl(1).select(),'%\DeltaF/F');
+ylabel(panl(1).select(),'F (counts)');
 
 % plot(panl(2).select(),x,y,'color',[1, 0 0],'tag',savetag); hold on
 % axis(panl(2).select(),'tight')
@@ -71,5 +71,5 @@ set(panl(3).select(),'TickDir','out');
 xlim([exp_t(1) exp_t(end)])
 set(panl(3).select(),'tag','stimulus_ax');
 xlabel(panl(3).select(),'Time (s)');
-ylabel(panl(3).select(),'pA');
+ylabel(panl(3).select(),'SGS (V)');
 

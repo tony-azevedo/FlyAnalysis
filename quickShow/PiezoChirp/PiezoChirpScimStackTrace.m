@@ -12,7 +12,7 @@ p.addParameter('callingfile','',@ischar);
 parse(p,varargin{:});
 
 panl = panel(h);
-pnl.pack('v',{4/6 1/6 1/6})  % response panel, stimulus panel
+panl.pack('v',{4/6 1/6 1/6})  % response panel, stimulus panel
 panl.margin = [18 16 2 10];
 panl.fontname = 'Arial';
 panl(1).marginbottom = 2;
@@ -52,7 +52,7 @@ xlim([exp_t(1) exp_t(end)])
 %ylim([80 150])
 box(panl(1).select(),'off');
 set(panl(1).select(),'TickDir','out');
-ylabel(panl(1).select(),'%\DeltaF/F');
+ylabel(panl(1).select(),'F (counts)');
 
 freq_value = zeros(size(x));
 freq_value(x>=0 & x< trial.params.stimDurInSec) = ...
@@ -73,5 +73,5 @@ set(panl(3).select(),'TickDir','out');
 xlim([exp_t(1) exp_t(end)])
 set(panl(3).select(),'tag','stimulus_ax');
 xlabel(panl(3).select(),'Time (s)');
-ylabel(panl(3).select(),'pA');
+ylabel(panl(3).select(),'SGS (V)');
 
