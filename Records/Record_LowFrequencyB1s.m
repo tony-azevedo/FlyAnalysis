@@ -5,15 +5,45 @@ if ~isdir(savedir)
     mkdir(savedir)
 end
 save = 1
+%%
 
-%
-% VT30609
+analysis_cells = {...
+'140128_F1_C1'
+'140122_F2_C1'
+'131015_F3_C1'
+'130911_F2_C1'
+'150402_F3_C2'
+'150402_F1_C1'
+'150326_F1_C1'
+};
+
+analysis_cells_comment = {...
+    'Complete over harmonics, slight band pass';
+    'coarse freq sample, single amplitude, VCLAMP data!';
+    'coarse frequency, no current injections';
+    'coarse frequency, no current injections';
+};
+
+analysis_cells_genotype = {...
+'pJFRC7;VT30609'
+'pJFRC7;VT30609'
+'GH86;pJFRC7'
+'pJFRC7;VT45599'
+};
+
+%%
 clear analysis_cell
-cnt = 1;
-analysis_cell(1).name = {
-    '140128_F1_C1';
-    };
-analysis_cell(1).exampletrials = {...
+for c = 1:length(analysis_cells)
+    analysis_cell(c).name = analysis_cells(c); 
+    analysis_cell(c).genotype = analysis_cells_genotype(c); %#ok<*SAGROW>
+    analysis_cell(c).comment = analysis_cells_comment(c);
+end
+
+%%
+
+cnt = find(strcmp(analysis_cells,'140128_F1_C1'));
+
+analysis_cell(cnt).exampletrials = {...
 'C:\Users\Anthony Azevedo\Raw_Data\140128\140128_F1_C1\CurrentStep_Raw_140128_F1_C1_15.mat';
 'C:\Users\Anthony Azevedo\Raw_Data\140128\140128_F1_C1\CurrentStep_Raw_140128_F1_C1_10.mat';
 'C:\Users\Anthony Azevedo\Raw_Data\140128\140128_F1_C1\PiezoSine_Raw_140128_F1_C1_100.mat'; % Combined with the earlier trial
@@ -22,19 +52,10 @@ analysis_cell(1).exampletrials = {...
 analysis_cell(cnt).baselinetrial = {
 'C:\Users\Anthony Azevedo\Raw_Data\140128\140128_F1_C1\Sweep_Raw_140128_F1_C1_6.mat';
 };
-analysis_cell(1).genotype = genotypoToFilename(IdentifyGenotype(getFlyGenotype(analysis_cell(1).exampletrials{1})));
-analysis_cell(1).comment = {
-    'Complete over harmonics, slight band pass';
-    };
 
-cnt = 2;
-analysis_cell(2).name = {
-    '140122_F2_C1';
-    };
-analysis_cell(2).comment = {
-    'coarse freq sample, single amplitude, VCLAMP data!';
-    };
-analysis_cell(2).exampletrials = {...
+%%
+cnt = find(strcmp(analysis_cells,'140122_F2_C1'));
+analysis_cell(cnt).exampletrials = {...
     % 'C:\Users\Anthony Azevedo\Raw_Data\140122\140122_F2_C1\PiezoSine_Raw_140122_F2_C1_5.mat'; %VClamp
     'C:\Users\Anthony Azevedo\Raw_Data\140122\140122_F2_C1\CurrentStep_Raw_140122_F2_C1_5.mat';
 'C:\Users\Anthony Azevedo\Raw_Data\140122\140122_F2_C1\PiezoSine_Raw_140122_F2_C1_35.mat';
@@ -43,20 +64,10 @@ analysis_cell(2).exampletrials = {...
 analysis_cell(cnt).baselinetrial = {
 'C:\Users\Anthony Azevedo\Raw_Data\140122\140122_F2_C1\PiezoSine_Raw_140122_F2_C1_16.mat';
 };
-analysis_cell(2).genotype = genotypoToFilename(IdentifyGenotype(getFlyGenotype(analysis_cell(cnt).exampletrials{1})));
-analysis_cell(2).comment = {
-    'coarse freq sample, single amplitude, VCLAMP data!';
-    };
 
+%%
 
-% % GH86
-cnt = 3;
-analysis_cell(cnt).name = {
-    '131015_F3_C1';
-    };
-analysis_cell(cnt).comment = {
-    'coarse frequency, no current injections';
-    };
+cnt = find(strcmp(analysis_cells,'131015_F3_C1'));
 analysis_cell(cnt).exampletrials = {...
 'C:\Users\Anthony Azevedo\Raw_Data\131015\131015_F3_C1\PiezoSine_Raw_131015_F3_C1_43.mat';
 'C:\Users\Anthony Azevedo\Raw_Data\131015\131015_F3_C1\PiezoStep_Raw_131015_F3_C1_1.mat';
@@ -64,19 +75,9 @@ analysis_cell(cnt).exampletrials = {...
 analysis_cell(cnt).baselinetrial = {
 'C:\Users\Anthony Azevedo\Raw_Data\131015\131015_F3_C1\Sweep_Raw_131015_F3_C1_2.mat';
 };
-analysis_cell(cnt).genotype = genotypoToFilename(IdentifyGenotype(getFlyGenotype(analysis_cell(cnt).exampletrials{1})));
-analysis_cell(cnt).comment = {
-    'coarse frequency, no current injections';
-    };
 
-% % VT45599
-cnt = 4;
-analysis_cell(cnt).name = {
-    '130911_F2_C1';
-    };
-analysis_cell(cnt).comment = {
-    'coarse frequency, no current injections';
-    };
+%% VT45599
+cnt = find(strcmp(analysis_cells,'130911_F2_C1'));
 analysis_cell(cnt).exampletrials = {...
 'C:\Users\Anthony Azevedo\Raw_Data\130911\130911_F2_C1\PiezoSine_Raw_130911_F2_C1_1.mat';
 'C:\Users\Anthony Azevedo\Raw_Data\130911\130911_F2_C1\PiezoStep_Raw_130911_F2_C1_1.mat';
@@ -84,10 +85,7 @@ analysis_cell(cnt).exampletrials = {...
 analysis_cell(cnt).baselinetrial = {
 'C:\Users\Anthony Azevedo\Raw_Data\130911\130911_F2_C1\PiezoSine_Raw_130911_F2_C1_1.mat';
 };
-analysis_cell(cnt).genotype = genotypoToFilename(IdentifyGenotype(getFlyGenotype(analysis_cell(cnt).exampletrials{1})));
-analysis_cell(cnt).comment = {
-    'coarse frequency, no current injections';
-    };
+
 
 %% Exporting PiezoSineMatrix info on cells 
 close all

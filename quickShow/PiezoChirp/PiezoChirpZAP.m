@@ -44,7 +44,8 @@ f = trial.params.sampratein/length(x(xwindow))*[0:length(x(xwindow))/2]; f = [f,
 Z_mag = sqrt(real(Z.*conj(Z)));
 Z_phase = angle(Z);
 
-freqBins = logspace(log10(handles.trial.params.freqStart),log10(handles.trial.params.freqEnd),100);
+%freqBins = logspace(log10(handles.trial.params.freqStart),log10(handles.trial.params.freqEnd),100);
+freqBins = handles.trial.params.freqStart:2.5:handles.trial.params.freqEnd;
 freqBins = sort(freqBins);
 fsampled = freqBins(1:end-1);
 Z_mag_sampled = freqBins(1:end-1);
@@ -85,7 +86,7 @@ if ip.Results.plot
         [prot '.' d '.' fly '.' cell '.' trialnum],...
         'Stim to V transfer function'));
     set(ax,'xlim',[...
-        min(handles.trial.params.freqStart,handles.trial.params.freqEnd),...
+        max(min(handles.trial.params.freqStart,handles.trial.params.freqEnd),3),...
         max(handles.trial.params.freqStart,handles.trial.params.freqEnd),...
         ])
     
@@ -101,9 +102,10 @@ if ip.Results.plot
     ylabel(ax,'phase (deg)')
     xlabel(ax,'Frequency (Hz)')
     set(ax,'xlim',[...
-        min(handles.trial.params.freqStart,handles.trial.params.freqEnd),...
+        max(min(handles.trial.params.freqStart,handles.trial.params.freqEnd),3),...
         max(handles.trial.params.freqStart,handles.trial.params.freqEnd),...
         ])
     
-    set(get(fig,'children'),'xscale','log');
+    %     set(get(fig,'children'),'xscale','log');
+    set(get(fig,'children'),'xscale','linear');
 end

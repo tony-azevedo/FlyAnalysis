@@ -1,6 +1,4 @@
-% Record_TTX
-
-%% Checklist
+% Record_SynapticTransmission
 
 analysis_cells = {...
 '150326_F1_C1'
@@ -26,6 +24,7 @@ analysis_cells_genotype = {...
 'pJFRC7;VT27938/TM6b'
 };
 
+%%
 clear analysis_cell
 for c = 1:length(analysis_cells)
     analysis_cell(c).name = analysis_cells(c);
@@ -37,31 +36,14 @@ end
 
 cnt = find(strcmp(analysis_cells,'150326_F1_C1'));
 % Cd first, then TTX.  Control is Cd
-analysis_cell(cnt).ControlTrial = 'C:\Users\Anthony Azevedo\Raw_Data\150326\150326_F1_C1\PiezoSine_Raw_150326_F1_C1_109.mat';
-analysis_cell(cnt).TTXTrial = 'C:\Users\Anthony Azevedo\Raw_Data\150326\150326_F1_C1\PiezoSine_Raw_150326_F1_C1_217.mat';
-analysis_cell(cnt).ExtraControlTrial = 'C:\Users\Anthony Azevedo\Raw_Data\150326\150326_F1_C1\PiezoSine_Raw_150326_F1_C1_1.mat';
+analysis_cell(cnt).CdTrial = 'C:\Users\Anthony Azevedo\Raw_Data\150326\150326_F1_C1\PiezoSine_Raw_150326_F1_C1_109.mat';
+analysis_cell(cnt).ControlTrial = 'C:\Users\Anthony Azevedo\Raw_Data\150326\150326_F1_C1\PiezoSine_Raw_150326_F1_C1_1.mat';
 
 %%
 
 cnt = find(strcmp(analysis_cells,'150402_F1_C1'));
 % Cd first, then TTX.  Control is Cd
-analysis_cell(cnt).ControlTrial = 'C:\Users\Anthony Azevedo\Raw_Data\150402\150402_F1_C1\PiezoSine_Raw_150402_F1_C1_109.mat';   
-analysis_cell(cnt).TTXTrial = 'C:\Users\Anthony Azevedo\Raw_Data\150402\150402_F1_C1\PiezoSine_Raw_150402_F1_C1_217.mat';
-analysis_cell(cnt).ExtraControlTrial = 'C:\Users\Anthony Azevedo\Raw_Data\150402\150402_F1_C1\PiezoSine_Raw_150402_F1_C1_1.mat';
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+analysis_cell(cnt).CdMLATrial = 'C:\Users\Anthony Azevedo\Raw_Data\150402\150402_F1_C1\PiezoSine_Raw_150402_F1_C1_217.mat';
+analysis_cell(cnt).CdTrial = 'C:\Users\Anthony Azevedo\Raw_Data\150402\150402_F1_C1\PiezoSine_Raw_150402_F1_C1_109.mat';   
+analysis_cell(cnt).ControlTrial = 'C:\Users\Anthony Azevedo\Raw_Data\150402\150402_F1_C1\PiezoSine_Raw_150402_F1_C1_1.mat';
 

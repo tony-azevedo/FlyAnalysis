@@ -43,6 +43,8 @@ ylabel(ax2,'SGS monitor (V)'); %xlim([0 max(t)]);
 box(ax2,'off'); set(ax2,'TickDir','out'); axis(ax2,'tight');
 xlabel(ax2,'Time (s)'); %xlim([0 max(t)]);
 
+set(ax2,'tag','quickshow_outax');
+
 % 
 % 
 % % setupStimulus

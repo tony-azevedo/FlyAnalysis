@@ -6,6 +6,33 @@ if ~isdir(savedir)
 end
 save = 1
 
+analysis_cells = {...
+'131126_F2_C3'
+'131126_F2_C1'
+'131122_F2_C1'
+'140117_F2_C1'
+'140602_F2_C1'
+'140603_F1_C1'
+'150402_F2_C1'
+'150402_F3_C1'  % Not great for some reason
+'150414_F1_C1'  % Not great for some reason
+};
+
+analysis_cells_comment = {...
+    'Complete over harmonics, slight band pass';
+    'coarse freq sample, single amplitude, VCLAMP data!';
+    'coarse frequency, no current injections';
+    'coarse frequency, no current injections';
+};
+
+analysis_cells_genotype = {...
+'pJFRC7;VT30609'
+'pJFRC7;VT30609'
+'GH86;pJFRC7'
+'pJFRC7;VT45599'
+};
+%%
+
 % Possible cells
 % 131217_F2_C1 ?????????
 

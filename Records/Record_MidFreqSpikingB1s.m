@@ -7,24 +7,55 @@ end
 save = 1
 
 
-% Cells that possibly should be excluded
-exclude_cells = {
-    '140311_F1_C1',  'From paired recording, no Piezosine data'
-    '140121_F2_C1',  'Arclight, great cell for that, no Piezosine data, no obvious spikes'
-    '140117_F2_C1',  'Not great PiezoSine data.  This should probably be put in the BP set'
-    '131122_F3_C1',  ' No Data...'
-    '131119_F2_C2',  ' No Data. Interesting current sign, though'
-    '131015_F1_C1',  ' No Piezo connection (no responses). Interesting current sign, though, beautiful spiking!'
-    };
+%%
 
-%
+analysis_cells = {...
+'131211_F2_C1'
+'131014_F4_C1'
+'131014_F3_C1'
+'131016_F1_C1'
+'140311_F1_C1'
+'140121_F2_C1'
+'131126_F2_C2'
+'140602_F1_C1'
+'150421_F1_C1'
+};
+
+analysis_cells_comment = {...
+    'Questionable.  No clear spiking, sharper tuning';
+    'clear spiking (sweep), but not great stimulus control';
+    'clear spiking, mid range frequency, holding potential is offset, but otherwise ok';
+    'Clear spiking, not good stimulus control! exclude from PiezoStepAnalysis';
+    'From paired recording, no AVLP, only current sine data';
+    'No obvious spikes in the sweep, current steps show activity, Piezo activity is unclear';
+    'Banner cell, Current Sine @ hyp. Vm, was used in NRSA-resubmit, sharp tuning though coarse';
+    'Not great access, has a lot of the hallmarks of a spiking cell.  Spiking cell accordign to notebook';
+    '??'
+};
+
+analysis_cells_genotype = {...
+'pJFRC7;VT30609'
+'GH86-Gal4!GH86-Gal4;pJFRC7!pJFRC7;'
+'GH86-Gal4!GH86-Gal4;pJFRC7!pJFRC7;'
+'GH86-Gal4!GH86-Gal4;pJFRC7!pJFRC7;'
+'GH86-Gal4!+;pJFRC7!+;VT34811-Gal4!+'
+';pJFRC7!pJFRC7;VT30609-Gal4!VT30609-Gal4'
+';pJFRC7!pJFRC7;VT30609-Gal4!VT30609-Gal4'
+';;VT30609-Gal4!ArcLight'
+'Fru-Gal4,UAS-GFP'
+};
+
+
 clear analysis_cell
+for c = 1:length(analysis_cells)
+    analysis_cell(c).name = analysis_cells(c); 
+    analysis_cell(c).genotype = analysis_cells_genotype(c); %#ok<*SAGROW>
+    analysis_cell(c).comment = analysis_cells_comment(c);
+end
 
+%%
 % VT30604
-cnt = 1;
-analysis_cell(cnt).name = {
-    '131211_F2_C1';
-    };
+cnt = find(strcmp(analysis_cells,'131211_F2_C1'));
 analysis_cell(cnt).exampletrials = {...
 'C:\Users\Anthony Azevedo\Raw_Data\131211\131211_F2_C1\CurrentStep_Raw_131211_F2_C1_2.mat';
 'C:\Users\Anthony Azevedo\Raw_Data\131211\131211_F2_C1\PiezoSine_Raw_131211_F2_C1_1.mat';
@@ -33,16 +64,9 @@ analysis_cell(cnt).exampletrials = {...
 analysis_cell(cnt).baselinetrial = {
 'C:\Users\Anthony Azevedo\Raw_Data\131211\131211_F2_C1\PiezoSine_Raw_131211_F2_C1_6.mat';
 };
-analysis_cell(cnt).genotype = genotypoToFilename(IdentifyGenotype(getFlyGenotype(analysis_cell(cnt).exampletrials{1})));
-analysis_cell(cnt).comment = {
-    'Questionable.  No clear spiking, sharper tuning';
-    };
 
-% GH86
-cnt = 2;
-analysis_cell(cnt).name = {
-    '131014_F4_C1';
-    };
+%% GH86
+cnt = find(strcmp(analysis_cells,'131014_F4_C1'));
 analysis_cell(cnt).exampletrials = {...
 'C:\Users\Anthony Azevedo\Raw_Data\131014\131014_F4_C1\PiezoSine_Raw_131014_F4_C1_1.mat';
 'C:\Users\Anthony Azevedo\Raw_Data\131014\131014_F4_C1\PiezoStep_Raw_131014_F4_C1_1.mat';
@@ -50,15 +74,9 @@ analysis_cell(cnt).exampletrials = {...
 analysis_cell(cnt).baselinetrial = {
 'C:\Users\Anthony Azevedo\Raw_Data\131014\131014_F4_C1\Sweep_Raw_131014_F4_C1_21.mat';
 };
-analysis_cell(cnt).genotype = genotypoToFilename(IdentifyGenotype(getFlyGenotype(analysis_cell(cnt).exampletrials{1})));
-analysis_cell(cnt).comment = {
-    'clear spiking (sweep), but not great stimulus control';
-    };
 
-cnt = 3;
-analysis_cell(cnt).name = {
-    '131014_F3_C1';
-    };
+%%
+cnt = find(strcmp(analysis_cells,'131014_F3_C1'));
 analysis_cell(cnt).exampletrials = {...
 'C:\Users\Anthony Azevedo\Raw_Data\131014\131014_F3_C1\PiezoSine_Raw_131014_F3_C1_4.mat';
 'C:\Users\Anthony Azevedo\Raw_Data\131014\131014_F3_C1\Sweep_Raw_131014_F3_C1_13.mat';
@@ -67,15 +85,12 @@ analysis_cell(cnt).exampletrials = {...
 analysis_cell(cnt).baselinetrial = {
 'C:\Users\Anthony Azevedo\Raw_Data\131014\131014_F3_C1\Sweep_Raw_131014_F3_C1_5.mat';
 };
-analysis_cell(cnt).genotype = genotypoToFilename(IdentifyGenotype(getFlyGenotype(analysis_cell(cnt).exampletrials{1})));
 analysis_cell(cnt).comment = {
     'clear spiking, mid range frequency, holding potential is offset, but otherwise ok';
     };
 
-cnt = 4;
-analysis_cell(cnt).name = {
-    '131016_F1_C1';
-    };
+%%
+cnt = find(strcmp(analysis_cells,'131016_F1_C1'));
 analysis_cell(cnt).exampletrials = {...
 'C:\Users\Anthony Azevedo\Raw_Data\131016\131016_F1_C1\Sweep_Raw_131016_F1_C1_12.mat';
 'C:\Users\Anthony Azevedo\Raw_Data\131016\131016_F1_C1\PiezoStep_Raw_131016_F1_C1_1.mat';
@@ -84,13 +99,9 @@ analysis_cell(cnt).exampletrials = {...
 analysis_cell(cnt).baselinetrial = {
 'C:\Users\Anthony Azevedo\Raw_Data\131016\131016_F1_C1\Sweep_Raw_131016_F1_C1_2.mat';
 };
-analysis_cell(cnt).genotype = genotypoToFilename(IdentifyGenotype(getFlyGenotype(analysis_cell(cnt).exampletrials{1})));
-analysis_cell(cnt).comment = {
-    'Clear spiking, not good stimulus control! exclude from PiezoStepAnalysis';
-    };
 
-% VT30609
-cnt = 5;
+%% VT30609
+cnt = find(strcmp(analysis_cells,'140311_F1_C1'));
 analysis_cell(cnt).name = {
     '140311_F1_C1';
     };
@@ -101,15 +112,9 @@ analysis_cell(cnt).exampletrials = {...
 analysis_cell(cnt).baselinetrial = {
 ''
 };
-analysis_cell(cnt).genotype = genotypoToFilename(IdentifyGenotype(getFlyGenotype(analysis_cell(cnt).exampletrials{1})));
-analysis_cell(cnt).comment = {
-    'From paired recording, no AVLP, only current sine data';
-    };
 
-cnt = 6;
-analysis_cell(cnt).name = {
-    '140121_F2_C1';
-    };
+%%
+cnt = find(strcmp(analysis_cells,'140121_F2_C1'));
 analysis_cell(cnt).exampletrials = {...
 'C:\Users\Anthony Azevedo\Raw_Data\140121\140121_F2_C1\CurrentStep_Raw_140121_F2_C1_13.mat';
 'C:\Users\Anthony Azevedo\Raw_Data\140121\140121_F2_C1\Sweep_Raw_140121_F2_C1_7.mat';
@@ -117,12 +122,9 @@ analysis_cell(cnt).exampletrials = {...
 analysis_cell(cnt).baselinetrial = {
 'C:\Users\Anthony Azevedo\Raw_Data\140121\140121_F2_C1\PiezoSine_Raw_140121_F2_C1_25.mat';
 };
-analysis_cell(cnt).genotype = genotypoToFilename(IdentifyGenotype(getFlyGenotype(analysis_cell(cnt).exampletrials{1})));
-analysis_cell(cnt).comment = {
-    'No obvious spikes in the sweep, current steps show activity, Piezo activity is unclear';
-    };
 
-cnt = 7;
+%%
+cnt = find(strcmp(analysis_cells,'131126_F2_C2'));
 analysis_cell(cnt).name = {
     '131126_F2_C2';
     };
@@ -138,15 +140,9 @@ analysis_cell(cnt).exampletrials = {...
 analysis_cell(cnt).baselinetrial = {
 'C:\Users\Anthony Azevedo\Raw_Data\131126\131126_F2_C2\Sweep_Raw_131126_F2_C2_4.mat';
 };
-analysis_cell(cnt).genotype = genotypoToFilename(IdentifyGenotype(getFlyGenotype(analysis_cell(cnt).exampletrials{1})));
-analysis_cell(cnt).comment = {
-    'Banner cell, Current Sine @ hyp. Vm, was used in NRSA-resubmit, sharp tuning though coarse';
-    };
 
-cnt = 8;
-analysis_cell(cnt).name = {
-    '140602_F1_C1';
-    };
+%%
+cnt = find(strcmp(analysis_cells,'140602_F1_C1'));
 analysis_cell(cnt).exampletrials = {...
 'C:\Users\Anthony Azevedo\Raw_Data\140602\140602_F1_C1\CurrentStep_Raw_140602_F1_C1_1.mat';
 'C:\Users\Anthony Azevedo\Raw_Data\140602\140602_F1_C1\PiezoStep_Raw_140602_F1_C1_1.mat';
@@ -158,27 +154,16 @@ analysis_cell(cnt).exampletrials = {...
 analysis_cell(cnt).baselinetrial = {
 'C:\Users\Anthony Azevedo\Raw_Data\140602\140602_F1_C1\PiezoChirp_Raw_140602_F1_C1_5.mat';
 };
-analysis_cell(cnt).genotype = genotypoToFilename(IdentifyGenotype(getFlyGenotype(analysis_cell(cnt).exampletrials{1})));
-analysis_cell(cnt).comment = {
-'Not great access, has a lot of the hallmarks of a spiking cell.  Spiking cell accordign to notebook'
+
+%%
+cnt = find(strcmp(analysis_cells,'150421_F1_C1'));
+analysis_cell(cnt).exampletrials = {...
+'C:\Users\Anthony Azevedo\Raw_Data\150421\150421_F1_C1\CurrentChirp_Raw_150421_F1_C1_2.mat';
+};
+analysis_cell(cnt).baselinetrial = {
+'C:\Users\Anthony Azevedo\Raw_Data\150421\150421_F1_C1\Sweep_Raw_150421_F1_C1_1.mat';
 };
 
-% cnt = 7;
-% analysis_cell(cnt).name = {
-%     '130802_F1_C2';
-%     };
-% analysis_cell(cnt).exampletrials = {...
-% 'C:\Users\Anthony Azevedo\Raw_Data\130730\130730_F1_C1\PiezoStep_Raw_130730_F1_C1_20.mat';
-% 'C:\Users\Anthony Azevedo\Raw_Data\130730\130730_F1_C1\PiezoSine_Raw_130730_F1_C1_12.mat';
-% };
-% analysis_cell(cnt).baselinetrial = {
-% 'C:\Users\Anthony Azevedo\Raw_Data\130730\130730_F1_C1\Sweep_Raw_130730_F1_C1_9.mat';
-% %'C:\Users\Anthony Azevedo\Raw_Data\140603\140603_F1_C1\CurrentStep_Raw_140603_F1_C1_1.mat';
-% };
-% analysis_cell(cnt).genotype = genotypoToFilename(IdentifyGenotype(getFlyGenotype(analysis_cell(cnt).exampletrials{1})));
-% analysis_cell(cnt).comment = {
-%     'Not a great cell, the access was not that great, as can be seen in the current step trace';
-%     };
 
 %% Exporting PiezoSineMatrix info on cells 
 close all
@@ -800,3 +785,12 @@ fn = fullfile(savedir,'BPS_SelectivityVsSpontaneous.pdf');
 pnl.fontname = 'Arial';
 pnl.export(fn, '-rp','-l','-a1');
 
+%% Cells that possibly should be excluded
+exclude_cells = {
+    '140311_F1_C1',  'From paired recording, no Piezosine data'
+    '140121_F2_C1',  'Arclight, great cell for that, no Piezosine data, no obvious spikes'
+    '140117_F2_C1',  'Not great PiezoSine data.  This should probably be put in the BP set'
+    '131122_F3_C1',  ' No Data...'
+    '131119_F2_C2',  ' No Data. Interesting current sign, though'
+    '131015_F1_C1',  ' No Piezo connection (no responses). Interesting current sign, though, beautiful spiking!'
+    };

@@ -3,6 +3,21 @@ cd('C:\Users\Anthony Azevedo\Code\FlyAnalysis\Records\') % Go to the home folder
 %% Cells to Analyze
 % Note 6/11/14:  I'm taking three cells out of the analysis: 140207 - due
 % to motion; 140205 - likely the rogue PN in VT30609-Gal4; 140122 - same
+
+evidence_for_Inclusion = {
+    '140117_F2_C1', 'sound responsive',...
+'140121_F2_C1','sound responsive',...
+'140131_F3_C1','same kinds of currents',...
+'140206_F1_C1','same currents',...
+'140528_F1_C1','sound responsive',...
+'140530_F1_C1','sound responsive',...
+'140530_F2_C1','sound responsive',...
+'140602_F1_C1','sound responsive',...
+'140602_F2_C1','sound responsive',...
+'150119_F1_C1','NOT SURE!!',...
+'150220_F1_C1','Sound responsive',...
+    };
+
 cnt = 1;
 analysis_cell(cnt).name = '140117_F2_C1';
 analysis_cell(cnt).comment = {'Bright, isolated','Prepoints on Voltage Plateau too few to get good dFoverF relationship'};
@@ -266,7 +281,7 @@ for c_ind = 1%:length(moving_cell)
     end
 end
 
-%%
+%
 % The subpixel registration works well to align images that have shifted in
 % x and y.  However, most of the movement produced by beating of the brain
 % is stretching of the cell in x and y.  This is a fundamental limitation
@@ -308,7 +323,7 @@ for c_ind = 1:length(analysis_cell)
     Script_ArcLight_roiFluoTrace;
 end
 
-%% Fluorescence Changes at Break-in
+%% Find Fluorescence Changes at Break-in
 % Look for a strong change in the statistics of the current trace (-7X
 % std).  That is the point of break in.  Then plot the change in
 % fluorescence of DFrames frames before and after.
@@ -334,7 +349,7 @@ end
 
 close all
 
-%%
+%% Plot the Fluorescence Changes
 % With the time of break-in found and the change in fluorescence localized,
 % plot the fluorescence trace at break-in.
 close all
@@ -368,7 +383,7 @@ eval(['export_fig ', ...
     [savedir 'Break-in_Fluorescence'],...
     ' -pdf -transparent'])
 
-%%
+%% Detrended
 % With the time of break-in found and the change in fluorescence localized,
 % plot the fluorescence trace after detrending.  Also compare each trace to
 % it's detrended line
@@ -414,7 +429,7 @@ eval(['export_fig ', ...
     [savedir 'Break-in_Fluo_detrend'],...
     ' -pdf -transparent'])
 
-%%
+%% Modelled trends (lines)
 % With the time of break-in found and the change in fluorescence localized,
 % plot the modelled fluorescence trace at break-in.
 
@@ -474,8 +489,7 @@ eval(['export_fig ', ...
     [savedir 'DetrendVsMeasured_DeltaF'],...
     ' -pdf -transparent'])
 
-%% 
-% Plot DF_over_F vs holding potential
+%% Plot DF_over_F vs holding potential
 
 figure
 hold on
@@ -499,9 +513,7 @@ eval(['export_fig ', ...
     [savedir 'DFoverF_vs_DV_fig'],...
     ' -pdf -transparent'])
 
-
-%% 
-% Plot DF_over_F vs holding potential
+%% Plot DF_over_F vs holding potential (Modelled)
 
 figure
 hold on
@@ -546,18 +558,6 @@ saveas(gcf,fullfile(regexprep(savedir,'''',''),'DFoverF_vs_DV_detrend'));
 eval(['export_fig ', ...
     [savedir 'DFoverF_vs_DV_detrend'],...
     ' -pdf -transparent'])
-
-
-%%
-% We can see that those cells that do not appear to be B1 cells also do not
-% increase in fluorescence upon break-in (from the 
-% orginal notes, see the Google Drive notebook notes).  Currently, the four
-% definite B1 cells cluster around 2% change in fluorescence, once they are
-% held at 50mV.  When comparing these \Delta Fs to calibration curves,
-% consider the decrease in fluorescence for a step from -50mV to -36mV.
-%
-% As a future plan, if I break in at -40, I should deliver steps from -40.
-
 
 %% Comparison of break-in step with \Delta F/F vs \Delta V
 % I typically recorded two blocks of VoltagePlateau protocols in a row.  I
@@ -715,8 +715,7 @@ breakinDeltaT = [2.91198000000000,3.27442000000000,1.91542000000000,11.910000000
 base_coeffout = [-0.769015655040183,1.77785936262991;-0.770158284290286,-3.77226428179149;0.0857622188969272,-1.40885364673638;-0.144805445459890,-8.32569462630583;-2.81975047162087,-2.29260221444858;-1.44691249561201,-3.52355908631020;-0.898213072544603,-2.52993306014564;-0.908070220912778,-0.781524624945376;2.11726830087980,-1.78389707045849;-2.78390859862825,-2.67440006534934;-1.10477405293482,-2.66892546014037;-0.517597396205579,-1.72235450744712];
 
 
-
-%% close mainFig
+%% Make the mainFig
 mainFig = figure;
 set(mainFig,'color',[1 1 1],'position',[527   298   713   680])
 
@@ -1115,7 +1114,7 @@ reject_cells(cnt).exampletrial = 'C:\Users\Anthony Azevedo\Raw_Data\150217\15021
 cnt = 12;
 analysis_cell(cnt).name = '150217_F1_C1';
 analysis_cell(cnt).comment = {
-'Break in at -37, Not a B1 neuron, no sound responses, have to image the cell'
+'Not a B1 cell, see the image';
 };
 analysis_cell(cnt).exampletrials = {...
 'C:\Users\Anthony Azevedo\Raw_Data\150217\150217_F1_C1\Sweep_Raw_150217_F1_C1_1.mat';

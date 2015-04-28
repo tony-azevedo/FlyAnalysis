@@ -20,7 +20,7 @@ function varargout = quickShow(varargin)
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 
-% Last Modified by GUIDE v2.5 01-Mar-2015 17:42:52
+% Last Modified by GUIDE v2.5 27-Apr-2015 21:01:22
 
 %% Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -172,13 +172,8 @@ else
             protocols{end+1} = a(i).name(1:ind(1)-1);
         end
     end
-    a = dir([handles.dir '\notes_*']);
+    handles = reload_notes([],'loadCellFromDir',handles);
 
-    fclose('all');
-    handles.notesfilename = fullfile(handles.dir,a.name);
-    handles.notesfid = fopen(handles.notesfilename,'r');
-
-    set(handles.infoPanel,'userdata',fileread(handles.notesfilename))
     set(handles.protocolMenu, 'String', protocols,'value',1);
     guidata(handles.protocolMenu,handles)
     protocolMenu_Callback(handles.protocolMenu, [], handles);
@@ -311,19 +306,11 @@ if ~isfield(handles.trial,'ROI')
 elseif isfield(handles.trial,'ROI')
     set(handles.clear_ROI_button,'enable','on');
 end
-
 guidata(hObject,handles)
 quickShow_Protocol(hObject, eventdata, handles)
 
 
-% --- Executes during object creation, after setting all properties.
 function trialnum_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to trialnum (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
@@ -431,7 +418,7 @@ findobj(fig,'ButtonDownFcn',@showClickedImage);
 %                 'BackgroundColor',[1 1 1],...
 %                 'Position',[0 0 .75 1],'parent',fig,'bordertype','none');
 % copyobj(childs,repmat(cp,size(childs)));
-linax = findobj(fig,'xscale','linear');
+linax = findobj(fig,'xscale','linear','-not','tag','unlink');
 if length(linax)>1
     linkaxes(linax,'x');
 end
@@ -626,12 +613,6 @@ guidata(hObject,handles);
 
 % --- Executes during object creation, after setting all properties.
 function analysis_popup_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to analysis_popup (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: popupmenu controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
 analyses = what('Analysis');
 for i = 1:length(analyses.m)
     analyses.m{i} = regexprep(analyses.m{i},'\.m','');
@@ -806,9 +787,13 @@ winopen(imdir);
 
 % --- Executes on button press in tag_button.
 function tag_button_Callback(hObject, eventdata, handles)
+button = questdlg('Edit for entire block?','Tag Block','Yes');
+if strcmp(button,'Cancel'), return, end
+
 handles = guidata(hObject);
 tags = handles.trial.tags;
 def = '';
+
 for t_ind = 1:length(tags)
     def = [def tags{t_ind} '; '];
 end
@@ -827,8 +812,20 @@ if isempty(s{end}) || isempty(regexp(s{end},'\S'))
     s = s(1:end-1);
 end
 handles.trial.tags = s;
-trial = handles.trial;
-save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
+
+if strcmp(button,'Yes')
+    nums = findLikeTrials('name',handles.trial.name,'datastruct',handles.prtclData);
+    for n_ind = 1:length(nums);
+        trial = load(fullfile(handles.dir,sprintf(handles.trialStem,nums(n_ind))));
+        trial.tags = s;
+        save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
+    end
+else
+    trial = handles.trial;
+    save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
+end
+guidata(hObject, handles);
+trialnum_Callback(handles.trialnum, eventdata, handles)
 
 
 % --- Executes on button press in clear_ROI_button.
@@ -903,3 +900,68 @@ else
       close(figs);
 end
     
+
+
+% --- Executes on selection change in cellDiagnosticsMenu.
+function cellDiagnosticsMenu_Callback(hObject, eventdata, handles)
+handles = guidata(hObject);
+
+guidata(hObject, handles);
+
+
+% --- Executes during object creation, after setting all properties.
+function cellDiagnosticsMenu_CreateFcn(hObject, eventdata, handles)
+analyses = what('CellDiagnostics');
+for i = 1:length(analyses.m)
+    analyses.m{i} = regexprep(analyses.m{i},'\.m','');
+end
+
+funcs = analyses.m;
+set(hObject,'String',funcs);
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+function helperFunctionMenu_Callback(hObject, eventdata, handles)
+handles = guidata(hObject);
+hfs = get(hObject,'string');
+hfv = get(hObject,'value');
+hf = hfs{hfv};
+feval(hf,hObject,eventdata,handles);
+
+
+function helperFunctionMenu_CreateFcn(hObject, eventdata, handles)
+helperfuncs = ...
+{
+'save_data_struct'
+'reload_notes'
+};
+set(hObject,'String',helperfuncs);
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+% ----------- helper functions ---------------
+function save_data_struct(hObject, eventdata, handles)
+handles = guidata(hObject);
+createDataFileFromRaw(handles.prtclDataFileName);
+d = load(handles.prtclDataFileName);
+handles.prtclData = d.data;
+guidata(hObject, handles);
+
+function handles = reload_notes(hObject, eventdata, handles)
+a = dir([handles.dir '\notes_*']);
+
+fclose('all');
+handles.notesfilename = fullfile(handles.dir,a.name);
+handles.notesfid = fopen(handles.notesfilename,'r');
+set(handles.infoPanel,'userdata',fileread(handles.notesfilename))
+
+if ~isempty(eventdata) && ischar(eventdata) && strcmp(eventdata,'loadCellFromDir')
+else
+    updateInfoPanel(handles);
+end
+if ~isempty(hObject)
+    guidata(hObject, handles);
+end

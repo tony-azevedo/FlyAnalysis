@@ -96,8 +96,8 @@ box(ax2,'off');
 set(ax2,'TickDir','out'); 
 
 
-if isfield(obj,'prtclData') && isfield(obj,'prtclTrialNums') && ~isempty(obj.prtclData(obj.prtclTrialNums==obj.currentTrialNum).tags)
-    tags = obj.prtclData(obj.prtclTrialNums==obj.currentTrialNum).tags;
+if isfield(obj.trial,'tags')
+    tags = obj.trial.tags;
     tagstr = tags{1};
     for i = 2:length(tags)
         tagstr = [tagstr ';' tags{i}];

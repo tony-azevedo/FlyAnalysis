@@ -1,5 +1,6 @@
 function quickShow_PiezoChirp(plotcanvas,obj,savetag)
 % setupStimulus
+delete(get(plotcanvas,'children'));
 panl = panel(plotcanvas);
 panl.pack('v',{1/2 1/2})  % response panel, stimulus panel
 panl.margin = [18 16 2 10];
