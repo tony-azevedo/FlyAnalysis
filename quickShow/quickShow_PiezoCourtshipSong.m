@@ -1,5 +1,7 @@
 function quickShow_PiezoCourtshipSong(plotcanvas,obj,savetag)
 
+delete(get(plotcanvas,'children'));
+
 % setupStimulus
 panl = panel(plotcanvas);
 panl.pack('v',{1/2 1/2})  % response panel, stimulus panel

@@ -1,5 +1,7 @@
 function quickShow_PiezoBWCourtshipSong(plotcanvas,obj,savetag)
+% see also quickShow_PiezoCourtshipSong
 
+delete(get(plotcanvas,'children'));
 % setupStimulus
 panl = panel(plotcanvas);
 panl.pack('v',{1/2 1/2})  % response panel, stimulus panel
@@ -22,6 +24,7 @@ panl.title(sprintf('%s', [prot '.' d '.' fly '.' cell '.' trial]));
 % displayTrial
 if isfield(obj.trial,'voltage')
     ax1 = panl(1).select();
+    set(ax1,'tag','quickshow_inax');
     if length(obj.trial.params.mode)>6, mode = obj.trial.params.mode(1:6);
     else mode = obj.trial.params.mode(1:6);
     end
@@ -37,6 +40,7 @@ if isfield(obj.trial,'voltage')
 end
     
 ax2 = panl(2).select();
+set(ax2,'tag','quickshow_outax');
 line(x,sgsmonitor,'parent',ax2,'color',[0 0 1],'tag',savetag);
 ylabel(ax2,'SGS monitor (V)'); %xlim([0 max(t)]);
 box(ax2,'off'); set(ax2,'TickDir','out'); axis(ax2,'tight');

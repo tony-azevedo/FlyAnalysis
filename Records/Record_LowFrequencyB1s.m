@@ -15,19 +15,28 @@ analysis_cells = {...
 '150402_F3_C2'
 '150402_F1_C1'
 '150326_F1_C1'
+'150502_F1_C2'
 };
 
 analysis_cells_comment = {...
-    'Complete over harmonics, slight band pass';
-    'coarse freq sample, single amplitude, VCLAMP data!';
-    'coarse frequency, no current injections';
-    'coarse frequency, no current injections';
+    'Complete over harmonics, slight band pass';                %'140128_F1_C1'
+    'coarse freq sample, single amplitude, VCLAMP data!';       % 140122_F2_C1
+    'coarse frequency, no current injections';                  % 131015_F3_C1    
+    'coarse frequency, no current injections';                  % 130911_F2_C1
+    '';                  % 150402_F3_C2
+    '';                  % 150402_F1_C1
+    '';                  % 150326_F1_C1
+    'no sag current, not a lot of K current, chirp low pass-ish';  % '150502_F1_C2'
 };
 
 analysis_cells_genotype = {...
 'pJFRC7;VT30609'
 'pJFRC7;VT30609'
 'GH86;pJFRC7'
+'pJFRC7;VT45599'
+'pJFRC7;VT27938'
+'pJFRC7;VT27938'
+'pJFRC7;VT27938'
 'pJFRC7;VT45599'
 };
 
@@ -86,6 +95,14 @@ analysis_cell(cnt).baselinetrial = {
 'C:\Users\Anthony Azevedo\Raw_Data\130911\130911_F2_C1\PiezoSine_Raw_130911_F2_C1_1.mat';
 };
 
+%% VT45599
+cnt = find(strcmp(analysis_cells,'150502_F1_C2'));
+analysis_cell(cnt).exampletrials = {...
+'C:\Users\Anthony Azevedo\Raw_Data\150502\150502_F1_C2\PiezoSine_Raw_150502_F1_C2_1.mat';
+    };
+analysis_cell(cnt).baselinetrial = {
+'C:\Users\Anthony Azevedo\Raw_Data\130911\130911_F2_C1\PiezoSine_Raw_130911_F2_C1_1.mat';
+};
 
 %% Exporting PiezoSineMatrix info on cells 
 close all

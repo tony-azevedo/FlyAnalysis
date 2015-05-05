@@ -1,5 +1,5 @@
 function varargout = extractRawIdentifiers(name)
-% [protocol,dateID,flynum,cellnum,trialnum,D,trialStem,datastructfile] = extractRawIdentifiers(name)
+% [protocol,dateID,flynum,cellnum,trialnum,D,trialStem,datastructfile,notesfile] = extractRawIdentifiers(name)
 %   [mfilename '_' protocol '_' dateID '_' flynum '_' cellnum '_' trialnum]
 
 if isempty(strfind(name,'.mat'))
@@ -27,4 +27,7 @@ dfile = name(~(1:length(name) >= ind_(end) & 1:length(name) < indDot(1)));
 dfile = regexprep(dfile,'_Raw','');
 dfile = regexprep(dfile,'Acquisition','Raw_Data');
 
-varargout = {prot,d,fly,cell,trial,D,trialStem,dfile};
+notesfile = fullfile(D,['notes_' d '_' fly '_' cell '.txt']);
+notesfile = regexprep(notesfile,'Acquisition','Raw_Data');
+
+varargout = {prot,d,fly,cell,trial,D,trialStem,dfile,notesfile};

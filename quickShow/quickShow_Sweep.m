@@ -43,11 +43,6 @@ ylabel(ax1,units);
 
 
 [prot,d,fly,cell,trial] = extractRawIdentifiers(obj.trial.name);
-xlims = get(ax1,'xlim');
-ylims = get(ax1,'ylim');
-text(xlims(1)+.05*diff(xlims),ylims(1)+.05*diff(ylims),...
-    sprintf('%s', [prot '.' d '.' fly '.' cell '.' trial]),...
-    'parent',ax1,'fontsize',7,'tag','delete');
 
 if isfield(obj.trial,'roiFluoTrace')
     if p.Results.BGCorrectImages
@@ -95,16 +90,5 @@ title(ax2,sprintf('%s', [prot '.' d '.' fly '.' cell '.' trial]));
 box(ax2,'off'); 
 set(ax2,'TickDir','out'); 
 
-
-if isfield(obj.trial,'tags')
-    tags = obj.trial.tags;
-    tagstr = tags{1};
-    for i = 2:length(tags)
-        tagstr = [tagstr ';' tags{i}];
-    end
-    xlims = get(ax2,'xlim');
-    ylims = get(ax2,'ylim');
-    text(xlims(1)+.05*diff(xlims),ylims(1)+.05*diff(ylims),tagstr,'parent',ax2,'tag','delete');
-end
 drawnow
 %guidata(plotcanvas,h);

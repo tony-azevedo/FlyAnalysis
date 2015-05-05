@@ -18,29 +18,15 @@ excludedFields = p.Results.exclude;
 excludedFields = union(excludedFields,{'trial','gain','mode'});
 
 if ~isempty(name);
-    [prot,d,fly,cell,trial,D] = extractRawIdentifiers(name);
-    trial = str2num(trial);
-    rawfiles = dir([D prot '_Raw*']);
+    [~,~,~,~,trial,D,~,dfile] = extractRawIdentifiers(name);
+    trial = str2double(trial);
+    datastruct = load(dfile);
+    datastruct = datastruct.data;
 end
 if isempty(window) && ~isempty(name)
-    window = [1,length(rawfiles)];
-    
-    if length(fieldnames(datastruct))==0 || length(datastruct) ~= length(rawfiles) %#ok<ISMT>
-        dfile = [prot '_' d '_' fly '_' cell '.mat'];
-        dataFileName = fullfile(D,dfile);
-        
-        dataFileExist = dir(dataFileName);
-        if length(dataFileExist)>0
-            datastruct = load(dataFileName);
-            datastruct = datastruct.data;
-        end
-        if ~length(dataFileExist) || length(datastruct) ~= length(rawfiles)
-            createDataFileFromRaw(dataFileName);
-            datastruct = load(dataFileName);
-        end
-    end
+    window = [1,length(datastruct)];
 end
-if ~isempty(fieldnames(datastruct)) && isempty(window)
+if isempty(window)
     window = [1,length(datastruct)];
 end
     
@@ -48,13 +34,13 @@ end
 
 for d = 1:length(datastruct)
     if datastruct(d).trial == trial
-        compare = datastruct(d);
+        compare_struct = datastruct(d);
         break
     end
 end
 
-if isfield(datastruct,'combinedTrialBlock') && compare.combinedTrialBlock ~= 0
-    fprintf(1,'Trial Blocks have been combined: %d\n',compare.combinedTrialBlock);
+if isfield(datastruct,'combinedTrialBlock') && compare_struct.combinedTrialBlock ~= 0
+    fprintf(1,'Trial Blocks have been combined: %d\n',compare_struct.combinedTrialBlock);
     excludedFields = union(excludedFields,'trialBlock');
 end
 
@@ -64,7 +50,7 @@ for d = 1:length(datastruct)
     if datastruct(d).trial < min(window) || datastruct(d).trial > max(window)
         continue
     end
-    fn = fieldnames(compare);
+    fn = fieldnames(compare_struct);
     e = true;
     for f = 1:length(fn)
         if sum(strcmp(excludedFields,fn{f}))
@@ -72,8 +58,8 @@ for d = 1:length(datastruct)
         end
         switch class(datastruct(d).(fn{f}))
             case 'double'
-                if length(datastruct(d).(fn{f})) == length(compare.(fn{f}))
-                    if datastruct(d).(fn{f}) ~= compare.(fn{f})
+                if length(datastruct(d).(fn{f})) == length(compare_struct.(fn{f}))
+                    if datastruct(d).(fn{f}) ~= compare_struct.(fn{f})
                         e = false;
                         break
                     end
@@ -82,12 +68,12 @@ for d = 1:length(datastruct)
                     break
                 end
             case 'char'
-                if datastruct(d).(fn{f}) ~= compare.(fn{f})
+                if datastruct(d).(fn{f}) ~= compare_struct.(fn{f})
                     e = false;
                     break
                 end
             case 'cell'
-                if ~isempty(setxor(compare.(fn{f}),datastruct(d).(fn{f})))
+                if ~isempty(setxor(compare_struct.(fn{f}),datastruct(d).(fn{f})))
                     e = false;
                     break
                 end
@@ -98,5 +84,9 @@ for d = 1:length(datastruct)
         likeinds(end+1) = d;
     end
 end
-
+if ~isempty(name);
+    trials = excludeTrials('trials',likenums,'name',name);
+    [likenums,il] = intersect(likenums,trials);
+    likeinds = likeinds(il);
+end
 varargout = {likenums,likeinds};

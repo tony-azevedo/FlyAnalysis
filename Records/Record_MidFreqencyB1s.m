@@ -16,6 +16,8 @@ analysis_cells = {...
 '150402_F2_C1'
 '150402_F3_C1'  % Not great for some reason
 '150414_F1_C1'  % Not great for some reason
+'150502_F1_C1'
+'150502_F1_C3'
 };
 
 analysis_cells_comment = {...
@@ -23,14 +25,61 @@ analysis_cells_comment = {...
     'coarse freq sample, single amplitude, VCLAMP data!';
     'coarse frequency, no current injections';
     'coarse frequency, no current injections';
+    ''
+    ''
+    ''
+    ''
+    ''
+    ''
+    ''
+    ''
+    ''
+    ''
+    ''
 };
 
 analysis_cells_genotype = {...
 'pJFRC7;VT30609'
 'pJFRC7;VT30609'
+'pJFRC7;VT30609'
+'ArcLight;VT30609'
+'ArcLight;VT30609'
+'ArcLight;VT30609'
 'GH86;pJFRC7'
+'GH86;pJFRC7'
+'pJFRC7;VT27938'
+'pJFRC7;VT27938'
+'pJFRC7;VT45599'
 'pJFRC7;VT45599'
 };
+
+
+clear analysis_cell
+for c = 1:length(analysis_cells)
+    analysis_cell(c).name = analysis_cells(c); 
+    analysis_cell(c).genotype = analysis_cells_genotype(c); %#ok<*SAGROW>
+    analysis_cell(c).comment = analysis_cells_comment(c);
+end
+
+%%
+
+%% VT45599
+cnt = find(strcmp(analysis_cells,'150502_F1_C1'));
+analysis_cell(cnt).PiezoSineEx = 'C:\Users\Anthony Azevedo\Raw_Data\150502\150502_F1_C1\PiezoSine_Raw_150502_F1_C1_1.mat';
+analysis_cell(cnt).CurrentChirpEx = 'C:\Users\Anthony Azevedo\Raw_Data\150502\150502_F1_C1\CurrentChirp_Raw_150502_F1_C1_1.mat';
+analysis_cell(cnt).SweepVClampEx = 'C:\Users\Anthony Azevedo\Raw_Data\150502\150502_F1_C1\Sweep_Raw_150502_F1_C1_3.mat';
+analysis_cell(cnt).SweepIClampEx = 'C:\Users\Anthony Azevedo\Raw_Data\150502\150502_F1_C1\Sweep_Raw_150502_F1_C1_7.mat';
+analysis_cell(cnt).VoltageStepEx = 'C:\Users\Anthony Azevedo\Raw_Data\150502\150502_F1_C1\VoltageStep_Raw_150502_F1_C1_1.mat';
+
+%% VT45599
+cnt = find(strcmp(analysis_cells,'150502_F1_C3'));
+analysis_cell(cnt).PiezoSineEx = 'C:\Users\Anthony Azevedo\Raw_Data\150502\150502_F1_C3\PiezoSine_Raw_150502_F1_C3_1.mat';
+analysis_cell(cnt).CurrentChirpEx = '';
+analysis_cell(cnt).SweepVClampEx = '';
+analysis_cell(cnt).SweepIClampEx = '';
+analysis_cell(cnt).VoltageStepEx = '';
+
+
 %%
 
 % Possible cells

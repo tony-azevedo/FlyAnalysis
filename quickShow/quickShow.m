@@ -355,9 +355,8 @@ else
     if get(handles.analyses_chckbox,'value')
         analysis_popup_Callback(hObject, eventdata, handles)
     end
-
 end
-    
+add_tags_to_subplots(hObject, eventdata, handles)  
     
 function showMenu_Callback(hObject, eventdata, handles)
 showfunctions = get(handles.showMenu,'string');
@@ -404,10 +403,59 @@ end
 guidata(hObject,handles)
 
 
+% --- Executes on selection change in analysis_popup.
+function analysis_popup_Callback(hObject, eventdata, handles)
+handles = guidata(hObject);
+funcs = get(handles.analysis_popup,'string');
+func = str2func(funcs{get(handles.analysis_popup,'value')});
+feval(func,handles.trial,handles.trial.params);
+handles.trial = load(fullfile(handles.dir, sprintf(handles.trialStem,handles.currentTrialNum)));
+guidata(hObject,handles);
+
+
+% --- Executes during object creation, after setting all properties.
+function analysis_popup_CreateFcn(hObject, eventdata, handles)
+analyses = what('Analysis');
+for i = 1:length(analyses.m)
+    analyses.m{i} = regexprep(analyses.m{i},'\.m','');
+end
+
+funcs = analyses.m;
+set(hObject,'String',funcs);
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on selection change in cellDiagnosticsMenu.
+function cellDiagnosticsMenu_Callback(hObject, eventdata, handles)
+handles = guidata(hObject);
+funcs = get(handles.cellDiagnosticsMenu,'string');
+func = str2func(funcs{get(handles.cellDiagnosticsMenu,'value')});
+feval(func,handles.trial);
+handles.trial = load(fullfile(handles.dir, sprintf(handles.trialStem,handles.currentTrialNum)));
+guidata(hObject,handles);
+
+
+% --- Executes during object creation, after setting all properties.
+function cellDiagnosticsMenu_CreateFcn(hObject, eventdata, handles)
+analyses = what('CellDiagnostics');
+for i = 1:length(analyses.m)
+    analyses.m{i} = regexprep(analyses.m{i},'\.m','');
+end
+
+funcs = analyses.m;
+set(hObject,'String',funcs);
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
 function clearcanvas_Callback(hObject, eventdata, handles)
 delete(get(handles.quickShowPanel,'children'))
 
 
+%% helper button callbacks
 function figButton_Callback(hObject, eventdata, handles)
 fig = figure('color',[1 1 1]);
 childs = get(handles.quickShowPanel,'children');
@@ -579,50 +627,10 @@ set(handles.infoPanel,'string',out)%,'position',position);
 
 
 function loadstr_button_Callback(hObject, eventdata, handles)
-fprintf('%%*********************\n');
-fprintf('obj.trial = load(''%s'');\n',(fullfile(handles.dir, sprintf(handles.trialStem,handles.currentTrialNum))))
-fprintf('load(''%s'')\n',handles.prtclDataFileName)
-fprintf('plotcanvas = fig;\n');
-fprintf('obj.params = data(%d);\n',handles.currentTrialNum);
-fprintf('savetag = ''delete'';\n');
-s = fileread([handles.quickShowFunction '.m']);
-s = regexprep(s,'%','%%');
-s = regexprep(s,'ax[\d]+','ax');
-newlines = regexp(s,'\n');
-s(newlines) = '';
-fprintf(s(newlines(1):end));
-
-notes = get(handles.infoPanel,'userdata');
-
-trln = regexp(notes,[handles.currentPrtcl ' trial ' num2str(handles.params.trial)]);
-trialinfo = notes(trln:trln+regexp(notes(trln:end),'\n','once'));
-trialinfo = regexprep(trialinfo,'(?=\d)\s',',');
-
-fprintf('title(ax,''%s'')\n',trialinfo(1:end-3));
-
-
-% --- Executes on selection change in analysis_popup.
-function analysis_popup_Callback(hObject, eventdata, handles)
+% An earlier version printed the script for the quickShow function 4/27/15
 handles = guidata(hObject);
-funcs = get(handles.analysis_popup,'string');
-func = str2func(funcs{get(handles.analysis_popup,'value')});
-feval(func,handles.trial,handles.trial.params);
-handles.trial = load(fullfile(handles.dir, sprintf(handles.trialStem,handles.currentTrialNum)));
-guidata(hObject,handles);
+evalin('base', ['trial = load(''' regexprep(handles.trial.name,'Acquisition','Raw_Data') ''')']);
 
-
-% --- Executes during object creation, after setting all properties.
-function analysis_popup_CreateFcn(hObject, eventdata, handles)
-analyses = what('Analysis');
-for i = 1:length(analyses.m)
-    analyses.m{i} = regexprep(analyses.m{i},'\.m','');
-end
-
-funcs = analyses.m;
-set(hObject,'String',funcs);
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
 
 function trialImages_Callback(hObject, eventdata, handles,varargin)
 handles = guidata(hObject);
@@ -814,7 +822,8 @@ end
 handles.trial.tags = s;
 
 if strcmp(button,'Yes')
-    nums = findLikeTrials('name',handles.trial.name,'datastruct',handles.prtclData);
+    nums = findLikeTrials('name',handles.trial.name,'datastruct',handles.prtclData,...
+        'exclude',{'step','amp','displacement'});
     for n_ind = 1:length(nums);
         trial = load(fullfile(handles.dir,sprintf(handles.trialStem,nums(n_ind))));
         trial.tags = s;
@@ -899,29 +908,6 @@ else
       figs = figs(figs ~= get(hObject,'parent'));
       close(figs);
 end
-    
-
-
-% --- Executes on selection change in cellDiagnosticsMenu.
-function cellDiagnosticsMenu_Callback(hObject, eventdata, handles)
-handles = guidata(hObject);
-
-guidata(hObject, handles);
-
-
-% --- Executes during object creation, after setting all properties.
-function cellDiagnosticsMenu_CreateFcn(hObject, eventdata, handles)
-analyses = what('CellDiagnostics');
-for i = 1:length(analyses.m)
-    analyses.m{i} = regexprep(analyses.m{i},'\.m','');
-end
-
-funcs = analyses.m;
-set(hObject,'String',funcs);
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
 
 function helperFunctionMenu_Callback(hObject, eventdata, handles)
 handles = guidata(hObject);
@@ -936,6 +922,7 @@ helperfuncs = ...
 {
 'save_data_struct'
 'reload_notes'
+'addTagsToSubplots'
 };
 set(hObject,'String',helperfuncs);
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
@@ -960,8 +947,32 @@ set(handles.infoPanel,'userdata',fileread(handles.notesfilename))
 
 if ~isempty(eventdata) && ischar(eventdata) && strcmp(eventdata,'loadCellFromDir')
 else
-    updateInfoPanel(handles);
+    updateInfoPanel(handles);   
 end
 if ~isempty(hObject)
     guidata(hObject, handles);
 end
+
+function add_tags_to_subplots(hObject, eventdata, handles)  
+ax1 = findobj(handles.quickShowPanel,'tag','quickshow_outax');
+ax2 = findobj(handles.quickShowPanel,'tag','quickshow_inax');
+
+[prot,d,fly,cell,trialnum] = extractRawIdentifiers(handles.trial.name);
+
+xlims = get(ax1,'xlim');
+ylims = get(ax1,'ylim');
+text(xlims(1)+.05*diff(xlims),ylims(1)+.05*diff(ylims),...
+    sprintf('%s', [prot '.' d '.' fly '.' cell '.' trialnum]),...
+    'parent',ax1,'fontsize',7,'tag','delete');
+
+if isfield(handles.trial,'tags') && ~isempty(handles.trial.tags);
+    tags = handles.trial.tags;
+    tagstr = tags{1};
+    for i = 2:length(tags)
+        tagstr = [tagstr ';' tags{i}];
+    end
+    xlims = get(ax2,'xlim');
+    ylims = get(ax2,'ylim');
+    text(xlims(1)+.05*diff(xlims),ylims(1)+.05*diff(ylims),tagstr,'parent',ax2,'tag','delete');
+end
+

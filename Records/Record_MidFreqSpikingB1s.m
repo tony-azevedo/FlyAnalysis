@@ -19,6 +19,7 @@ analysis_cells = {...
 '131126_F2_C2'
 '140602_F1_C1'
 '150421_F1_C1'
+'150421_F1_C1'
 };
 
 analysis_cells_comment = {...
@@ -31,6 +32,7 @@ analysis_cells_comment = {...
     'Banner cell, Current Sine @ hyp. Vm, was used in NRSA-resubmit, sharp tuning though coarse';
     'Not great access, has a lot of the hallmarks of a spiking cell.  Spiking cell accordign to notebook';
     '??'
+    'Larger amplitudes produce lower amplitude responses'
 };
 
 analysis_cells_genotype = {...
@@ -43,6 +45,7 @@ analysis_cells_genotype = {...
 ';pJFRC7!pJFRC7;VT30609-Gal4!VT30609-Gal4'
 ';;VT30609-Gal4!ArcLight'
 'Fru-Gal4,UAS-GFP'
+'pJFRC7/+;VT45599/+';
 };
 
 
