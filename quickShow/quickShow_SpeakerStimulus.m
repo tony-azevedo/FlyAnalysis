@@ -1,4 +1,4 @@
-function quickShow_SpeakerChirp(plotcanvas,obj,savetag)
+function quickShow_SpeakerStimulus(plotcanvas,obj,savetag)
 % setupStimulus
 delete(get(plotcanvas,'children'));
 panl = panel(plotcanvas);

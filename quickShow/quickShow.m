@@ -961,10 +961,10 @@ ax2 = findobj(handles.quickShowPanel,'tag','quickshow_inax');
 
 xlims = get(ax1,'xlim');
 ylims = get(ax1,'ylim');
-text(xlims(1)+.05*diff(xlims),ylims(1)+.05*diff(ylims),...
+if ~isempty(xlims)
+    text(xlims(1)+.05*diff(xlims),ylims(1)+.05*diff(ylims),...
     sprintf('%s', [prot '.' d '.' fly '.' cell '.' trialnum]),...
     'parent',ax1,'fontsize',7,'tag','delete');
-
 if isfield(handles.trial,'tags') && ~isempty(handles.trial.tags);
     tags = handles.trial.tags;
     tagstr = tags{1};
@@ -974,5 +974,6 @@ if isfield(handles.trial,'tags') && ~isempty(handles.trial.tags);
     xlims = get(ax2,'xlim');
     ylims = get(ax2,'ylim');
     text(xlims(1)+.05*diff(xlims),ylims(1)+.05*diff(ylims),tagstr,'parent',ax2,'tag','delete');
+end
 end
 
