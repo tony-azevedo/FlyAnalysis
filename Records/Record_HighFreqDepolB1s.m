@@ -1,6 +1,5 @@
 %% Record of High Frequency Responsive B1 cells
 clear all
-
 savedir = 'C:\Users\Anthony Azevedo\RAnalysis_Data\Record_HighFrequencyB1s';
 if ~isdir(savedir)
     mkdir(savedir)

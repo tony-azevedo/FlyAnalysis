@@ -34,13 +34,14 @@ if isfield(obj.trial,'voltage')
             line(x,voltage,'parent',ax1,'color',[1 0 0],'tag',savetag);
             ylabel(ax1,'V_m (mV)'); %xlim([0 max(t)]);
     end
-    box(ax1,'off'); set(ax1,'TickDir','out'); axis(ax1,'tight');
+    box(ax1,'off'); set(ax1,'TickDir','out','tag','quickshow_inax'); axis(ax1,'tight');
 end
-    
+
+
 ax2 = panl(2).select();
 line(x,sgsmonitor,'parent',ax2,'color',[0 0 1],'tag',savetag);
 ylabel(ax2,'SGS monitor (V)'); %xlim([0 max(t)]);
-box(ax2,'off'); set(ax2,'TickDir','out'); axis(ax2,'tight');
+box(ax2,'off'); set(ax2,'TickDir','out','tag','quickshow_outax'); axis(ax2,'tight');
 xlabel(ax2,'Time (s)'); %xlim([0 max(t)]);
 
 

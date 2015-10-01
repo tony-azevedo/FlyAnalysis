@@ -20,7 +20,7 @@ function varargout = quickShow(varargin)
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 
-% Last Modified by GUIDE v2.5 27-Apr-2015 21:01:22
+% Last Modified by GUIDE v2.5 03-Jun-2015 10:18:22
 
 %% Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -377,6 +377,8 @@ guidata(hObject,handles)
 updateInfoPanel(handles);
 handles = guidata(hObject);
 feval(str2func(handles.quickShowFunction),handles.quickShowPanel,handles,savetag);
+add_tags_to_subplots(hObject, eventdata, handles)  
+
 % quickShow_Protocol(hObject, eventdata, handles)
 
 
@@ -496,7 +498,7 @@ findobj(fig,'ButtonDownFcn',@showClickedImage);
 %                 'BackgroundColor',[1 1 1],...
 %                 'Position',[0 0 .75 1],'parent',fig,'bordertype','none');
 % copyobj(childs,repmat(cp,size(childs)));
-linax = findobj(fig,'xscale','linear');
+linax = findobj(fig,'xscale','linear','-not','tag','unlink');
 if length(linax)>1
     linkaxes(linax,'x');
 end
@@ -515,7 +517,7 @@ fprintf('%s\n',infoStr{:});
 
 try nameguess = regexprep(handles.trialStem,...
         {handles.currentPrtcl,'_Raw_','%d','.mat'},...
-        {'','',[handles.quickShowFunction '_' num2str(handles.currentTrialNum)  sprintf('_%s',handles.trial.tags{:})],'.pdf'});
+        {'','',[handles.quickShowFunction '_' num2str(handles.currentTrialNum)  regexprep(sprintf('_%s',handles.trial.tags{:}),{'-',';'},{'m',''})],'.pdf'});
 catch
     nameguess = regexprep(handles.trialStem,...
         {handles.currentPrtcl,'_Raw_','%d','.mat'},...
@@ -525,9 +527,9 @@ end
 nameguess = regexprep(nameguess,' ','_');
 set(fig,'name')
 
-[FileName,PathName,FilterIndex] = uiputfile('*.*','File Path',['C:\Users\Anthony Azevedo\Desktop\Weekly_Record\' nameguess]);
+[FileName,PathName,FilterIndex] = uiputfile('*.*','File Path',['C:\Users\Anthony Azevedo\Dropbox\Weekly_Record\' nameguess]);
 set(fig,'name',FileName)
-
+figure(fig);
 if ~FileName, return, end
 eval(['export_fig ' regexprep(fullfile(PathName,FileName),'\sAzevedo',''' Azevedo''')]);
 %panl.export(fn, '-rp');
@@ -678,7 +680,38 @@ clipboard('copy',sprintf('''%s'';\n',(fullfile(handles.dir, sprintf(handles.tria
 
 % --- Executes button press in Combine Blocks.
 function combineblocks_Callback(hObject, eventdata, handles) %#ok<*DEFNU>
-blocktrials = findLikeTrials('name',handles.trial.name,'datastruct',handles.prtclData,'exclude',{'trialBlock','combinedTrialBlock','gain','secondary_gain','randomize'});
+fns = fieldnames(handles.trial.params);
+plurals = {};
+for fn_ind = 1:length(fns)
+    if strcmp('s',fns{fn_ind}(end))
+        plurals{end+1} = fns{fn_ind};
+    end
+end
+% Create figure
+h.f = figure('units','pixels','position',[200,200,100,30+16*length(plurals)+10],...
+             'toolbar','none','menu','none');
+for pl_ind = 1:length(plurals)
+    % Create yes/no checkboxes
+    h.c(pl_ind) = uicontrol('style','checkbox','units','pixels','parent',h.f,...
+        'position',[10,30+16*(pl_ind-1),100,15],'string',plurals{pl_ind});
+    % left bottom width height
+end
+
+% Create OK pushbutton
+h.p = uicontrol('style','pushbutton','units','pixels','parent',h.f,...
+                'position',[10,5,80,20],'string','OK',...
+                'callback',@(x,y,z)uiresume);
+uiwait(h.f);
+
+excluded = {'trialBlock','combinedTrialBlock','gain','secondary_gain','randomize'};
+for pl_ind = 1:length(plurals)
+    if get(h.c(pl_ind),'value')
+        excluded{end+1} = plurals{pl_ind};
+    end
+end
+close(h.f);
+clear h
+blocktrials = findLikeTrials('name',handles.trial.name,'datastruct',handles.prtclData,'exclude',excluded);
 
 blocks = zeros(1,length(blocktrials));
 combinedblocks = [];
@@ -876,20 +909,13 @@ handles = guidata(hObject);
 edit(handles.notesfilename);
 
 
-% --- Executes on button press in clicky_button.
-function clicky_button_Callback(hObject, eventdata, handles)
-handles = guidata(hObject);
-I = getScimImageStack(handles.trial,handles.trial.params);
-clicky(I);
-
-
 function save_data_struct_button_Callback(hObject, eventdata, handles)
-handles = guidata(hObject);
-createDataFileFromRaw(handles.prtclDataFileName);
-d = load(handles.prtclDataFileName);
-handles.prtclData = d.data;
-guidata(hObject, handles);
+error('Use the drop down menu for this function');
 
+% --- Executes on button press in raw_folder_location.
+function raw_folder_location_Callback(hObject, eventdata, handles)
+handles = guidata(hObject);
+winopen(handles.dir);
 
 
 % --------------------------------------------------------------------
@@ -923,6 +949,9 @@ helperfuncs = ...
 'save_data_struct'
 'reload_notes'
 'addTagsToSubplots'
+'clicky_on_image'
+'rename_tag'
+'cleanuptags'
 };
 set(hObject,'String',helperfuncs);
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
@@ -963,17 +992,69 @@ xlims = get(ax1,'xlim');
 ylims = get(ax1,'ylim');
 if ~isempty(xlims)
     text(xlims(1)+.05*diff(xlims),ylims(1)+.05*diff(ylims),...
-    sprintf('%s', [prot '.' d '.' fly '.' cell '.' trialnum]),...
-    'parent',ax1,'fontsize',7,'tag','delete');
-if isfield(handles.trial,'tags') && ~isempty(handles.trial.tags);
-    tags = handles.trial.tags;
-    tagstr = tags{1};
-    for i = 2:length(tags)
-        tagstr = [tagstr ';' tags{i}];
+        sprintf('%s', [prot '.' d '.' fly '.' cell '.' trialnum]),...
+        'parent',ax1,'fontsize',7,'tag','delete');
+    if isfield(handles.trial,'tags') && ~isempty(handles.trial.tags);
+        tags = handles.trial.tags;
+        tagstr = tags{1};
+        for i = 2:length(tags)
+            tagstr = [tagstr ';' tags{i}];
+        end
+        xlims = get(ax2,'xlim');
+        ylims = get(ax2,'ylim');
+        text(xlims(1)+.05*diff(xlims),ylims(1)+.05*diff(ylims),tagstr,'parent',ax2,'tag','delete');
     end
-    xlims = get(ax2,'xlim');
-    ylims = get(ax2,'ylim');
-    text(xlims(1)+.05*diff(xlims),ylims(1)+.05*diff(ylims),tagstr,'parent',ax2,'tag','delete');
-end
 end
 
+function clicky_on_image(hObject, eventdata, handles)
+handles = guidata(hObject);
+I = getScimImageStack(handles.trial,handles.trial.params);
+clicky(I);
+
+function rename_tag(hObject, eventdata, handles)  
+handles = guidata(hObject);
+button = questdlg('Replace all?','Rename All','Yes');
+if strcmp(button,'Cancel'), return, end
+
+tags = handles.trial.tags;
+def = '';
+
+for t_ind = 1:length(tags)
+    def = [def tags{t_ind} '; '];
+end
+prompt = {'Current name','New tag name'};
+dlg_title = 'Rename Tag';
+num_lines = 1;
+def = {def,def};
+answer = inputdlg(prompt,dlg_title,num_lines,def);
+if isempty(answer)
+    return
+end   
+pat = ';\s*';
+oldtag = regexp(answer{1}, pat, 'split');
+if isempty(oldtag{end}) || isempty(regexp(oldtag{end},'\S'))
+    oldtag = oldtag(1:end-1);
+end
+oldtag = oldtag{1};
+
+newtag = regexp(answer{2}, pat, 'split');
+if isempty(newtag{end}) || isempty(regexp(newtag{end},'\S'))
+    newtag = newtag(1:end-1);
+end
+newtag = newtag{1};
+
+loopThroughRawFilesTags(handles.trial.name,oldtag,newtag);
+
+createDataFileFromRaw(handles.prtclDataFileName);
+d = load(handles.prtclDataFileName);
+handles.prtclData = d.data;
+guidata(hObject, handles);
+
+function cleanuptags(hObject, eventdata, handles)  
+handles = guidata(hObject);
+loopThroughRawFilesTags_cleanup(handles.dir);
+
+createDataFileFromRaw(handles.prtclDataFileName);
+d = load(handles.prtclDataFileName);
+handles.prtclData = d.data;
+guidata(hObject, handles);

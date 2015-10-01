@@ -10,14 +10,16 @@ analysis_cells = {...
 '150425_F1_C3'
 '150425_F1_C4'
 '150425_F1_C5'
+
 '150425_F2_C1'
 '150425_F2_C2'
 '150425_F2_C3'
+
 '150426_F1_C1' % Cs internal, oscillations in current and voltage, tail currents
 '150426_F2_C1' % iffy
 '150427_F1_C1'
-'150427_F1_C3' % Cs,TTX, this one is special
 
+'150427_F1_C3' % Cs,TTX, this one is special, started in TTX
 '150421_F1_C1'
 '141129_F2_C1'
 };
@@ -27,15 +29,19 @@ analysis_cells_internal = {...
 'QX-314, Cs'
 'QX-314, Cs'
 'QX-314/Cs'
+
 'QX-314/Cs'
 'QX-314/Cs'
 'QX-314/Cs'
+
 'QX-314/Cs'
 'QX-314/Cs'
 'QX-314/Cs'
+
 'Cs'
 'Cs'
 'Cs'
+
 'Cs/TTX'
 'KAsp'
 'KAsp'
@@ -313,7 +319,7 @@ analysis_cell(cnt).VoltagePlateau = 'C:\Users\Anthony Azevedo\Raw_Data\150426\15
 
 analysis_cell(cnt).VoltageStep = 'C:\Users\Anthony Azevedo\Raw_Data\150426\150426_F1_C1\VoltageStep_Raw_150426_F1_C1_1.mat';
 analysis_cell(cnt).CurrentStep = 'C:\Users\Anthony Azevedo\Raw_Data\150426\150426_F1_C1\CurrentStep_Raw_150426_F1_C1_32.mat';
-%'C:\Users\Anthony Azevedo\Raw_Data\150426\150426_F1_C1\CurrentStep_Raw_150426_F1_C1_1.mat';
+analysis_cell(cnt).CurrentStep = 'C:\Users\Anthony Azevedo\Raw_Data\150426\150426_F1_C1\CurrentStep_Raw_150426_F1_C1_1.mat';
 analysis_cell(cnt).CurrentStep_m80 = 'C:\Users\Anthony Azevedo\Raw_Data\150426\150426_F1_C1\CurrentStep_Raw_150426_F1_C1_32.mat';
 analysis_cell(cnt).CurrentChirp = 'C:\Users\Anthony Azevedo\Raw_Data\150426\150426_F1_C1\CurrentChirp_Raw_150426_F1_C1_6.mat';
 
@@ -647,7 +653,7 @@ plot(lags/VClamptrial.params.sampratein,x_cor_mean_volt/poi_volt,'color',[1 0 1]
 %% Diagnostic for each cell 
 
 % for cnt = 3:10
-cnt = find(strcmp(analysis_cells,'141129_F2_C1'));
+cnt = find(strcmp(analysis_cells,'150426_F1_C1'));
 
 fig = figure(3);
 clf(fig);

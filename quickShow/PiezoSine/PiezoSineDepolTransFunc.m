@@ -48,9 +48,12 @@ response_area = response_area/trial.params.stimDurInSec;
 
 response_area_ext = trapz(x(x>=0),yc(x>=0));
 
+% find the max, average a few points around it
+avewin = [-30:30];
 [response_amp,tpk] = max(...
     yc(x>=0 & x <trial.params.stimDurInSec-eps));
 tpk = tpk + sum(x<0);
+response_amp = mean(yc(tpk+avewin));
 
 % make the ideal stimulus, once the piezo response is accounted for
 

@@ -8,7 +8,7 @@ if isempty(fig);
     if ~ispref('AnalysisFigures') ||~ispref('AnalysisFigures',mfilename) % rmpref('AnalysisFigures','CellInputResistance')
         proplist = {...
             'tag',mfilename,...
-            'Position',[8   643   820   354],...
+            'Position',[8   276   820   720],...
             'NumberTitle', 'off',...
             'Name', 'Input Resistance',... % 'DeleteFcn',@obj.setDisplay);
             };
@@ -53,6 +53,7 @@ Ri_struct = repmat(Ri_struct,size(rawfiles));
 trialtime = nan(size(rawfiles));
 mode = cell(size(rawfiles));
 Ri = nan(size(rawfiles));
+access = nan(size(rawfiles));
 V_mh = nan(size(rawfiles));
 trialorder = V_mh;
 block = V_mh;
@@ -64,7 +65,7 @@ for r_ind = 1:length(rawfiles)
     trial = load(rawfiles(r_ind).name);
     [prot,~,~,~,num,~,~,~] = ...
         extractRawIdentifiers(trial.name);
-    name{r_ind} = [prot '_' num];
+    name{r_ind} = [num2str(trial.params.trialBlock) ' ' prot];
 
     % get the creation date
     if isfield(trial,'timestamp')
@@ -103,7 +104,9 @@ for r_ind = 1:length(rawfiles)
     
     resp_i = mean(trial.(in)(1:step_start));
     resp_f = mean(trial.(in)(step_start+step_dur-step_start+1:step_start+step_dur));
-    
+    resp_min = min(trial.(in)(step_start:step_start+round(step_dur/4)));
+    resp_max = max(trial.(in)(step_start+step_dur:step_start+step_dur+round(step_dur/4)));
+
     if strcmp(mode{r_ind},'IClamp')
         Ri(r_ind) = (resp_f-resp_i)/step_amp;
         V_mh(r_ind) = resp_i;
@@ -112,19 +115,23 @@ for r_ind = 1:length(rawfiles)
         Ri(r_ind) = step_amp/(resp_f-resp_i);
         V_mh(r_ind) = outmu; 
         colr = [0 1 1];
+        if ~isnan(step_amp), access(r_ind) = step_amp/mean([(resp_min-resp_i) -abs(resp_max-resp_i)]); end
     end
                
 end
 [tro, ord] = sort(trialorder);
 trialtime = trialtime(ord);
 Ri = Ri(ord);
+access = access(ord);
 V_mh = V_mh(ord);
 block = block(ord);
 name = name(ord);
+mode = mode(ord);
 
 ax = subplot(3,1,[1 2],'parent',fig);
 set(ax,'XTickLabel',{[]});
-ylabel(ax,'R (m - IC, c - VC)')
+ylabel(ax,'R (G\Omega; m - IC, c - VC)')
+xlabel(ax,'Trials');
 title(ax,[dateID '\_' flynum '\_' cellnum])
 
 block_diff = [1; diff(block)];
@@ -136,11 +143,16 @@ for r_ind = 1:length(tro)
     elseif strcmp(mode{r_ind},'VClamp')
         colr = [0 1 1];
     end
-    if Ri(r_ind)>0;
-        line(trialtime(r_ind),Ri(r_ind),'parent',ax,'linestyle','none','marker','.','markerfacecolor',colr,'markeredgecolor',colr);
+    if Ri(r_ind)>4
+        line(trialtime(r_ind),Ri(r_ind)/100,'parent',ax,'linestyle','none','marker','p','markerfacecolor',[0 0 0],'markeredgecolor',[0 0 0]);
+    elseif Ri(r_ind)>0;
+        line(trialtime(r_ind),Ri(r_ind),'parent',ax,'linestyle','none','marker','o','markerfacecolor',colr,'markeredgecolor',colr,'markersize',2);
     else
         line(trialtime(r_ind),0,'parent',ax,'linestyle','none','marker','s','markerfacecolor',[0 0 0],'markeredgecolor',colr);
     end
+    
+    line(trialtime(r_ind),access(r_ind),'parent',ax,'linestyle','none','marker','+','markerfacecolor',.75* colr,'markeredgecolor',.75 * colr,'markersize',2);
+    
     if block_diff(r_ind)
         text(trialtime(r_ind),-.5,regexprep(name{r_ind},'_',' '),'rotation',45,'fontsize',7);
     end
@@ -151,17 +163,22 @@ for r_ind = 1:length(tro)
     Ri_struct(r_ind).V_mh = V_mh(r_ind);
     Ri_struct(r_ind).name = name{r_ind};
 end
-ylims = get(ax,'ylim');
-set(ax,'ylim',[-1 ylims(2)])
+%ylims = get(ax,'ylim');
+axis(ax,'tight')
+xlims = get(ax,'xlim');
+set(ax,'ylim',[-.6 1.7])
+line(xlims,[0 0],'parent',ax,'linestyle','-','color',[.8 .8 .8],'tag','baseline');
 
 % Is there a relationship for a Ri vs holding Potential?
 ax = subplot(3,1,3,'parent',fig);
 plot(ax,Ri(Ri>0),V_mh(Ri>0),'.k');
 
 axis(ax,'tight')
-xlim(ax,[0,3])
+xlim(ax,[0,2])
 xlabel(ax,'R_i (G\Omega)');
 ylabel(ax,'Holding V_m (mV)');
+
+set(fig,'Name',[dateID '_' flynum '_' cellnum '_InputR'])
 
 varargout = {trial};
 

@@ -3,13 +3,7 @@ function newfig = CurrentStepFamMatrix(fig,handles,savetag)
 
 [protocol,dateID,flynum,cellnum,trialnum,D,trialStem] = extractRawIdentifiers(handles.trial.name);
 
-blocktrials = findLikeTrials('name',handles.trial.name,'datastruct',handles.prtclData,'exclude',{'step'});
-t = 1;
-while t <= length(blocktrials)
-    trials = findLikeTrials('trial',blocktrials(t),'datastruct',handles.prtclData);
-    blocktrials = setdiff(blocktrials,setdiff(trials,blocktrials(t)));
-    t = t+1;
-end
+blocktrials = findBlockTrials(handles.trial,handles.prtclData);
 
 clear f
 cnt = 1;

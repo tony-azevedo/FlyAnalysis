@@ -4,16 +4,16 @@ analysis_cells = {...
 '150326_F1_C1'
 '150402_F1_C1'
 '150402_F2_C1'
-'150402_F3_C1'
 '150402_F3_C2'
+'150602_F2_C1'
 };
 
 analysis_cells_comment = {...
-'Low pass cell, Cd and TTX, Cd appeared ineffectual'
-'OK cell, not great access.  I let it seal up a bit, the seal itself, was not that clean or fast.'
-'Good cell, good electrode, great seal, eveything went well, not a lot of movement. Did MLA first, then TTX, as expected'
-'Good cell, great reording, looking strong.  Nope.  The acces wasnt that great, then I tried to improve it and I blew it.  I need to keep getting that motion down.  Im struggling there, but it has to happen.'
-'Good cell, no response for TTX, great, went through, fixing it too'
+'Cd and TTX, Cd appeared ineffectual'
+'Cd 200mM.  Cd was followed by MLA, according to notes. Not clear though'
+'MLA first, then TTX, as expected, saw small reduction'
+'MLA .5 uM, TTX, slight reduction.'
+'MLA .5 uM, slight reduction.'
 };
 
 analysis_cells_genotype = {...
@@ -21,7 +21,7 @@ analysis_cells_genotype = {...
 'pJFRC7;VT27938/TM6b'
 'pJFRC7;VT27938/TM6b'
 'pJFRC7;VT27938/TM6b'
-'pJFRC7;VT27938/TM6b'
+'10XUAS-GFP;FruGal4'
 };
 
 %%

@@ -208,6 +208,21 @@ analysis_cell(cnt).plateau_trial = {...
 'C:\Users\Anthony Azevedo\Raw_Data\150220\150220_F1_C1\VoltagePlateau_Raw_150220_F1_C1_1.mat';
     };
 
+cnt = 13;
+analysis_cell(cnt).name = '150504_F1_C2';
+analysis_cell(cnt).comment = {
+'Break in at -50, low pass neuron'
+};
+analysis_cell(cnt).exampletrials = {...
+'C:\Users\Anthony Azevedo\Raw_Data\150504\150504_F1_C2\Sweep_Raw_150504_F1_C2_1.mat';
+'C:\Users\Anthony Azevedo\Raw_Data\150504\150504_F1_C2\VoltagePlateau_Raw_150504_F1_C2_1.mat';
+    };
+analysis_cell(cnt).breakin_trial = {...
+'C:\Users\Anthony Azevedo\Raw_Data\150504\150504_F1_C2\Sweep_Raw_150504_F1_C2_1.mat';
+    };
+analysis_cell(cnt).plateau_trial = {...
+'C:\Users\Anthony Azevedo\Raw_Data\150504\150504_F1_C2\VoltagePlateau_Raw_150504_F1_C2_1.mat';
+    };
 
 fprintf('Currently analyzing %d cells.\n\n',length(analysis_cell))
 for c_ind = 1:length(analysis_cell)

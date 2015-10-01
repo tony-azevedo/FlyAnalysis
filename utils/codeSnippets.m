@@ -145,3 +145,7 @@ end
 [protocol,dateID,flynum,cellnum,trialnum] = extractRawIdentifiers(data.name);
 name = sprintf('%s Block %d: {%s}', [protocol '.' dateID '.' flynum '.' cellnum],b,sprintf('%s; ',tags{:}));
 
+%% legend stuff
+legend(pnl(1,1).select(),'toggle');
+l = findobj(fig,'Tag','legend');
+set(l,'location','NorthWest','interpreter','none','box','off');

@@ -43,7 +43,7 @@ function varargout = layout_sub(f,name,varargin)
 dim = size(f);
 
 h = figure;
-set(h,'color',[1 1 1])
+set(h,'color',[1 1 1],'position',[680         165        1163         813])
 p = panel(h);
 p.pack('v',{dim(1)/(dim(1)+1)  1/(dim(1)+1)})  % response panel, stimulus panel
 p.margin = [18 10 2 10];
@@ -60,6 +60,7 @@ for y = 1:dim(1)
         ax_to = p(1,y,x).select();
 
         ax_from = findobj(f(y,x),'tag','response_ax'); 
+        ylabe = get(get(ax_from,'ylabel'),'string');
         delete(get(ax_from,'xlabel'));
         delete(get(ax_from,'ylabel'));
         delete(get(ax_from,'zlabel'));
@@ -79,7 +80,7 @@ end
 set(p(1).de.axis,'xlim',xlims,'ylim',ylims)
 set(p(1).de.axis,'xtick',[])
 set(p(1).de.axis,'xcolor',[1 1 1])
-p(1).ylabel('Response (mV)')
+p(1).ylabel(['Response (' ylabe ')']);
 p(1).de.fontsize = 8;
 
 

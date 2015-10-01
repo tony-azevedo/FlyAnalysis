@@ -55,15 +55,23 @@ for ii = 1:length(dispexamples)
         ax = p(1).select();
         line(handles.trial.params.freqs',abs(transfer(:,ii)),...
             'parent',ax,'color',[0 1/length(handles.trial.params.displacements) 0]*ii,...
+            'displayname',[num2str(handles.trial.params.displacement) ' V'],...
             'tag',savetag);
-        ylabel(ax,'Magnitude (mV)')
+        if sum(strcmp({'IClamp','IClamp_fast'},handles.trial.params.mode))
+            y_units = 'mV'; ylims = [0 5.6];
+        elseif sum(strcmp('VClamp',handles.trial.params.mode))
+            y_units = 'pA'; ylims = [0 25];
+        end
+
+        ylabel(ax,['Magnitude (' y_units ')'])
         title(ax,'Stim to V transfer function')
         set(ax,'tag','magnitude_ax');
         
         ax = p(2).select();
-        line(handles.trial.params.freqs',angle(transfer(:,ii))/(2*pi)*360,...
+        line(handles.trial.params.freqs',unwrap(angle(transfer(:,ii)))/(2*pi)*360,...
             'parent',ax,...
             'linestyle','none',...
+            'displayname',[num2str(handles.trial.params.displacement) ' V'],...
             'marker','o',...
             'markerfacecolor',[0 1/length(handles.trial.params.displacements) 0]*ii,...
             'markeredgecolor',[0 1/length(handles.trial.params.displacements) 0]*ii,...
@@ -72,7 +80,9 @@ for ii = 1:length(dispexamples)
         
         ylabel(ax,'phase (deg)')
         xlabel(ax,'Frequency (Hz)')
+        
     end
+    
 end
 varargout{1} = transfer;
 varargout{2} = handles.trial.params.freqs;
@@ -80,5 +90,10 @@ varargout{3} = handles.trial.params.displacements;
 
 if ip.Results.plot
     axis(get(fig,'children'),'tight')
-    %     set(get(fig,'children'),'xscale','log');
+    set(get(fig,'children'),'xscale','log','xlim',[10 600]);
+    ax = p(1).select();
+    set(ax,'ylim',ylims)
+    legend(ax,'show')
+    legend(ax,'boxoff')
+
 end
