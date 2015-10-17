@@ -1,6 +1,6 @@
 function pnls = PF_CurrentChirpZAPFam(pnls,obj,savetag,varargin)
 % works on Current Sine, there for the blocks have a rang of amps and freqs
-% see also TransferFunctionOfLike
+% see also CurrentChirpZAPFam
 
 % for each displacement example, get all the trials
 blocktrials = findBlockTrials(obj.trial,obj.prtclData);
@@ -31,7 +31,7 @@ for bt = blocktrials;
     Z = fft(y(xwindow)) ./ fft(u(xwindow));
     f = trial.params.sampratein/length(x(xwindow))*[0:length(x(xwindow))/2]; f = [f, fliplr(f(2:end-1))];
     
-    colr = (cnt-1)/(length(blocktrials)-1) * [0 -1 1] + [0 1 0];
+    colr = (cnt-.99)/(length(blocktrials)-.99) * [0 -1 1] + [0 1 0];
     Z_mag = sqrt(real(Z.*conj(Z)));
     Z_phase = angle(Z);
     

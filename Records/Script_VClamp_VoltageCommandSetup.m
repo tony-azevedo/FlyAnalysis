@@ -3,6 +3,9 @@ close all
 trial = load(ac.trials.VoltageCommand);
 
 h = getShowFuncInputsFromTrial(trial);
+if isempty(strfind(h.dir,ac.name{1}))
+    error('Get the right VoltageCommand trial, numbnuts!')
+end
 
 stimnames = {};
 tag_collections = {};
@@ -44,7 +47,7 @@ for tc_ind = 1:length(tag_collections)
     drugmap.(regexprep(tag_collections{tc_ind},'4','Four')) = ac.drugs{d_ind};
 end
 
-ENa = 1000*nernstPotential(130, 50,1);
+ENa = 1000*nernstPotential(130, 1,1);
 EK = 1000*nernstPotential(3,141,1);
 ECl = 1000*nernstPotential(117,1,1);
 ECa = 1000*nernstPotential(1.5,1E-6,2);
@@ -52,9 +55,11 @@ ECa = 1000*nernstPotential(1.5,1E-6,2);
 Emap.TTX = ENa;
 Emap.FourAP = EK;
 Emap.TEA = EK;
+Emap.FourAP_TEA = EK;
 Emap.Cs = EK;
 Emap.ZD = EK;
 Emap.Cd = EK;
+Emap.curare = 0;
 
 comparestims = {'VoltageRamp_m100_p20',...
     'VoltageRamp_m70_p20','VoltageRamp_m70_p20_1s',...

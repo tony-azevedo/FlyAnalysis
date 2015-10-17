@@ -192,4 +192,4 @@ analysis_cell(cnt).SweepTrial = ...
 'C:\Users\Anthony Azevedo\Raw_Data\150504\150504_F1_C3\Sweep_Raw_150504_F1_C3_4.mat';
 
 %% 
-Script_FrequencySelectivity
+%Script_FrequencySelectivity

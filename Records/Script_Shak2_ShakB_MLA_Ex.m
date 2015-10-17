@@ -7,6 +7,7 @@ analysis_cells = {...
 '150723_F1_C2'
 '150723_F3_C1'
 '150725_F1_C1'
+'151010_F1_C1'
 };
 
 analysis_cells_comment = {...   
@@ -16,12 +17,14 @@ analysis_cells_comment = {...
     'MLA 0.5 uM application.  fairly big responses. more trials, very nice examples'
     'MLA 0.5 uM application.  fairly big responses. more Step responses, nice example'
     'MLA 0.5 uM application.  big response at off. more Step responses, nice example'
+    'curare 50 uM application.  big response at on. more Step responses, nice example'
 };
 
 analysis_cells_genotype = {...
 'ShakB2/y;pJFRC7/Sp;45D07-Gal4/+';
 'ShakB2/y;pJFRC7/Sp;45D07-Gal4/+';
 'ShakB2/y;pJFRC7/Sp;45D07-Gal4/+';
+'ShakB2/y;pJFRC7/+;45D07-Gal4/+';
 'ShakB2/y;pJFRC7/+;45D07-Gal4/+';
 'ShakB2/y;pJFRC7/+;45D07-Gal4/+';
 'ShakB2/y;pJFRC7/+;45D07-Gal4/+';
@@ -235,4 +238,34 @@ analysis_cell(cnt).PiezoSineTrial_VClamp_Drug = ...
 
 analysis_cell(cnt).PiezoStepTrial_IClamp_Drug = ...
 'C:\Users\Anthony Azevedo\Raw_Data\150725\150725_F1_C1\PiezoStep_Raw_150725_F1_C1_259.mat';
+
+%% 'ShakB2/y;pJFRC7/Sp;45D07-Gal4/+' 
+
+cnt = find(strcmp(analysis_cells,'151010_F1_C1'));
+analysis_cell(cnt).PiezoSineTrial_IClamp = ...
+'C:\Users\Anthony Azevedo\Raw_Data\151010\151010_F1_C1\PiezoSine_Raw_151010_F1_C1_1.mat';
+analysis_cell(cnt).PiezoSineTrial_VClamp = ...
+'';
+analysis_cell(cnt).PiezoChirpTrial_IClamp = ...
+'C:\Users\Anthony Azevedo\Raw_Data\151010\151010_F1_C1\PiezoChirp_Raw_151010_F1_C1_4.mat';
+analysis_cell(cnt).CurrentStepTrial = ...
+'';
+analysis_cell(cnt).VoltageStepTrial = ...
+'';
+analysis_cell(cnt).CurrentChirpTrial = ...
+'';
+analysis_cell(cnt).SweepTrial = ...
+'C:\Users\Anthony Azevedo\Raw_Data\151010\151010_F1_C1\Sweep_Raw_151010_F1_C1_5.mat';
+analysis_cell(cnt).PiezoStepTrial_IClamp = ...
+'C:\Users\Anthony Azevedo\Raw_Data\151010\151010_F1_C1\PiezoStep_Raw_151010_F1_C1_3.mat';
+
+% --------------- MLA ------------------
+analysis_cell(cnt).Drug = 'Curare 50 uM';
+analysis_cell(cnt).PiezoSineTrial_IClamp_Drug = ...
+'C:\Users\Anthony Azevedo\Raw_Data\151010\151010_F1_C1\PiezoSine_Raw_151010_F1_C1_148.mat';
+analysis_cell(cnt).PiezoSineTrial_VClamp_Drug = ...
+'';
+
+analysis_cell(cnt).PiezoStepTrial_IClamp_Drug = ...
+'C:\Users\Anthony Azevedo\Raw_Data\151010\151010_F1_C1\PiezoStep_Raw_151010_F1_C1_143.mat';
 

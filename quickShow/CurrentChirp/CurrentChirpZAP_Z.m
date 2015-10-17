@@ -1,4 +1,4 @@
-function varargout = CurrentChirpZAPFam(fig,handles,savetag,varargin)
+function varargout = CurrentChirpZAP_Z(fig,handles,savetag,varargin)
 % works on Current Sine, there for the blocks have a rang of amps and freqs
 % see also TransferFunctionOfLike
 
@@ -34,6 +34,11 @@ for bt = blocktrials;
 
     x = makeTime(handles.trial.params);
     xwindow = x>=0+handles.trial.params.ramptime & x< handles.trial.params.stimDurInSec -handles.trial.params.ramptime;
+    stimx = x(x>=0& x< handles.trial.params.stimDurInSec);% -handles.trial.params.ramptime);
+    f = stimx/handles.trial.params.stimDurInSec * ...
+        (handles.trial.params.freqEnd-handles.trial.params.freqStart) + ...
+        handles.trial.params.freqStart;
+    f = f(stimx>handles.trial.params.ramptime & stimx<handles.trial.params.stimDurInSec-handles.trial.params.ramptime);
     
     if sum(strcmp({'IClamp','IClamp_fast'},handles.trial.params.mode))
         y_name = 'voltage';
@@ -58,69 +63,78 @@ for bt = blocktrials;
     end
     y = mean(y,2);
     
-    y = y - mean(y);
+    y = y-mean(y(x>trial.params.preDurInSec+.06));
     u = u - mean(u(x<=0));
     
     % ZAP calculation
-    Z = fft(y(xwindow)) ./ fft(u(xwindow));
-    f = trial.params.sampratein/length(x(xwindow))*[0:length(x(xwindow))/2]; f = [f, fliplr(f(2:end-1))];
+    Vz = hilbert(y);
+    Iz = hilbert(u);
+    Z = 1E-3*Vz(xwindow)./(Iz(xwindow)*1E-12);
+    
+    
+    %Z = fft(y(xwindow)) ./ fft(u(xwindow));
     varargout = {Z,f,x,y,u};
     
     if ip.Results.plot
-        colr = (cnt-1)/(max([length(blocktrials)-1 1])) * [0 -1 1] + [0 1 0];
-        Z_mag = sqrt(real(Z.*conj(Z)));
-        Z_phase = angle(Z);
         
         %freqBins = logspace(log10(handles.trial.params.freqStart),log10(handles.trial.params.freqEnd),100);
         freqBins = handles.trial.params.freqStart:2.5:handles.trial.params.freqEnd;
         freqBins = sort(freqBins);
         fsampled = freqBins(1:end-1);
-        Z_mag_sampled = freqBins(1:end-1);
+        Z_sampled = freqBins(1:end-1);
         for fb = 1:length(freqBins)-1
             f_wind = f >= freqBins(fb) & f<freqBins(fb+1);
-            fsampled(fb) = 10^(mean(log10(f(f_wind))));
-            Z_mag_sampled(fb) = mean(Z_mag(f_wind));
+            fsampled(fb) = mean(f(f_wind));
+            Z_sampled(fb) = mean(Z(f_wind));
         end
+        r_sampled = real(Z_sampled);
+        x_sampled = imag(Z_sampled);
         
         ax = p(1).select();
-        line(fsampled,Z_mag_sampled,...
-            'parent',ax,'color',colr,...
-            'displayname',[num2str(handles.trial.params.amp) ' pA'],...
-            'tag',savetag);
-        ylabel(ax,'Magnitude')
+        clrs = parula(length(r_sampled));
+        plot(Z,'color',[1 1 1]*.9);
+        for r_ind = sum(fsampled<4)+1:length(r_sampled)
+            line(r_sampled(r_ind),x_sampled(r_ind),...
+                'parent',ax,'color',clrs(r_ind,:),...
+                'marker','o','markersize',6,'markerfacecolor',clrs(r_ind,:),'markeredgecolor',clrs(r_ind,:),...
+                'tag',savetag);
+        end
+        ylabel(ax,'Resistance (Ohms)')
+        xlabel(ax,'Reactance (Ohms)')
+        
         [prot,d,fly,cell,trialnum] = extractRawIdentifiers(handles.trial.name);
         title(ax,sprintf('%s : %s',...
             [prot '.' d '.' fly '.' cell '.' trialnum],...
             'Stim to V transfer function'));
         
-        set(ax,'xlim',[...
-            max(min(handles.trial.params.freqStart,handles.trial.params.freqEnd),3),...
-            max(handles.trial.params.freqStart,handles.trial.params.freqEnd),...
-            ])
+        %         set(ax,'xlim',[...
+        %             max(min(handles.trial.params.freqStart,handles.trial.params.freqEnd),3),...
+        %             max(handles.trial.params.freqStart,handles.trial.params.freqEnd),...
+        %             ])
         
-        ax = p(2).select();
-        line(f(1:length(f)/2),Z_phase(1:length(f)/2)/(2*pi)*360,...
-            'parent',ax,...
-            'linestyle','none',...
-            'displayname',[num2str(handles.trial.params.amp) ' pA'],...
-            'marker','.',...
-            'markerfacecolor',colr,...
-            'markeredgecolor',colr,...
-            'markersize',2);
-        
-        ylabel(ax,'phase (deg)')
-        xlabel(ax,'Frequency (Hz)')
-        set(ax,'xlim',[...
-            max(min(handles.trial.params.freqStart,handles.trial.params.freqEnd),3),...
-            max(handles.trial.params.freqStart,handles.trial.params.freqEnd),...
-            ])
-        
-        %set(get(fig,'children'),'xscale','log');
-        set(get(fig,'children'),'xscale','linear');
-        set(p.de.axis,'tickdir','out')
+        %         ax = p(2).select();
+        %         line(f(1:length(f)/2),Z_phase(1:length(f)/2)/(2*pi)*360,...
+        %             'parent',ax,...
+        %             'linestyle','none',...
+        %             'displayname',[num2str(handles.trial.params.amp) ' pA'],...
+        %             'marker','.',...
+        %             'markerfacecolor',colr,...
+        %             'markeredgecolor',colr,...
+        %             'markersize',2);
+        %
+        %         ylabel(ax,'phase (deg)')
+        %         xlabel(ax,'Frequency (Hz)')
+        %         set(ax,'xlim',[...
+        %             max(min(handles.trial.params.freqStart,handles.trial.params.freqEnd),3),...
+        %             max(handles.trial.params.freqStart,handles.trial.params.freqEnd),...
+        %             ])
+        %
+        %         %set(get(fig,'children'),'xscale','log');
+        %         set(get(fig,'children'),'xscale','linear');
+        %         set(p.de.axis,'tickdir','out')
     end
     cnt = cnt+1;
 end
 ax = p(1).select();
-legend(ax,'show')
-legend(ax,'boxoff')
+% legend(ax,'show')
+% legend(ax,'boxoff')

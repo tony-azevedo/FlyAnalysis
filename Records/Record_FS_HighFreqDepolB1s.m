@@ -71,4 +71,4 @@ analysis_cell(cnt).SweepTrial = ...
 'C:\Users\Anthony Azevedo\Raw_Data\131211\131211_F1_C2\CurrentPlateau_Raw_131211_F1_C2_3.mat';
 
 %% 
-Script_FrequencySelectivity_HP
+%Script_FrequencySelectivity_HP

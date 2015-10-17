@@ -40,34 +40,38 @@ close all
 clear transfer freqs dsplcmnts f       
 cnt = 0;
 for c_ind = 1:length(analysis_cell)
-if ~isempty(analysis_cell(c_ind).PiezoSineTrial)
-trial = load(analysis_cell(c_ind).PiezoSineTrial);
-obj.trial = trial;
-
-[obj.currentPrtcl,dateID,flynum,cellnum,obj.currentTrialNum,obj.dir,obj.trialStem,dfile] = ...
-    extractRawIdentifiers(trial.name);
-
-cnt = cnt+1;
-prtclData = load(dfile);
-obj.prtclData = prtclData.data;
-obj.prtclTrialNums = obj.currentTrialNum;
-
-if exist('f','var') && ishandle(f), close(f),end
-
-% hasPiezoSineName{cnt} = analysis_cell(c_ind).name;
-[transfer{cnt},freqs{cnt},dsplcmnts{cnt}] = PiezoSineDepolRespVsFreq([],obj,'');
-f = findobj(0,'tag','PiezoSineDepolRespVsFreq');
-if save_log
-    p = panel.recover(f);
-    if isfield(obj.trial.params,'trialBlock'), tb = num2str(obj.trial.params.trialBlock);
-    else tb = 'NaN';
+    if ~isempty(analysis_cell(c_ind).PiezoSineTrial)
+        trial = load(analysis_cell(c_ind).PiezoSineTrial);
+        obj.trial = trial;
+        
+        [obj.currentPrtcl,dateID,flynum,cellnum,obj.currentTrialNum,obj.dir,obj.trialStem,dfile] = ...
+            extractRawIdentifiers(trial.name);
+        
+        cnt = cnt+1;
+        prtclData = load(dfile);
+        obj.prtclData = prtclData.data;
+        obj.prtclTrialNums = obj.currentTrialNum;
+        
+        if exist('f','var') && ishandle(f), close(f),end
+        
+        hasPiezoSineName{cnt} = analysis_cell(c_ind).name;
+        [transfer{cnt},freqs{cnt},dsplcmnts{cnt}] = PiezoSineDepolRespVsFreq([],obj,'');
+        f = findobj(0,'tag','PiezoSineDepolRespVsFreq');
+        if save_log
+            p = panel.recover(f);
+            if isfield(obj.trial.params,'trialBlock'), tb = num2str(obj.trial.params.trialBlock);
+            else tb = 'NaN';
+            end
+            fn = fullfile(savedir,[id dateID '_' flynum '_' cellnum '_' tb '_',...
+                'PiezoSineDepolRespVsFreq.pdf']);
+            p.fontname = 'Arial';
+            p.export(fn, '-rp','-l','-a1.4');
+        end
     end
-    fn = fullfile(savedir,[id dateID '_' flynum '_' cellnum '_' tb '_',...
-        'PiezoSineDepolRespVsFreq.pdf']);
-    p.fontname = 'Arial';
-    p.export(fn, '-rp','-l','-a1.4');
 end
-end
+
+for c_ind = 1:length(hasPiezoSineName)
+    hasPiezoSineName{c_ind} = hasPiezoSineName{c_ind}{1};
 end
 
 % Count the number of displacements, etc
@@ -112,10 +116,12 @@ for d_ind = 1:length(all_dsplcmnts)
         
         plot(freqs{c_ind},real(abs(transfer{c_ind}(:,d_i))),...
             'parent',ax1,'linestyle','-','color',0*[.85 .85 .85],...
-            'marker','.','markerfacecolor',0*[.85 .85 .85],'markeredgecolor',0*[.85 .85 .85])
+            'marker','.','markerfacecolor',0*[.85 .85 .85],'markeredgecolor',0*[.85 .85 .85],...
+            'tag',hasPiezoSineName{c_ind})
         plot(freqs{c_ind},real(abs(transfer{c_ind}(:,d_i)))/max(real(abs(transfer{c_ind}(:,d_i)))),...
             'parent',ax2,'linestyle','-','color',0*[.85 .85 .85],...
-            'marker','.','markerfacecolor',0*[.85 .85 .85],'markeredgecolor',0*[.85 .85 .85])
+            'marker','.','markerfacecolor',0*[.85 .85 .85],'markeredgecolor',0*[.85 .85 .85],...
+            'tag',hasPiezoSineName{c_ind})
     end
     %plot(all_freqs(~isnan(dspltranf(3,:))),nanmean(dspltranf(:,~isnan(dspltranf(3,:))),1),'color',[0 1/length(all_dsplcmnts) 0]*d_ind);
     plot(ax1,all_freqs,nanmean(dspltranf,1),...
@@ -148,18 +154,15 @@ for d_ind = 1:length(all_dsplcmnts)
             continue
         end
         [~,af_i] = intersect(all_freqs,round(freqs{c_ind}*100)/100);
-        dsplphase(c_ind,af_i) = angle(transfer{c_ind}(:,d_i))';
-        
-        
+        dsplphase(c_ind,af_i) = angle(transfer{c_ind}(:,d_i))'; 
+        dsplphase(c_ind,:) = unwrap(dsplphase(c_ind,:));
+        %dsplphase = dsplphase/(2*pi)*360;
+        plot(all_freqs,dsplphase,...
+            'parent',ax,'linestyle','-','color',0*[.85 .85 .85],...
+            'marker','.','markerfacecolor',0*[.85 .85 .85],'markeredgecolor',0*[.85 .85 .85],...
+            'tag',hasPiezoSineName{c_ind})
     end
-    for row_ind = 1:size(dsplphase,1);
-        dsplphase(row_ind,:) = unwrap(dsplphase(row_ind,:));
-    end
-    %dsplphase = dsplphase/(2*pi)*360;
-    plot(all_freqs,dsplphase,...
-        'parent',ax,'linestyle','-','color',0*[.85 .85 .85],...
-        'marker','.','markerfacecolor',0*[.85 .85 .85],'markeredgecolor',0*[.85 .85 .85],...
-        'tag',sprintf('%.2f',dsplcmnts{c_ind}(d_ind)))
+    
     plot(all_freqs,nanmean(dsplphase,1),...
         'parent',ax,'linestyle','none','color',[.85 .85 .85],...
         'marker','o','markerfacecolor',[0 1/length(all_dsplcmnts) 0]*d_ind,...

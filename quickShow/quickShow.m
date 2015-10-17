@@ -20,7 +20,7 @@ function varargout = quickShow(varargin)
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 
-% Last Modified by GUIDE v2.5 03-Jun-2015 10:18:22
+% Last Modified by GUIDE v2.5 01-Oct-2015 18:37:19
 
 %% Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -1058,3 +1058,16 @@ createDataFileFromRaw(handles.prtclDataFileName);
 d = load(handles.prtclDataFileName);
 handles.prtclData = d.data;
 guidata(hObject, handles);
+
+
+% --- Executes on key press with focus on figure1 and none of its controls.
+function figure1_KeyPressFcn(hObject, eventdata, handles)
+key = eventdata.Key;
+switch key
+    case 'rightarrow'
+        fprintf('->\n')
+        rightButton_Callback(hObject, eventdata, handles)
+    case 'leftarrow'
+        fprintf('<-\n')
+        leftButton_Callback(hObject, eventdata, handles)
+end
