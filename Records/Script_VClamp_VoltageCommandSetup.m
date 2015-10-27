@@ -3,7 +3,7 @@ close all
 trial = load(ac.trials.VoltageCommand);
 
 h = getShowFuncInputsFromTrial(trial);
-if isempty(strfind(h.dir,ac.name{1}))
+if isempty(strfind(h.dir,ac.name))
     error('Get the right VoltageCommand trial, numbnuts!')
 end
 
@@ -59,6 +59,8 @@ Emap.FourAP_TEA = EK;
 Emap.Cs = EK;
 Emap.ZD = EK;
 Emap.Cd = EK;
+Emap.MLA = 0;
+Emap.aBTX = 0;
 Emap.curare = 0;
 
 comparestims = {'VoltageRamp_m100_p20',...

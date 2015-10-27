@@ -69,9 +69,6 @@ for r_ind = 1:length(rawfiles)
     [prot,~,~,~,num,~,~,~] = ...
         extractRawIdentifiers(trial.name);
     name{r_ind} = [num2str(trial.params.trialBlock) ' ' prot];
-    if strcmp('Sweep',prot) && isfield(trial,'excluded') && trial.excluded
-        continue
-    end
 
     % get the creation date
     if isfield(trial,'timestamp')
@@ -84,7 +81,7 @@ for r_ind = 1:length(rawfiles)
     end
     
     block(r_ind) = trial.params.trialBlock;
-    if ~isempty(trial.tags), drgs{r_ind} = trial.tags{end}; else drgs{r_ind} = ' '; end
+    drgs{r_ind} = trial.tags{end};
     
     % get the mode
     mode{r_ind} = trial.params.mode;
@@ -133,17 +130,6 @@ for r_ind = 1:length(rawfiles)
     end
                
 end
-trialtime = trialtime(~isnan(trialorder));
-Ri = Ri(~isnan(trialorder));
-access = access(~isnan(trialorder));
-V_mh = V_mh(~isnan(trialorder));
-block = block(~isnan(trialorder));
-name = name(~isnan(trialorder));
-mode = mode(~isnan(trialorder));
-drgs = drgs(~isnan(trialorder));
-trialorder = trialorder(~isnan(trialorder));
-
-
 [tro, ord] = sort(trialorder);
 trialtime = trialtime(ord);
 Ri = Ri(ord);
@@ -154,7 +140,7 @@ name = name(ord);
 mode = mode(ord);
 drgs = drgs(ord);
 
-ax = subplot(1,1,1,'parent',fig);
+ax = subplot(3,1,[1 2],'parent',fig);
 set(ax,'XTickLabel',{[]});
 ylabel(ax,'R (G\Omega; m - IC, c - VC)')
 xlabel(ax,'Trials');
@@ -209,13 +195,13 @@ set(ax,'ylim',[-.6 ylims(2)])
 line(xlims,[0 0],'parent',ax,'linestyle','-','color',[.8 .8 .8],'tag','baseline');
 
 % Is there a relationship between Ri vs holding Potential?
-% ax = subplot(3,1,3,'parent',fig);
-% plot(ax,Ri(Ri>0),V_mh(Ri>0),'.k');
-% 
-% axis(ax,'tight')
-% xlim(ax,[0,2])
-% xlabel(ax,'R_i (G\Omega)');
-% ylabel(ax,'Holding V_m (mV)');
+ax = subplot(3,1,3,'parent',fig);
+plot(ax,Ri(Ri>0),V_mh(Ri>0),'.k');
+
+axis(ax,'tight')
+xlim(ax,[0,2])
+xlabel(ax,'R_i (G\Omega)');
+ylabel(ax,'Holding V_m (mV)');
 
 set(fig,'Name',[dateID '_' flynum '_' cellnum '_InputR'])
 

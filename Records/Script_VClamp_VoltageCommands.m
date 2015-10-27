@@ -131,12 +131,12 @@ if ~isdir(fullfile(savedir,'ramps'))
     mkdir(fullfile(savedir,'ramps'))
 end
 
-fn = fullfile(savedir,'ramps',[ac.name{1},'_',rampstims{r_ind} '_Currents.pdf']);
+fn = fullfile(savedir,'ramps',[ac.name,'_',rampstims{r_ind} '_Currents.pdf']);
 figure(fig)
 eval(['export_fig ' regexprep(fn,'\sAzevedo',''' Azevedo''') ' -pdf -transparent']);
 
 set(fig,'paperpositionMode','auto');
-saveas(fig,fullfile(savedir,'ramps',[ac.name{1},'_',rampstims{r_ind} '_Currents']),'fig');
+saveas(fig,fullfile(savedir,'ramps',[ac.name,'_',rampstims{r_ind} '_Currents']),'fig');
 
 clear Current
 end
@@ -164,7 +164,7 @@ f = 400;
 
 %Create a figure with the number of columns drugs
 fig = figure();
-set(fig,'color',[1 1 1],'position',[197 204  1240 742],'name',[ac.name{1} '_VoltageSteps']);
+set(fig,'color',[1 1 1],'position',[197 204  1240 742],'name',[ac.name '_VoltageSteps']);
 pnl = panel(fig);
 pnl.margin = [18 18 10 10];
 pnl.pack('h',length(blocktrials));
@@ -227,7 +227,7 @@ set(pnls_hs([2],:),'ylim',ylims_voltage,...
 ylabel(pnl(1,1).select(),'pA');
 ylabel(pnl(1,2).select(),'mV');
 xlabel(pnl(1,2).select(),'s');
-xlabel(pnl(length(blocktrials),2).select(),regexprep(ac.name{1},'_','.'));
+xlabel(pnl(length(blocktrials),2).select(),regexprep(ac.name,'_','.'));
 
 for bt_ind = 1:length(blocktrials) % assuming the next trial block should be subtracted
     set(pnl(bt_ind,3).select(),'xlim',steplims,'ylim',currlims);
@@ -241,18 +241,18 @@ if ~isdir(fullfile(savedir,'vSteps'))
     mkdir(fullfile(savedir,'vSteps'))
 end
 
-fn = fullfile(savedir,'vSteps',[ac.name{1}, '_VoltageSteps.pdf']);
+fn = fullfile(savedir,'vSteps',[ac.name, '_VoltageSteps.pdf']);
 figure(fig)
 eval(['export_fig ' regexprep(fn,'\sAzevedo',''' Azevedo''') ' -pdf -transparent']);
 
 set(fig,'paperpositionMode','auto');
-saveas(fig,fullfile(savedir,'vSteps',[ac.name{1}, '_VoltageSteps']),'fig');
+saveas(fig,fullfile(savedir,'vSteps',[ac.name, '_VoltageSteps']),'fig');
 
 for bt_ind = 1:length(blocktrials) % assuming the next trial block should be subtracted
     set(pnl(bt_ind,1).select(),'xlim',[-.005 .02]);
 end
 
-fn = fullfile(savedir,'vSteps',[ac.name{1}, '_VoltageSteps_onset.pdf']);
+fn = fullfile(savedir,'vSteps',[ac.name, '_VoltageSteps_onset.pdf']);
 figure(fig)
 eval(['export_fig ' regexprep(fn,'\sAzevedo',''' Azevedo''') ' -pdf -transparent']);
 
@@ -260,7 +260,7 @@ for bt_ind = 1:length(blocktrials) % assuming the next trial block should be sub
     set(pnl(bt_ind,1).select(),'xlim',trial.params.stimDurInSec+[-.005 .01]);
 end
 
-fn = fullfile(savedir,'vSteps',[ac.name{1}, '_VoltageSteps_offset.pdf']);
+fn = fullfile(savedir,'vSteps',[ac.name, '_VoltageSteps_offset.pdf']);
 figure(fig)
 eval(['export_fig ' regexprep(fn,'\sAzevedo',''' Azevedo''') ' -pdf -transparent']);
 
@@ -287,7 +287,7 @@ f = 400;
 
 %Create a figure with the number of columns drugs
 fig = figure();
-set(fig,'color',[1 1 1],'position',[197 9  1410 988],'name',[ac.name{1} '_VoltageSteps']);
+set(fig,'color',[1 1 1],'position',[197 9  1410 988],'name',[ac.name '_VoltageSteps']);
 pnl = panel(fig);
 pnl.margin = [18 18 10 10];
 pnl.pack('h',length(blocktrials));
@@ -362,25 +362,25 @@ ylabel(pnl(1,1).select(),'pA');
 ylabel(pnl(1,2).select(),'mV');
 ylabel(pnl(1,3).select(),'pA');
 xlabel(pnl(1,2).select(),'s');
-xlabel(pnl(length(blocktrials),2).select(),regexprep(ac.name{1},'_','.'));
+xlabel(pnl(length(blocktrials),2).select(),regexprep(ac.name,'_','.'));
 
 if ~isdir(fullfile(savedir,'vSteps_sbtrct'))
     mkdir(fullfile(savedir,'vSteps_sbtrct'))
 end
 
-fn = fullfile(savedir,'vSteps_sbtrct',[ac.name{1}, '_VoltageSubtraction.pdf']);
+fn = fullfile(savedir,'vSteps_sbtrct',[ac.name, '_VoltageSubtraction.pdf']);
 figure(fig)
 eval(['export_fig ' regexprep(fn,'\sAzevedo',''' Azevedo''') ' -pdf -transparent']);
 
 set(fig,'paperpositionMode','auto');
-saveas(fig,fullfile(savedir,'vSteps_sbtrct',[ac.name{1}, '_VoltageSubtraction']),'fig');
+saveas(fig,fullfile(savedir,'vSteps_sbtrct',[ac.name, '_VoltageSubtraction']),'fig');
 
 for bt_ind = 1:length(blocktrials) % assuming the next trial block should be subtracted
     set(pnl(bt_ind,1).select(),'xlim',[-.005 .02]);
     set(pnl(bt_ind,3).select(),'xlim',[-.005 .02]);
 end
 
-fn = fullfile(savedir,'vSteps_sbtrct',[ac.name{1}, '_VoltageSubtraction_onset.pdf']);
+fn = fullfile(savedir,'vSteps_sbtrct',[ac.name, '_VoltageSubtraction_onset.pdf']);
 figure(fig)
 eval(['export_fig ' regexprep(fn,'\sAzevedo',''' Azevedo''') ' -pdf -transparent']);
 
@@ -389,7 +389,7 @@ for bt_ind = 1:length(blocktrials) % assuming the next trial block should be sub
     set(pnl(bt_ind,3).select(),'xlim',trial.params.stimDurInSec+[-.005 .01]);
 end
 
-fn = fullfile(savedir,'vSteps_sbtrct',[ac.name{1}, '_VoltageSubtraction_offset.pdf']);
+fn = fullfile(savedir,'vSteps_sbtrct',[ac.name, '_VoltageSubtraction_offset.pdf']);
 figure(fig)
 eval(['export_fig ' regexprep(fn,'\sAzevedo',''' Azevedo''') ' -pdf -transparent']);
 
@@ -437,8 +437,8 @@ clrs = distinguishable_colors(size(trial_seeds,3),{'w','k',[1 1 0],[1 1 1]*.75})
 for a_ind = 1:size(trial_seeds,1)
 % a_ind = 2
     fig = figure();
-    set(fig,'color',[1 1 1],'position',[28 34 1767 948],'name',[ac.name{1} '_VoltageSine_' num2str(trial.params.amps(a_ind)) 'V']);
-    %set(fig,'color',[1 1 1],'units','inches','position',[1 2 10 7],'name',[ac.name{1} '_VoltageSine_' num2str(trial.params.amps(a_ind)) 'V']);
+    set(fig,'color',[1 1 1],'position',[28 34 1767 948],'name',[ac.name '_VoltageSine_' num2str(trial.params.amps(a_ind)) 'V']);
+    %set(fig,'color',[1 1 1],'units','inches','position',[1 2 10 7],'name',[ac.name '_VoltageSine_' num2str(trial.params.amps(a_ind)) 'V']);
     pnl = panel(fig);
     pnl.margin = [18 18 10 10];
     pnl.pack('h',size(trial_seeds,2));
@@ -631,7 +631,7 @@ for a_ind = 1:size(trial_seeds,1)
     voltaxes = pnls_hs(1,:);
     linkaxes(voltaxes(:),'y');
     set(voltaxes,'ylim',ylims_voltage);
-    xlabel(pnls_hs(end,end),regexprep(ac.name{1},'_','.'));
+    xlabel(pnls_hs(end,end),regexprep(ac.name,'_','.'));
     
     
     % Finished with all columns (frequencies). Clean up plot
@@ -648,12 +648,12 @@ for a_ind = 1:size(trial_seeds,1)
     %pnl.fontsize = 18;
     pnl.fontname = 'Arial';
     
-    fn = fullfile(savedir,'vSines',[ac.name{1}, '_VoltageSine_Currents_' regexprep(num2str(trial.params.amp),'\.','_') 'V.pdf']);
+    fn = fullfile(savedir,'vSines',[ac.name, '_VoltageSine_Currents_' regexprep(num2str(trial.params.amp),'\.','_') 'V.pdf']);
     figure(fig)
     eval(['export_fig ' regexprep(fn,'\sAzevedo',''' Azevedo''') ' -pdf -transparent']);
 
     set(fig,'paperpositionMode','auto');
-    saveas(fig,fullfile(savedir,'vSines',[ac.name{1}, '_VoltageSine_Currents_' regexprep(num2str(trial.params.amp),'\.','_') 'V']),'fig');
+    saveas(fig,fullfile(savedir,'vSines',[ac.name, '_VoltageSine_Currents_' regexprep(num2str(trial.params.amp),'\.','_') 'V']),'fig');
 
 end
 
@@ -699,7 +699,7 @@ end
 stim = VoltageSine;
 for a_ind = 1:size(trial_seeds,1)
     fig = figure();
-    set(fig,'color',[1 1 1],'position',[1 1 820 980],'name',[ac.name{1} '_VS_Z' num2str(trial.params.amps(a_ind)) 'V']);
+    set(fig,'color',[1 1 1],'position',[1 1 820 980],'name',[ac.name '_VS_Z' num2str(trial.params.amps(a_ind)) 'V']);
     pnl = panel(fig);
     pnl.margin = [18 18 10 10];
     pnl.pack('h',size(trial_seeds,2));
@@ -900,14 +900,14 @@ for a_ind = 1:size(trial_seeds,1)
     ylabel(pnl(1,2).select(),'pA');
     xlabel(pnl(1,2).select(),'s');
     
-    ylabel(pnl(length(trial.params.freqs),rownum).select(),regexprep(ac.name{1},'_','.'));
+    ylabel(pnl(length(trial.params.freqs),rownum).select(),regexprep(ac.name,'_','.'));
         
-    fn = fullfile(savedir,'vImpedance',[ac.name{1}, '_VoltageSine_Z_' regexprep(num2str(trial.params.amp),'\.','_') 'V.pdf']);
+    fn = fullfile(savedir,'vImpedance',[ac.name, '_VoltageSine_Z_' regexprep(num2str(trial.params.amp),'\.','_') 'V.pdf']);
     figure(fig)
     eval(['export_fig ' regexprep(fn,'\sAzevedo',''' Azevedo''') ' -pdf -transparent']);
 
     set(fig,'paperpositionMode','auto');
-    saveas(fig,fullfile(savedir,'vImpedance',[ac.name{1}, '_VoltageSine_Currents_' regexprep(num2str(trial.params.amp),'\.','_') 'V']),'fig');
+    saveas(fig,fullfile(savedir,'vImpedance',[ac.name, '_VoltageSine_Currents_' regexprep(num2str(trial.params.amp),'\.','_') 'V']),'fig');
 
 end
 
@@ -950,8 +950,8 @@ clrs = distinguishable_colors(size(trial_seeds,3),{'w','k',[1 1 0],[1 1 1]*.75})
 
 for a_ind = 1:size(trial_seeds,1)
     fig = figure();
-    set(fig,'color',[1 1 1],'position',[17 66 1872 916],'name',[ac.name{1} '_VoltageSine_' num2str(trial.params.amps(a_ind)) 'V']);
-    %set(fig,'color',[1 1 1],'units','inches','position',[1 2 10 7],'name',[ac.name{1} '_VoltageSine_' num2str(trial.params.amps(a_ind)) 'V']);
+    set(fig,'color',[1 1 1],'position',[17 66 1872 916],'name',[ac.name '_VoltageSine_' num2str(trial.params.amps(a_ind)) 'V']);
+    %set(fig,'color',[1 1 1],'units','inches','position',[1 2 10 7],'name',[ac.name '_VoltageSine_' num2str(trial.params.amps(a_ind)) 'V']);
     pnl = panel(fig);
     pnl.margin = [20 20 2 2];
     pnl.pack('h',size(trial_seeds,2));
@@ -1131,7 +1131,7 @@ for a_ind = 1:size(trial_seeds,1)
     voltaxes = pnls_hs(1,:);
     linkaxes(voltaxes(:),'y');
     set(voltaxes,'ylim',ylims_voltage);
-    xlabel(pnls_hs(end,end),regexprep(ac.name{1},'_','.'));
+    xlabel(pnls_hs(end,end),regexprep(ac.name,'_','.'));
     
     % Finished with all columns (frequencies). Clean up plot
     ylabel(pnl(1,1).select(),'mV');
@@ -1147,12 +1147,12 @@ for a_ind = 1:size(trial_seeds,1)
     pnl.fontname = 'Arial';
 
     
-    fn = fullfile(savedir,'vConductance',[ac.name{1}, '_VoltageSine_Conductances_' regexprep(num2str(trial.params.amp),'\.','_') 'V.pdf']);
+    fn = fullfile(savedir,'vConductance',[ac.name, '_VoltageSine_Conductances_' regexprep(num2str(trial.params.amp),'\.','_') 'V.pdf']);
     figure(fig)
     eval(['export_fig ' regexprep(fn,'\sAzevedo',''' Azevedo''') ' -pdf -transparent']);
     
     set(fig,'paperpositionMode','auto');
-    saveas(fig,fullfile(savedir,'vConductance',[ac.name{1}, '_VoltageSine_Conductances_' regexprep(num2str(trial.params.amp),'\.','_') 'V']),'fig');
+    saveas(fig,fullfile(savedir,'vConductance',[ac.name, '_VoltageSine_Conductances_' regexprep(num2str(trial.params.amp),'\.','_') 'V']),'fig');
 
 end
 
@@ -1194,7 +1194,7 @@ end
 % 
 % for a_ind = 1:size(trial_seeds,1)
 %     fig = figure();
-%     set(fig,'color',[1 1 1],'position',[1 1 820 980],'name',[ac.name{1} '_VoltageSine_' num2str(trial.params.amps(a_ind)) 'V']);
+%     set(fig,'color',[1 1 1],'position',[1 1 820 980],'name',[ac.name '_VoltageSine_' num2str(trial.params.amps(a_ind)) 'V']);
 %     pnl = panel(fig);
 %     pnl.margin = [18 18 10 10];
 %     pnl.pack('h',size(trial_seeds,2));
@@ -1365,7 +1365,7 @@ end
 %         set(c,'ylim',cdiff/2*[-1 1]+yl);
 %     end
 % 
-%     ylabel(pnl(length(trial.params.freqs),rownum).select(),regexprep(ac.name{1},'_','.'));
+%     ylabel(pnl(length(trial.params.freqs),rownum).select(),regexprep(ac.name,'_','.'));
 %     
 %     
 %     % Finished with all columns (frequencies). Clean up plot
@@ -1378,7 +1378,7 @@ end
 %     xlabel(pnl(1,d_ind).select(),'mV');
 %     set(pnl(1,d_ind).select(),'xtickmode','auto','xticklabelmode','auto','xcolor',[0 0 0]);
 %     
-%     fn = fullfile(savedir,[ac.name{1}, '_VoltageSine_IvsV_' regexprep(num2str(trial.params.amp),'\.','_') 'V.pdf']);
+%     fn = fullfile(savedir,[ac.name, '_VoltageSine_IvsV_' regexprep(num2str(trial.params.amp),'\.','_') 'V.pdf']);
 %     figure(fig)
 %     eval(['export_fig ' regexprep(fn,'\sAzevedo',''' Azevedo''') ' -pdf -transparent']);
 %     
@@ -1402,7 +1402,7 @@ end
 % %         end
 % %     end
 % %     
-% %     fn = fullfile(savedir,[ac.name{1}, '_VoltageSine_Example' foldXs{X_ind} 'X.pdf']);
+% %     fn = fullfile(savedir,[ac.name, '_VoltageSine_Example' foldXs{X_ind} 'X.pdf']);
 % %     figure(exfig)
 % %     eval(['export_fig ' regexprep(fn,'\sAzevedo',''' Azevedo''') ' -pdf -transparent']);
 % 
@@ -1431,7 +1431,7 @@ end
 % 
 % %Create a figure with the number of columns drugs
 % fig = figure();
-% set(fig,'color',[1 1 1],'position',[197 204  1240 742],'name',[ac.name{1} '_VoltageSteps']);
+% set(fig,'color',[1 1 1],'position',[197 204  1240 742],'name',[ac.name '_VoltageSteps']);
 % pnl = panel(fig);
 % pnl.margin = [18 18 10 10];
 % pnl.pack('h',length(blocktrials));
@@ -1474,13 +1474,13 @@ end
 % ylabel(pnl(1,1).select(),'pA');
 % ylabel(pnl(1,2).select(),'mV');
 % xlabel(pnl(1,2).select(),'s');
-% xlabel(pnl(length(blocktrials),2).select(),regexprep(ac.name{1},'_','.'));
+% xlabel(pnl(length(blocktrials),2).select(),regexprep(ac.name,'_','.'));
 % 
 % for bt_ind = 1:length(blocktrials) % assuming the next trial block should be subtracted
 %     set(pnl(bt_ind,3).select(),'xlim',steplims,'ylim',currlims);
 % end
 % 
-% fn = fullfile(savedir,[ac.name{1}, '_VoltageSteps.pdf']);
+% fn = fullfile(savedir,[ac.name, '_VoltageSteps.pdf']);
 % figure(fig)
 % eval(['export_fig ' regexprep(fn,'\sAzevedo',''' Azevedo''') ' -pdf -transparent']);
 % 
@@ -1488,7 +1488,7 @@ end
 %     set(pnl(bt_ind,1).select(),'xlim',[-.005 .02]);
 % end
 % 
-% fn = fullfile(savedir,[ac.name{1}, '_VoltageSteps_onset.pdf']);
+% fn = fullfile(savedir,[ac.name, '_VoltageSteps_onset.pdf']);
 % figure(fig)
 % eval(['export_fig ' regexprep(fn,'\sAzevedo',''' Azevedo''') ' -pdf -transparent']);
 % 
@@ -1496,7 +1496,7 @@ end
 %     set(pnl(bt_ind,1).select(),'xlim',trial.params.stimDurInSec+[-.005 .01]);
 % end
 % 
-% fn = fullfile(savedir,[ac.name{1}, '_VoltageSteps_offset.pdf']);
+% fn = fullfile(savedir,[ac.name, '_VoltageSteps_offset.pdf']);
 % figure(fig)
 % eval(['export_fig ' regexprep(fn,'\sAzevedo',''' Azevedo''') ' -pdf -transparent']);
 % 
@@ -1523,7 +1523,7 @@ end
 % 
 % %Create a figure with the number of columns drugs
 % fig = figure();
-% set(fig,'color',[1 1 1],'position',[1 355 1920 570],'name',[ac.name{1} '_VoltageSteps']);
+% set(fig,'color',[1 1 1],'position',[1 355 1920 570],'name',[ac.name '_VoltageSteps']);
 % pnl = panel(fig);
 % pnl.margin = [18 18 10 10];
 % pnl.pack('h',length(blocktrials));
@@ -1553,9 +1553,9 @@ end
 % ylabel(pnl(1,2).select(),'pA');
 % xlabel(pnl(1,2).select(),'s');
 % 
-% xlabel(pnl(length(blocktrials),2).select(),regexprep(ac.name{1},'_','.'));
+% xlabel(pnl(length(blocktrials),2).select(),regexprep(ac.name,'_','.'));
 % 
-% fn = fullfile(savedir,[ac.name{1}, '_CurrentSteps.pdf']);
+% fn = fullfile(savedir,[ac.name, '_CurrentSteps.pdf']);
 % figure(fig)
 % eval(['export_fig ' regexprep(fn,'\sAzevedo',''' Azevedo''') ' -pdf -transparent']);
 % 
@@ -1584,7 +1584,7 @@ end
 % 
 % %Create a figure with the number of columns drugs
 % fig = figure();
-% set(fig,'color',[1 1 1],'units','inches','position',[1 3 10 7],'name',[ac.name{1} '_CurrentChirps']);
+% set(fig,'color',[1 1 1],'units','inches','position',[1 3 10 7],'name',[ac.name '_CurrentChirps']);
 % pnl = panel(fig);
 % pnl.margin = [20 18 6 12];
 % pnl.pack('h',length(blocktrials));
@@ -1644,9 +1644,9 @@ end
 % pnl.fontname = 'Arial';
 % pnl.fontsize = 18;
 % 
-% xlabel(pnl(length(blocktrials),4).select(),regexprep(ac.name{1},'_','.'));
+% xlabel(pnl(length(blocktrials),4).select(),regexprep(ac.name,'_','.'));
 % 
-% fn = fullfile(savedir,[ac.name{1}, '_CurrentChirps.pdf']);
+% fn = fullfile(savedir,[ac.name, '_CurrentChirps.pdf']);
 % figure(fig)
 % eval(['export_fig ' regexprep(fn,'\sAzevedo',''' Azevedo''') ' -pdf -transparent']);
 % 
@@ -1658,7 +1658,7 @@ end
 %     
 %     %Create a figure with the number of rows in stimnames (frequency)
 %     fig = figure();
-%     set(fig,'color',[1 1 1],'position',[1 1 1920 1004],'name',[ac.name{1} '_SineResponses_' foldXs{X_ind} 'X']);
+%     set(fig,'color',[1 1 1],'position',[1 1 1920 1004],'name',[ac.name '_SineResponses_' foldXs{X_ind} 'X']);
 %     pnl = panel(fig);
 %     pnl.margin = [18 18 10 10];
 %     pnl.pack('h',length(X_stimnames));
@@ -1791,7 +1791,7 @@ end
 %     voltaxes = pnls_hs(1,:);
 %     linkaxes(voltaxes(:),'y');
 %     set(voltaxes,'ylim',ylims_voltage);
-%     ylabel(pnl(length(X_stimnames),rownum).select(),regexprep(ac.name{1},'_','.'));
+%     ylabel(pnl(length(X_stimnames),rownum).select(),regexprep(ac.name,'_','.'));
 %     
 %     
 %     % Finished with all columns (frequencies). Clean up plot
@@ -1804,7 +1804,7 @@ end
 %     xlabel(pnl(1,d_ind).select(),'s');
 %     set(pnl(1,d_ind).select(),'xtickmode','auto','xticklabelmode','auto','xcolor',[0 0 0]);
 %     
-%     fn = fullfile(savedir,[ac.name{1}, '_SinResp_BPH_Currents_' foldXs{X_ind} 'X.pdf']);
+%     fn = fullfile(savedir,[ac.name, '_SinResp_BPH_Currents_' foldXs{X_ind} 'X.pdf']);
 %     figure(fig)
 %     eval(['export_fig ' regexprep(fn,'\sAzevedo',''' Azevedo''') ' -pdf -transparent']);
 %     
@@ -1828,7 +1828,7 @@ end
 %         end
 %     end
 %     
-%     fn = fullfile(savedir,[ac.name{1}, '_SinResp_BPL_example_' foldXs{X_ind} 'X.pdf']);
+%     fn = fullfile(savedir,[ac.name, '_SinResp_BPL_example_' foldXs{X_ind} 'X.pdf']);
 %     figure(exfig)
 %     eval(['export_fig ' regexprep(fn,'\sAzevedo',''' Azevedo''') ' -pdf -transparent']);
 % end
@@ -1846,7 +1846,7 @@ end
 %     
 %     %Create a figure with the number of rows in stimnames (frequency)
 %     fig = figure();
-%     set(fig,'color',[1 1 1],'position',[4 10 1916 935],'name',[ac.name{1} '_SineResponses_' foldXs{X_ind} 'X']);
+%     set(fig,'color',[1 1 1],'position',[4 10 1916 935],'name',[ac.name '_SineResponses_' foldXs{X_ind} 'X']);
 %     pnl = panel(fig);
 %     pnl.margin = [18 18 10 10];
 %     pnl.pack('h',length(X_stimnames));
@@ -2004,7 +2004,7 @@ end
 %         'ytick',[],'yticklabel',{},'ycolor',[1 1 1],...
 %         'xtick',[],'xticklabel',{},'xcolor',[1 1 1]);
 %     
-%     xlabel(pnl(length(X_stimnames),rownum).select(),regexprep(ac.name{1},'_','.'));
+%     xlabel(pnl(length(X_stimnames),rownum).select(),regexprep(ac.name,'_','.'));
 % 
 %     % Finished with all columns (frequencies). Clean up plot
 %     ylabel(pnl(1,1).select(),'dV/dt (V/s)');
@@ -2015,7 +2015,7 @@ end
 %     xlabel(pnl(1,d_ind).select(),'mV');
 %     set(pnl(1,d_ind).select(),'xtickmode','auto','xticklabelmode','auto','xcolor',[0 0 0]);
 %     
-%     fn = fullfile(savedir,[ac.name{1}, '_SinResp_BPH_IvsV_' foldXs{X_ind} 'X.pdf']);
+%     fn = fullfile(savedir,[ac.name, '_SinResp_BPH_IvsV_' foldXs{X_ind} 'X.pdf']);
 %     figure(fig)
 %     eval(['export_fig ' regexprep(fn,'\sAzevedo',''' Azevedo''') ' -pdf -transparent']);
 %     
@@ -2035,7 +2035,7 @@ end
 %     end
 %     set(ax,'xtickmode','auto','xticklabelmode','auto','xcolor',[0 0 0]);
 %     
-%     fn = fullfile(savedir,[ac.name{1}, '_SinResp_BPH_IvsVexmpl_' foldXs{X_ind} 'X.pdf']);
+%     fn = fullfile(savedir,[ac.name, '_SinResp_BPH_IvsVexmpl_' foldXs{X_ind} 'X.pdf']);
 %     figure(exfig)
 %     eval(['export_fig ' regexprep(fn,'\sAzevedo',''' Azevedo''') ' -pdf -transparent']);
 % end

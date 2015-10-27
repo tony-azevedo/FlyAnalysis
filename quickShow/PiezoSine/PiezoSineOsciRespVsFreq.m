@@ -20,7 +20,7 @@ if ip.Results.plot
     end
     p = panel(fig);
     p.pack('v',{2/3  1/3})  % response panel, stimulus panel
-    p.margin = [13 10 2 10];
+    p.margin = [20 20 2 10];
     p(1).marginbottom = 2;
     p(2).marginleft = 12; 
 end

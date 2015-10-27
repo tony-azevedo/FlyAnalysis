@@ -149,3 +149,6 @@ name = sprintf('%s Block %d: {%s}', [protocol '.' dateID '.' flynum '.' cellnum]
 legend(pnl(1,1).select(),'toggle');
 l = findobj(fig,'Tag','legend');
 set(l,'location','NorthWest','interpreter','none','box','off');
+
+%% Changing order of lines
+uistack(findobj(pnl(1).select(),'linewidth',2),'top');
