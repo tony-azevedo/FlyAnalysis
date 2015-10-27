@@ -277,7 +277,7 @@ if ~isempty(cnt)
     analysis_cell(cnt).trials.VoltageCommand = ...
         'C:\Users\Anthony Azevedo\Raw_Data\151001\151001_F2_C1\VoltageCommand_Raw_151001_F2_C1_1.mat';
     analysis_cell(cnt).stem = 'SineResponse_BPH_100Hz_0_5V_3X';
-    analysis_cell(cnt).drugs = {'curare' '4AP' 'TEA' 'TTX' 'ZD'};
+    analysis_cell(cnt).drugs = {'' '4AP' 'TEA' 'TTX' 'ZD'};
 end
 
 %% 10XUAS-mCD8:GFP/+;FruGal4/+

@@ -302,10 +302,6 @@ lghtclrs = [
     1 .7 .7
     .7 .7 1
     ];
-lghtrclrs = [
-    1 .9 .9
-    .9 .9 1
-    ];
 
 set(findobj(fig,'color',clr,'type','line'),'color',base_clr);
 
@@ -332,23 +328,9 @@ for g = 1:length(genotypes)
                 for l = 1:length(ls)
                     traces(l,1:length(get(ls(l),'ydata'))) = get(ls(l),'ydata');
                 end
-                
-                y = nanmean(traces,1);
-                x = get(ave,'xdata');
-                
-                set(ave,'ydata',y);
-                
-                SEM = nanstd(traces,1)/sqrt(size(traces,1));
-                ts = tinv([0.025  0.975],size(traces,1)-1);
-                CI_patch_up = y + ts(1)*SEM; 
-                CI_patch_down = y + ts(2)*SEM; 
-                
-                p = patch(...
-                    [x(:);flipud(x(:))],...
-                    [CI_patch_up(:);flipud(CI_patch_down(:))],...
-                    lghtrclrs(g,:),'edgealpha',0,'parent',pnl_hs(r,c));
-                uistack(p,'bottom');
+                set(ave,'ydata',nanmean(traces,1));
             end
+            % std set(ave,'ydata',mean(traces,1));
         end
     end
 end
