@@ -9,9 +9,9 @@ function varargout = createDataFileFromRaw(dfn,varargin)
 % end
 dfn = regexprep(dfn,'Acquisition','Raw_Data');
 
-[filename,remain] = strtok(dfn,'\');
+[filename,remain] = strtok(dfn,filesep);
 while ~isempty(remain);
-[filename,remain] = strtok(remain,'\');
+[filename,remain] = strtok(remain,filesep);
 end
 
 D = regexprep(dfn,filename,'');
