@@ -12,6 +12,7 @@ blocktrials = findBlockTrials(handles.trial,handles.prtclData);
 x = makeInTime(handles.trial.params);
 voltage = zeros(length(x),length(blocktrials));
 current = zeros(length(x),length(blocktrials));
+steps = blocktrials;
 for bt_ind = 1:length(blocktrials);
     handles.trial = load(fullfile(handles.dir,sprintf(handles.trialStem,blocktrials(bt_ind))));
     trials = findLikeTrials('name',handles.trial.name,'datastruct',handles.prtclData);
@@ -22,14 +23,15 @@ for bt_ind = 1:length(blocktrials);
     end 
     voltage(:,bt_ind) = voltage(:,bt_ind)/length(trials);
     current(:,bt_ind) = current(:,bt_ind)/length(trials);
+    steps(bt_ind) = trial.params.step;
 end
 
 hold(pnl,'on')
 for bt_ind = 1:length(blocktrials);
-    plot(pnl,x,current(:,bt_ind),'color',[0 1 0] + [ 0 -1 1]*(bt_ind-1)/max([length(blocktrials)-1,1]),'tag',savetag);
+    plot(pnl,x,current(:,bt_ind),'color',[0 1 0] + [ 0 -1 1]*(bt_ind-1)/max([length(blocktrials)-1,1]),'tag',num2str(steps(bt_ind)));
     if ~isempty(pnl_aux)
         hold(pnl_aux,'on')
-        plot(pnl_aux,x,voltage(:,bt_ind),'color',[0 1 0] + [ 0 -1 1]*(bt_ind-1)/(length(blocktrials)-1),'tag',savetag);
+        plot(pnl_aux,x,voltage(:,bt_ind),'color',[0 1 0] + [ 0 -1 1]*(bt_ind-1)/(length(blocktrials)-1),'tag',num2str(steps(bt_ind)));
     end
 end
 if ~isempty(pnl_aux)

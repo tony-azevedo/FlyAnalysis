@@ -1,4 +1,5 @@
 function varargout = loopThroughRawFilesTags_cleanup(D,varargin)
+% tags used to be cells of cells, now they should be cells
 fprintf('Looping over raw files %s\n',D);
 rawfiles = dir([D '\*_Raw_*.mat']);
 

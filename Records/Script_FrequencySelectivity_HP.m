@@ -1,38 +1,38 @@
 
 %% Exporting PiezoSineMatrix info on cells 
 % close all
-% if save_log
-%     for c_ind = 1:length(analysis_cell)
-%         if ~isempty(analysis_cell(c_ind).PiezoSineTrial)
-%             close all
-%             trial = load(analysis_cell(c_ind).PiezoSineTrial);
-%             obj.trial = trial;
-%             
-%             [obj.currentPrtcl,dateID,flynum,cellnum,obj.currentTrialNum,obj.dir,obj.trialStem,dfile] = ...
-%                 extractRawIdentifiers(trial.name);
-%             
-%             prtclData = load(dfile);
-%             obj.prtclData = prtclData.data;
-%             obj.prtclTrialNums = obj.currentTrialNum;
-%             
-%             f = PiezoSineMatrix([],obj,'');
-%             p = panel.recover(f);
-%             
-%             % genotypedir = fullfile(savedir,analysis_cell(c_ind).genotype);
-%             % if ~isdir(genotypedir), mkdir(genotypedir); end
-%             if isfield(obj.trial.params,'trialBlock'); b = num2str(obj.trial.params.trialBlock); else b = 'NaN';end
-%             fn = fullfile(savedir,'Matrices',[id, ...
-%                 dateID '_', ...
-%                 flynum '_', ...
-%                 cellnum '_', ...
-%                 b '_',...
-%                 'PiezoSineMatrix', ...
-%                 '.pdf']);
-%             p.fontname = 'Arial';
-%             p.export(fn, '-rp','-l');
-%         end
-%     end
-% end
+if save_log
+    for c_ind = 6% 1:length(analysis_cell)
+        if ~isempty(analysis_cell(c_ind).PiezoSineTrial)
+            close all
+            trial = load(analysis_cell(c_ind).PiezoSineTrial);
+            obj.trial = trial;
+            
+            [obj.currentPrtcl,dateID,flynum,cellnum,obj.currentTrialNum,obj.dir,obj.trialStem,dfile] = ...
+                extractRawIdentifiers(trial.name);
+            
+            prtclData = load(dfile);
+            obj.prtclData = prtclData.data;
+            obj.prtclTrialNums = obj.currentTrialNum;
+            
+            f = PiezoSineMatrix([],obj,'');
+            p = panel.recover(f);
+            
+            % genotypedir = fullfile(savedir,analysis_cell(c_ind).genotype);
+            % if ~isdir(genotypedir), mkdir(genotypedir); end
+            if isfield(obj.trial.params,'trialBlock'); b = num2str(obj.trial.params.trialBlock); else b = 'NaN';end
+            fn = fullfile(savedir,'Matrices',[id, ...
+                dateID '_', ...
+                flynum '_', ...
+                cellnum '_', ...
+                b '_',...
+                'PiezoSineMatrix', ...
+                '.pdf']);
+            p.fontname = 'Arial';
+            p.export(fn, '-rp','-l');
+        end
+    end
+end
 
 
 %% Exporting PiezoSineOsciRespVsFreq info on cells with X-functions

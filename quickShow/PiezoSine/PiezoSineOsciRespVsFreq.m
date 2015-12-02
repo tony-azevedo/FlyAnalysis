@@ -35,7 +35,17 @@ while t <= length(blocktrials)
     t = t+1;
 end
 
+% change the order of the block trials
 dispexamples = blocktrials;
+exampledisp = dispexamples;
+for ii = 1:length(dispexamples)
+    params = load(fullfile(handles.dir,sprintf(handles.trialStem,dispexamples(ii))),'params');
+    exampledisp(ii) = params.params.displacement;
+end
+[~,o] = sort(exampledisp);
+dispexamples = dispexamples(o);
+
+
 for ii = 1:length(dispexamples)
     blocktrials = findLikeTrials('trial',dispexamples(ii),'datastruct',handles.prtclData,'exclude',{'freq'});
     t = 1;
@@ -58,9 +68,9 @@ for ii = 1:length(dispexamples)
             'displayname',[num2str(handles.trial.params.displacement) ' V'],...
             'tag',savetag);
         if sum(strcmp({'IClamp','IClamp_fast'},handles.trial.params.mode))
-            y_units = 'mV'; ylims = [0 5.6];
+            y_units = 'mV'; %ylims = [0 5.6];
         elseif sum(strcmp('VClamp',handles.trial.params.mode))
-            y_units = 'pA'; ylims = [0 25];
+            y_units = 'pA'; %ylims = [0 25];
         end
 
         ylabel(ax,['Magnitude (' y_units ')'])
@@ -92,7 +102,7 @@ if ip.Results.plot
     axis(get(fig,'children'),'tight')
     set(get(fig,'children'),'xscale','log','xlim',[10 600]);
     ax = p(1).select();
-    set(ax,'ylim',ylims)
+    %set(ax,'ylim',ylims)
     legend(ax,'show')
     legend(ax,'boxoff')
 

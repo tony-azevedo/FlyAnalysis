@@ -4,6 +4,8 @@ cd('C:\Users\Anthony Azevedo\Code\FlyAnalysis\Records\') % Go to the home folder
 % Note 6/11/14:  I'm taking three cells out of the analysis: 140207 - due
 % to motion; 140205 - likely the rogue PN in VT30609-Gal4; 140122 - same
 
+clear all
+
 evidence_for_Inclusion = {
     '140117_F2_C1', 'sound responsive',...
 '140121_F2_C1','sound responsive',...
@@ -15,6 +17,7 @@ evidence_for_Inclusion = {
 '140602_F1_C1','sound responsive',...
 '140602_F2_C1','sound responsive',...
 '150119_F1_C1','NOT SURE!!',...
+'150220_F1_C1','Sound responsive',...
 '150220_F1_C1','Sound responsive',...
     };
 
@@ -208,20 +211,69 @@ analysis_cell(cnt).plateau_trial = {...
 'C:\Users\Anthony Azevedo\Raw_Data\150220\150220_F1_C1\VoltagePlateau_Raw_150220_F1_C1_1.mat';
     };
 
+% cnt = 13;
+% analysis_cell(cnt).name = '150504_F1_C2';
+% analysis_cell(cnt).comment = {
+% 'Break in at -50, low pass neuron'
+% };
+% analysis_cell(cnt).exampletrials = {...
+% 'C:\Users\Anthony Azevedo\Raw_Data\150504\150504_F1_C2\Sweep_Raw_150504_F1_C2_1.mat';
+% 'C:\Users\Anthony Azevedo\Raw_Data\150504\150504_F1_C2\VoltagePlateau_Raw_150504_F1_C2_1.mat';
+%     };
+% analysis_cell(cnt).breakin_trial = {...
+% 'C:\Users\Anthony Azevedo\Raw_Data\150504\150504_F1_C2\Sweep_Raw_150504_F1_C2_1.mat';
+%     };
+% analysis_cell(cnt).plateau_trial = {...
+% 'C:\Users\Anthony Azevedo\Raw_Data\150504\150504_F1_C2\VoltagePlateau_Raw_150504_F1_C2_1.mat';
+%     };
+
+
 cnt = 13;
-analysis_cell(cnt).name = '150504_F1_C2';
+analysis_cell(cnt).name = '151123_F1_C1';
 analysis_cell(cnt).comment = {
 'Break in at -50, low pass neuron'
 };
 analysis_cell(cnt).exampletrials = {...
-'C:\Users\Anthony Azevedo\Raw_Data\150504\150504_F1_C2\Sweep_Raw_150504_F1_C2_1.mat';
-'C:\Users\Anthony Azevedo\Raw_Data\150504\150504_F1_C2\VoltagePlateau_Raw_150504_F1_C2_1.mat';
+'C:\Users\Anthony Azevedo\Raw_Data\151123\151123_F1_C1\Sweep_Raw_151123_F1_C1_7.mat';
+'C:\Users\Anthony Azevedo\Raw_Data\151123\151123_F1_C1\VoltagePlateau_Raw_151123_F1_C1_6.mat';
     };
 analysis_cell(cnt).breakin_trial = {...
-'C:\Users\Anthony Azevedo\Raw_Data\150504\150504_F1_C2\Sweep_Raw_150504_F1_C2_1.mat';
+'C:\Users\Anthony Azevedo\Raw_Data\151123\151123_F1_C1\Sweep_Raw_151123_F1_C1_7.mat';
     };
 analysis_cell(cnt).plateau_trial = {...
-'C:\Users\Anthony Azevedo\Raw_Data\150504\150504_F1_C2\VoltagePlateau_Raw_150504_F1_C2_1.mat';
+'C:\Users\Anthony Azevedo\Raw_Data\151123\151123_F1_C1\VoltagePlateau_Raw_151123_F1_C1_6.mat';
+    };
+
+cnt = 14;
+analysis_cell(cnt).name = '151123_F1_C2';
+analysis_cell(cnt).comment = {
+'Break in at -50, low pass neuron'
+};
+analysis_cell(cnt).exampletrials = {...
+'C:\Users\Anthony Azevedo\Raw_Data\151123\151123_F1_C2\Sweep_Raw_151123_F1_C2_1.mat';
+'C:\Users\Anthony Azevedo\Raw_Data\151123\151123_F1_C2\VoltagePlateau_Raw_151123_F1_C2_2.mat';
+    };
+analysis_cell(cnt).breakin_trial = {...
+'C:\Users\Anthony Azevedo\Raw_Data\151123\151123_F1_C2\Sweep_Raw_151123_F1_C2_1.mat';
+    };
+analysis_cell(cnt).plateau_trial = {...
+'C:\Users\Anthony Azevedo\Raw_Data\151123\151123_F1_C2\VoltagePlateau_Raw_151123_F1_C2_2.mat';
+    };
+
+cnt = 15;
+analysis_cell(cnt).name = '151123_F2_C1';
+analysis_cell(cnt).comment = {
+'Break in at -50, Band pass low neuron'
+};
+analysis_cell(cnt).exampletrials = {...
+'C:\Users\Anthony Azevedo\Raw_Data\151123\151123_F2_C1\Sweep_Raw_151123_F2_C1_1.mat';
+'C:\Users\Anthony Azevedo\Raw_Data\151123\151123_F2_C1\VoltagePlateau_Raw_151123_F2_C1_6.mat';
+        };
+analysis_cell(cnt).breakin_trial = {...
+'C:\Users\Anthony Azevedo\Raw_Data\151123\151123_F2_C1\Sweep_Raw_151123_F2_C1_1.mat';
+    };
+analysis_cell(cnt).plateau_trial = {...
+'C:\Users\Anthony Azevedo\Raw_Data\151123\151123_F2_C1\VoltagePlateau_Raw_151123_F2_C1_6.mat';
     };
 
 fprintf('Currently analyzing %d cells.\n\n',length(analysis_cell))
@@ -232,20 +284,20 @@ end
 
 backgroundCorrectionFlag =0;
 if backgroundCorrectionFlag
-    savedir = 'C:\Users\Anthony Azevedo\RAnalysis_Data\Record_ArcLightImaging\BackgroundCorrection';
+    savedir = 'C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_ArcLightImaging\BackgroundCorrection';
 else
-    savedir = 'C:\Users\Anthony Azevedo\RAnalysis_Data\Record_ArcLightImaging\NoCorrection';
+    savedir = 'C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_ArcLightImaging\NoCorrection';
 end
 if ~isdir(savedir)
     mkdir(savedir)
 end    
 if backgroundCorrectionFlag
-    savedir = 'C:\Users\Anthony'' Azevedo''\RAnalysis_Data\Record_ArcLightImaging\BackgroundCorrection\';
+    savedir = 'C:\Users\Anthony'' Azevedo''\Dropbox\RAnalysis_Data\Record_ArcLightImaging\BackgroundCorrection\';
 else
-    savedir = 'C:\Users\Anthony'' Azevedo''\RAnalysis_Data\Record_ArcLightImaging\NoCorrection\';
+    savedir = 'C:\Users\Anthony'' Azevedo''\Dropbox\RAnalysis_Data\Record_ArcLightImaging\NoCorrection\';
 end
 
-save = 1
+save_log = 1
 
 
 %% Motion minimization
@@ -323,15 +375,14 @@ roiFluoTrace(trial,trial.params,'NewROI','No','dFoFfig',gcf,'MotionCorrection',t
 
 %% Save all the roiFluoTraces
 close all
-roiFluoTraceSavedir = 'C:\Users\Anthony'' Azevedo''\RAnalysis_Data\Record_ArcLightImaging\RoiFluoTraces\';
+roiFluoTraceSavedir = 'C:\Users\Anthony'' Azevedo''\Dropbox\RAnalysis_Data\Record_ArcLightImaging\RoiFluoTraces\';
 % if ~isdir(roiFluoTraceSavedir)
 %     mkdir(roiFluoTraceSavedir)
 % end
 proplist =  getpref('AnalysisFigures','roiFluoTrace');
 fig = figure(proplist{:});
 
-c_ind = 13;
-for c_ind = 1:length(analysis_cell)
+for c_ind = 15 %length(analysis_cell)
     fig = figure(proplist{:});
     
     trial = load(analysis_cell(c_ind).breakin_trial{1});
@@ -362,17 +413,19 @@ for c_ind = 1:length(analysis_cell)
     
 end
 
+save(fullfile(regexprep(savedir,'''',''),'Break_in_output'));
+
 close all
 
 %% Plot the Fluorescence Changes
 % With the time of break-in found and the change in fluorescence localized,
 % plot the fluorescence trace at break-in.
 close all
+load(fullfile(regexprep(savedir,'''',''),'Break_in_output'));
 
 figure;
 ax = subplot(1,1,1); hold on
-colors = get(gca,'ColorOrder');
-colors = [colors; (2/3)*colors];
+colors = distinguishable_colors(size(breakin_dF_dF,1));
 for t_ind = 1:size(breakin_dF_dF,1)
     plot(breakin_exposure_time_windows(t_ind,:),breakin_dF_dF(t_ind,:),...
         '-','color',colors(t_ind,:),...
@@ -406,8 +459,7 @@ close all
 
 fig = figure;
 ax = subplot(1,1,1); hold on
-colors = get(ax,'ColorOrder');
-colors = [colors; (2/3)*colors];
+colors = distinguishable_colors(size(breakin_dF_dF_detrended,1));
 for t_ind = 1:size(breakin_dF_dF_detrended,1)
     plot(ax, breakin_exposure_time_windows(t_ind,:),breakin_dF_dF_detrended(t_ind,:),...
         '-','color',colors(t_ind,:),...
@@ -454,9 +506,8 @@ x = x-dFrame;
 
 figure
 plot(x,breakin_dF_model_traces);
-colors = get(gca,'ColorOrder');
 
-colors = [colors; (2/3)*colors];
+colors = distinguishable_colors(size(breakin_dF_dF_detrended,1));
 ylabel('% \DeltaF/F')
 xlabel('Frames, 20 ms exposure');
 
@@ -819,7 +870,7 @@ set(findobj([ax1,ax2,ax3],'type','line'),'color',[0 0 0]);
 
 %Traces panel
 ax4 = panl(2,1).select();
-traces_ax = get(tracesFig,'children');
+traces_ax = findobj(tracesFig,'type','axes');
 copyobj(get(traces_ax,'children'),ax4);
 panl(2,1).xlabel('Time from patch (s)')
 panl(2,1).ylabel('\DeltaF/F (%)')
@@ -874,17 +925,17 @@ panl.fontname = 'Arial';
 panl.fontsize = 18;
 panl.margin = [24 24 10 10]
 
-export_fig 'C:\Users\Anthony Azevedo\RAnalysis_Data\Record_ArcLightImaging\MainFigPoster.pdf'
+export_fig 'C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_ArcLightImaging\MainFigPoster.pdf'
 %%
 panl.margin = [18 10 2 10];
 panl(2).marginleft = 18;
 %panl(2).margintop = 8;
 
 %% Fig for Allen Talk
-% uiopen('C:\Users\Anthony Azevedo\RAnalysis_Data\Record_ArcLightImaging\NoCorrection\ArcLightMainFig.fig',1)
+% uiopen('C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_ArcLightImaging\NoCorrection\ArcLightMainFig.fig',1)
 panl.fontsize = 14
 panl.margin = [20 20 4 2];
-export_fig 'C:\Users\Anthony Azevedo\RAnalysis_Data\Record_ArcLightImaging\MainFigPPT.pdf'
+export_fig 'C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_ArcLightImaging\MainFigPPT.pdf'
 
 
 %% Nice little spike figure
@@ -941,7 +992,7 @@ panl(2).ylabel('\DeltaF/F (%)')
 panl(1).ylabel('pA')
 panl(1).xlabel('Time (s)')
 
-cd('C:\Users\Anthony Azevedo\RAnalysis_Data\Record_ArcLightImaging\')
+cd('C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_ArcLightImaging\')
 fn = ['SpikeSlide_', ...
     '.pdf'];
 

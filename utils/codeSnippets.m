@@ -152,3 +152,14 @@ set(l,'location','NorthWest','interpreter','none','box','off');
 
 %% Changing order of lines
 uistack(findobj(pnl(1).select(),'linewidth',2),'top');
+
+%% setting xlims across panels
+ylims = [Inf -Inf];
+
+ylims(1) = min([ylims(1) min(current_diff(x>i &x<f))]);
+ylims(2) = max([ylims(2) max(current_diff(x>i &x<f))]);
+
+ylims = [...
+    min([ylims(1) min(get(pnl1,'ylim'))]),...
+    max([ylims(2) max(get(pnl1,'ylim')))])];
+

@@ -1,5 +1,6 @@
-cd 'C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_VoltageClampCurrentIsolation\include\access'
-%cd 'C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_VoltageClampCurrentIsolation\control\access\'
+cd(savedir)
+cd access\
+
 access_figs = dir('*access.fig');
 
 fig = figure;
@@ -14,6 +15,7 @@ pnl.de.margin = [16 16 16 16];
 % set(pnl(1,1).select(),'tag','TTX'); title(pnl(1,1).select(),'TTX');
 clrs = distinguishable_colors(length(access_figs),{'w','k',[1 1 0],[1 1 1]*.75});
 
+%%
 for af_idx = 1:length(access_figs)
     cell_id = access_figs(af_idx).name(1:12);
     cell_idx = find(strcmp(analysis_cells,cell_id));
@@ -104,7 +106,7 @@ for af_idx = 1:length(access_figs)
     close(fromfig)
 
 end
-
+%%
 set(pnl(1,1).select(),'xlim',[0,.32]); 
 uistack(findobj(pnl(1,1).select(),'linewidth',2),'top');
 pnl(1,1).xlabel('Access (G\Omega)');

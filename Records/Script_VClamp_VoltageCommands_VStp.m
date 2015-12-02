@@ -52,6 +52,9 @@ for bt_ind = 1:length(blocktrials) % assuming the next trial block should be sub
         tg = drugmap.(tg);
     else tg = 'ctrl';
     end
+    
+    set(pnl(bt_ind,1).select(),'tag',['Currents_' tg]);
+    set(pnl(bt_ind,2).select(),'tag',['Voltage_' tg]);
 
     pnl(bt_ind).title(tg);
 
@@ -63,7 +66,8 @@ for bt_ind = 1:length(blocktrials) % assuming the next trial block should be sub
     ylims = get(pnl(bt_ind,3).select(),'ylim');
     currlims(1) = min([currlims(1) ylims(1)]);
     currlims(2) = max([currlims(2) ylims(2)]);
-
+    
+    set(pnl(bt_ind,3).select(),'tag',['IV' tg]);
 end
 col_pnls = pnl(1).de;
 pnls_hs = zeros(length(col_pnls),length(blocktrials));
@@ -78,6 +82,8 @@ set(pnls_hs([1,3],:),'ylim',ylims_current,...
     'xtick',[],'xticklabel',{},'xcolor',[1 1 1]);
 set(pnls_hs([2],:),'ylim',ylims_voltage,...
     'xtick',[],'xticklabel',{},'xcolor',[1 1 1]);
+set(pnls_hs(3,:),...
+    'XTickMode','auto','XTickLabelMode','auto','xcolor',[0 0 0]);
 
 ylabel(pnl(1,1).select(),'pA');
 ylabel(pnl(1,2).select(),'mV');

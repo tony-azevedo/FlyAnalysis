@@ -1,5 +1,5 @@
 
-%% Record of Low Frequency Responsive Cells
+%% Record of ShakB Experiments
 
 savedir = 'C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_ShakB2';
 if ~isdir(savedir)
@@ -10,7 +10,15 @@ id = 'ShakB_';
 
 %%
 Script_Shak2_ShakB_Ex
+
+auxid = 'ShakB_nodrugs';
+Script_ShakB2_PiezoSine
+Script_ShakB2_PiezoSineRvF
+
+Script_ShakB2_PiezoStepFam
 Script_ShakB2_PiezoStep
+
+ShakB_cell = analysis_cell;
 
 fn = fullfile(savedir,['ShakB2Males.pdf']);
 figure(fig)
@@ -19,7 +27,15 @@ shakbmalesdots = findobj(fig,'tag','dots');
 
 %%
 Script_Shak2_ShakB_MLA_Ex
+
+auxid = 'ShakB';
+Script_ShakB2_PiezoStepFam
+Script_ShakB2_PiezoSineRvF
+Script_ShakB2_PiezoSine
+
 Script_ShakB2_PiezoStep_Drug
+
+ShakB_drug_cell = analysis_cell;
 
 fn = fullfile(savedir,['ShakB2Males_Drug.pdf']);
 figure(fig)
@@ -33,7 +49,15 @@ shakB_step_ax = examplepnl(5,3).select();
 
 %%
 Script_Shak2_Controls_Ex
+
+auxid = 'ShakBCtrl_nodrugs';
+Script_ShakB2_PiezoStepFam
+Script_ShakB2_PiezoSine
+Script_ShakB2_PiezoSineRvF
+
 Script_ShakB2_PiezoStep
+
+ShakB_ctrl_cell = analysis_cell;
 
 fn = fullfile(savedir,['ShakB2Controls.pdf']);
 figure(fig)
@@ -44,15 +68,24 @@ shakbcontrolsdots = findobj(fig,'tag','dots');
 
 %%
 Script_Shak2_Controls_MLA_Ex
+
+auxid = 'ShakBCtrl';
+Script_ShakB2_PiezoStepFam
+Script_ShakB2_PiezoSine
+Script_ShakB2_PiezoSineRvF
+
 Script_ShakB2_PiezoStep_Drug
+
+ShakB_ctrl_drug_cell = analysis_cell;
+
 fn = fullfile(savedir,['ShakB2Controls_Drug.pdf']);
 figure(fig)
 eval(['export_fig ' regexprep(fn,'\sAzevedo',''' Azevedo''') ' -pdf -transparent']);
 shakbcontrolsdrugsdots = findobj(fig,'tag','dots');
 examplepnl = panel.recover(fig);
-ctrl_ctrl_ax = examplepnl(4,1).select();
-ctrl_drug_ax = examplepnl(4,2).select();
-ctrl_step_ax = examplepnl(4,3).select();
+ctrl_ctrl_ax = examplepnl(5,1).select();
+ctrl_drug_ax = examplepnl(5,2).select();
+ctrl_step_ax = examplepnl(5,3).select();
 
 
 %%
@@ -100,7 +133,7 @@ ylim(pnl(2,3).select(),[3.5 6.5])
 
 linkaxes([pnl(1,4).select() pnl(2,4).select()])
 xlim(pnl(2,4).select(),[-.5 1.5])
-ylim(pnl(2,4).select(),[0 6.3])
+ylim(pnl(2,4).select(),[0 15])
 
 set(pnl(1,4).select(),'xticklabel',{'ctrl','drug'},'xtick',[0 1],'tag','dots')
 set(pnl(2,4).select(),'xticklabel',{'ctrl','drug'},'xtick',[0 1],'tag','dots')
@@ -182,8 +215,9 @@ g2 = cat(2,...
     repmat({'ctrl'},size(shkB_ctrl)),...
     repmat({'drug'},size(shkB_drug)))%,...
 
+figure
 [p,tbl,stats,terms] = anovan(y,{g1,g2},'model','interaction','varnames',{'geno';'drug'});
 multcompare(stats,'ctyp','lsd','dimension',[1 2]);
 
-
+%% Need to look at the sine responses in these neurons.  Average across cycles to see what the responses look like
 

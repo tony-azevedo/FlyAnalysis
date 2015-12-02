@@ -10,25 +10,25 @@ id = 'BPH_Hyp_';
 
 %%
 
-analysis_cells = {...
-'150531_F1_C1'
+analysis_grid = {...
+'150531_F1_C1' '10X-UAS;Fru-Gal4'     'Without perfusion, Very nice cell, tall spikes, also has hyperpolarized responses'
+'151125_F1_C1'  '10XUAS-mCD8:GFP/+;FruGal4/+'     'hyperpolarized responses'
+
+'151130_F1_C1'  'pJFRC7/+;VT30609/+'     'Lots of noise, appears to be due to antennal input, tall spikes, hyperpolarized responses didnt work'
 };
 
-analysis_cells_comment = {...
-    'Without perfusion, Very nice cell, tall spikes, also has hyperpolarized responses'
+clear analysis_cell analysis_cells control_cells control_cells
+genotypes = {   '10XUAS-mCD8:GFP/+;FruGal4/+'                           '20XUAS-mCD8:GFP;VT27938-Gal4';
+                'UAS-Dcr;10XUAS-mCD8:GFP/+;FruGal4/UAS-paraRNAi'        'UAS-Dcr;20XUAS-mCD8:GFP/+;VT27938-Gal4/UAS-paraRNAi'
 };
 
-analysis_cells_genotype = {...
-'10X-UAS;Fru-Gal4';
-};
-
-
-clear analysis_cell
-for c = 1:length(analysis_cells)
-    analysis_cell(c).name = analysis_cells(c); 
-    analysis_cell(c).genotype = analysis_cells_genotype(c); %#ok<*SAGROW>
-    analysis_cell(c).comment = analysis_cells_comment(c);
+for c = 1:size(analysis_grid,1)
+    analysis_cell(c).name = analysis_grid{c,1}; 
+    analysis_cell(c).genotype = analysis_grid{c,2}; %#ok<*SAGROW>
+    analysis_cell(c).comment = analysis_grid{c,3};
+    analysis_cells{c} = analysis_grid{c,1}; 
 end
+
 
 %% 'Genotype'
 

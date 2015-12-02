@@ -1,158 +1,164 @@
-function newfig = PiezoSineMatrix(fig,handles,savetag)
+function fig = PiezoSineMatrix(fig,h,savetag)
 % see also AverageLikeSines
 
-[protocol,dateID,flynum,cellnum,trialnum] = extractRawIdentifiers(handles.trial.name);
+[protocol,dateID,flynum,cellnum,trialnum] = extractRawIdentifiers(h.trial.name);
 
-blocktrials = findLikeTrials('name',handles.trial.name,'datastruct',handles.prtclData,'exclude',{'displacement','freq'});
+blocktrials = findLikeTrials('name',h.trial.name,'datastruct',h.prtclData,'exclude',{'displacement','freq'});
 t = 1;
 while t <= length(blocktrials)
-    trials = findLikeTrials('trial',blocktrials(t),'datastruct',handles.prtclData);
+    trials = findLikeTrials('trial',blocktrials(t),'datastruct',h.prtclData);
     blocktrials = setdiff(blocktrials,setdiff(trials,blocktrials(t)));
     t = t+1;
 end
 
-clear f
-cnt = 1;
-for bt = blocktrials;
-    handles.trial = load(fullfile(handles.dir,sprintf(handles.trialStem,bt)));
-    f(cnt) = PiezoSineAverage([],handles,savetag);
-    cnt = cnt+1;
-end
-f = unique(f);
-f = sort(f);
-if ~isfield(handles.prtclData(bt),'displacements');
-    handles.prtclData(bt).displacements = handles.prtclData(bt).displacement;
-end
-f = reshape(f,length(handles.prtclData(bt).displacements),length(handles.prtclData(bt).freqs));
-f = f';
-tags = getTrialTags(blocktrials,handles.prtclData);
+fig = figure;
+set(fig,'color',[1 1 1],'position',[680 165 1163 813])
 
-b = nan;
-if isfield(handles.trial.params, 'trialBlock')
-    b = handles.trial.params.trialBlock;
-end
-newfig = layout_sub(f,...
-    sprintf('%s Block %d: {%s}', [handles.currentPrtcl '.' dateID '.' flynum '.' cellnum],b,sprintf('%s; ',tags{:})),...
-    'close');
+p = panel(fig);
 
-[protocol,dateID,flynum,cellnum,trialnum] = extractRawIdentifiers(handles.trial.name);
-set(newfig,'name',[dateID '_' flynum '_' cellnum '_' protocol '_Block' num2str(b) '_' mfilename sprintf('_%s',tags{:})])
+freqs = h.trial.params.freqs;
+fnum = length(freqs);
+dspls = h.trial.params.displacements;
+dnum = length(dspls);
 
+p.pack('v',{fnum/(fnum+1)  1/(fnum+1)})  % response panel, stimulus panel
 
-function varargout = layout_sub(f,name,varargin)
-dim = size(f);
-
-h = figure;
-set(h,'color',[1 1 1],'position',[680         165        1163         813])
-p = panel(h);
-p.pack('v',{dim(1)/(dim(1)+1)  1/(dim(1)+1)})  % response panel, stimulus panel
-p.margin = [18 10 2 10];
-p.fontname = 'Arial';
-p(1).marginbottom = 2;
-p(2).margintop = 8;
-
-p(1).pack(dim(1),dim(2))
+p(1).pack(fnum,dnum)
 p(1).de.margin = 2;
 
-ylims = [Inf, -Inf];
-for y = 1:dim(1)
-    for x = 1:dim(2)
-        ax_to = p(1,y,x).select();
+p(2).pack(1,dnum)
+p(2).de.margin = 2;
 
-        ax_from = findobj(f(y,x),'tag','response_ax'); 
+
+fig2 = figure;
+set(fig2,'color',[1 1 1],'tag','PiezoSineMatrixStimuli')
+p2 = panel(fig2);
+p2.pack(fnum,dnum)  % response panel, stimulus panel
+p2.margin = [12 10 2 10];
+p2.fontname = 'Arial';
+p2.de.margin = 2;
+
+trialnummatrix = nan(fnum,dnum);
+pnl_hs = trialnummatrix;
+pnl2_hs = trialnummatrix;
+
+for bt = blocktrials;
+    %h.trial = load(fullfile(h.dir,sprintf(h.trialStem,bt)));
+
+    params = load(fullfile(h.dir,sprintf(h.trialStem,bt)),'params');
+    
+    r = find(freqs == params.params.freq);
+    c = find(dspls == params.params.displacement);
+    
+    trialnummatrix(r,c) = bt; 
+end
+
+ylims = [Inf, -Inf];
+slims = [Inf, -Inf];
+for r = 1:size(trialnummatrix,1)
+    for c = 1:size(trialnummatrix,2)
+        h.trial = load(fullfile(h.dir,sprintf(h.trialStem,trialnummatrix(r,c))));
+        averagefig = PiezoSineAverage([],h,savetag);
+        
+        ax_from = findobj(averagefig,'tag','response_ax');
+
         ylabe = get(get(ax_from,'ylabel'),'string');
         delete(get(ax_from,'xlabel'));
         delete(get(ax_from,'ylabel'));
         delete(get(ax_from,'zlabel'));
         delete(get(ax_from,'title'));
-        
-        xlims = get(ax_from,'xlim');
+
         ylims_from = get(ax_from,'ylim');
+        xlims_from = get(ax_from,'xlim');
         ylims = [min(ylims(1),ylims_from(1)),...
             max(ylims(2),ylims_from(2))];
+
+        pnl_hs(r,c) = p(1,r,c).select();
+        copyobj(get(ax_from,'children'),pnl_hs(r,c)); 
+
+        set(pnl_hs(r,c),'TickDir','out','YColor',[1 1 1],'YTick',[],'XColor',[1 1 1],'XTick',[],'xlim',xlims_from,'ylim',ylims_from);
         
-        copyobj(get(ax_from,'children'),ax_to); 
-        if x>1
-            set(ax_to,'TickDir','out','YColor',[1 1 1],'YTick',[],'YTickLabel','');
+        sax_from = findobj(averagefig,'tag','stimulus_ax');
+        copyobj(get(sax_from,'children'),p2(r,c).select())
+        set(p2(r,c).select(),'TickDir','out','YColor',[1 1 1],'YTick',[],'XColor',[1 1 1],'XTick',[],'xlim',xlims_from);
+        pnl2_hs(r,c) = p2(r,c).select();
+
+        if r == 1
+            sax_from = findobj(averagefig,'tag','stimulus_ax');
+            slims_from = get(sax_from,'ylim');
+            slims = [min(slims(1),slims_from(1)),...
+                max(slims(2),slims_from(2))];
+            
+            copyobj(get(sax_from,'children'),p(2,r,c).select())
+            set(p(2,r,c).select(),'TickDir','out','YColor',[1 1 1],'YTick',[],'XColor',[1 1 1],'XTick',[],'xlim',xlims_from,'ylim',slims_from);
         end
+        % drawnow;
+        close(averagefig)
     end
 end
-set(p(1).de.axis,'xlim',xlims,'ylim',ylims)
-set(p(1).de.axis,'xtick',[])
-set(p(1).de.axis,'xcolor',[1 1 1])
+set(pnl_hs(:),'ylim',ylims)
+set(pnl_hs(:,1),'ytickmode','auto','ycolor',[0 0 0])
 p(1).ylabel(['Response (' ylabe ')']);
 p(1).de.fontsize = 8;
 
-
-p(2).pack(1,dim(2))
-p(2).de.margin = 2;
-ylims = [Inf, -Inf];
-for x = 1:dim(2)
-    p(2,1,x).select();
-    ax_to = gca;
-    ax_from = findobj(f(round(dim(1)/2),x),'tag','stimulus_ax');
-
-    ylims_from = get(ax_from,'ylim');
-    ylims = [min(ylims(1),ylims_from(1)),...
-        max(ylims(2),ylims_from(2))];
-    
-    copyobj(get(ax_from,'children'),ax_to)
-    if x>1
-        set(ax_to,'TickDir','out','YColor',[1 1 1],'YTick',[],'YTickLabel','');
-    end
-
-end
-set(p(2).de.axis,'xlim',xlims,'ylim',ylims)
+set(p(2).de.axis,'ylim',slims,'xtickmode','auto','xcolor',[0 0 0])
+set(p(2,1,1).select(),'ytickmode','auto','ycolor',[0 0 0])
 p(2).ylabel('Stimulus (V)')
 p(2).xlabel('Time (s)')
 p(2).de.fontsize = 8;
 
+set(pnl2_hs(:),'ylim',slims)
+set(pnl2_hs(:,1),'ytickmode','auto','ycolor',[0 0 0])
+p2.ylabel(['Stimulus (V)']);
+p2.de.fontsize = 8;
+
+tags = getTrialTags(blocktrials,h.prtclData);
+b = nan;
+if isfield(h.trial.params, 'trialBlock')
+    b = h.trial.params.trialBlock;
+end
+
+name = sprintf('%s Block %d: {%s}', [h.currentPrtcl '.' dateID '.' flynum '.' cellnum],b,sprintf('%s; ',tags{:}));
 p.title(name);
 
+%figure(fig);
 
-h2 = figure;
-set(h2,'color',[1 1 1],'tag','PiezoSineMatrixStimuli')
-p = panel(h2);
-p.pack('v',{dim(1)/(dim(1)+1)  1/(dim(1)+1)})  % response panel, stimulus panel
-p.margin = [12 10 2 10];
-p.fontname = 'Arial';
-p(1).marginbottom = 2;
-p(2).margintop = 8;
-
-p(1).pack(dim(1),dim(2))
-p(1).de.margin = 2;
-
-ylims = [Inf, -Inf];
-for y = 1:dim(1)
-    for x = 1:dim(2)
-        p(1,y,x).select();
-        ax_to = gca;
-        ax_from = findobj(f(y,x),'tag','stimulus_ax');
-        xlims = get(ax_from,'xlim');
-        ylims_from = get(ax_from,'ylim');
-        ylims = [min(ylims(1),ylims_from(1)),...
-            max(ylims(2),ylims_from(2))];
-        
-        copyobj(get(ax_from,'children'),ax_to)
-        if x>1
-            set(ax_to,'TickDir','out','YColor',[1 1 1],'YTick',[],'YTickLabel','');
-        end
-    end
-end
-set(p(1).de.axis,'xlim',xlims,'ylim',ylims)
-set(p(1).de.axis,'xtick',[])
-set(p(1).de.axis,'xcolor',[1 1 1])
-p(1).ylabel('Stimulus (V)')
-p(1).de.fontsize = 8;
-
-p.title([regexprep(name,'_',' ') ' Stimuli']);
-
-if nargin>2 && strcmp(varargin{1},'close')
-    delete(f(:))
-end
-
-varargout{1} = h;
-%varargout{2} = p;
+% 
+% 
+% p(1).pack(dim(1),dim(2))
+% p(1).de.margin = 2;
+% 
+% ylims = [Inf, -Inf];
+% for y = 1:dim(1)
+%     for x = 1:dim(2)
+%         p(1,y,x).select();
+%         ax_to = gca;
+%         ax_from = findobj(f(y,x),'tag','stimulus_ax');
+%         xlims = get(ax_from,'xlim');
+%         ylims_from = get(ax_from,'ylim');
+%         ylims = [min(ylims(1),ylims_from(1)),...
+%             max(ylims(2),ylims_from(2))];
+%         
+%         copyobj(get(ax_from,'children'),ax_to)
+%         if x>1
+%             set(ax_to,'TickDir','out','YColor',[1 1 1],'YTick',[],'YTickLabel','');
+%         end
+%     end
+% end
+% set(p(1).de.axis,'xlim',xlims,'ylim',ylims)
+% set(p(1).de.axis,'xtick',[])
+% set(p(1).de.axis,'xcolor',[1 1 1])
+% p(1).ylabel('Stimulus (V)')
+% p(1).de.fontsize = 8;
+% 
+% p.title([regexprep(name,'_',' ') ' Stimuli']);
+% 
+% if nargin>2 && strcmp(varargin{1},'close')
+%     delete(f(:))
+% end
+% 
+% varargout{1} = h;
+% %varargout{2} = p;
 
 % % if we set the properties on the root panel, they affect
 % % all its children and grandchildren.
@@ -163,3 +169,4 @@ varargout{1} = h;
 % % however, any child can override them, and the changes
 % % affect just that child (and its descendants).
 % p(2,2).fontsize = 14;
+

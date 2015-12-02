@@ -1,53 +1,27 @@
 %%
 
-analysis_cells = {...
-%'150601_F1_C1'
-'150601_F1_C2'
-'150601_F1_C3'
-'150601_F1_C4'
-'150601_F1_C5'
-'150601_F1_C6'
-'150601_F1_C7'
+analysis_grid = {...
+%'150601_F1_C1'   %'ShakB2/y;pJFRC7/Sp;45D07-Gal4/+';      %'Weird high pass cell, with small spikes, large R_i'
+'150601_F1_C2'  'ShakB2/y;pJFRC7/Sp;45D07-Gal4/+'      'Band pass, some responses near 100-200Hz.  I''m missing the important frequencies, I think'
+'150601_F1_C3'  'ShakB2/y;pJFRC7/Sp;45D07-Gal4/+'      'A strange current injection. Small responses, nice sanity check'
 
-'150602_F1_C1'
-
-'150603_F1_C1'
-};
-
-analysis_cells_comment = {...   
-    %'Weird high pass cell, with small spikes, large R_i'
-    'Band pass, some responses near 100-200Hz.  I''m missing the important frequencies, I think'
-    'A strange current injection. Small responses, nice sanity check'
-    '';
-    '';
-    '';
-    '';
-
-    'Mid frequency';
+'150601_F1_C4'  'ShakB2/y;pJFRC7/Sp;45D07-Gal4/+'  ''
+'150601_F1_C5'  'ShakB2/y;pJFRC7/Sp;45D07-Gal4/+'  ''
+'150601_F1_C6'  'ShakB2/y;pJFRC7/Sp;45D07-Gal4/+'  ''
+'150601_F1_C7'  'ShakB2/y;pJFRC7/Sp;45D07-Gal4/+'  ''
     
-    'Mid frequency';
-};
+'150602_F1_C1'  'ShakB2/y;pJFRC7/Sp;45D07-Gal4/+'      'Mid frequency';
 
-analysis_cells_genotype = {...
-%'ShakB2/y;pJFRC7/Sp;45D07-Gal4/+';
-'ShakB2/y;pJFRC7/Sp;45D07-Gal4/+';
-'ShakB2/y;pJFRC7/Sp;45D07-Gal4/+';
-'ShakB2/y;pJFRC7/Sp;45D07-Gal4/+';
-'ShakB2/y;pJFRC7/Sp;45D07-Gal4/+';
-'ShakB2/y;pJFRC7/Sp;45D07-Gal4/+';
-'ShakB2/y;pJFRC7/Sp;45D07-Gal4/+';
-
-'ShakB2/y;pJFRC7/Sp;45D07-Gal4/+';
-
-'ShakB2/y;pJFRC7/Sp;45D07-Gal4/+';
+'150603_F1_C1'  'ShakB2/y;pJFRC7/Sp;45D07-Gal4/+'      'Mid frequency';
 };
 
 
-clear analysis_cell
-for c = 1:length(analysis_cells)
-    analysis_cell(c).name = analysis_cells(c); 
-    analysis_cell(c).genotype = analysis_cells_genotype(c); %#ok<*SAGROW>
-    analysis_cell(c).comment = analysis_cells_comment(c);
+clear analysis_cell analysis_cells
+for c = 1:size(analysis_grid,1)
+    analysis_cell(c).name = analysis_grid{c,1}; 
+    analysis_cell(c).genotype = analysis_grid{c,2}; %#ok<*SAGROW>
+    analysis_cell(c).comment = analysis_grid{c,3};
+    analysis_cells{c} = analysis_grid{c,1}; 
 end
 
 %% 'ShakB2/y;pJFRC7/Sp;45D07-Gal4/+'  Weird high pass cell
@@ -113,7 +87,7 @@ analysis_cell(cnt).PiezoStepTrial_IClamp = ...
 
 cnt = find(strcmp(analysis_cells,'150601_F1_C4'));
 analysis_cell(cnt).PiezoSineTrial_IClamp = ...
-'';
+'C:\Users\Anthony Azevedo\Raw_Data\150601\150601_F1_C4\PiezoSine_Raw_150601_F1_C4_6.mat';
 analysis_cell(cnt).PiezoSineTrial_VClamp = ...
 '';
 analysis_cell(cnt).PiezoChirpTrial_IClamp = ...
@@ -133,7 +107,7 @@ analysis_cell(cnt).PiezoStepTrial_IClamp = ...
 
 cnt = find(strcmp(analysis_cells,'150601_F1_C5'));
 analysis_cell(cnt).PiezoSineTrial_IClamp = ...
-'';
+'C:\Users\Anthony Azevedo\Raw_Data\150601\150601_F1_C5\PiezoSine_Raw_150601_F1_C5_27.mat';
 analysis_cell(cnt).PiezoSineTrial_VClamp = ...
 '';
 analysis_cell(cnt).PiezoChirpTrial_IClamp = ...
@@ -154,7 +128,7 @@ analysis_cell(cnt).PiezoStepTrial_IClamp = ...
 
 cnt = find(strcmp(analysis_cells,'150601_F1_C6'));
 analysis_cell(cnt).PiezoSineTrial_IClamp = ...
-'';
+'C:\Users\Anthony Azevedo\Raw_Data\150601\150601_F1_C6\PiezoSine_Raw_150601_F1_C6_7.mat';
 analysis_cell(cnt).PiezoSineTrial_VClamp = ...
 '';
 analysis_cell(cnt).PiezoChirpTrial_IClamp = ...
@@ -174,7 +148,7 @@ analysis_cell(cnt).PiezoStepTrial_IClamp = ...
 
 cnt = find(strcmp(analysis_cells,'150601_F1_C7'));
 analysis_cell(cnt).PiezoSineTrial_IClamp = ...
-'';
+'C:\Users\Anthony Azevedo\Raw_Data\150601\150601_F1_C7\PiezoSine_Raw_150601_F1_C7_4.mat';
 analysis_cell(cnt).PiezoSineTrial_VClamp = ...
 '';
 analysis_cell(cnt).PiezoChirpTrial_IClamp = ...

@@ -72,6 +72,12 @@ for r_ind = 1:length(rawfiles)
     if strcmp('Sweep',prot) && isfield(trial,'excluded') && trial.excluded
         continue
     end
+    if strcmp('PiezoStep',prot) && sum(strcmp(trial.tags,'turn on')) && isfield(trial,'excluded') && trial.excluded
+        continue
+    end
+    if sum(strcmp(trial.tags,'Total Crap')) && isfield(trial,'excluded') && trial.excluded
+        continue
+    end
 
     % get the creation date
     if isfield(trial,'timestamp')

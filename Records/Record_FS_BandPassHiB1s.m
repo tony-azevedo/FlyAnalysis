@@ -4,64 +4,50 @@ savedir = 'C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_FS_BandPassHig
 if ~isdir(savedir)
     mkdir(savedir)
 end
-save_log = 1
+save_log = 0
 id = 'BPH_';
 
 
 %%
 
-analysis_cells = {...
-'131014_F4_C1'
-'131014_F3_C1'
-'131016_F1_C1'
-'131126_F2_C2'
+analysis_grid = {...
+'131014_F4_C1'  'GH86-Gal4/GH86-Gal4;pJFRC7/pJFRC7;'	'clear spiking (sweep), but not great stimulus control'
+'131014_F3_C1'  'GH86-Gal4/GH86-Gal4;pJFRC7/pJFRC7;'	'clear spiking, mid range frequency, holding potential is offset, but otherwise ok'
+'131016_F1_C1'  'GH86-Gal4/GH86-Gal4;pJFRC7/pJFRC7;'	'Clear spiking, not good stimulus control! exclude from PiezoStepAnalysis'
+'131126_F2_C2'  'GH86-Gal4/GH86-Gal4;pJFRC7/pJFRC7;'	'Banner cell, Current Sine @ hyp. Vm, was used in NRSA-resubmit, sharp tuning though coarse'
 
-'150421_F1_C1'
-'150513_F2_C1'
-'150527_F1_C3'
-'150528_F1_C1'
+'150421_F1_C1'  '10XUAS-mCD8:GFP/+;FruGal4/+'      'Larger amplitudes produce lower amplitude responses'
+'150513_F2_C1'  '10XUAS-mCD8:GFP/+;FruGal4/+'      'PiezoChirp is an interesting stimulus, strong spontaneous noise'
+'150527_F1_C3'  'pJFRC7/+;63A03-Gal4/+'    'Without perfusion, beautiful clear line, nice spiker, the somewhat dim one next to the big guy'
+'150528_F1_C1'  'pJFRC7/+;63A03-Gal4/+'       'Without perfusion, NO CLEAR SPIKING, but certainly band pass high'
 
-'150531_F1_C1'
-'150602_F3_C1'
+'150531_F1_C1'  '10XUAS-mCD8:GFP/+;FruGal4/+'     'Without perfusion, Very nice cell, tall spikes, also has hyperpolarized responses'
+'151125_F1_C1'  '10XUAS-mCD8:GFP/+;FruGal4/+'     'hyperpolarized responses'
+
+'151130_F1_C1'  'pJFRC7/+;VT30609/+'     'Lots of noise, appears to be due to antennal input, tall spikes, hyperpolarized responses didnt work'
+
+'151201_F1_C1'  '10XUAS-mCD8:GFP/+;FruGal4/+'     'Hyperpolarization responses didnt work'
+'151201_F1_C2'  '10XUAS-mCD8:GFP/+;FruGal4/+'     'Lots of noise, appears to be due to antennal input, tall spikes, hyperpolar responses didnt work'
+'151201_F1_C2_2'  '10XUAS-mCD8:GFP/+;FruGal4/+'     'This is the second set of responses in the other block'
+'151201_F1_C3'  '10XUAS-mCD8:GFP/+;FruGal4/+'     'Lots of noise, appears to be due to antennal input, tall spikes, hyperpolar responses didnt work'
 };
 
-analysis_cells_comment = {...
-    'clear spiking (sweep), but not great stimulus control';
-    'clear spiking, mid range frequency, holding potential is offset, but otherwise ok';
-    'Clear spiking, not good stimulus control! exclude from PiezoStepAnalysis';
-    'Banner cell, Current Sine @ hyp. Vm, was used in NRSA-resubmit, sharp tuning though coarse';
+male_grid = { ...
+'150602_F3_C1'  'ShakB2-y/X;pJFRC7;45D07'  'Without perfusion, Weird cell, a ton of spontaneous noise.  Where is this from?'  %Male
+}
 
-    'Larger amplitudes produce lower amplitude responses'
-    'PiezoChirp is an interesting stimulus, strong spontaneous noise'
-    'Without perfusion, beautiful clear line, nice spiker, the somewhat dim one next to the big guy'
-    'Without perfusion, NO CLEAR SPIKING, but certainly band pass high'
-    
-    'Without perfusion, Very nice cell, tall spikes, also has hyperpolarized responses'
-    'Without perfusion, Weird cell, a ton of spontaneous noise.  Where is this from?'
+clear analysis_cell analysis_cells control_cells control_cells
+genotypes = {   '10XUAS-mCD8:GFP/+;FruGal4/+'                           '20XUAS-mCD8:GFP;VT27938-Gal4';
+                'UAS-Dcr;10XUAS-mCD8:GFP/+;FruGal4/UAS-paraRNAi'        'UAS-Dcr;20XUAS-mCD8:GFP/+;VT27938-Gal4/UAS-paraRNAi'
 };
 
-analysis_cells_genotype = {...
-'GH86-Gal4!GH86-Gal4;pJFRC7!pJFRC7;'
-'GH86-Gal4!GH86-Gal4;pJFRC7!pJFRC7;'
-'GH86-Gal4!GH86-Gal4;pJFRC7!pJFRC7;'
-'GH86-Gal4!GH86-Gal4;pJFRC7!pJFRC7;'
-
-'10XUAS-GFP;Fru-Gal4';
-'10XUAS-GFP;Fru-Gal4';
-'pJFRC7/+;63A03-Gal4/+';
-'pJFRC7/+;63A03-Gal4/+';
-
-'10XUAS-GFP;Fru-Gal4';
-'pJFRC7/Cy0;45D07-Gal4/TM6b';  %Male
-};
-
-
-clear analysis_cell
-for c = 1:length(analysis_cells)
-    analysis_cell(c).name = analysis_cells(c); 
-    analysis_cell(c).genotype = analysis_cells_genotype(c); %#ok<*SAGROW>
-    analysis_cell(c).comment = analysis_cells_comment(c);
+for c = 1:size(analysis_grid,1)
+    analysis_cell(c).name = analysis_grid{c,1}; 
+    analysis_cell(c).genotype = analysis_grid{c,2}; %#ok<*SAGROW>
+    analysis_cell(c).comment = analysis_grid{c,3};
+    analysis_cells{c} = analysis_grid{c,1}; 
 end
+
 
 %% Rejects
 
@@ -76,13 +62,6 @@ exclude_cells = {
     '131119_F2_C2',  ' No Data. Interesting current sign, though'
     '131015_F1_C1',  ' No Piezo connection (no responses). Interesting current sign, though, beautiful spiking!'
     };
-
-
-%% 'Genotype'
-% 
-% cnt = find(strcmp(analysis_cells,''));
-
-%%
 
 
 %% GH86
@@ -253,25 +232,133 @@ analysis_cell(cnt).extratrials = {...
 };
 
 %% Tons of spontaneous noise MALE!!
+
 cnt = find(strcmp(analysis_cells,'150602_F3_C1'));
+if ~isempty(cnt)
+    analysis_cell(cnt).PiezoSineTrial = ...
+        'C:\Users\Anthony Azevedo\Raw_Data\150602\150602_F3_C1\PiezoSine_Raw_150602_F3_C1_1.mat';
+    analysis_cell(cnt).PiezoChirpTrial = ...
+        'C:\Users\Anthony Azevedo\Raw_Data\150602\150602_F3_C1\PiezoChirp_Raw_150602_F3_C1_1.mat';
+    analysis_cell(cnt).CurrentStepTrial = ...
+        'C:\Users\Anthony Azevedo\Raw_Data\150602\150602_F3_C1\CurrentStep_Raw_150602_F3_C1_1.mat';
+    analysis_cell(cnt).CurrentChirpTrial = ...
+        'C:\Users\Anthony Azevedo\Raw_Data\150602\150602_F3_C1\CurrentChirp_Raw_150602_F3_C1_2.mat';
+    analysis_cell(cnt).SweepTrial = ...
+        'C:\Users\Anthony Azevedo\Raw_Data\150602\150602_F3_C1\Sweep_Raw_150602_F3_C1_4.mat';
+    analysis_cell(cnt).SweepVClampEx = ...
+        'C:\Users\Anthony Azevedo\Raw_Data\150602\150602_F3_C1\Sweep_Raw_150602_F3_C1_3.mat';
+    analysis_cell(cnt).VoltageStepEx = ...
+        'C:\Users\Anthony Azevedo\Raw_Data\150602\150602_F3_C1\VoltageStep_Raw_150602_F3_C1_1.mat';
+    
+    analysis_cell(cnt).extratrials = {...
+        };
+end
+
+%%
+cnt = find(strcmp(analysis_cells,'151125_F1_C1'));
 analysis_cell(cnt).PiezoSineTrial = ...
-'C:\Users\Anthony Azevedo\Raw_Data\150602\150602_F3_C1\PiezoSine_Raw_150602_F3_C1_1.mat';
+'C:\Users\Anthony Azevedo\Raw_Data\151125\151125_F1_C1\PiezoSine_Raw_151125_F1_C1_1.mat';
 analysis_cell(cnt).PiezoChirpTrial = ...
-'C:\Users\Anthony Azevedo\Raw_Data\150602\150602_F3_C1\PiezoChirp_Raw_150602_F3_C1_1.mat';
+'';
 analysis_cell(cnt).CurrentStepTrial = ...
-'C:\Users\Anthony Azevedo\Raw_Data\150602\150602_F3_C1\CurrentStep_Raw_150602_F3_C1_1.mat';
+'';
 analysis_cell(cnt).CurrentChirpTrial = ...
-'C:\Users\Anthony Azevedo\Raw_Data\150602\150602_F3_C1\CurrentChirp_Raw_150602_F3_C1_2.mat';
+'';
 analysis_cell(cnt).SweepTrial = ...
-'C:\Users\Anthony Azevedo\Raw_Data\150602\150602_F3_C1\Sweep_Raw_150602_F3_C1_4.mat';
+'';
 analysis_cell(cnt).SweepVClampEx = ...
-'C:\Users\Anthony Azevedo\Raw_Data\150602\150602_F3_C1\Sweep_Raw_150602_F3_C1_3.mat';
+'';
 analysis_cell(cnt).VoltageStepEx = ...
-'C:\Users\Anthony Azevedo\Raw_Data\150602\150602_F3_C1\VoltageStep_Raw_150602_F3_C1_1.mat';
+'';
 
 analysis_cell(cnt).extratrials = {...
 };
 
+%%
+cnt = find(strcmp(analysis_cells,'151130_F1_C1'));
+analysis_cell(cnt).PiezoSineTrial = ...
+'C:\Users\Anthony Azevedo\Raw_Data\151130\151130_F1_C1\PiezoSine_Raw_151130_F1_C1_169.mat';
+analysis_cell(cnt).PiezoChirpTrial = ...
+'';
+analysis_cell(cnt).CurrentStepTrial = ...
+'';
+analysis_cell(cnt).CurrentChirpTrial = ...
+'';
+analysis_cell(cnt).SweepTrial = ...
+'';
+analysis_cell(cnt).SweepVClampEx = ...
+'';
+analysis_cell(cnt).VoltageStepEx = ...
+'';
+
+analysis_cell(cnt).extratrials = {...
+};
+
+%% '10XUAS-mCD8:GFP/+;FruGal4/+'
+cnt = find(strcmp(analysis_cells,'151201_F1_C1'));
+analysis_cell(cnt).PiezoSineTrial = ...
+'C:\Users\Anthony Azevedo\Raw_Data\151201\151201_F1_C1\PiezoSine_Raw_151201_F1_C1_1.mat';
+analysis_cell(cnt).PiezoChirpTrial = ...
+'';
+analysis_cell(cnt).CurrentStepTrial = ...
+'C:\Users\Anthony Azevedo\Raw_Data\151201\151201_F1_C1\CurrentStep_Raw_151201_F1_C1_1.mat';
+analysis_cell(cnt).CurrentChirpTrial = ...
+'';
+analysis_cell(cnt).SweepTrial = ...
+'C:\Users\Anthony Azevedo\Raw_Data\151201\151201_F1_C1\Sweep_Raw_151201_F1_C1_2.mat';
+analysis_cell(cnt).SweepVClampEx = ...
+'';
+analysis_cell(cnt).VoltageStepEx = ...
+'C:\Users\Anthony Azevedo\Raw_Data\151201\151201_F1_C1\VoltageStep_Raw_151201_F1_C1_1.mat';
+
+analysis_cell(cnt).extratrials = {...
+};
+
+%% '10XUAS-mCD8:GFP/+;FruGal4/+'
+cnt = find(strcmp(analysis_cells,'151201_F1_C2'));
+analysis_cell(cnt).PiezoSineTrial = ...
+'C:\Users\Anthony Azevedo\Raw_Data\151201\151201_F1_C2\PiezoSine_Raw_151201_F1_C2_1.mat';
+analysis_cell(cnt).PiezoChirpTrial = ...
+'';
+analysis_cell(cnt).CurrentStepTrial = ...
+'C:\Users\Anthony Azevedo\Raw_Data\151201\151201_F1_C2\CurrentStep_Raw_151201_F1_C2_5.mat';
+analysis_cell(cnt).CurrentChirpTrial = ...
+'';
+analysis_cell(cnt).SweepTrial = ...
+'C:\Users\Anthony Azevedo\Raw_Data\151201\151201_F1_C2\Sweep_Raw_151201_F1_C2_3.mat';
+analysis_cell(cnt).SweepVClampEx = ...
+'';
+analysis_cell(cnt).VoltageStepEx = ...
+'C:\Users\Anthony Azevedo\Raw_Data\151201\151201_F1_C2\VoltageStep_Raw_151201_F1_C2_1.mat';
+
+analysis_cell(cnt).extratrials = {...
+};
+
+%% '10XUAS-mCD8:GFP/+;FruGal4/+'
+cnt = find(strcmp(analysis_cells,'151201_F1_C2_2'));
+analysis_cell(cnt).PiezoSineTrial = ...
+'C:\Users\Anthony Azevedo\Raw_Data\151201\151201_F1_C2\PiezoSine_Raw_151201_F1_C2_109.mat';
+
+
+%% '10XUAS-mCD8:GFP/+;FruGal4/+'
+cnt = find(strcmp(analysis_cells,'151201_F1_C3'));
+analysis_cell(cnt).PiezoSineTrial = ...
+'C:\Users\Anthony Azevedo\Raw_Data\151201\151201_F1_C3\PiezoSine_Raw_151201_F1_C3_1.mat';
+analysis_cell(cnt).PiezoChirpTrial = ...
+'';
+analysis_cell(cnt).CurrentStepTrial = ...
+'';
+analysis_cell(cnt).CurrentChirpTrial = ...
+'';
+analysis_cell(cnt).SweepTrial = ...
+'C:\Users\Anthony Azevedo\Raw_Data\151201\151201_F1_C3\Sweep_Raw_151201_F1_C3_3.mat';
+analysis_cell(cnt).SweepVClampEx = ...
+'';
+analysis_cell(cnt).VoltageStepEx = ...
+'C:\Users\Anthony Azevedo\Raw_Data\151201\151201_F1_C3\VoltageStep_Raw_151201_F1_C3_1.mat';
+
+analysis_cell(cnt).extratrials = {...
+};
 
 %%
 %Script_FrequencySelectivity

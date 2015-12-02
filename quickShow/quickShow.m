@@ -855,8 +855,8 @@ end
 handles.trial.tags = s;
 
 if strcmp(button,'Yes')
-    nums = findLikeTrials('name',handles.trial.name,'datastruct',handles.prtclData,...
-        'exclude',{'step','amp','displacement'});
+    nums = findLikeTrials_includingExcluded('name',handles.trial.name,'datastruct',handles.prtclData,...
+        'exclude',{'step','amp','displacement','freq'});
     for n_ind = 1:length(nums);
         trial = load(fullfile(handles.dir,sprintf(handles.trialStem,nums(n_ind))));
         trial.tags = s;
@@ -952,6 +952,7 @@ helperfuncs = ...
 'clicky_on_image'
 'rename_tag'
 'cleanuptags'
+'excludeBlock_toggle'
 };
 set(hObject,'String',helperfuncs);
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
@@ -1057,6 +1058,27 @@ loopThroughRawFilesTags_cleanup(handles.dir);
 createDataFileFromRaw(handles.prtclDataFileName);
 d = load(handles.prtclDataFileName);
 handles.prtclData = d.data;
+guidata(hObject, handles);
+
+function excludeBlock_toggle(hObject,eventdata,handles)
+button = questdlg('Exclude entire block?','Exclude Block','Yes');
+if strcmp(button,'Cancel'), return, end
+
+handles = guidata(hObject);
+if strcmp(button,'Yes')
+    nums = findLikeTrials_includingExcluded('name',handles.trial.name,'datastruct',handles.prtclData,...
+        'exclude',{'step','amp','displacement','freq'});
+    ex = handles.trial.excluded;
+    for n_ind = 1:length(nums);
+        trial = load(fullfile(handles.dir,sprintf(handles.trialStem,nums(n_ind))));
+        trial.excluded = ex;
+        save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
+    end
+else
+    trial = handles.trial;
+    save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
+end
+
 guidata(hObject, handles);
 
 

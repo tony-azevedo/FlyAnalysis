@@ -4,8 +4,12 @@
 %     'VoltageRamp_m60_p40', 'VoltageRamp_m60_p40_1s', 'VoltageRamp_m60_p40_h_1s',
 %     'VoltageRamp_m50_p12_h_0_5s};
 
-trial = load(ac.trials.VoltageCommand);
+yyddmm = ac.name(1:6);
+trial = load([fullfile('C:\Users\Anthony Azevedo\Raw_Data\',yyddmm,ac.name) '\VoltageStep_Raw_' ac.name '_1.mat']);  
 h = getShowFuncInputsFromTrial(trial);
+
+% trial = load(ac.trials.VoltageCommand);
+% h = getShowFuncInputsFromTrial(trial);
 cd(h.dir);
 
 [trial,fig,Ri_struct,access] = CellInputResistance(trial);

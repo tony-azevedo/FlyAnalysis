@@ -4,77 +4,42 @@ savedir = 'C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_FS_BandPassLow
 if ~isdir(savedir)
     mkdir(savedir)
 end
-save_log = 1
+save_log = 0
 id = 'BPL_';
 
 %%
-analysis_cells = {...
-'131126_F2_C3'
-'131126_F2_C1'
-'131122_F2_C1'
-'131211_F2_C1'
+analysis_grid = {...
+'131126_F2_C3'  'pJFRC7;VT30609'      'Complete over harmonics, slight band pass';
+'131126_F2_C1'  'pJFRC7;VT30609'      'coarse freq sample, single amplitude, VCLAMP data!';
+'131122_F2_C1'  'pJFRC7;VT30609'      'coarse frequency, no current injections';
+'131211_F2_C1'  'pJFRC7;VT30609'      'Low pass, first cell with more sine waves.  No clear spiking, sharper tuning';
 
-'140117_F2_C1'
-'140602_F2_C1'
-'140603_F1_C1'
-'150402_F2_C1'
+'140117_F2_C1'  'UAS-ArcLight; VT30609-Gal4'      'coarse frequency, no current injections';
+'140602_F2_C1'  'UAS-ArcLight; VT30609-Gal4'      ''
+'140603_F1_C1'  'UAS-ArcLight; VT30609-Gal4'      ''  
+'150402_F2_C1'  'GH86;pJFRC7'           ''
 
-'150402_F3_C1'  % Not great for some reason
-'150409_F1_C1'  % Not great for some reason
-'150414_F1_C1'  % Not great for some reason
-'150502_F1_C1'
+'150409_F1_C1'  '20XUAS-mCD8:GFP;VT27938-Gal4'        ''
+'150414_F1_C1'  '20XUAS-mCD8:GFP;VT27938-Gal4'        ''  
+'150502_F1_C1'  'pJFRC7;VT45599'        ''
 
-'150502_F1_C3'
-};
+'150502_F1_C3'  'pJFRC7;VT45599'        ''
 
-analysis_cells_comment = {...
-    'Complete over harmonics, slight band pass';
-    'coarse freq sample, single amplitude, VCLAMP data!';
-    'coarse frequency, no current injections';
-    'Low pass, first cell with more sine waves.  No clear spiking, sharper tuning';
-        
-    'coarse frequency, no current injections';
-    ''
-    ''
-    ''
-    ''
-    ''
-    ''
-    ''
-    'Not great for some reason'
-    ''
-    ''
-    ''
-    ''
-};
-
-analysis_cells_genotype = {...
-'pJFRC7;VT30609'
-'pJFRC7;VT30609'
-'pJFRC7;VT30609'
-'pJFRC7;VT30609'
-
-'ArcLight;VT30609'
-'ArcLight;VT30609'
-'ArcLight;VT30609'
-'GH86;pJFRC7'
-
-'GH86;pJFRC7'
-'pJFRC7;VT27938'
-'pJFRC7;VT27938'
-'pJFRC7;VT27938'
-
-'pJFRC7;VT45599'
-'pJFRC7;VT45599'
 };
 
 
-clear analysis_cell
-for c = 1:length(analysis_cells)
-    analysis_cell(c).name = analysis_cells(c); 
-    analysis_cell(c).genotype = analysis_cells_genotype(c); %#ok<*SAGROW>
-    analysis_cell(c).comment = analysis_cells_comment(c);
+clear analysis_cell analysis_cells
+for c = 1:size(analysis_grid,1)
+    analysis_cell(c).name = analysis_grid{c,1}; 
+    analysis_cell(c).genotype = analysis_grid{c,2}; %#ok<*SAGROW>
+    analysis_cell(c).comment = analysis_grid{c,3};
+    analysis_cells{c} = analysis_grid{c,1}; 
 end
+
+reject_cells = {
+'150402_F3_C1'  'GH86;pJFRC7'      'Not great for some reason'
+}
+
 
 %% 'pJFRC7;VT30609'
 
@@ -176,14 +141,16 @@ analysis_cell(cnt).SweepTrial = ...
 
 %% 'pJFRC7;VT27938'
 cnt = find(strcmp(analysis_cells,'150402_F3_C1'));
-analysis_cell(cnt).PiezoSineTrial = ...
-'C:\Users\Anthony Azevedo\Raw_Data\150402\150402_F3_C1\PiezoSine_Raw_150402_F3_C1_5.mat';
-analysis_cell(cnt).CurrentStepTrial = ...
-'C:\Users\Anthony Azevedo\Raw_Data\150402\150402_F3_C1\CurrentStep_Raw_150402_F3_C1_1.mat';
-analysis_cell(cnt).CurrentChirpTrial = ...
-'C:\Users\Anthony Azevedo\Raw_Data\150402\150402_F3_C1\CurrentChirp_Raw_150402_F3_C1_1.mat';
-analysis_cell(cnt).SweepTrial = ...
-'C:\Users\Anthony Azevedo\Raw_Data\150402\150402_F3_C1\Sweep_Raw_150402_F3_C1_1.mat';
+if ~isempty(cnt)
+    analysis_cell(cnt).PiezoSineTrial = ...
+        'C:\Users\Anthony Azevedo\Raw_Data\150402\150402_F3_C1\PiezoSine_Raw_150402_F3_C1_5.mat';
+    analysis_cell(cnt).CurrentStepTrial = ...
+        'C:\Users\Anthony Azevedo\Raw_Data\150402\150402_F3_C1\CurrentStep_Raw_150402_F3_C1_1.mat';
+    analysis_cell(cnt).CurrentChirpTrial = ...
+        'C:\Users\Anthony Azevedo\Raw_Data\150402\150402_F3_C1\CurrentChirp_Raw_150402_F3_C1_1.mat';
+    analysis_cell(cnt).SweepTrial = ...
+        'C:\Users\Anthony Azevedo\Raw_Data\150402\150402_F3_C1\Sweep_Raw_150402_F3_C1_1.mat';
+end
 
 %% 'pJFRC7;VT27938'
 cnt = find(strcmp(analysis_cells,'150409_F1_C1'));

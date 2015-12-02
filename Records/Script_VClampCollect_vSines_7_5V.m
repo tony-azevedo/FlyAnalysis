@@ -1,5 +1,5 @@
-cd 'C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_VoltageClampCurrentIsolation\include\vSines\'
-%cd 'C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_VoltageClampCurrentIsolation\control\vSines\'
+cd(savedir)
+cd vSines\
 
 vs_figs = dir('*_VoltageSine_*.fig');
 lg = false(size(vs_figs));
@@ -197,41 +197,41 @@ end
 %     '151006_F3_C1'    [1x27 char]    [1x24 char]
 %     '151006_F3_C2'
 %     
-cellname = '151007_F1_C1';
-clr = [0 0 1];
-
-set(findobj(fig,'color',clr,'type','line'),'color',base_clr);
-ls = findobj(fig,'type','line','displayname',cellname);
-set(ls,'color',clr);
-
-for i = 1:length(pnl_hs(:))
-    uistack(findobj(pnl_hs(i),'type','line','color',clr),'top');
-end
+% cellname = '151007_F1_C1';
+% clr = [0 0 1];
+% 
+% set(findobj(fig,'color',clr,'type','line'),'color',base_clr);
+% ls = findobj(fig,'type','line','displayname',cellname);
+% set(ls,'color',clr);
+% 
+% for i = 1:length(pnl_hs(:))
+%     uistack(findobj(pnl_hs(i),'type','line','color',clr),'top');
+% end
 
 %% Highlight reject cells
 % '150913_F2_C1'	High access                     150913_F2_C1_access
 % '151002_F2_C1'	High access, but stable			151002_F2_C1_access
 % '151007_F4_C1' 	high access variance';          150903_F1_C1_InputR.pdf 151007_F4_C1_access
 
-rejects = {'151007_F1_C1'};
-clr = [0 0 1];
-
-set(findobj(fig,'color',clr,'type','line'),'color',base_clr);
-for r = 1:length(rejects)
-    ls = findobj(fig,'type','line','displayname',rejects{r});
-    set(ls,'color',clr);
-end
-
-for i = 1:length(pnl_hs(:))
-    uistack(findobj(pnl_hs(i),'type','line','color',clr),'top');
-end
-
-%% put away or delete
-for i = 1:length(pnl_hs(:))
-%     uistack(findobj(pnl_hs(i),'color',clr,'type','line'),'bottom');
-%     set(findobj(pnl_hs(i),'color',clr,'type','line'),'color',[1 1 1]);
-    delete(findobj(pnl_hs(i),'color',clr,'type','line'));
-end
+% rejects = {'151007_F1_C1'};
+% clr = [0 0 1];
+% 
+% set(findobj(fig,'color',clr,'type','line'),'color',base_clr);
+% for r = 1:length(rejects)
+%     ls = findobj(fig,'type','line','displayname',rejects{r});
+%     set(ls,'color',clr);
+% end
+% 
+% for i = 1:length(pnl_hs(:))
+%     uistack(findobj(pnl_hs(i),'type','line','color',clr),'top');
+% end
+% 
+% %% put away or delete
+% for i = 1:length(pnl_hs(:))
+% %     uistack(findobj(pnl_hs(i),'color',clr,'type','line'),'bottom');
+% %     set(findobj(pnl_hs(i),'color',clr,'type','line'),'color',[1 1 1]);
+%     delete(findobj(pnl_hs(i),'color',clr,'type','line'));
+% end
 
 
 %% Highlight weird conditions
@@ -292,19 +292,30 @@ end
 
 
 %% Average Fru vs VT cells
-genotypes = {'10XUAS-mCD8:GFP/+;FruGal4/+'};
-genotypes = {'20XUAS-mCD8:GFP;VT27938-Gal4';'10XUAS-mCD8:GFP/+;FruGal4/+'};
+if ~isempty(strfind(savedir,'sham'))
+    genotypes = {'10XUAS-mCD8:GFP/+;FruGal4/+'};
+end
+if ~isempty(strfind(savedir,'include'))
+    genotypes = {'10XUAS-mCD8:GFP/+;FruGal4/+';'20XUAS-mCD8:GFP;VT27938-Gal4';'pJFRC7;VT30609-Gal4'};
+end
+if ~isempty(strfind(savedir,'cesiumPara'))
+    genotypes = {'UAS-Dcr;10XUAS-mCD8:GFP/+;FruGal4/UAS-paraRNAi';'UAS-Dcr;20XUAS-mCD8:GFP/+;VT27938-Gal4/UAS-paraRNAi'};
+end
+
 clrs = [
-    .7 0 0
     0 0 .7
+    .7 0 0
+    0 .7 0
     ];
 lghtclrs = [
-    1 .7 .7
     .7 .7 1
+    1 .7 .7
+    .7 1 .7
     ];
 lghtrclrs = [
-    1 .9 .9
     .9 .9 1
+    1 .9 .9
+    .9 1 .9
     ];
 
 set(findobj(fig,'color',clr,'type','line'),'color',base_clr);
@@ -319,8 +330,8 @@ for g = 1:length(genotypes)
                 for l = 1:length(ls)
                     if length(get(ls(l),'ydata')) > maxlength
                         
-                        maxlength = length(get(ls(1),'ydata'))
-                        midx = l
+                        maxlength = length(get(ls(1),'ydata'));
+                        midx = l;
                     end
                 end
                 set(ls,'color',lghtclrs(g,:))
@@ -339,34 +350,87 @@ for g = 1:length(genotypes)
                 set(ave,'ydata',y);
                 
                 SEM = nanstd(traces,1)/sqrt(size(traces,1));
-                ts = tinv([0.025  0.975],size(traces,1)-1);
+                %ts = tinv([0.025  0.975],size(traces,1)-1);
+                ts = [-1 1];
                 CI_patch_up = y + ts(1)*SEM; 
                 CI_patch_down = y + ts(2)*SEM; 
                 
                 p = patch(...
                     [x(:);flipud(x(:))],...
                     [CI_patch_up(:);flipud(CI_patch_down(:))],...
-                    lghtrclrs(g,:),'edgealpha',0,'parent',pnl_hs(r,c));
+                    lghtrclrs(g,:),'edgecolor',lghtrclrs(g,:),'edgealpha',0,'parent',pnl_hs(r,c));
                 uistack(p,'bottom');
             end
         end
     end
 end
 
-for r_idx = 1:size(pnl_hs,1)
+if ~isempty(strfind(savedir,'include'))
     
-    yl = get(pnl_hs(r_idx,1),'ylim');
-    xl = get(pnl_hs(r_idx,1),'xlim');
-    l = findobj(get(pnl_hs(r_idx,1),'children'),'type','line','-not','tag','fiducials');
-    text(xl(1),yl(2),['N=',num2str(length(l))],'verticalalignment','top','parent',pnl_hs(r_idx,1),'fontsize',8)
+    for r_idx = 1:size(pnl_hs,1)
+        
+        yl = get(pnl_hs(r_idx,1),'ylim');
+        xl = get(pnl_hs(r_idx,1),'xlim');
+        l = findobj(get(pnl_hs(r_idx,1),'children'),'type','line','-not','tag','fiducials');
+    end
+    
+    linkaxes(pnl_hs(:),'off')
+    axis(pnl_hs(:),'tight')
+    ylims = [Inf -Inf];
+    maxdiff = -Inf;
+    for r_idx = 1:size(pnl_hs,1)
+        for c_idx = 1:size(pnl_hs,2)
+            yl = get(pnl_hs(r_idx,c_idx),'ylim');
+            maxdiff = max([maxdiff, diff(yl)]);
+            ylims(1) = min([ylims(1) yl(1)]);
+            ylims(2) = max([ylims(2) yl(2)]);
+        end
+    end
+    
+    for r_idx = 1:size(pnl_hs,1)
+        linkaxes(pnl_hs(r_idx,:),'y');
+        yl = get(pnl_hs(r_idx,1),'ylim');
+        set(pnl_hs(r_idx,:),'ylim',mean(yl)+maxdiff/2*[-1 1]);
+        
+        fiducials = findobj(pnl_hs(r_idx,:),'tag','fiducials');
+        set(fiducials,'ydata',mean(yl)+maxdiff/2*[-1 1]);
+    end
+    fprintf('Y-Limits: %.2f \n',round(mean(yl)+maxdiff/2*[-1 1]))
+else
+    for r_idx = 1:size(pnl_hs,1)
+        linkaxes(pnl_hs(r_idx,:),'y');
+        set(pnl_hs(r_idx,:),'ylim',[-39 64]);
+        
+        fiducials = findobj(pnl_hs(r_idx,:),'tag','fiducials');
+        set(fiducials,'ydata',[-39 64]);
+    end
 end
 
+set(findobj(fig,'type','patch'),'facealpha',0)
+% delete(findobj(fig,'type','patch'));
 
 figure(fig)
-eval(['export_fig ' 'VoltageSine_7_5V_ByGenotype.pdf' ' -pdf -transparent']);
+eval(['export_fig ' 'VoltageSine_7_5V_ByGenotype_Traces.pdf' ' -pdf -transparent']);
 
 set(fig,'paperpositionMode','auto');
-saveas(fig,'VoltageSine_7_5V_ByGenotype','fig');
+saveas(fig,'VoltageSine_7_5V_ByGenotype_Traces','fig');
 
+set(findobj(fig,'type','patch'),'facealpha',1)
+set(findobj(fig,'type','patch'),'edgealpha',0);
 
+% set(findobj(fig,'type','line','color',lghtclrs(1,:),'-or','color',lghtclrs(2,:)),'color',[1 1 1]);
+% for pidx = 1:length(pnl_hs(:))
+%     uistack(findobj(pnl_hs(7,4),'type','line','color',[1 1 1]),'bottom');
+% end
+delete(findobj(fig,'type','line','color',lghtclrs(1,:),'-or','color',lghtclrs(2,:)))
+
+figure(fig)
+eval(['export_fig ' 'VoltageSine_7_5V_ByGenotype_95ci.pdf' ' -pdf -transparent']);
+
+set(fig,'paperpositionMode','auto');
+saveas(fig,'VoltageSine_7_5V_ByGenotype__95ci','fig');
+
+% for g = 1:length(genotypes)
+%     set(findobj(pnl_hs(:),'color',[1 1 1],'type','line','tag',genotype),'color',lghtclrs(g,:));
+% end
 

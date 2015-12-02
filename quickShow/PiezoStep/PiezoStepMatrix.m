@@ -15,11 +15,13 @@ clear f
 cnt = 1;
 for bt = blocktrials;
     handles.trial = load(fullfile(handles.dir,sprintf(handles.trialStem,bt)));
+    disps(cnt) = handles.trial.params.displacement;
     f(cnt) = PiezoStepAverage([],handles,savetag);
     cnt = cnt+1;
 end
 f = unique(f);
-f = sort(f);
+[disps,order] = sort(disps);
+f = f(order);
 f = reshape(f,length(handles.prtclData(bt).displacements),[]);
 tags = getTrialTags(blocktrials,handles.prtclData);
 

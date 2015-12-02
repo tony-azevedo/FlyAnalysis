@@ -4,63 +4,40 @@ savedir = 'C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_FS_LowPassB1s'
 if ~isdir(savedir)
     mkdir(savedir)
 end
-save_log = 1
+save_log = 0
 id = 'LP_';
 
 %%
 
-analysis_cells = {...
-'131015_F3_C1'
-'130911_F2_C1'
-'140122_F2_C1'
-'140128_F1_C1'
-'150326_F1_C1'
-'150402_F3_C2'
-'150402_F1_C1'
-'150502_F1_C2'
-'150504_F1_C1'
-'150504_F1_C2'
-'150504_F1_C3'
-'150623_F1_C1'
+analysis_grid = {...
+'131015_F3_C1'  'GH86;pJFRC7'           'coarse frequency, no current injections';                  % 130911_F2_C1
+'130911_F2_C1'  'GH86;pJFRC7'               'coarse frequency, no current injections';                  % 131015_F3_C1    
+'140122_F2_C1'  'pJFRC7;VT30609-Gal4'    'coarse freq sample, single amplitude, VCLAMP data!';       % 140122_F2_C1
+'140128_F1_C1'  'pJFRC7;VT30609-Gal4'    'Complete over harmonics, slight band pass';                %'140128_F1_C1'
+'150326_F1_C1'  '20XUAS-mCD8:GFP;VT27938-Gal4'    '';                  % 150326_F1_C1
+'150402_F3_C2'  '20XUAS-mCD8:GFP;VT27938-Gal4'    '';                  % 150402_F3_C2
+'150402_F1_C1'  '20XUAS-mCD8:GFP;VT27938-Gal4'    '';                  % 150402_F1_C1
+'150502_F1_C2'  'pJFRC7;VT45599-Gal4'    'no sag current, not a lot of K current, chirp low pass-ish';  % '150502_F1_C2'
+'150504_F1_C1'  'ArcLight;45D07-Gal4'    'Very low pass, large, largest response to low frequencies';  % '150504_F1_C2'
+'150504_F1_C2'  'ArcLight;45D07-Gal4'    'Very low pass, large, largest response to low frequencies';  % '150504_F1_C2'
+'150504_F1_C3'  'ArcLight;45D07-Gal4'    'Very low pass, large, largest response to low frequencies';  % '150504_F1_C3'
+'150623_F1_C1'  'pJFRC7/[UAS-ort];45D07-Gal4/+'     'Very low pass, large, largest response to low frequencies';  % not responsive to histamine, so, not sure.
 };
 
-analysis_cells_comment = {...
-    'coarse frequency, no current injections';                  % 130911_F2_C1
-    'coarse frequency, no current injections';                  % 131015_F3_C1    
-    'coarse freq sample, single amplitude, VCLAMP data!';       % 140122_F2_C1
-    'Complete over harmonics, slight band pass';                %'140128_F1_C1'
-    '';                  % 150326_F1_C1
-    '';                  % 150402_F3_C2
-    '';                  % 150402_F1_C1
-    'no sag current, not a lot of K current, chirp low pass-ish';  % '150502_F1_C2'
-    'Very low pass, large, largest response to low frequencies';  % '150504_F1_C2'
-    'Very low pass, large, largest response to low frequencies';  % '150504_F1_C2'
-    'Very low pass, large, largest response to low frequencies';  % '150504_F1_C3'
-    'Very low pass, large, largest response to low frequencies';  % '150504_F1_C3'
-};
+male_grid = { ...
+'151103_F3_C1' 'ShakB2-y/X;pJFRC7;45D07'        'Crazy big responses. Beautiful, but wrecks the ShakB stats!'
+'151106_F1_C1'  'ShakB2-y/X;pJFRC7;45D07'       'More normal sized'
+'151106_F1_C3'  'ShakB2-y/X;pJFRC7;45D07'       'Big responses. No drugs!'
+}
 
-analysis_cells_genotype = {...
-'GH86;pJFRC7'
-'GH86;pJFRC7'
-'pJFRC7;VT30609'
-'pJFRC7;VT30609'
-'pJFRC7;VT27938'
-'pJFRC7;VT27938'
-'pJFRC7;VT27938'
-'pJFRC7;VT45599'
-'ArcLight;45D07-Gal4'
-'ArcLight;45D07-Gal4'
-'ArcLight;45D07-Gal4'
-'pJFRC7/[UAS-ort];45D07-Gal4/+' % not responsive to histamine, so, not sure.
-};
-
-%%
-clear analysis_cell
-for c = 1:length(analysis_cells)
-    analysis_cell(c).name = analysis_cells(c); 
-    analysis_cell(c).genotype = analysis_cells_genotype(c); %#ok<*SAGROW>
-    analysis_cell(c).comment = analysis_cells_comment(c);
+clear analysis_cell analysis_cells
+for c = 1:size(analysis_grid,1)
+    analysis_cell(c).name = analysis_grid{c,1}; 
+    analysis_cell(c).genotype = analysis_grid{c,2}; %#ok<*SAGROW>
+    analysis_cell(c).comment = analysis_grid{c,3};
+    analysis_cells{c} = analysis_grid{c,1}; 
 end
+
 
 %% 'GH86;pJFRC7'
 cnt = find(strcmp(analysis_cells,'130911_F2_C1'));

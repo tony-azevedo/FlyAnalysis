@@ -21,6 +21,7 @@ end
 
 trial = load(fullfile(handles.dir,sprintf(handles.trialStem,trials(1))));
 x = makeTime(trial.params);
+stim = PiezoSineStim(trial.params);
 
 if sum(strcmp({'IClamp','IClamp_fast'},trial.params.mode))
     y_name = 'voltage';
@@ -41,16 +42,17 @@ for t = 1:length(trials)
 end
 
 yc = mean(y,2);
-base = mean(yc(x<0));
+base = mean(yc(x>=-trial.params.preDurInSec+.075 & x<0));
 yc = yc-base;
-uc = mean(u,2);
-offset = mean(uc(x<0));
-uc = uc-offset;
+% uc = mean(u,2);
+% offset = mean(uc(x<0));
+% uc = uc-offset;
+uc = stim;
 
 fin = trial.params.stimDurInSec - trial.params.ramptime;
-yc = yc(x>=fin-trial.params.stimDurInSec/2 & x< fin);
-uc = uc(x>=fin-trial.params.stimDurInSec/2 & x< fin);
-t = x(x>=fin-trial.params.stimDurInSec/2 & x< fin);
+yc = yc(x>=trial.params.ramptime & x< fin); % fin-trial.params.stimDurInSec/2
+uc = uc(x>=trial.params.ramptime & x< fin);
+t = x(x>=trial.params.ramptime & x< fin);
 
 f = trial.params.sampratein/length(t)*[0:length(t)/2]; f = [f, fliplr(f(2:end-1))];
 YC = fft(yc(1:length(f)));
@@ -76,8 +78,7 @@ end
 u_ideal = trial.params.displacement*exp(1i * (2*pi*trial.params.freq * (x-t_del) - pi/2));
 if p.Results.plot
     ax = subplot(3,1,[1 2],'parent',fig);
-    delete(ax)
-    ax = subplot(3,1,[1 2],'parent',fig);
+    cla(ax),set(ax,'xscale','log');
     semilogx(ax,f,real(YC.*conj(YC)),'color',[.7 0 0],'tag',savetag); hold on
     semilogx(ax,f,real(max(YC.*conj(YC)))/real(max(UC.*conj(UC)))* real(UC.*conj(UC)),'color',[0 0 .7],'tag',savetag); hold on
     axis(ax,'tight');

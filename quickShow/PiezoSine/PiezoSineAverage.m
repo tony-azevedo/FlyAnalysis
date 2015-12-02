@@ -41,13 +41,18 @@ for t = 1:length(trials)
     trial = load(fullfile(handles.dir,sprintf(handles.trialStem,trials(t))));
     y(:,t) = trial.(y_name)(1:length(x));
 end
-plot(ax,x,y,'color',[1, .7 .7],'tag',savetag); hold on
-plot(ax,x,mean(y,2),'color',[.7 0 0],'tag',savetag);
+
+x_win = x>= -.1 & x<trial.params.stimDurInSec+ min(.25,trial.params.postDurInSec);
+
+plot(ax,x(x_win),y(x_win,:),'color',[1, .7 .7],'tag',savetag); hold on
+y_ = mean(y,2);
+plot(ax,x(x_win),y_(x_win),'color',[.7 0 0],'tag',savetag);
+
 axis(ax,'tight')
-xlim([-.1 trial.params.stimDurInSec+ min(.25,trial.params.postDurInSec)])
-text(-.09,mean(mean(y(x<0),2),1),...
+% xlim([-.1 trial.params.stimDurInSec+ min(.25,trial.params.postDurInSec)])
+text(-.09,mean(mean(y_(x<0),2),1),...
     [num2str(trial.params.freq) ' Hz ' num2str(trial.params.displacement*3) ' \mum'],...
-    'fontsize',7,'parent',ax,'tag',savetag)
+    'fontsize',7,'parent',ax,'tag',savetag,'verticalAlignment','bottom')
 
 [prot,d,fly,cell,trialnum] = extractRawIdentifiers(trial.name);
 title(ax,sprintf('%s - %d Hz %.2f \\mum', [prot '.' d '.' fly '.' cell '.' trialnum], trial.params.freq,trial.params.displacement*3));
@@ -57,11 +62,14 @@ ylabel(ax,y_units);
 set(ax,'tag','response_ax');
 
 ax = subplot(3,1,3,'parent',h);
-plot(ax,x,trial.sgsmonitor(1:length(x)),'color',[0 0 1],'tag',savetag); hold on;
+
+y_ = trial.sgsmonitor(1:length(x));
+
+plot(ax,x(x_win),y_(x_win),'color',[0 0 1],'tag',savetag); hold on;
 
 box(ax,'off');
 axis(ax,'tight');
-xlim([-.1 trial.params.stimDurInSec+ min(.25,trial.params.postDurInSec)])
+
 set(ax,'TickDir','out');
 set(ax,'tag','stimulus_ax');
 

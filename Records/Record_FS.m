@@ -10,24 +10,31 @@ end
 %Record_FS_LowPassB1s
 %Record_FS_HighFreqDepolB1s
 
-%% Populations
+% Script_FrequencySelectivity
+% Script_FS_f1_f2
+% Script_FS_CurrentChirpAndSteps % and others
+
+% Populations
 close all
-uiopen('C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_FS_LowPassB1s\LP__PiezoSineOsciRespVsFreq.fig',1)
-fig_low = gcf; chi = get(gcf,'children');
-%ax_low = findobj(fig_low,'position',[0.3664    0.7002    0.2870    0.2496]);
-ax_low = chi(7); %(fig_low,'position',[0.3664    0.7002    0.2870    0.2496]);
+%uiopen('C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_FS_LowPassB1s\LP_PiezoSineOsciRespVsFreq.fig',1)
+uiopen('C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_FS_LowPassB1s\LP_PiezoSineOsciRespVsFreq_Aggregate.fig',1)
+fig_low = gcf;
+ax_low = findobj(fig_low,'type','axes','tag','mag_0.15');
 
-uiopen('C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_FS_BandPassLowB1s\BPL__PiezoSineOsciRespVsFreq.fig',1)
-fig_bpl = gcf; chi = get(gcf,'children');
-ax_bpl = chi(7);
+%uiopen('C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_FS_BandPassLowB1s\BPL_PiezoSineOsciRespVsFreq.fig',1)
+uiopen('C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_FS_BandPassLowB1s\BPL_PiezoSineOsciRespVsFreq_Aggregate.fig',1)
+fig_bpl = gcf; 
+ax_bpl = findobj(fig_bpl,'type','axes','tag','mag_0.15');
 
-uiopen('C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_FS_BandPassHighB1s\BPH__PiezoSineOsciRespVsFreq.fig',1)
-fig_bph = gcf; chi = get(gcf,'children');
-ax_bph  = chi(7);
+% uiopen('C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_FS_BandPassHighB1s\BPH_PiezoSineOsciRespVsFreq.fig',1)
+uiopen('C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_FS_BandPassHighB1s\BPH_PiezoSineOsciRespVsFreq_Aggregate.fig',1)
+fig_bph = gcf; 
+ax_bph  = findobj(fig_bph,'type','axes','tag','mag_0.15');
 
-uiopen('C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_FS_HighPassB1s\HP_PiezoSineDepolRespVsFreq.fig',1)
-fig_hi = gcf; chi = get(gcf,'children');
-ax_hi = chi(7);
+% uiopen('C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_FS_HighPassB1s\HP_PiezoSineDepolRespVsFreq.fig',1)
+uiopen('C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_FS_HighPassB1s\HP_PiezoSineDepolRespVsFreq_Aggregate.fig',1)
+fig_hi = gcf; 
+ax_hi = findobj(fig_hi,'type','axes','tag','mag_0.15');
 
 fig = figure;
 set(fig,'color',[1 1 1],'units','inches','position',[1 3 10 3.7],'name','Summary_FrequencySelectivity');
@@ -36,13 +43,13 @@ pnl.margin = [20 18 6 12];
 pnl.pack('h',4);
 pnl.de.margin = [4 4 4 4];
 
-copyobj(get(ax_low,'children'),pnl(1).select()); 
-copyobj(get(ax_bpl,'children'),pnl(2).select()); 
-copyobj(get(ax_bph,'children'),pnl(3).select()); 
-copyobj(get(ax_hi,'children'),pnl(4).select()); 
+copyobj(get(ax_low,'children'),pnl(1).select()); set(pnl(1).select(),'tag',get(ax_low,'tag'))
+copyobj(get(ax_bpl,'children'),pnl(2).select()); set(pnl(2).select(),'tag',get(ax_bpl,'tag'))
+copyobj(get(ax_bph,'children'),pnl(3).select()); set(pnl(3).select(),'tag',get(ax_bph,'tag'))
+copyobj(get(ax_hi,'children'),pnl(4).select()); set(pnl(4).select(),'tag',get(ax_hi,'tag'))
 
 axs = [pnl(1).select(),pnl(2).select(),pnl(3).select(),pnl(4).select()];
-set(axs,'xlim',[0 400],'xtick',[100 200 300],'tickdir','out');
+set(axs,'xscale','log','xlim',[16 600],'xtick',[25 100 400],'tickdir','out');
 
 set(findobj(fig,'color',[0 0 0]),'marker','none','color',[1 1 1]*.8);
 
@@ -61,6 +68,55 @@ ylabel(pnl(1).select(),'Magnitude (mV)');
 fn = fullfile(savedir, 'Summary_FrequencySelectivity.pdf');
 figure(fig)
 eval(['export_fig ' regexprep(fn,'\sAzevedo',''' Azevedo''') ' -pdf -transparent']);
+
+ls = findobj(fig,'type','line','marker','o');
+for l = ls'
+    axname = get(get(l,'parent'),'tag');
+    set(l,'tag',['ave_' axname],'color',[0 0 0],'markerfacecolor',[0 0 0],'markeredgecolor',[0 0 0]);
+end
+
+savePDFandFIG(fig,savedir,[],'FS_Summary_0_15')
+
+%% Color the Fru-Gal4
+base_clr = [1 1 1]*0.92;
+set(findobj(fig,'type','line','-not','marker','o'),'color',base_clr);
+
+ls = findobj(fig,'type','line','marker','o');
+for l = ls' 
+    set(l,'color',[1 1 1],'markerfacecolor',[1 1 1],'markeredgecolor',[1 1 1]);
+    uistack(l,'bottom');
+end
+
+
+genotypes = {'FruGal4/+';
+    '20XUAS-mCD8:GFP;VT27938-Gal4';
+    'VT30609';
+    'GH86-Gal4/GH86-Gal4;pJFRC7/pJFRC7;'
+    'pJFRC7;VT45599-Gal4'};
+
+clrs = [
+    0 0 1
+    1 0 0
+    0 1 0
+    0 1 0
+    0 1 0
+    ];
+
+
+for g = 1:length(genotypes)
+    geno = genotypes{g};
+    ls = findobj(fig,'color',base_clr,'type','line','-regexp','tag',geno);
+    if ~isempty(ls)
+        
+        set(ls,'color',clrs(g,:))
+        legend_lines(g) = ls(1);
+        savePDFandFIG(fig,savedir,[],['FS_' regexprep(geno,{'/','+',';','-',':'}, {'_','','','_',''})])
+        pause
+        set(findobj(fig,'type','line','-not','marker','o'),'color',base_clr);
+    end
+end
+
+
 
 %% examples
 close all
@@ -249,7 +305,6 @@ plot(x,reshape(U(:,2),[],3),'color',[1 0 0]);
 plot(x,reshape(U(:,3),[],3),'color',[0 1 0]);
 
 %% Third attempt - subtract the nan mean, use this weird algorithm
-% 
 
 Y = bsxfun(@minus,Y0,nanmean(Y0,1));
 
@@ -258,7 +313,6 @@ group = group0;
 [U,AX,latent,tsquared,explained,mu1] = pca(Y','algorithm','als');
 energyfrac = cumsum(explained)/sum(explained);
 disp(energyfrac(1:3))
-
 
 
 figure(6); clf, hold on
@@ -355,100 +409,5 @@ plot(x,reshape(U(:,2),[],3),'color',[1 0 0]);
 plot(x,reshape(U(:,3),[],3),'color',[0 1 0]);
 
 
-%%
-variances = diag(sigma).^2;
-energyfrac = cumsum(variances)/sum(variances);
-
-negligE = -2:.5:-1;
-negligE = -3:.5:-1;
-negligE = 10.^negligE;
-
-efracs = fliplr(1-negligE);
-%efracs = .99;
-
-
-
-for j = 1:length(efracs)
-    clear m
-    efrac = efracs(j);
-    fprintf('Using %g of Energy\n',efrac);
-    D = find(energyfrac<efrac,1,'last');
-    
-    proj = AX(1:D,:);
-    
-    % LDA
-    % Fisher criterion: J(w) = (m2proj-m1proj)^2/(S1^2 + S2^2) where
-    % S = <w'x - m>
-    % or J(w) = w'*Sb*w/w'*Sw*w
-    wtproj = proj(:,1:n(1));
-    ttmproj = proj(:,n(1)+1:end);
-    
-    m(:,1) = mean(wtproj,2);
-    m(:,2) = mean(ttmproj,2);
-    
-    % Sb is the between class scatter matrix
-    % multiply distance from m1 to m2 by itself;
-    Sb = (m(:,2) - m(:,1))*(m(:,2) - m(:,1))';
-    
-    [dim N] = size(proj);
-    
-    % Sw is the within class scatter matrix
-    Sw = zeros(dim);
-    for i = 1:N
-        if i <= n(1);
-            new = (proj(:,i)-m(:,1))*(proj(:,i)-m(:,1))';
-        else
-            new = (proj(:,i)-m(:,2))*(proj(:,i)-m(:,2))';
-        end
-        Sw = Sw + new;
-    end
-    
-    % solve generalized eigenvalue
-    % problem Sb*w = lambda*Sw*w
-    SwI = pinv(Sw);
-    S = SwI*Sb;
-    [Unew,sigmanew,Vnew] = svd(S,0);
-    w = Unew(:,1);
-    w2 = Unew(:,2);
-    
-    fprintf('Top two eigenvalues: %e, %e\n',sigmanew(1,1),sigmanew(2,2));
-    
-    % project the pca components onto w
-    % w now represents the linear combination of orthonormal vectors in U that
-    % puts the means of wt and ttm projections along w as far apart as
-    % possible.
-    
-    wtwproj  = w'*wtproj;
-    ttmwproj = w'*ttmproj;
-    wtyproj  = w2'*wtproj;
-    ttmyproj = w2'*ttmproj;
-    
-    % calculate a threshold along w
-    alphac = (mean(wtwproj)+mean(ttmwproj))/2;
-    
-    
-    % Estimate WT distr
-    
-    Pwt = fitdist(wtwproj','logistic');
-    [h,p,stats] = chi2gof(wtwproj,'cdf',Pwt);
-    [h,p,stats] = kstest(wtwproj,Pwt);
-    fprintf('WT distribution is different: %d, %.3f\n',h,p);
-    
-    
-    % Estimate TTM distr
-    
-    Pttm = fitdist(ttmwproj','normal');
-    [h,p,stats] = chi2gof(ttmwproj,'cdf',Pttm);
-    [h,p,k,c] = kstest(ttmwproj,Pttm);
-    fprintf('TTM distribution is different: %d, %.3f\n',h,p);
-    
-    % Calculate a bayes error?
-    BEfun = @(x) (Pwt.cdf(x)+(1-Pttm.cdf(x)))/2;
-    bthresh = fminsearch(BEfun,alphac);
-    be(j) = BEfun(bthresh);
-end
-
-
-%%
 
 

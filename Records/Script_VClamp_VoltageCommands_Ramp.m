@@ -3,7 +3,7 @@
 %     'VoltageRamp_m70_p20','VoltageRamp_m70_p20_1s',...
 %     'VoltageRamp_m60_p40', 'VoltageRamp_m60_p40_1s', 'VoltageRamp_m60_p40_h_1s',
 %     'VoltageRamp_m50_p12_h_0_5s};
-
+clear Voltage Current
 trial = load(ac.trials.VoltageCommand);
 h = getShowFuncInputsFromTrial(trial);
 
@@ -101,6 +101,18 @@ ylim(pnl(1,1).select(),ylims + [-.1 .1]*diff(ylims));
 %ylim(pnl(1,2).select(),[-100 10]);
 
 fns = fieldnames(Current);
+total_current = smooth(Current.(fns{1}),20);
+i = 0.001;
+f = trial.params.stimDurInSec-i;
+line(Voltage.(fns{1})(x>i&x<f),total_current(x>i&x<f),'color',[1 1 1]*.92,'displayname','total','tag','total','parent',pnl(2).select());
+
+SnL_names = dir([h.dir '\SealAndLeak_Raw_*']);
+SnLtrial = load(fullfile(h.dir,SnL_names(end).name));
+[Ri,Rs] = getInputAndAccessR(SnLtrial);
+
+expected_I = stimvec.voltage*1E-3/Ri; 
+line(Voltage.(fns{1})(x>i&x<f),expected_I(x>i&x<f)/1E-12,'color',[1 1 1]*.7,'displayname','theoretical','tag','theoretical','userdata',[Ri,Rs],'parent',pnl(2).select());
+
 for fn_ind = 2:length(fns)
     clr = clrs(fn_ind,:);
     sensitive_current = smooth(Current.(fns{fn_ind-1})-Current.(fns{fn_ind}),20);
@@ -122,6 +134,9 @@ for fn_ind = 2:length(fns)
     end
         
 end
+
+
+
 legend(pnl(2).select(),'toggle');
 l = findobj(fig,'Tag','legend');
 set(l,'location','NorthWest','interpreter','none','box','off');

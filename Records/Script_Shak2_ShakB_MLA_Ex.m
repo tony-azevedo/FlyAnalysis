@@ -1,41 +1,22 @@
 %% Script_Shak2_ShakB_MLA_Ex
 
-analysis_cells = {...
-'150601_F1_C8'
-'150602_F1_C3'
-'150603_F1_C2'
-'150723_F1_C2'
-'150723_F3_C1'
-'150725_F1_C1'
-'151010_F1_C1'
+analysis_grid = {
+'150601_F1_C8'  'Cd application.  fairly big responses. necessitates more recordings'                   'ShakB2/y;pJFRC7/Sp;45D07-Gal4/+';
+'150602_F1_C3'  'MLA 0.5 uM application.  fairly big responses. necessitates more recordings'           'ShakB2/y;pJFRC7/Sp;45D07-Gal4/+';
+'150603_F1_C2'  'MLA 0.5 uM application.  fairly big responses. necessitates more recordings'           'ShakB2/y;pJFRC7/Sp;45D07-Gal4/+';
+'150723_F1_C2'  'MLA 0.5 uM application.  fairly big responses. more trials, very nice examples'        'ShakB2/y;pJFRC7/Sp;45D07-Gal4/+';
+'150723_F3_C1'  'MLA 0.5 uM application.  fairly big responses. more Step responses, nice example'      'ShakB2/y;pJFRC7/Sp;45D07-Gal4/+';
+'150725_F1_C1'  'MLA 0.5 uM application.  big response at off. more Step responses, nice example'       'ShakB2/y;pJFRC7/Sp;45D07-Gal4/+';
+'151010_F1_C1'  'curare 50 uM application.  big response at on. more Step responses, nice example'      'ShakB2/y;pJFRC7/Sp;45D07-Gal4/+';
+'151015_F1_C1'  'curare 50 uM application.  big response at on. more Step responses, nice example'      'ShakB2/y;pJFRC7/Sp;45D07-Gal4/+';
 };
 
-analysis_cells_comment = {...   
-    'Cd application.  fairly big responses. necessitates more recordings'
-    'MLA 0.5 uM application.  fairly big responses. necessitates more recordings'
-    'MLA 0.5 uM application.  fairly big responses. necessitates more recordings'
-    'MLA 0.5 uM application.  fairly big responses. more trials, very nice examples'
-    'MLA 0.5 uM application.  fairly big responses. more Step responses, nice example'
-    'MLA 0.5 uM application.  big response at off. more Step responses, nice example'
-    'curare 50 uM application.  big response at on. more Step responses, nice example'
-};
-
-analysis_cells_genotype = {...
-'ShakB2/y;pJFRC7/Sp;45D07-Gal4/+';
-'ShakB2/y;pJFRC7/Sp;45D07-Gal4/+';
-'ShakB2/y;pJFRC7/Sp;45D07-Gal4/+';
-'ShakB2/y;pJFRC7/+;45D07-Gal4/+';
-'ShakB2/y;pJFRC7/+;45D07-Gal4/+';
-'ShakB2/y;pJFRC7/+;45D07-Gal4/+';
-'ShakB2/y;pJFRC7/+;45D07-Gal4/+';
-};
-
-
-clear analysis_cell
-for c = 1:length(analysis_cells)
-    analysis_cell(c).name = analysis_cells(c); 
-    analysis_cell(c).genotype = analysis_cells_genotype(c); %#ok<*SAGROW>
-    analysis_cell(c).comment = analysis_cells_comment(c);
+clear analysis_cell analysis_cells
+for c = 1:size(analysis_grid,1)
+    analysis_cell(c).name = analysis_grid{c,1}; 
+    analysis_cell(c).genotype = analysis_grid{c,2}; %#ok<*SAGROW>
+    analysis_cell(c).comment = analysis_grid{c,3};
+    analysis_cells{c} = analysis_grid{c,1}; 
 end
 
 
@@ -79,7 +60,7 @@ analysis_cell(cnt).PiezoStepTrial_VClamp_Drug = ...
 
 cnt = find(strcmp(analysis_cells,'150602_F1_C3'));
 analysis_cell(cnt).PiezoSineTrial_IClamp = ...
-'';
+'C:\Users\Anthony Azevedo\Raw_Data\150602\150602_F1_C3\PiezoSine_Raw_150602_F1_C3_4.mat';
 analysis_cell(cnt).PiezoSineTrial_VClamp = ...
 '';
 analysis_cell(cnt).PiezoChirpTrial_IClamp = ...
@@ -98,7 +79,7 @@ analysis_cell(cnt).PiezoStepTrial_IClamp = ...
 % --------------- MLA ------------------
 analysis_cell(cnt).Drug = 'MLA 0.5uM';
 analysis_cell(cnt).PiezoSineTrial_IClamp_Drug = ...
-'';
+'C:\Users\Anthony Azevedo\Raw_Data\150602\150602_F1_C3\PiezoSine_Raw_150602_F1_C3_78.mat';
 analysis_cell(cnt).PiezoSineTrial_VClamp_Drug = ...
 '';
 analysis_cell(cnt).PiezoStepTrial_IClamp_Drug = ...
@@ -232,7 +213,7 @@ analysis_cell(cnt).PiezoStepTrial_IClamp = ...
 % --------------- MLA ------------------
 analysis_cell(cnt).Drug = 'MLA 0.5uM';
 analysis_cell(cnt).PiezoSineTrial_IClamp_Drug = ...
-'';
+'C:\Users\Anthony Azevedo\Raw_Data\150725\150725_F1_C1\PiezoSine_Raw_150725_F1_C1_61.mat';
 analysis_cell(cnt).PiezoSineTrial_VClamp_Drug = ...
 '';
 
@@ -268,4 +249,34 @@ analysis_cell(cnt).PiezoSineTrial_VClamp_Drug = ...
 
 analysis_cell(cnt).PiezoStepTrial_IClamp_Drug = ...
 'C:\Users\Anthony Azevedo\Raw_Data\151010\151010_F1_C1\PiezoStep_Raw_151010_F1_C1_143.mat';
+
+%% 'ShakB2/y;pJFRC7/Sp;45D07-Gal4/+' 
+
+cnt = find(strcmp(analysis_cells,'151015_F1_C1'));
+analysis_cell(cnt).PiezoSineTrial_IClamp = ...
+'C:\Users\Anthony Azevedo\Raw_Data\151015\151015_F1_C1\PiezoSine_Raw_151015_F1_C1_3.mat';
+analysis_cell(cnt).PiezoSineTrial_VClamp = ...
+'';
+analysis_cell(cnt).PiezoChirpTrial_IClamp = ...
+'C:\Users\Anthony Azevedo\Raw_Data\151015\151015_F1_C1\PiezoChirp_Raw_151015_F1_C1_1.mat';
+analysis_cell(cnt).CurrentStepTrial = ...
+'';
+analysis_cell(cnt).VoltageStepTrial = ...
+'';
+analysis_cell(cnt).CurrentChirpTrial = ...
+'';
+analysis_cell(cnt).SweepTrial = ...
+'C:\Users\Anthony Azevedo\Raw_Data\151015\151015_F1_C1\Sweep_Raw_151015_F1_C1_6.mat';
+analysis_cell(cnt).PiezoStepTrial_IClamp = ...
+'C:\Users\Anthony Azevedo\Raw_Data\151015\151015_F1_C1\PiezoStep_Raw_151015_F1_C1_13.mat';
+
+% --------------- MLA ------------------
+analysis_cell(cnt).Drug = 'Curare 50 uM';
+analysis_cell(cnt).PiezoSineTrial_IClamp_Drug = ...
+'C:\Users\Anthony Azevedo\Raw_Data\151015\151015_F1_C1\PiezoSine_Raw_151015_F1_C1_122.mat';
+analysis_cell(cnt).PiezoSineTrial_VClamp_Drug = ...
+'';
+
+analysis_cell(cnt).PiezoStepTrial_IClamp_Drug = ...
+'C:\Users\Anthony Azevedo\Raw_Data\151015\151015_F1_C1\PiezoStep_Raw_151015_F1_C1_151.mat';
 

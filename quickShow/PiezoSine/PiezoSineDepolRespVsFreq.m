@@ -41,7 +41,7 @@ for ii = 1:length(dispexamples)
     end
 
     ax = p(1).select();
-    line(handles.trial.params.freqs',amp(:,ii),... abs(area(:,ii))
+    line(handles.trial.params.freqs', abs(area(:,ii)),... amp(:,ii),...
         'parent',ax,'color',[0 1/length(handles.trial.params.displacements) 0]*ii,...
         'tag',savetag);
     ylabel(ax,'Peak (mV)') % 'Area (mV s)'

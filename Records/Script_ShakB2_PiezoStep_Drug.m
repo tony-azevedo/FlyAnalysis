@@ -65,7 +65,7 @@ for cnt = 1:length(analysis_cell)
     xlim(ax,[-.1 .1])
     
     linkaxes([pnl(cnt,1).select(),pnl(cnt,2).select()],'y')
-    ylim(pnl(cnt,1).select(),[-41 -27])
+    ylim(pnl(cnt,1).select(),[-50 -25])
     ylim(ax,[3.5 6.5])
     
     ax = pnl(length(analysis_cell)+1,1).select();

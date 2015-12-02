@@ -29,6 +29,10 @@ switch analysis_cell(c_ind).name
         break_in = 56500;
     case '140602_F2_C1'
         break_in = 89205;
+    case '151123_F1_C2'
+        break_in = 267607; %find(t>5.3521,1)
+    case '151123_F2_C1'
+        break_in = 185067; %find(t>3.7013,1)
     otherwise
         break_in = find(abs(current-current_baseline_std) > threshold*current_baseline_std,1);
 end
