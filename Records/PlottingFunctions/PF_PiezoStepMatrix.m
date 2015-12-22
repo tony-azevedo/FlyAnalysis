@@ -1,4 +1,4 @@
-function newfig = PiezoStepMatrix(fig,handles,savetag)
+function newfig = PF_PiezoStepMatrix(fig,handles,savetag)
 % see also AverageLikeSines
 
 [~,dateID,flynum,cellnum] = extractRawIdentifiers(handles.trial.name);
@@ -30,7 +30,7 @@ if isfield(handles.trial.params, 'trialBlock')
     b = handles.trial.params.trialBlock;
 end
 newfig = layout_sub(f,...
-    sprintf('%s Block %d: {%s}', [handles.currentPrtcl '.' dateID '.' flynum '.' cellnum],b,sprintf('%s; ',tags{:})),...
+    sprintf('%s Block %d: {%s} - %s', [handles.currentPrtcl '.' dateID '.' flynum '.' cellnum],b,sprintf('%s; ',tags{:}),savetag),...
     'close');
 
 [protocol,dateID,flynum,cellnum,trialnum] = extractRawIdentifiers(handles.trial.name);

@@ -38,7 +38,7 @@ box(ax,'off');
 set(ax,'TickDir','out');
 ylabel(ax,y_units);
 [prot,d,fly,cell,trialnum] = extractRawIdentifiers(handles.trial.name);
-title(ax,sprintf('%s', [prot '.' d '.' fly '.' cell '.' trialnum]));
+%title(ax,sprintf('%s', [prot '.' d '.' fly '.' cell '.' trialnum]));
 set(ax,'tag','response_ax');
 
 ax = subplot(3,1,3,'parent',h); cla(ax,'reset')

@@ -37,7 +37,7 @@ hold(pnl(1).select(),'on')
 
 %% change the colors and average
 if ~isempty(strfind(savedir,'include'))
-    genotypes = {'10XUAS-mCD8:GFP/+;FruGal4/+';'20XUAS-mCD8:GFP;VT27938-Gal4';'pJFRC7;VT30609-Gal4'};
+    genotypes = {'10XUAS-mCD8:GFP;FruGal4';'20XUAS-mCD8:GFP;VT27938-Gal4';'20XUAS-mCD8:GFP;VT30609-Gal4'};
 end
 
 clrs = [
@@ -86,10 +86,35 @@ end
 % Stats:
 [H,P,CI] = ttest2(Fru_v_(:,1),VT27938_v_(:,1));
 
-
 %%
 figure(fig)
 eval(['export_fig ' 'VmCollection.pdf' ' -pdf -transparent']);
 
 set(fig,'paperpositionMode','auto');
 saveas(fig,'VmCollection','fig');
+
+%%
+barfig = figure;
+set(barfig,'color',[1 1 1],'position',[158   465   512   488],'name','VoltageStep_Collection');
+
+pnl = panel(barfig);
+pnl.margin = [20 20 10 10];
+pnl.pack('h',1);
+to_ax = pnl(1).select(); hold(to_ax,'on');
+v = [];
+g_ = [];
+for g = 1:length(geno_nicknames)
+
+    eval(['v_ = ' geno_nicknames{g} '_v_;']);
+    v = [v;v_(:,1)];
+    g_ = [g_;g*ones(size(v_,1),1)];
+end
+    boxplot(to_ax,v,g_);
+
+    %%
+figure(fig)
+eval(['export_fig ' 'VmCollectionBox.pdf' ' -pdf -transparent']);
+
+set(fig,'paperpositionMode','auto');
+saveas(fig,'VmCollectionBox','fig');
+

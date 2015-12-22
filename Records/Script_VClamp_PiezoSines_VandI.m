@@ -1,4 +1,9 @@
 
+% ac_ind = 15; %1:length(analysis_cells)
+% ac = analysis_cell(ac_ind);
+% disp(ac.name);
+
+%%
 close all
 yyddmm = ac.name(1:6);
 trial = load([fullfile('C:\Users\Anthony Azevedo\Raw_Data\',yyddmm,ac.name) '\PiezoSine_Raw_' ac.name '_1.mat']);  
@@ -35,19 +40,26 @@ for didx = 1:length(h.prtclData)
     end
 end
 
-if ~isdir(fullfile(savedir,'PiezoSine'))
-    mkdir(fullfile(savedir,'PiezoSine'))
-end
-
 % VClamp
 trial = load(VClampCtrlSineTrial);
 h = getShowFuncInputsFromTrial(trial);
 
-[fig, pnl_hs] = PF_PiezoSineMatrix([],h,ac.genotype);
-set(pnl_hs(:),'ylim',[-35 20])
+[fig, pnl_hs,stimpnl_hs] = PF_PiezoSineMatrix([],h,ac.genotype);
+if isempty(strfind(ac.genotype,'VT30609'))
+    set(pnl_hs(:),'ylim',[-40 30])
+else
+    set(pnl_hs(:),'ylim',[-20 10])
+end
+savePDFandFIG(fig,savedir,'VClampPiezoSineMatrices',[ac.name, '_VClamp']);
 
-savePDFandFIG(fig,savedir,'PiezoSine',[ac.name, '_VClamp']);
+set(pnl_hs(:),'xlim',[-.02 .08])
+set(stimpnl_hs(:),'xlim',[-.02 .08])
+savePDFandFIG(fig,savedir,'VClampPiezoSineOnset',[ac.name, '_VClamp']);
 
+[fig, pnl_hs] = PF_PiezoSineCycleMatrix([],h,ac.genotype);
+set(pnl_hs(:),'ylim',[-12 5])
+
+savePDFandFIG(fig,savedir,'VClampPiezoSineCycles',[ac.name, '_VClamp']);
 
 % fig2 = PF_PiezoSineOsciRespVsFreq([],h,ac.genotype);
 % 

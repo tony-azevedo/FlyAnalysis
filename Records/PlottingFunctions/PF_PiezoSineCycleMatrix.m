@@ -1,4 +1,4 @@
-function [fig,pnl_hs,stimpnl_hs] = PF_PiezoSineMatrix(averagefig,h,savetag)
+function [fig,pnl_hs] = PF_PiezoSineMatrix(averagefig,h,savetag)
 % see also AverageLikeSines
 
 [protocol,dateID,flynum,cellnum,trialnum] = extractRawIdentifiers(h.trial.name);
@@ -53,7 +53,7 @@ slims = [Inf, -Inf];
 for r = 1:size(trialnummatrix,1)
     for c = 1:size(trialnummatrix,2)
         h.trial = load(fullfile(h.dir,sprintf(h.trialStem,trialnummatrix(r,c))));
-        averagefig = PiezoSineAverage([],h,savetag);
+        averagefig = PiezoSineCycle([],h,savetag);
         
         ax_from = findobj(averagefig,'tag','response_ax');
 
@@ -82,9 +82,6 @@ for r = 1:size(trialnummatrix,1)
             
             copyobj(get(sax_from,'children'),p(2,r,c).select())
             set(p(2,r,c).select(),'TickDir','out','YColor',[1 1 1],'YTick',[],'XColor',[1 1 1],'XTick',[],'xlim',xlims_from,'ylim',slims_from);
-
-            stimpnl_hs(r,c) = p(2,r,c).select();
-
         end
         % drawnow;
         close(averagefig)

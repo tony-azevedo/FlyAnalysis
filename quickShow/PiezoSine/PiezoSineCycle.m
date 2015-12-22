@@ -1,4 +1,4 @@
-function h = PiezoSineComplex(h,handles,savetag,varargin)
+function h = PiezoSineCycle(h,handles,savetag,varargin)
 
 p = inputParser;
 p.PartialMatching = 0;
@@ -15,7 +15,7 @@ if isempty(p.Results.trials)
 end
 
 set(h,'tag',mfilename);
-ax = subplot(1,1,1,'parent',h);
+ax = subplot(3,1,[1 2],'parent',h);
 trial = load(fullfile(handles.dir,sprintf(handles.trialStem,trials(1))));
 x = makeTime(trial.params);
 
@@ -41,40 +41,47 @@ for t = 1:length(trials)
     trial = load(fullfile(handles.dir,sprintf(handles.trialStem,trials(t))));
     y(:,t) = trial.(y_name)(1:length(x));
 end
-
 y_ = mean(y,2);
+base = mean(y_(x>=-trial.params.preDurInSec+.08 &x<0));
 
 x_win = x>= trial.params.ramptime & x<trial.params.stimDurInSec-trial.params.ramptime;
 
-Yz = hilbert(y_-mean(y_(x>trial.params.preDurInSec+.06&x<6)));
-
 s = PiezoSineStim(trial.params)/trial.params.displacement;
+[cyclemat,ascd,peak,desc,vall] = findSineCycle(s(x_win),0,[]);
+r = min(diff(ascd));
+x_ = x(sum(x<trial.params.ramptime)+(ascd(1):ascd(1)+r-1)); 
+x_ = x_-x_(1);
+s_ = s(sum(x<trial.params.ramptime)+(ascd(1):ascd(1)+r-1));
+y = zeros(r,length(diff(ascd)));
+y_inwin = y_(x_win);
+for c = 1:length(diff(ascd))
+    y(:,c) = y_inwin(ascd(c):ascd(c)+r-1);
+end
 
-Sz = hilbert(s);
+plot(ax,x_,y,'color',[1, .7 .7],'tag',savetag); hold on
+y_ = mean(y,2);
+plot(ax,x_,y_,'color',[.7 0 0],'tag',savetag);
+plot(ax,x_,base*ones(size(x_)),'color',[.8 .8 .8],'tag',savetag);
 
-Zz = Yz./Sz;
-
-line(real(Yz(x_win)),imag(Yz(x_win)),'color',[1 .7 .7],'tag',savetag,'parent',ax);
-line(real(Sz(x_win)),imag(Sz(x_win)),'color',[.7 .7 1],'tag',savetag,'parent',ax);
-line(real(Zz(x_win)),imag(Zz(x_win)),'color',[.9 .9 .9],'tag',savetag,'parent',ax);
-
-[cyclemat,ascd] = findSineCycle(s(x_win),0,1);
-
-c_win = (cyclemat(1):cyclemat(2)) + sum(x< trial.params.ramptime);
-
-line(real(Yz(c_win)),imag(Yz(c_win)),'color',[1 0 0],'linewidth',2,'tag',savetag,'parent',ax);
-line(real(Sz(c_win)),imag(Sz(c_win)),'color',[0 0 1],'linewidth',2,'tag',savetag,'parent',ax);
-line(real(Zz(c_win)),imag(Zz(c_win)),'color',[0 0 0],'linewidth',2,'tag',savetag,'parent',ax);
-
-axis(ax,'square')
-text(0,0,...
+axis(ax,'tight')
+% xlim([-.1 trial.params.stimDurInSec+ min(.25,trial.params.postDurInSec)])
+text(0,mean(y_),...
     [num2str(trial.params.freq) ' Hz ' num2str(trial.params.displacement*3) ' \mum'],...
     'fontsize',7,'parent',ax,'tag',savetag,'verticalAlignment','bottom')
 
 [prot,d,fly,cell,trialnum] = extractRawIdentifiers(trial.name);
-title(ax,sprintf('%s - %.0f Hz %.2f \\mum', [prot '.' d '.' fly '.' cell '.' trialnum], trial.params.freq,trial.params.displacement*3));
+title(ax,sprintf('%s - %d Hz %.2f \\mum', [prot '.' d '.' fly '.' cell '.' trialnum], trial.params.freq,trial.params.displacement*3));
 box(ax,'off');
 set(ax,'TickDir','out');
-% ylabel(ax,y_units);
+ylabel(ax,y_units);
 set(ax,'tag','response_ax');
+
+ax = subplot(3,1,3,'parent',h);
+plot(ax,x_,s_,'color',[0 0 1],'tag',savetag); hold on;
+
+box(ax,'off');
+axis(ax,'tight');
+
+set(ax,'TickDir','out');
+set(ax,'tag','stimulus_ax');
 

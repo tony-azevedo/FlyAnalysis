@@ -1,14 +1,8 @@
 
 
-if sum(strcmp(analysis_cells,'151030_F1_C1'))
-    funchandle = @PiezoSineDepolRespVsFreq;
-else
-    funchandle = @PiezoSineOsciRespVsFreq;
-end
-
 %% Exporting PiezoSineMatrix info on cells 
 if save_log
-    for c_ind = 14;%1:length(analysis_cell)
+    for c_ind = 19:20 %1:length(analysis_cell)
         if ~isempty(analysis_cell(c_ind).PiezoSineTrial)
             close all
             trial = load(analysis_cell(c_ind).PiezoSineTrial);
@@ -16,12 +10,13 @@ if save_log
 
             f = PF_PiezoSineMatrix([],h,'');
             
-            % genotypedir = fullfile(savedir,analysis_cell(c_ind).genotype);
-            % if ~isdir(genotypedir), mkdir(genotypedir); end
             if isfield(h.trial.params,'trialBlock'); b = num2str(h.trial.params.trialBlock); else b = 'NaN';end
+            p = panel.recover(f);
+            p.title(regexprep([analysis_cell(c_ind).name ' Block ' b ': ' analysis_cell(c_ind).genotype],'_', '\\_'));
             fn = [analysis_cell(c_ind).name ...
-                b '_',...
+                '_' b '_',...
                 'PiezoSineMatrix'];
+            
             savePDFandFIG(f,savedir,'Matrices',fn)
         end
     end
@@ -29,9 +24,15 @@ end
 
 
 %% Exporting PiezoSineOsciRespVsFreq info on cells with X-functions
-close all
 if save_log
+    
+    if sum(strcmp(analysis_cells,'151030_F1_C1'))
+        funchandle = @PiezoSineDepolRespVsFreq;
+    else
+        funchandle = @PF_PiezoSineOsciRespVsFreq;
+    end
     close all
+    
     clear transfer freqs dsplcmnts f
     cnt = 0;
     for c_ind = 1:length(analysis_cell)
@@ -46,10 +47,8 @@ if save_log
             hasPiezoSineName{cnt} = analysis_cell(c_ind).name;
             genotype{cnt} = analysis_cell(c_ind).genotype;
             
-            [transfer{cnt},freqs{cnt},dsplcmnts{cnt}] = feval(funchandle,[],h,analysis_cell(c_ind).genotype);
+            [f,transfer{cnt},freqs{cnt},dsplcmnts{cnt}] = feval(funchandle,[],h,analysis_cell(c_ind).genotype);
             
-            f = findobj(0,'tag',func2str(funchandle));
-
             if isfield(h.trial.params,'trialBlock'), tb = num2str(h.trial.params.trialBlock);
             else tb = 'NaN';
             end
@@ -76,6 +75,11 @@ end
 
 
 %% Show all amplitudes 
+if sum(strcmp(analysis_cells,'151030_F1_C1'))
+    funchandle = @PiezoSineDepolRespVsFreq;
+else
+    funchandle = @PiezoSineOsciRespVsFreq;
+end
 close all
 s = load(fullfile(savedir,'transfer_functions_data'));
 hasPiezoSineName = s.name;
@@ -142,7 +146,7 @@ for d_ind = 1:length(all_dsplcmnts)
     %plot(all_freqs(~isnan(dspltranf(3,:))),nanmean(dspltranf(:,~isnan(dspltranf(3,:))),1),'color',[0 1/length(all_dsplcmnts) 0]*d_ind);
     plot(ax1,all_freqs,nanmean(dspltranf,1),...
         'marker','o','markerfacecolor',[0 1/length(all_dsplcmnts) 0]*d_ind,'markeredgecolor',[0 1/length(all_dsplcmnts) 0]*d_ind,...
-        'color',[0 1/length(all_dsplcmnts) 0]*d_ind);
+        'linestyle','none','color',[0 1/length(all_dsplcmnts) 0]*d_ind);
 
     set(ax1,'xscale','log');
     set(ax2,'xscale','log');
@@ -203,11 +207,11 @@ for d_ind = 1:length(all_dsplcmnts)
     set(pnl(2,d_ind).axis,'tag',['norm_' num2str(all_dsplcmnts(d_ind))]);
 end
 
+legend(
 savePDFandFIG(f,savedir,[],[id func2str(funchandle)])
 
-
-%% Group amplitudes to the nearby (0.1 -> 0.05, .2->.15 .4->.5)
-close all
+%%
+% Group amplitudes to the nearby (0.1 -> 0.05, .2->.15 .4->.5)
 s = load(fullfile(savedir,'transfer_functions_data'));
 hasPiezoSineName = s.name;
 transfer = s.transfer;

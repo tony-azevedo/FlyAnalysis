@@ -1,5 +1,5 @@
 function varargout = findSineCycle(s_,start,cycles)
-
+% s_ stimulus vector, in sample units; start - {0,1/2,1,3/2}; cycles - {n,[]}
 c_ = diff(s_);
 
 %s_ = s_ - (max(s_)+min(s_))/2;

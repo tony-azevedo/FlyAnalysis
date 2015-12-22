@@ -5,29 +5,111 @@ if ~isdir(savedir)
     mkdir(savedir)
 end
 
-%Record_FS_BandPassHiB1s
-%Record_FS_BandPassLowB1s
 %Record_FS_LowPassB1s
+%Record_FS_BandPassLowB1s
+%Record_FS_BandPassHiB1s
 %Record_FS_HighFreqDepolB1s
 
 % Script_FrequencySelectivity
 % Script_FS_f1_f2
 % Script_FS_CurrentChirpAndSteps % and others
+% Script_FS_Vm
 
-% Populations
+%% Vm 
+savedir = 'C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_FS';
+
+fig = figure;
+set(fig,'color',[1 1 1],'units','inches','position',[1 3 10 3.7],'name','Summary_Vm');
+pnl = panel(fig);
+pnl.margin = [20 18 6 12];
+pnl.pack(1);
+pnl.de.margin = [4 4 4 4];
+
+Vm = [];
+Vm_group = [];
+
+x = 1;
+uiopen('C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_FS\Vm\LP_Vm.fig',1)
+fig_low = gcf;
+ax_low = findobj(fig_low,'type','axes');
+l = copyobj(get(ax_low,'children'),pnl(1).select());  
+set(l,'xdata',x); 
+v_ = cell2mat(get(l,'ydata')); 
+Vm = [Vm;v_];
+Vm_group = [Vm_group;x*ones(size(v_,1),1)];
+line(x+[-.2 .2],[mean(v_) mean(v_)],'parent',pnl(1).select());
+text(x,-28,['N=' num2str(length(l))],'parent',pnl(1).select(),'horizontalalignment','center');
+
+x = 2;
+uiopen('C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_FS\Vm\BPL_Vm.fig',1)
+fig_bpl = gcf; 
+ax_bpl = findobj(fig_bpl,'type','axes');
+l = copyobj(get(ax_bpl,'children'),pnl(1).select());  
+set(l,'xdata',x); 
+v_ = cell2mat(get(l,'ydata')); 
+Vm = [Vm;v_];
+Vm_group = [Vm_group;x*ones(size(v_,1),1)];
+line(x+[-.2 .2],[mean(v_) mean(v_)],'parent',pnl(1).select());
+text(x,-28,['N=' num2str(length(l))],'parent',pnl(1).select(),'horizontalalignment','center');
+
+x = 3;
+uiopen('C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_FS\Vm\BPH_Vm.fig',1); 
+fig_bph = gcf; 
+ax_bph  = findobj(fig_bph,'type','axes');
+l = copyobj(get(ax_bph,'children'),pnl(1).select());  
+set(l,'xdata',x); 
+v_ = cell2mat(get(l,'ydata')); 
+Vm = [Vm;v_];
+Vm_group = [Vm_group;x*ones(size(v_,1),1)];
+line(x+[-.2 .2],[mean(v_) mean(v_)],'parent',pnl(1).select());
+text(x,-28,['N=' num2str(length(l))],'parent',pnl(1).select(),'horizontalalignment','center');
+
+x = 4;
+uiopen('C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_FS\Vm\HP_Vm.fig',1)
+fig_hi = gcf; 
+ax_hi = findobj(fig_hi,'type','axes');
+l = copyobj(get(ax_hi,'children'),pnl(1).select());  
+set(l,'xdata',x); 
+v_ = cell2mat(get(l,'ydata')); 
+Vm = [Vm;v_];
+Vm_group = [Vm_group;x*ones(size(v_,1),1)];
+line(x+[-.2 .2],[mean(v_) mean(v_)],'parent',pnl(1).select());
+text(x,-28,['N=' num2str(length(l))],'parent',pnl(1).select(),'horizontalalignment','center');
+
+
+set(pnl(1).select(),'xlim',[.5 4.5],'ylim',[-50 -25],'xtick',[1 2 3 4],'xticklabel',{'LP' 'BPL' 'BHP' 'HP-A2'})
+ylabel(pnl(1).select(),'V_m (mV)');
+savePDFandFIG(fig,savedir,[],'Summary_Vm')
+
+barfig = figure;
+set(barfig,'color',[1 1 1],'units','inches','position',[1 3 10 3.7],'name','Summary_Vm_Box');
+
+pnl = panel(barfig);
+pnl.margin = [20 20 10 10];
+pnl.pack('h',1);
+
+to_ax = pnl(1).select(); hold(to_ax,'on');
+boxplot(to_ax,Vm,Vm_group,'plotstyle','traditional','notch','on');
+savePDFandFIG(barfig,savedir,[],'Summary_Vm_Box')
+
+
+
+%% Populations
 close all
-%uiopen('C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_FS_LowPassB1s\LP_PiezoSineOsciRespVsFreq.fig',1)
-uiopen('C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_FS_LowPassB1s\LP_PiezoSineOsciRespVsFreq_Aggregate.fig',1)
+savedir = 'C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_FS';
+
+uiopen('C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_FS_LowPassB1s\LP_PiezoSineOsciRespVsFreq.fig',1)
+% uiopen('C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_FS_LowPassB1s\LP_PiezoSineOsciRespVsFreq_Aggregate.fig',1)
 fig_low = gcf;
 ax_low = findobj(fig_low,'type','axes','tag','mag_0.15');
 
-%uiopen('C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_FS_BandPassLowB1s\BPL_PiezoSineOsciRespVsFreq.fig',1)
-uiopen('C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_FS_BandPassLowB1s\BPL_PiezoSineOsciRespVsFreq_Aggregate.fig',1)
+uiopen('C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_FS_BandPassLowB1s\BPL_PiezoSineOsciRespVsFreq.fig',1)
+% uiopen('C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_FS_BandPassLowB1s\BPL_PiezoSineOsciRespVsFreq_Aggregate.fig',1)
 fig_bpl = gcf; 
 ax_bpl = findobj(fig_bpl,'type','axes','tag','mag_0.15');
 
-% uiopen('C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_FS_BandPassHighB1s\BPH_PiezoSineOsciRespVsFreq.fig',1)
-uiopen('C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_FS_BandPassHighB1s\BPH_PiezoSineOsciRespVsFreq_Aggregate.fig',1)
+uiopen('C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_FS_BandPassHighB1s\BPH_PiezoSineOsciRespVsFreq.fig',1)
+% uiopen('C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_FS_BandPassHighB1s\BPH_PiezoSineOsciRespVsFreq_Aggregate.fig',1)
 fig_bph = gcf; 
 ax_bph  = findobj(fig_bph,'type','axes','tag','mag_0.15');
 
@@ -78,7 +160,7 @@ end
 savePDFandFIG(fig,savedir,[],'FS_Summary_0_15')
 
 %% Color the Fru-Gal4
-base_clr = [1 1 1]*0.92;
+base_clr = [1 1 1]*0.9;
 set(findobj(fig,'type','line','-not','marker','o'),'color',base_clr);
 
 ls = findobj(fig,'type','line','marker','o');
@@ -88,11 +170,11 @@ for l = ls'
 end
 
 
-genotypes = {'FruGal4/+';
-    '20XUAS-mCD8:GFP;VT27938-Gal4';
-    'VT30609';
-    'GH86-Gal4/GH86-Gal4;pJFRC7/pJFRC7;'
-    'pJFRC7;VT45599-Gal4'};
+genotypes = {'FruGal4';
+    'VT27938-Gal4';
+    'VT30609-Gal4';
+    'GH86'
+    'VT45599'};
 
 clrs = [
     0 0 1

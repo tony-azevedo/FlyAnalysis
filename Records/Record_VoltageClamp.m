@@ -24,6 +24,8 @@ reject_grid = {  % can be used in controls
 '151108_F1_C1'  'UAS-Dcr;20XUAS-mCD8:GFP/+;VT27938-Gal4/UAS-paraRNAi'    'Antennal nerve intact, LP (lower capacitance), CsAsp TEA internal'
 % '151104_F1_C1'  'UAS-Dcr;20XUAS-mCD8:GFP/+;VT27938-Gal4/UAS-paraRNAi' 'Antennal nerve intact, LP (lower capacitance), CsAsp TEA internal'  % crapped out during the sines
 '151027_F2_C1'  'UAS-Dcr;10XUAS-mCD8:GFP/+;FruGal4/UAS-paraRNAi'    'Antennal nerve intact, BPH (dim cell body), CsAsp TEA internal' % bad access
+
+'151216_F1_C2'  'UAS-Dcr;20XUAS-mCD8:GFP/+;VT30609-Gal4/UAS-paraRNAi'   'A2, not a good recording'     
 }
 
 analysis_grid = {
@@ -41,6 +43,30 @@ analysis_grid = {
 '151108_F2_C1'  'UAS-Dcr;20XUAS-mCD8:GFP/+;VT27938-Gal4/UAS-paraRNAi'    'Antennal nerve intact, LP (lower capacitance), CsAsp TEA internal'
 '151109_F1_C1'  'UAS-Dcr;20XUAS-mCD8:GFP/+;VT27938-Gal4/UAS-paraRNAi'    'Antennal nerve intact, LP (lower capacitance), CsAsp TEA internal' % access drifts up
 '151109_F1_C2'  'UAS-Dcr;20XUAS-mCD8:GFP/+;VT27938-Gal4/UAS-paraRNAi'    'Antennal nerve intact, LP (lower capacitance), CsAsp TEA internal'
+
+'151212_F1_C1'  'UAS-Dcr;20XUAS-mCD8:GFP/+;VT30609-Gal4/UAS-paraRNAi'   'A2, decent input currents, crapped out on the piezosines'                      %'VClamp, -5 pA' 
+'151215_F3_C1'  'UAS-Dcr;20XUAS-mCD8:GFP/+;VT30609-Gal4/UAS-paraRNAi'   'A2, Gorgeous input currents for steps!'                                        %'VClamp, -5 pA' 
+'151216_F2_C3'  'UAS-Dcr;20XUAS-mCD8:GFP/+;VT30609-Gal4/UAS-paraRNAi'   'A2, small input currents for steps, control cells for this fly'                %'VClamp, IClamp' 
+'151216_F3_C2'  'UAS-Dcr;20XUAS-mCD8:GFP/+;VT30609-Gal4/UAS-paraRNAi'   'A2, small input currents for steps,control cells for this fly'       
+'151217_F1_C3'  'UAS-Dcr;20XUAS-mCD8:GFP/+;VT30609-Gal4/UAS-paraRNAi'   'A2, really small input currents for steps, control antenna was free'           %'VClamp, whole cell on and off' 
+'151217_F2_C1'  'UAS-Dcr;20XUAS-mCD8:GFP/+;VT30609-Gal4/UAS-paraRNAi'   'A2, assymetric step responses, sine responses oscillate'           %'VClamp, whole cell on and off' 
+}
+
+offtarget_grid = {
+'151214_F1_C1'  'UAS-Dcr;20XUAS-mCD8:GFP/+;VT30609-Gal4/UAS-paraRNAi'   '0 deg, band pass, not an A2, more band pass'       'VClamp'     
+'151214_F1_C2'  'UAS-Dcr;20XUAS-mCD8:GFP/+;VT30609-Gal4/UAS-paraRNAi'   '-180 deg, band pass, not an A2, more band pass'    'VClamp, IClamp' % this is a good cell for showing how band pass currents can become low pass
+'151214_F2_C1'  'UAS-Dcr;20XUAS-mCD8:GFP/+;VT30609-Gal4/UAS-paraRNAi'   '0 deg, band pass, not an A2, more band pass'       'VClamp, IClamp' 
+
+'151215_F2_C1'  'UAS-Dcr;20XUAS-mCD8:GFP/+;VT30609-Gal4/UAS-paraRNAi'   'Got an A2, but this one has spikes!'       'VClamp, IClamp' 
+
+'151216_F1_C1'  'UAS-Dcr;20XUAS-mCD8:GFP/+;VT30609-Gal4/UAS-paraRNAi'   '0 deg Low pass currents! interesting, with sustained inward'       'VClamp, IClamp' 
+'151216_F1_C3'  'UAS-Dcr;20XUAS-mCD8:GFP/+;VT30609-Gal4/UAS-paraRNAi'   '0 deg Band pass currents, with inward at high freq'       'VClamp, IClamp, stange Iclamp responses' 
+'151216_F2_C1'  'UAS-Dcr;20XUAS-mCD8:GFP/+;VT30609-Gal4/UAS-paraRNAi'   '-180 deg Band pass currents, sharp peak'       'VClamp' 
+'151216_F2_C2'  'UAS-Dcr;20XUAS-mCD8:GFP/+;VT30609-Gal4/UAS-paraRNAi'   '0 deg Band pass currents'       'VClamp' 
+'151216_F3_C1'  'UAS-Dcr;20XUAS-mCD8:GFP/+;VT30609-Gal4/UAS-paraRNAi'   '-180 deg Band pass currents, sharp peak'       'VClamp' 
+
+'151217_F1_C1'  'UAS-Dcr;20XUAS-mCD8:GFP/+;VT30609-Gal4/UAS-paraRNAi'   '0 deg, Very small currents, anteanna was stuck'       'VClamp' 
+'151217_F1_C2'  'UAS-Dcr;20XUAS-mCD8:GFP/+;VT30609-Gal4/UAS-paraRNAi'   '-180 deg Band pass currents, smooth peak, antenna free'       'VClamp' 
 }
 
 savedir = 'C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_VoltageClampInputCurrents';
@@ -67,12 +93,13 @@ end
 
 %%
 %for ac_ind = [6 11 4 3 2 1];
-for ac_ind = 1:length(analysis_cell)
+for ac_ind = 15; %1:length(analysis_cell)
     ac = analysis_cell(ac_ind);
     disp(ac.name);
     
-%     Script_VClamp_PiezoSines_VandI;
-%     Script_VClamp_VoltageCommands_Access; 
+     Script_VClamp_PiezoSines_VandI;
+     Script_VClamp_PiezoSteps_VandI;
+     Script_VClamp_VoltageCommands_Access; 
 
     % Vsteps
     % PiezoSteps

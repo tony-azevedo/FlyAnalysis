@@ -37,7 +37,7 @@ protocols = unique(protocols);
 
 dfns = protocols;
 for p = 1:length(protocols)
-    rawfiles = dir([D protocols{p} '*_Raw_*']);
+    rawfiles = dir([D protocols{p} '_Raw_*']);
     
     trial = load([D rawfiles(1).name]);
     if isfield(trial.params,'recmode');
@@ -70,6 +70,9 @@ for p = 1:length(protocols)
             end
             tempfn = fieldnames(data(f));
             for name = 1:length(tempfn)
+                if strcmp(tempfn{name},'freq1')
+                    keyboard
+                end
                 data(f).(tempfn{name}) = trial.params.(tempfn{name});
             end
         end

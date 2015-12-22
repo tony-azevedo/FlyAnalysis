@@ -108,7 +108,7 @@ if ~isempty(cnt)
 end
 
 
-%% 10XUAS-mCD8:GFP/+;FruGal4/+
+%% pJFRC7;VT27938-Gal4
 cnt = find(strcmp(analysis_cells,'151022_F2_C1'));
 
 if ~isempty(cnt)
@@ -177,6 +177,194 @@ if ~isempty(cnt)
     analysis_cell(cnt).drugs = {'' 'TTX' '4AP' 'TEA'};
 end
 
+%% pJFRC7;VT30609-Gal4
+cnt = find(strcmp(analysis_cells,'151203_F3_C3'));
+
+if ~isempty(cnt)
+    analysis_cell(cnt).trials.VoltageCommand = ...
+'C:\Users\Anthony Azevedo\Raw_Data\151203\151203_F3_C3\VoltageCommand_Raw_151203_F3_C3_2.mat';
+    analysis_cell(cnt).trials.Sweep = ...
+'C:\Users\Anthony Azevedo\Raw_Data\151203\151203_F3_C3\Sweep_Raw_151203_F3_C3_2.mat';
+    analysis_cell(cnt).drugs = {'' 'curare' 'TTX' '4AP TEA'};
+end
+
+%% pJFRC7;VT30609-Gal4
+cnt = find(strcmp(analysis_cells,'151203_F4_C1'));
+
+if ~isempty(cnt)
+    analysis_cell(cnt).trials.VoltageCommand = ...
+        'C:\Users\Anthony Azevedo\Raw_Data\151203\151203_F4_C1\VoltageCommand_Raw_151203_F4_C1_1.mat';
+    analysis_cell(cnt).trials.Sweep = ...
+'C:\Users\Anthony Azevedo\Raw_Data\151203\151203_F4_C1\Sweep_Raw_151203_F4_C1_4.mat';
+    analysis_cell(cnt).drugs = {'' 'curare' 'TTX' '4AP TEA'};
+end
+
+%% pJFRC7;VT30609-Gal4
+cnt = find(strcmp(analysis_cells,'151207_F1_C1'));
+
+if ~isempty(cnt)
+    analysis_cell(cnt).trials.VoltageCommand = ...
+'C:\Users\Anthony Azevedo\Raw_Data\151207\151207_F1_C1\VoltageCommand_Raw_151207_F1_C1_6.mat';
+    analysis_cell(cnt).trials.Sweep = ...
+'C:\Users\Anthony Azevedo\Raw_Data\151207\151207_F1_C1\Sweep_Raw_151207_F1_C1_2.mat';
+    analysis_cell(cnt).drugs = {'' 'curare' 'TTX' '4AP TEA'};
+end
+
+%% pJFRC7;VT30609-Gal4
+cnt = find(strcmp(analysis_cells,'151207_F2_C1'));
+
+if ~isempty(cnt)
+    analysis_cell(cnt).trials.VoltageCommand = ...
+'C:\Users\Anthony Azevedo\Raw_Data\151207\151207_F2_C1\VoltageCommand_Raw_151207_F2_C1_1.mat';
+    analysis_cell(cnt).trials.Sweep = ...
+'C:\Users\Anthony Azevedo\Raw_Data\151207\151207_F2_C1\Sweep_Raw_151207_F2_C1_2.mat';
+    analysis_cell(cnt).drugs = {'' 'curare' 'TTX' '4AP TEA' 'IBTX Cd'};
+end
+
+%% 10XUAS-mCD8:GFP/+;FruGal4/+
+cnt = find(strcmp(analysis_cells,'151210_F1_C1'));
+
+if ~isempty(cnt)
+    analysis_cell(cnt).trials.VoltageCommand = ...
+'C:\Users\Anthony Azevedo\Raw_Data\151210\151210_F1_C1\VoltageCommand_Raw_151210_F1_C1_1.mat';
+    analysis_cell(cnt).trials.Sweep = ...
+'C:\Users\Anthony Azevedo\Raw_Data\151210\151210_F1_C1\Sweep_Raw_151210_F1_C1_2.mat';
+
+    analysis_cell(cnt).drugs = {'' 'curare' 'TTX' '4AP' 'TEA' 'IBTX'};
+end
+
+%% 10XUAS-mCD8:GFP/+;FruGal4/+
+cnt = find(strcmp(analysis_cells,'151210_F2_C1'));
+
+if ~isempty(cnt)
+    analysis_cell(cnt).trials.VoltageCommand = ...
+'C:\Users\Anthony Azevedo\Raw_Data\151210\151210_F2_C1\VoltageCommand_Raw_151210_F2_C1_1.mat';
+    analysis_cell(cnt).trials.Sweep = ...
+'C:\Users\Anthony Azevedo\Raw_Data\151210\151210_F2_C1\Sweep_Raw_151210_F2_C1_2.mat';
+
+    analysis_cell(cnt).drugs = {'' 'curare' 'TTX' '4AP' 'TEA' 'IBTX'};
+end
+
+%% 10XUAS-mCD8:GFP/+;FruGal4/+
+cnt = find(strcmp(analysis_cells,'151210_F3_C1'));
+
+if ~isempty(cnt)
+    analysis_cell(cnt).trials.VoltageCommand = ...
+'C:\Users\Anthony Azevedo\Raw_Data\151210\151210_F3_C1\VoltageCommand_Raw_151210_F3_C1_1.mat';
+    analysis_cell(cnt).trials.Sweep = ...
+'C:\Users\Anthony Azevedo\Raw_Data\151210\151210_F3_C1\Sweep_Raw_151210_F3_C1_2.mat';
+
+    analysis_cell(cnt).drugs = {'' 'curare' 'TTX' 'IBTX' '4AP' 'TEA' };
+end
+
+%% %%%%%%% Sham Cells %%%%%%%%%%
+
+%% 10XUAS-mCD8:GFP/+;FruGal4/+
+cnt = find(strcmp(analysis_cells,'150923_F1_C1'));
+
+if ~isempty(cnt)
+    analysis_cell(cnt).trials.VoltageCommand = ...
+        'C:\Users\Anthony Azevedo\Raw_Data\150923\150923_F1_C1\VoltageCommand_Raw_150923_F1_C1_1.mat';
+    analysis_cell(cnt).stem = 'SineResponse_BPH_100Hz_0_5V_3X';
+    analysis_cell(cnt).drugs = {'' 'aBTX' '4AP' 'TEA' 'TTX' 'ZD' };
+end
+
+%% 10XUAS-mCD8:GFP/+;FruGal4/+
+cnt = find(strcmp(analysis_cells,'151005_F1_C1'));
+
+if ~isempty(cnt)
+    analysis_cell(cnt).trials.VoltageCommand = ...
+        'C:\Users\Anthony Azevedo\Raw_Data\151005\151005_F1_C1\VoltageCommand_Raw_151005_F1_C1_1.mat';
+    analysis_cell(cnt).stem = 'SineResponse_BPH_100Hz_0_5V_3X';
+    analysis_cell(cnt).drugs = {'' 'curare' '4AP' 'TEA' 'TTX' 'ZD'};
+end
+
+%% 10XUAS-mCD8:GFP/+;FruGal4/+
+cnt = find(strcmp(analysis_cells,'151005_F2_C1'));
+
+if ~isempty(cnt)
+    analysis_cell(cnt).trials.VoltageCommand = ...
+        'C:\Users\Anthony Azevedo\Raw_Data\151005\151005_F2_C1\VoltageCommand_Raw_151005_F2_C1_25.mat';
+    analysis_cell(cnt).stem = 'SineResponse_BPH_100Hz_0_5V_3X';
+    analysis_cell(cnt).drugs = {'' 'curare' '4AP' 'TEA' 'TTX' 'ZD'};
+end
+
+%% 10XUAS-mCD8:GFP/+;FruGal4/+
+cnt = find(strcmp(analysis_cells,'151006_F3_C1'));
+
+if ~isempty(cnt)
+    analysis_cell(cnt).trials.VoltageCommand = ...
+        'C:\Users\Anthony Azevedo\Raw_Data\151006\151006_F3_C1\VoltageCommand_Raw_151006_F3_C1_11.mat';
+    analysis_cell(cnt).stem = 'SineResponse_BPH_100Hz_0_5V_3X';
+    analysis_cell(cnt).drugs = {'' 'curare' '4AP' 'TEA' 'TTX' 'ZD'};
+end
+
+%% 10XUAS-mCD8:GFP/+;FruGal4/+
+cnt = find(strcmp(analysis_cells,'151006_F3_C2'));
+
+if ~isempty(cnt)
+    analysis_cell(cnt).trials.VoltageCommand = ...
+        'C:\Users\Anthony Azevedo\Raw_Data\151006\151006_F3_C2\VoltageCommand_Raw_151006_F3_C2_1.mat';
+    analysis_cell(cnt).stem = 'SineResponse_BPH_100Hz_0_5V_3X';
+    analysis_cell(cnt).drugs = {'' 'curare' '4AP' 'TEA' 'TTX' 'ZD'};
+end
+
+%% %%%%%%% csPara Cells %%%%%%%%%%
+
+%% 'UAS-Dcr;10XUAS-mCD8:GFP/+;FruGal4/UAS-paraRNAi'
+cnt = find(strcmp(analysis_cells,'151015_F3_C1'));
+
+if ~isempty(cnt)
+    analysis_cell(cnt).trials.VoltageCommand = ...
+        'C:\Users\Anthony Azevedo\Raw_Data\151015\151015_F3_C1\VoltageCommand_Raw_151015_F3_C1_1.mat';
+    analysis_cell(cnt).stem = 'SineResponse_BPH_100Hz_0_5V_3X';
+    analysis_cell(cnt).drugs = {'' 'curare' '4AP TEA' 'TTX' 'ZD'};
+end
+
+%% 'UAS-Dcr;10XUAS-mCD8:GFP/+;FruGal4/UAS-paraRNAi'
+cnt = find(strcmp(analysis_cells,'151027_F2_C1'));
+
+if ~isempty(cnt)
+    analysis_cell(cnt).trials.VoltageCommand = ...
+        'C:\Users\Anthony Azevedo\Raw_Data\151027\151027_F2_C1\VoltageCommand_Raw_151027_F2_C1_1.mat';
+    analysis_cell(cnt).drugs = {'' 'curare' 'TTX' '4AP TEA'};
+end
+
+%% 'UAS-Dcr;10XUAS-mCD8:GFP/+;FruGal4/UAS-paraRNAi'
+cnt = find(strcmp(analysis_cells,'151027_F3_C1'));
+
+if ~isempty(cnt)
+    analysis_cell(cnt).trials.VoltageCommand = ...
+        'C:\Users\Anthony Azevedo\Raw_Data\151027\151027_F3_C1\VoltageCommand_Raw_151027_F3_C1_1.mat';
+    analysis_cell(cnt).drugs = {'' 'curare' 'TTX' '4AP TEA'};
+end
+
+%% 'UAS-Dcr;10XUAS-mCD8:GFP/+;FruGal4/UAS-paraRNAi'
+cnt = find(strcmp(analysis_cells,'151028_F2_C1'));
+
+if ~isempty(cnt)
+    analysis_cell(cnt).trials.VoltageCommand = ...
+        'C:\Users\Anthony Azevedo\Raw_Data\151028\151028_F2_C1\VoltageCommand_Raw_151028_F2_C1_1.mat';
+    analysis_cell(cnt).drugs = {'' 'curare' 'TTX' '4AP TEA'};
+end
+
+%% 'UAS-Dcr;20XUAS-mCD8:GFP/+;VT27938-Gal4/UAS-paraRNAi'
+cnt = find(strcmp(analysis_cells,'151102_F1_C1'));
+
+if ~isempty(cnt)
+    analysis_cell(cnt).trials.VoltageCommand = ...
+        'C:\Users\Anthony Azevedo\Raw_Data\151102\151102_F1_C1\VoltageCommand_Raw_151102_F1_C1_1.mat';
+    analysis_cell(cnt).drugs = {'' 'curare' 'TTX' '4AP TEA'};
+end
+
+%% 'UAS-Dcr;20XUAS-mCD8:GFP/+;VT27938-Gal4/UAS-paraRNAi'
+cnt = find(strcmp(analysis_cells,'151102_F2_C1'));
+
+if ~isempty(cnt)
+    analysis_cell(cnt).trials.VoltageCommand = ...
+        'C:\Users\Anthony Azevedo\Raw_Data\151102\151102_F2_C1\VoltageCommand_Raw_151102_F2_C1_1.mat';
+    analysis_cell(cnt).drugs = {'' 'curare' 'TTX' '4AP TEA'};
+end
 
 %% %%%%%%% Other Cells %%%%%%%%%%
 
@@ -404,16 +592,6 @@ end
 
 
 %% 10XUAS-mCD8:GFP/+;FruGal4/+
-cnt = find(strcmp(analysis_cells,'150923_F1_C1'));
-
-if ~isempty(cnt)
-    analysis_cell(cnt).trials.VoltageCommand = ...
-        'C:\Users\Anthony Azevedo\Raw_Data\150923\150923_F1_C1\VoltageCommand_Raw_150923_F1_C1_1.mat';
-    analysis_cell(cnt).stem = 'SineResponse_BPH_100Hz_0_5V_3X';
-    analysis_cell(cnt).drugs = {'' 'aBTX' '4AP' 'TEA' 'TTX' 'ZD' };
-end
-
-%% 10XUAS-mCD8:GFP/+;FruGal4/+
 cnt = find(strcmp(analysis_cells,'150926_F1_C1'));
 
 if ~isempty(cnt)
@@ -445,45 +623,6 @@ if ~isempty(cnt)
     analysis_cell(cnt).drugs = {'' 'curare' '4AP' 'TEA' 'TTX' 'ZD'};
 end
 
-%% 10XUAS-mCD8:GFP/+;FruGal4/+
-cnt = find(strcmp(analysis_cells,'151005_F1_C1'));
-
-if ~isempty(cnt)
-    analysis_cell(cnt).trials.VoltageCommand = ...
-        'C:\Users\Anthony Azevedo\Raw_Data\151005\151005_F1_C1\VoltageCommand_Raw_151005_F1_C1_1.mat';
-    analysis_cell(cnt).stem = 'SineResponse_BPH_100Hz_0_5V_3X';
-    analysis_cell(cnt).drugs = {'' 'curare' '4AP' 'TEA' 'TTX' 'ZD'};
-end
-
-%% 10XUAS-mCD8:GFP/+;FruGal4/+
-cnt = find(strcmp(analysis_cells,'151005_F2_C1'));
-
-if ~isempty(cnt)
-    analysis_cell(cnt).trials.VoltageCommand = ...
-        'C:\Users\Anthony Azevedo\Raw_Data\151005\151005_F2_C1\VoltageCommand_Raw_151005_F2_C1_25.mat';
-    analysis_cell(cnt).stem = 'SineResponse_BPH_100Hz_0_5V_3X';
-    analysis_cell(cnt).drugs = {'' 'curare' '4AP' 'TEA' 'TTX' 'ZD'};
-end
-
-%% 10XUAS-mCD8:GFP/+;FruGal4/+
-cnt = find(strcmp(analysis_cells,'151006_F3_C1'));
-
-if ~isempty(cnt)
-    analysis_cell(cnt).trials.VoltageCommand = ...
-        'C:\Users\Anthony Azevedo\Raw_Data\151006\151006_F3_C1\VoltageCommand_Raw_151006_F3_C1_11.mat';
-    analysis_cell(cnt).stem = 'SineResponse_BPH_100Hz_0_5V_3X';
-    analysis_cell(cnt).drugs = {'' 'curare' '4AP' 'TEA' 'TTX' 'ZD'};
-end
-
-%% 10XUAS-mCD8:GFP/+;FruGal4/+
-cnt = find(strcmp(analysis_cells,'151006_F3_C2'));
-
-if ~isempty(cnt)
-    analysis_cell(cnt).trials.VoltageCommand = ...
-        'C:\Users\Anthony Azevedo\Raw_Data\151006\151006_F3_C2\VoltageCommand_Raw_151006_F3_C2_1.mat';
-    analysis_cell(cnt).stem = 'SineResponse_BPH_100Hz_0_5V_3X';
-    analysis_cell(cnt).drugs = {'' 'curare' '4AP' 'TEA' 'TTX' 'ZD'};
-end
 
 
 %% pJFRC7;VT27938-Gal4
@@ -492,17 +631,6 @@ cnt = find(strcmp(analysis_cells,'151007_F4_C1'));
 if ~isempty(cnt)
     analysis_cell(cnt).trials.VoltageCommand = ...
         'C:\Users\Anthony Azevedo\Raw_Data\151007\151007_F4_C1\VoltageCommand_Raw_151007_F4_C1_1.mat';
-    analysis_cell(cnt).stem = 'SineResponse_BPH_100Hz_0_5V_3X';
-    analysis_cell(cnt).drugs = {'' 'curare' '4AP TEA' 'TTX' 'ZD'};
-end
-
-
-%% 'UAS-Dcr;10XUAS-mCD8:GFP/+;FruGal4/UAS-paraRNAi'
-cnt = find(strcmp(analysis_cells,'151015_F3_C1'));
-
-if ~isempty(cnt)
-    analysis_cell(cnt).trials.VoltageCommand = ...
-        'C:\Users\Anthony Azevedo\Raw_Data\151015\151015_F3_C1\VoltageCommand_Raw_151015_F3_C1_1.mat';
     analysis_cell(cnt).stem = 'SineResponse_BPH_100Hz_0_5V_3X';
     analysis_cell(cnt).drugs = {'' 'curare' '4AP TEA' 'TTX' 'ZD'};
 end
@@ -527,33 +655,6 @@ if ~isempty(cnt)
     analysis_cell(cnt).drugs = {'' 'curare' 'TTX' '4AP TEA'};
 end
 
-%% 'UAS-Dcr;10XUAS-mCD8:GFP/+;FruGal4/UAS-paraRNAi'
-cnt = find(strcmp(analysis_cells,'151027_F2_C1'));
-
-if ~isempty(cnt)
-    analysis_cell(cnt).trials.VoltageCommand = ...
-        'C:\Users\Anthony Azevedo\Raw_Data\151027\151027_F2_C1\VoltageCommand_Raw_151027_F2_C1_1.mat';
-    analysis_cell(cnt).drugs = {'' 'curare' 'TTX' '4AP TEA'};
-end
-
-%% 'UAS-Dcr;10XUAS-mCD8:GFP/+;FruGal4/UAS-paraRNAi'
-cnt = find(strcmp(analysis_cells,'151027_F3_C1'));
-
-if ~isempty(cnt)
-    analysis_cell(cnt).trials.VoltageCommand = ...
-        'C:\Users\Anthony Azevedo\Raw_Data\151027\151027_F3_C1\VoltageCommand_Raw_151027_F3_C1_1.mat';
-    analysis_cell(cnt).drugs = {'' 'curare' 'TTX' '4AP TEA'};
-end
-
-%% 'UAS-Dcr;10XUAS-mCD8:GFP/+;FruGal4/UAS-paraRNAi'
-cnt = find(strcmp(analysis_cells,'151028_F2_C1'));
-
-if ~isempty(cnt)
-    analysis_cell(cnt).trials.VoltageCommand = ...
-        'C:\Users\Anthony Azevedo\Raw_Data\151028\151028_F2_C1\VoltageCommand_Raw_151028_F2_C1_1.mat';
-    analysis_cell(cnt).drugs = {'' 'curare' 'TTX' '4AP TEA'};
-end
-
 
 %% pJFRC7;VT30609-Gal4
 cnt = find(strcmp(analysis_cells,'151030_F1_C1'));
@@ -566,21 +667,5 @@ if ~isempty(cnt)
     analysis_cell(cnt).drugs = {'' 'curare' 'TTX' '4AP TEA'};
 end
 
-%% 'UAS-Dcr;20XUAS-mCD8:GFP/+;VT27938-Gal4/UAS-paraRNAi'
-cnt = find(strcmp(analysis_cells,'151102_F1_C1'));
 
-if ~isempty(cnt)
-    analysis_cell(cnt).trials.VoltageCommand = ...
-        'C:\Users\Anthony Azevedo\Raw_Data\151102\151102_F1_C1\VoltageCommand_Raw_151102_F1_C1_1.mat';
-    analysis_cell(cnt).drugs = {'' 'curare' 'TTX' '4AP TEA'};
-end
-
-%% 'UAS-Dcr;20XUAS-mCD8:GFP/+;VT27938-Gal4/UAS-paraRNAi'
-cnt = find(strcmp(analysis_cells,'151102_F2_C1'));
-
-if ~isempty(cnt)
-    analysis_cell(cnt).trials.VoltageCommand = ...
-        'C:\Users\Anthony Azevedo\Raw_Data\151102\151102_F2_C1\VoltageCommand_Raw_151102_F2_C1_1.mat';
-    analysis_cell(cnt).drugs = {'' 'curare' 'TTX' '4AP TEA'};
-end
 

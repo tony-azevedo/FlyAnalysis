@@ -93,7 +93,7 @@ delete(findobj(fig,'type','line','linestyle',':'));
 
 %% change the colors and average
 if ~isempty(strfind(savedir,'include'))
-    genotypes = {'10XUAS-mCD8:GFP/+;FruGal4/+';'20XUAS-mCD8:GFP;VT27938-Gal4';'pJFRC7;VT30609-Gal4'};
+    genotypes = {'10XUAS-mCD8:GFP;FruGal4';'20XUAS-mCD8:GFP;VT27938-Gal4';'20XUAS-mCD8:GFP;VT30609-Gal4'};
 end
 
 clrs = [

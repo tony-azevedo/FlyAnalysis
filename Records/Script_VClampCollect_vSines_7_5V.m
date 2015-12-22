@@ -277,8 +277,9 @@ set(findobj(fig,'color',[0 0 1],'type','line'),'color',base_clr);
 
 %% Highlight Fru vs VT cells
 
-genotype = '10XUAS-mCD8:GFP/+;FruGal4/+';
+genotype = '10XUAS-mCD8:GFP;FruGal4' 
 genotype = '20XUAS-mCD8:GFP;VT27938-Gal4';
+genotype = '20XUAS-mCD8:GFP;VT30609-Gal4';
 
 clr = [0 0 1];
 
@@ -296,7 +297,7 @@ if ~isempty(strfind(savedir,'sham'))
     genotypes = {'10XUAS-mCD8:GFP/+;FruGal4/+'};
 end
 if ~isempty(strfind(savedir,'include'))
-    genotypes = {'10XUAS-mCD8:GFP/+;FruGal4/+';'20XUAS-mCD8:GFP;VT27938-Gal4';'pJFRC7;VT30609-Gal4'};
+    genotypes = {'10XUAS-mCD8:GFP;FruGal4' '20XUAS-mCD8:GFP;VT27938-Gal4' '20XUAS-mCD8:GFP;VT30609-Gal4' };
 end
 if ~isempty(strfind(savedir,'cesiumPara'))
     genotypes = {'UAS-Dcr;10XUAS-mCD8:GFP/+;FruGal4/UAS-paraRNAi';'UAS-Dcr;20XUAS-mCD8:GFP/+;VT27938-Gal4/UAS-paraRNAi'};

@@ -106,6 +106,6 @@ if ip.Results.plot
     legend(ax,'boxoff')
 
     [protocol,dateID,flynum,cellnum,trialnum] = extractRawIdentifiers(handles.trial.name);
-    p.title(['PSne_RespVFreq_' dateID '_' flynum '_' cellnum])
+    p.title(regexprep(['PiezoSine ' dateID '_' flynum '_' cellnum ': ' savetag],'_','\\_'))
     set(fig,'name',['PSne_RespVFreq_' dateID '_' flynum '_' cellnum])
 end
