@@ -20,11 +20,7 @@ function varargout = quickShow(varargin)
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 
-<<<<<<< Updated upstream:quickShow/quickShow.m
 % Last Modified by GUIDE v2.5 01-Oct-2015 18:37:19
-=======
-% Last Modified by GUIDE v2.5 02-Jul-2014 15:34:02
->>>>>>> Stashed changes:quickShow.m
 
 %% Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -180,11 +176,7 @@ else
             protocols{end+1} = a(i).name(1:ind(1)-1);
         end
     end
-<<<<<<< Updated upstream:quickShow/quickShow.m
     handles = reload_notes([],'loadCellFromDir',handles);
-=======
-    a = dir([handles.dir filesep 'notes_*']);
->>>>>>> Stashed changes:quickShow.m
 
     set(handles.protocolMenu, 'String', protocols,'value',1);
     guidata(handles.protocolMenu,handles)
@@ -811,8 +803,6 @@ else
     set(handles.exclude,'enable','off')
 end
 guidata(hObject,handles)
-<<<<<<< Updated upstream:quickShow/quickShow.m
-
 
 
 % --- Executes on button press in image_button.
@@ -1106,5 +1096,3 @@ switch key
         fprintf('<-\n')
         leftButton_Callback(hObject, eventdata, handles)
 end
-=======
->>>>>>> Stashed changes:quickShow.m

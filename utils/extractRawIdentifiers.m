@@ -31,3 +31,4 @@ notesfile = fullfile(D,['notes_' d '_' fly '_' cell '.txt']);
 notesfile = regexprep(notesfile,'Acquisition','Raw_Data');
 
 varargout = {prot,d,fly,cell,trial,D,trialStem,dfile,notesfile};
+
