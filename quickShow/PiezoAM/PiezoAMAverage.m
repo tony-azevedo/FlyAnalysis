@@ -1,6 +1,5 @@
-function h = PiezoChirpAverage(h,handles,savetag)
+function h = PiezoAMAverage(h,handles,savetag)
 
-% see also AverageLikeSongs
 if isfield(handles,'infoPanel')
     notes = get(handles.infoPanel,'userdata');
 else
@@ -47,8 +46,8 @@ xlabel('Time (s)');
 [prot,d,fly,cell,trialnum] = extractRawIdentifiers(trial.name);
 title(ax,sprintf('%s : %d-%d Hz %.2f \\mum',...
     [prot '.' d '.' fly '.' cell '.' trialnum],...
-    trial.params.freqStart,...
-    trial.params.freqEnd,...
+    trial.params.freqCarrier,...
+    trial.params.freqEnvelope,...
     trial.params.displacement*3));
 
 box(ax,'off');
@@ -56,26 +55,7 @@ set(ax,'TickDir','out');
 ylabel(ax,y_units);
 set(ax,'tag','response_ax');
 
-ax = subplot(6,1,5,'parent',h);
-freqramp = (trial.params.freqEnd-trial.params.freqStart)/trial.params.stimDurInSec * x + trial.params.freqStart;
-freqramp(x<0 & x>=trial.params.stimDurInSec) = 0;
-
-plot(ax,x,freqramp,'color',[0 0 1],'tag',savetag); hold on;
-text(-.1,5.01,...
-    [num2str(trial.params.freqStart) '-' ...
-    num2str(trial.params.freqEnd) ' Hz ' ...
-    num2str(trial.params.displacement *3) ' \mum'],...
-    'fontsize',7,'parent',ax,'tag',savetag)
-
-box(ax,'off');
-set(ax,'TickDir','out');
-axis(ax,'tight');
-ylabel('Hz');
-
-xlim([-.1 trial.params.stimDurInSec+ min(.25,trial.params.postDurInSec)])
-set(ax,'tag','ramp_ax');
-
-ax = subplot(6,1,6,'parent',h);
+ax = subplot(3,1,3,'parent',h);
 plot(ax,x,trial.sgsmonitor(1:length(x)),'color',[0 0 1],'tag',savetag); hold on;
 
 box(ax,'off');

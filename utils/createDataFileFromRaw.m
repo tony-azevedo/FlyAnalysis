@@ -40,9 +40,12 @@ for p = 1:length(protocols)
     rawfiles = dir([D protocols{p} '_Raw_*']);
     
     trial = load([D rawfiles(1).name]);
+    n = trial.name;
+    trial = setRawFilePath(trial);
+
     if isfield(trial.params,'recmode');
         trial.params.mode = trial.params.recmode;
-        save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
+        save(trial.name, '-struct', 'trial');
     end
 
     data = trial.params;
@@ -58,9 +61,11 @@ for p = 1:length(protocols)
     trialnums = nan(size(rawfiles));
     for f = 1:length(rawfiles)
         trial = load([D rawfiles(f).name]);
+        trial = setRawFilePath(trial);
+
         if isfield(trial.params,'recmode');
             trial.params.mode = trial.params.recmode;
-            save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
+            save(trial.name, '-struct', 'trial');
         end
 
         try data(f) = trial.params;
@@ -88,11 +93,12 @@ for p = 1:length(protocols)
             % add an exposure time vector to the trial, and adjust images
             % and exposure vector to include only times associated 
             % with images
-            imdir = regexprep(regexprep(regexprep(trial.name,'Raw','Images'),'.mat',''),'Acquisition','Raw_Data');
+            imdir = regexprep(trial.name,{'_Raw_','.mat'},{'_Images_',''});
             fprintf('%s\n',imdir);
-            d = ls(fullfile(imdir,'*_Image_*'));
-            numImages = size(d,1);
 
+            d = dir(fullfile(imdir,'*_Image_*'));
+            numImages = length(d);
+            
             t = makeInTime(trial.params);
             
             if numImages>0 && ~sum(trial.exposure)
@@ -113,8 +119,8 @@ for p = 1:length(protocols)
                     end
                 end
             end
-            d = ls(fullfile(imdir,'*_Image_*'));
-            numImages = size(d,1);
+            d = dir(fullfile(imdir,'*_Image_*'));
+            numImages = length(d);
             if numImages > length(trial.exposure_time)
                 error('Problem moving files into %s',fullfile(imdir,'extras'));
             end

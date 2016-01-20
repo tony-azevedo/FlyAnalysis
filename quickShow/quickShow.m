@@ -30,7 +30,14 @@ gui_State = struct('gui_Name',       mfilename, ...
                    'gui_OutputFcn',  @quickShow_OutputFcn, ...
                    'gui_LayoutFcn',  [] , ...
                    'gui_Callback',   []);
-if nargin && ischar(varargin{1})
+
+if nargin
+    str2test = varargin{1};
+end
+               
+if nargin && ischar(varargin{1}) &&...
+        isempty(strfind(str2test,getpref('USERDIRECTORY','MAC'))) &&...
+        isempty(strfind(str2test,getpref('USERDIRECTORY','PC')))
     gui_State.gui_Callback = str2func(varargin{1});
 end
 
@@ -58,7 +65,7 @@ handles.dir = pwd;
 if nargin>3
     linkvariable = varargin{1};
     if ischar(linkvariable)
-        if ~isempty(strfind(linkvariable,'C:\Users\Anthony Azevedo\Acquisition'))
+        if ~isempty(strfind(linkvariable,'C:\Users\Anthony Azevedo\')) || ~isempty(strfind(linkvariable,'/Users/tony/'))
             dir = linkvariable;
         end
     elseif isstruct(linkvariable) && ...
@@ -123,7 +130,7 @@ else
     if ispc
     curdir = 'C:\Users\Anthony Azevedo\Raw_Data\';
     elseif ismac
-    curdir = '/Users/tony/HMS/Raw_Data/';
+    curdir = '/Users/tony/Raw_Data/';
     end        
 end
 handles.dir = uigetdir(curdir,'Choose cell folder');
@@ -190,6 +197,7 @@ handles.currentPrtcl = protocols{get(hObject,'value')};
 
 % give handles the information on the Trials involved
 rawfiles = dir(fullfile(handles.dir,[handles.currentPrtcl '_Raw*']));
+
 ind_ = regexp(rawfiles(1).name,'_');
 indDot = regexp(rawfiles(1).name,'\.');
 handles.trialStem = [rawfiles(1).name((1:length(rawfiles(1).name)) <= ind_(end)) '%d' rawfiles(1).name(1:length(rawfiles(1).name) >= indDot(1))];
@@ -201,7 +209,14 @@ dataFileExist = dir(handles.prtclDataFileName);
 if length(dataFileExist)
     d = load(handles.prtclDataFileName);
 end
-if ~length(dataFileExist) || length(d.data) ~= length(rawfiles)
+
+trial = load(fullfile(handles.dir,rawfiles(1).name));
+changeFileNames = isempty(strfind(trial.name,filesep)) || ~isfield(trial,'name_mac');
+% once all cells have been examined, next line can be commented out.
+% changeFileNames = true;
+
+% Creating the data file and testing what platform I'm on and what the name should be
+if ~length(dataFileExist) || length(d.data) ~= length(rawfiles) || changeFileNames
     createDataFileFromRaw(handles.prtclDataFileName);
     FlySoundDataStruct2csv(handles.prtclDataFileName);
     d = load(handles.prtclDataFileName);
@@ -279,10 +294,18 @@ if ~isfield(handles.trial,'excluded')
     save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
 end
 set(handles.exclude,'value',handles.trial.excluded);
+if ismac
+    if handles.trial.excluded
+        set(handles.exclude,'FontWeight','bold');
+    else
+        set(handles.exclude,'FontWeight','normal');
+    end
+end
 set(handles.allow_excluding,'value',0);
 set(handles.exclude,'enable','off');
 
-imdir = regexprep(handles.trial.name,{'Raw','.mat','Acquisition'},{'Images','','Raw_Data'});
+imdir = regexprep(handles.trial.name,{'_Raw_','.mat'},{'_Images_',''});
+
 if ~isdir(imdir) || length(dir(imdir))==2
     set(handles.image_button,'enable','off');
     set(handles.image_info,'String','');
@@ -971,7 +994,8 @@ handles.prtclData = d.data;
 guidata(hObject, handles);
 
 function handles = reload_notes(hObject, eventdata, handles)
-a = dir([handles.dir '\notes_*']);
+% a = dir([handles.dir '\notes_*']);
+a = dir(fullfile(handles.dir,'notes_*'));
 
 fclose('all');
 handles.notesfilename = fullfile(handles.dir,a.name);

@@ -12,9 +12,10 @@ while t <= length(blocktrials)
 end
 
 fig = figure;
-set(fig,'color',[1 1 1],'position',[680 165 1163 813])
+set(fig,'color',[1 1 1],'position',[680 165 1163 813],'name',[dateID '_' flynum '_' cellnum '_' mfilename])
 
 p = panel(fig);
+p.margin = [18 18 18 10];
 
 freqs = h.trial.params.freqs;
 fnum = length(freqs);
@@ -57,6 +58,8 @@ ylims = [Inf, -Inf];
 slims = [Inf, -Inf];
 for r = 1:size(trialnummatrix,1)
     for c = 1:size(trialnummatrix,2)
+        drawnow;
+
         h.trial = load(fullfile(h.dir,sprintf(h.trialStem,trialnummatrix(r,c))));
         averagefig = PiezoSineAverage([],h,savetag);
         
@@ -92,25 +95,30 @@ for r = 1:size(trialnummatrix,1)
             copyobj(get(sax_from,'children'),p(2,r,c).select())
             set(p(2,r,c).select(),'TickDir','out','YColor',[1 1 1],'YTick',[],'XColor',[1 1 1],'XTick',[],'xlim',xlims_from,'ylim',slims_from);
         end
-        % drawnow;
         close(averagefig)
     end
 end
+tic
 set(pnl_hs(:),'ylim',ylims)
 set(pnl_hs(:,1),'ytickmode','auto','ycolor',[0 0 0])
 p(1).ylabel(['Response (' ylabe ')']);
 p(1).de.fontsize = 8;
+toc
 
+tic
 set(p(2).de.axis,'ylim',slims,'xtickmode','auto','xcolor',[0 0 0])
 set(p(2,1,1).select(),'ytickmode','auto','ycolor',[0 0 0])
 p(2).ylabel('Stimulus (V)')
 p(2).xlabel('Time (s)')
 p(2).de.fontsize = 8;
+toc
 
+tic
 set(pnl2_hs(:),'ylim',slims)
 set(pnl2_hs(:,1),'ytickmode','auto','ycolor',[0 0 0])
 p2.ylabel(['Stimulus (V)']);
 p2.de.fontsize = 8;
+toc
 
 tags = getTrialTags(blocktrials,h.prtclData);
 b = nan;
@@ -120,53 +128,4 @@ end
 
 name = sprintf('%s Block %d: {%s}', [h.currentPrtcl '.' dateID '.' flynum '.' cellnum],b,sprintf('%s; ',tags{:}));
 p.title(name);
-
-%figure(fig);
-
-% 
-% 
-% p(1).pack(dim(1),dim(2))
-% p(1).de.margin = 2;
-% 
-% ylims = [Inf, -Inf];
-% for y = 1:dim(1)
-%     for x = 1:dim(2)
-%         p(1,y,x).select();
-%         ax_to = gca;
-%         ax_from = findobj(f(y,x),'tag','stimulus_ax');
-%         xlims = get(ax_from,'xlim');
-%         ylims_from = get(ax_from,'ylim');
-%         ylims = [min(ylims(1),ylims_from(1)),...
-%             max(ylims(2),ylims_from(2))];
-%         
-%         copyobj(get(ax_from,'children'),ax_to)
-%         if x>1
-%             set(ax_to,'TickDir','out','YColor',[1 1 1],'YTick',[],'YTickLabel','');
-%         end
-%     end
-% end
-% set(p(1).de.axis,'xlim',xlims,'ylim',ylims)
-% set(p(1).de.axis,'xtick',[])
-% set(p(1).de.axis,'xcolor',[1 1 1])
-% p(1).ylabel('Stimulus (V)')
-% p(1).de.fontsize = 8;
-% 
-% p.title([regexprep(name,'_',' ') ' Stimuli']);
-% 
-% if nargin>2 && strcmp(varargin{1},'close')
-%     delete(f(:))
-% end
-% 
-% varargout{1} = h;
-% %varargout{2} = p;
-
-% % if we set the properties on the root panel, they affect
-% % all its children and grandchildren.
-% p.fontname = 'Courier New';
-% p.fontsize = 10;
-% p.fontweight = 'normal'; % this is the default, anyway
-% 
-% % however, any child can override them, and the changes
-% % affect just that child (and its descendants).
-% p(2,2).fontsize = 14;
 

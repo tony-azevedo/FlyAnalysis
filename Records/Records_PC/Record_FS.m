@@ -1,6 +1,6 @@
 %% Record_FS - take from the different types and agreggate here
 close all
-savedir = '/Users/tony/Dropbox/RAnalysis_Data/Record_FS';
+savedir = 'C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_FS';
 if ~isdir(savedir)
     mkdir(savedir)
 end
@@ -16,7 +16,7 @@ end
 % Script_FS_Vm
 
 %% Vm 
-savedir = '/Users/tony/Dropbox/RAnalysis_Data/Record_FS';
+savedir = 'C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_FS';
 
 fig = figure;
 set(fig,'color',[1 1 1],'units','inches','position',[1 3 10 3.7],'name','Summary_Vm');
@@ -29,7 +29,7 @@ Vm = [];
 Vm_group = [];
 
 x = 1;
-uiopen('/Users/tony/Dropbox/RAnalysis_Data/Record_FS/Vm/LP_Vm.fig',1)
+uiopen('C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_FS\Vm\LP_Vm.fig',1)
 fig_low = gcf;
 ax_low = findobj(fig_low,'type','axes');
 l = copyobj(get(ax_low,'children'),pnl(1).select());  
@@ -41,7 +41,7 @@ line(x+[-.2 .2],[mean(v_) mean(v_)],'parent',pnl(1).select());
 text(x,-28,['N=' num2str(length(l))],'parent',pnl(1).select(),'horizontalalignment','center');
 
 x = 2;
-uiopen('/Users/tony/Dropbox/RAnalysis_Data/Record_FS/Vm/BPL_Vm.fig',1)
+uiopen('C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_FS\Vm\BPL_Vm.fig',1)
 fig_bpl = gcf; 
 ax_bpl = findobj(fig_bpl,'type','axes');
 l = copyobj(get(ax_bpl,'children'),pnl(1).select());  
@@ -53,7 +53,7 @@ line(x+[-.2 .2],[mean(v_) mean(v_)],'parent',pnl(1).select());
 text(x,-28,['N=' num2str(length(l))],'parent',pnl(1).select(),'horizontalalignment','center');
 
 x = 3;
-uiopen('/Users/tony/Dropbox/RAnalysis_Data/Record_FS/Vm/BPH_Vm.fig',1); 
+uiopen('C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_FS\Vm\BPH_Vm.fig',1); 
 fig_bph = gcf; 
 ax_bph  = findobj(fig_bph,'type','axes');
 l = copyobj(get(ax_bph,'children'),pnl(1).select());  
@@ -65,7 +65,7 @@ line(x+[-.2 .2],[mean(v_) mean(v_)],'parent',pnl(1).select());
 text(x,-28,['N=' num2str(length(l))],'parent',pnl(1).select(),'horizontalalignment','center');
 
 x = 4;
-uiopen('/Users/tony/Dropbox/RAnalysis_Data/Record_FS/Vm/HP_Vm.fig',1)
+uiopen('C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_FS\Vm\HP_Vm.fig',1)
 fig_hi = gcf; 
 ax_hi = findobj(fig_hi,'type','axes');
 l = copyobj(get(ax_hi,'children'),pnl(1).select());  
@@ -96,25 +96,25 @@ savePDFandFIG(barfig,savedir,[],'Summary_Vm_Box')
 
 %% Populations
 close all
-savedir = '/Users/tony/Dropbox/RAnalysis_Data/Record_FS';
+savedir = 'C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_FS';
 
-uiopen('/Users/tony/Dropbox/RAnalysis_Data/Record_FS_LowPassB1s/LP_PiezoSineOsciRespVsFreq.fig',1)
-% uiopen('/Users/tony/Dropbox/RAnalysis_Data/Record_FS_LowPassB1s/LP_PiezoSineOsciRespVsFreq_Aggregate.fig',1)
+uiopen('C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_FS_LowPassB1s\LP_PiezoSineOsciRespVsFreq.fig',1)
+% uiopen('C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_FS_LowPassB1s\LP_PiezoSineOsciRespVsFreq_Aggregate.fig',1)
 fig_low = gcf;
 ax_low = findobj(fig_low,'type','axes','tag','mag_0.15');
 
-uiopen('/Users/tony/Dropbox/RAnalysis_Data/Record_FS_BandPassLowB1s/BPL_PiezoSineOsciRespVsFreq.fig',1)
-% uiopen('/Users/tony/Dropbox/RAnalysis_Data/Record_FS_BandPassLowB1s/BPL_PiezoSineOsciRespVsFreq_Aggregate.fig',1)
+uiopen('C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_FS_BandPassLowB1s\BPL_PiezoSineOsciRespVsFreq.fig',1)
+% uiopen('C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_FS_BandPassLowB1s\BPL_PiezoSineOsciRespVsFreq_Aggregate.fig',1)
 fig_bpl = gcf; 
 ax_bpl = findobj(fig_bpl,'type','axes','tag','mag_0.15');
 
-uiopen('/Users/tony/Dropbox/RAnalysis_Data/Record_FS_BandPassHighB1s/BPH_PiezoSineOsciRespVsFreq.fig',1)
-% uiopen('/Users/tony/Dropbox/RAnalysis_Data/Record_FS_BandPassHighB1s/BPH_PiezoSineOsciRespVsFreq_Aggregate.fig',1)
+uiopen('C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_FS_BandPassHighB1s\BPH_PiezoSineOsciRespVsFreq.fig',1)
+% uiopen('C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_FS_BandPassHighB1s\BPH_PiezoSineOsciRespVsFreq_Aggregate.fig',1)
 fig_bph = gcf; 
 ax_bph  = findobj(fig_bph,'type','axes','tag','mag_0.15');
 
-% uiopen('/Users/tony/Dropbox/RAnalysis_Data/Record_FS_HighPassB1s/HP_PiezoSineDepolRespVsFreq.fig',1)
-uiopen('/Users/tony/Dropbox/RAnalysis_Data/Record_FS_HighPassB1s/HP_PiezoSineDepolRespVsFreq_Aggregate.fig',1)
+% uiopen('C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_FS_HighPassB1s\HP_PiezoSineDepolRespVsFreq.fig',1)
+uiopen('C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_FS_HighPassB1s\HP_PiezoSineDepolRespVsFreq_Aggregate.fig',1)
 fig_hi = gcf; 
 ax_hi = findobj(fig_hi,'type','axes','tag','mag_0.15');
 
@@ -149,7 +149,7 @@ ylabel(pnl(1).select(),'Magnitude (mV)');
 
 fn = fullfile(savedir, 'Summary_FrequencySelectivity.pdf');
 figure(fig)
-eval(['export_fig ' regexprep(fn,'/sAzevedo',''' Azevedo''') ' -pdf -transparent']);
+eval(['export_fig ' regexprep(fn,'\sAzevedo',''' Azevedo''') ' -pdf -transparent']);
 
 ls = findobj(fig,'type','line','marker','o');
 for l = ls'
@@ -204,8 +204,8 @@ end
 close all
 
 trials = {
-'/Users/tonyRaw_Data/150513/150513_F2_C1/PiezoSine_Raw_150513_F2_C1_1.mat';
-'/Users/tonyRaw_Data/131211/131211_F1_C2/PiezoSine_Raw_131211_F1_C2_56.mat';    
+'C:\Users\Anthony Azevedo\Raw_Data\150513\150513_F2_C1\PiezoSine_Raw_150513_F2_C1_1.mat';
+'C:\Users\Anthony Azevedo\Raw_Data\131211\131211_F1_C2\PiezoSine_Raw_131211_F1_C2_56.mat';    
 }
 
 fig = figure;
@@ -244,16 +244,16 @@ end
 
 %% PCA on Freq_Selectivity 
 close all
-uiopen('/Users/tony/Dropbox/RAnalysis_Data/Record_FS_LowPassB1s/LP__PiezoSineOsciRespVsFreq.fig',1)
+uiopen('C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_FS_LowPassB1s\LP__PiezoSineOsciRespVsFreq.fig',1)
 fig_low = gcf; chi_low = get(gcf,'children');
 
-uiopen('/Users/tony/Dropbox/RAnalysis_Data/Record_FS_BandPassLowB1s/BPL__PiezoSineOsciRespVsFreq.fig',1)
+uiopen('C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_FS_BandPassLowB1s\BPL__PiezoSineOsciRespVsFreq.fig',1)
 fig_bpl = gcf; chi_bpl = get(gcf,'children');
 
-uiopen('/Users/tony/Dropbox/RAnalysis_Data/Record_FS_BandPassHighB1s/BPH__PiezoSineOsciRespVsFreq.fig',1)
+uiopen('C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_FS_BandPassHighB1s\BPH__PiezoSineOsciRespVsFreq.fig',1)
 fig_bph = gcf; chi_bph = get(gcf,'children');
 
-% uiopen('/Users/tony/Dropbox/RAnalysis_Data/Record_FS_HighPassB1s/HP_PiezoSineDepolRespVsFreq.fig',1)
+% uiopen('C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_FS_HighPassB1s\HP_PiezoSineDepolRespVsFreq.fig',1)
 % fig_hi = gcf; chi_hi = get(gcf,'children');
 
 H0_categories = {'chi_low', 'chi_bpl', 'chi_bph'};%, 'chi_hi'};

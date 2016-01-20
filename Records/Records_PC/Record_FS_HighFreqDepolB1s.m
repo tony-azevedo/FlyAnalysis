@@ -1,6 +1,6 @@
 %% Record of High Frequency Responsive B1 cells
 clear all
-savedir = '/Users/tony/Dropbox/RAnalysis_Data/Record_FS_HighPassB1s';
+savedir = 'C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_FS_HighPassB1s';
 if ~isdir(savedir)
     mkdir(savedir)
 end
@@ -19,7 +19,7 @@ analysis_grid = {
 '151121_F1_C1'      '20XUAS-mCD8:GFP;VT30609-Gal4'               'Nice cell'
 '151201_F2_C1'      '20XUAS-mCD8:GFP;VT30609-Gal4'               'Nice cell'
 
-%no piezo sine, VClamp, but useful for Vm measurement
+%no piezo sine, VClamp
 '151203_F3_C3'      '20XUAS-mCD8:GFP;VT30609-Gal4'              'No piezo sine, only steps to confirm'
 '151203_F4_C1'      '20XUAS-mCD8:GFP;VT30609-Gal4'               'No piezo sine, only steps to confirm'
 '151207_F1_C1'      '20XUAS-mCD8:GFP;VT30609-Gal4'        'Nice recording, cell in the nerve, quick dissection'
@@ -34,19 +34,6 @@ for c = 1:size(analysis_grid,1)
     analysis_cell(c).comment = analysis_grid{c,3};
     analysis_cells{c} = analysis_grid{c,1}; 
 end
-
-%% Example cell 
-example_cell.name = '151121_F1_C1';
-example_cell.PiezoSineTrial = ...
-'/Users/tony/Raw_Data/151121/151121_F1_C1/PiezoSine_Raw_151121_F1_C1_3.mat';
-example_cell.CurrentStepTrial = ...
-'/Users/tony/Raw_Data/151121/151121_F1_C1/CurrentStep_Raw_151121_F1_C1_1.mat';
-example_cell.CurrentChirpTrial = ...
-'';
-example_cell.SweepTrial = ...
-'/Users/tony/Raw_Data/151121/151121_F1_C1/Sweep_Raw_151121_F1_C1_2.mat';
-
-
 
 %% 'UAS-ArcLight; VT30609-Gal4
 cnt = find(strcmp(analysis_cells,'131211_F1_C2'));
@@ -118,39 +105,39 @@ end
 cnt = find(strcmp(analysis_cells,'151119_F3_C1'));
 if ~isempty(cnt)
 analysis_cell(cnt).PiezoSineTrial = ...
-'/Users/tony/Raw_Data/151119/151119_F3_C1/PiezoSine_Raw_151119_F3_C1_213.mat';
+'C:\Users\Anthony Azevedo\Raw_Data\151119\151119_F3_C1\PiezoSine_Raw_151119_F3_C1_213.mat';
 analysis_cell(cnt).CurrentStepTrial = ...
 '';
 analysis_cell(cnt).CurrentChirpTrial = ...
 '';
 analysis_cell(cnt).SweepTrial = ...
-'/Users/tony/Raw_Data/151119/151119_F3_C1/PiezoLongCourtshipSong_Raw_151119_F3_C1_1.mat';
+'C:\Users\Anthony Azevedo\Raw_Data\131211\131211_F1_C2\CurrentPlateau_Raw_131211_F1_C2_3.mat';
 end
 
 %% '20XUAS-mCD8:GFP;VT30609-Gal4'
 cnt = find(strcmp(analysis_cells,'151121_F1_C1'));
 if ~isempty(cnt)
 analysis_cell(cnt).PiezoSineTrial = ...
-'/Users/tony/Raw_Data/151121/151121_F1_C1/PiezoSine_Raw_151121_F1_C1_1.mat';
+'C:\Users\Anthony Azevedo\Raw_Data\151121\151121_F1_C1\PiezoSine_Raw_151121_F1_C1_1.mat';
 analysis_cell(cnt).CurrentStepTrial = ...
-'/Users/tony/Raw_Data/151121/151121_F1_C1/CurrentStep_Raw_151121_F1_C1_1.mat';
+'C:\Users\Anthony Azevedo\Raw_Data\151121\151121_F1_C1\CurrentStep_Raw_151121_F1_C1_4.mat';
 analysis_cell(cnt).CurrentChirpTrial = ...
 '';
 analysis_cell(cnt).SweepTrial = ...
-'/Users/tony/Raw_Data/151121/151121_F1_C1/Sweep_Raw_151121_F1_C1_2.mat';
+'C:\Users\Anthony Azevedo\Raw_Data\151121\151121_F1_C1\Sweep_Raw_151121_F1_C1_4.mat';
 end
 
 %% '20XUAS-mCD8:GFP;VT30609-Gal4'
 cnt = find(strcmp(analysis_cells,'151201_F2_C1'));
 if ~isempty(cnt)
 analysis_cell(cnt).PiezoSineTrial = ...
-'/Users/tony/Raw_Data/151201/151201_F2_C1/PiezoSine_Raw_151201_F2_C1_1.mat';
+'C:\Users\Anthony Azevedo\Raw_Data\151201\151201_F2_C1\PiezoSine_Raw_151201_F2_C1_2.mat';
 analysis_cell(cnt).CurrentStepTrial = ...
-'/Users/tony/Raw_Data/151201/151201_F2_C1/CurrentStep_Raw_151201_F2_C1_1.mat';
+'C:\Users\Anthony Azevedo\Raw_Data\151201\151201_F2_C1\CurrentStep_Raw_151201_F2_C1_1.mat';
 analysis_cell(cnt).CurrentChirpTrial = ...
 '';
 analysis_cell(cnt).SweepTrial = ...
-'/Users/tony/Raw_Data/151201/151201_F2_C1/Sweep_Raw_151201_F2_C1_3.mat';
+'C:\Users\Anthony Azevedo\Raw_Data\151201\151201_F2_C1\Sweep_Raw_151201_F2_C1_4.mat';
 end
 
 %% pJFRC7;VT30609-Gal4
@@ -158,7 +145,7 @@ cnt = find(strcmp(analysis_cells,'151203_F3_C3'));
 
 if ~isempty(cnt)
     analysis_cell(cnt).SweepTrial = ...
-        '/Users/tony/Raw_Data/151203/151203_F3_C3/PiezoStep_Raw_151203_F3_C3_1.mat';
+        'C:\Users\Anthony Azevedo\Raw_Data\151203\151203_F3_C3\PiezoStep_Raw_151203_F3_C3_3.mat';
 end
 
 %% pJFRC7;VT30609-Gal4
@@ -166,7 +153,7 @@ cnt = find(strcmp(analysis_cells,'151203_F4_C1'));
 
 if ~isempty(cnt)
     analysis_cell(cnt).SweepTrial = ...
-'/Users/tony/Raw_Data/151203/151203_F4_C1/PiezoStep_Raw_151203_F4_C1_1.mat';
+'C:\Users\Anthony Azevedo\Raw_Data\151203\151203_F4_C1\PiezoStep_Raw_151203_F4_C1_1.mat';
 end
 
 
@@ -175,7 +162,7 @@ cnt = find(strcmp(analysis_cells,'151207_F1_C1'));
 
 if ~isempty(cnt)
     analysis_cell(cnt).SweepTrial = ...
-'/Users/tony/Raw_Data/151207/151207_F1_C1/Sweep_Raw_151207_F1_C1_2.mat';
+        'C:\Users\Anthony Azevedo\Raw_Data\151207\151207_F1_C1\Sweep_Raw_151207_F1_C1_2.mat';
 end
 
 %% pJFRC7;VT30609-Gal4
@@ -183,7 +170,7 @@ cnt = find(strcmp(analysis_cells,'151207_F2_C1'));
 
 if ~isempty(cnt)
     analysis_cell(cnt).SweepTrial = ...
-'/Users/tony/Raw_Data/151207/151207_F2_C1/Sweep_Raw_151207_F2_C1_2.mat';
+        'C:\Users\Anthony Azevedo\Raw_Data\151207\151207_F2_C1\Sweep_Raw_151207_F2_C1_2.mat';
 end
 
 

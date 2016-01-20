@@ -15,6 +15,170 @@ end
 % Script_FS_CurrentChirpAndSteps % and others
 % Script_FS_Vm
 
+%% Figure 1c: Example A2 Neuron - 
+% example neuron 151121_F1_C1, 
+% example amplitude 0.15 V
+% example frequencies [25 50 100 200 400]
+
+Record_FS_HighFreqDepolB1s
+savedir = '/Users/tony/Dropbox/AzevedoWilson_B1_MS/Figure1/';
+
+% ax_hi = findobj(fig_hi,'type','axes','tag','mag_0.15');
+trial = load(example_cell.PiezoSineTrial);
+h = getShowFuncInputsFromTrial(trial);
+
+blocktrials = findLikeTrials('name',h.trial.name,'datastruct',h.prtclData,'exclude',{'freq'});
+t = 1;
+while t <= length(blocktrials)
+    trials = findLikeTrials('trial',blocktrials(t),'datastruct',h.prtclData);
+    blocktrials = setdiff(blocktrials,setdiff(trials,blocktrials(t)));
+    t = t+1;
+end
+
+fig = figure;
+fig.Units = 'inches';
+set(fig,'color',[1 1 1],'position',[1 7 14 3])
+
+p = panel(fig);
+
+freqs = h.trial.params.freqs(2:2:length(h.trial.params.freqs));
+fnum = length(freqs);
+p.pack('h', fnum)  % response panel, stimulus panel
+
+trialnummatrix = nan(1,fnum);
+pnl_hs = trialnummatrix;
+
+for bt = blocktrials;
+    params = load(fullfile(h.dir,sprintf(h.trialStem,bt)),'params');
+    
+    if sum(freqs == params.params.freq);
+        c = find(freqs == params.params.freq);
+        trialnummatrix(1,c) = bt;
+    end    
+end
+
+ylims = [Inf, -Inf];
+slims = [Inf, -Inf];
+for c = 1:size(trialnummatrix,2)
+    h.trial = load(fullfile(h.dir,sprintf(h.trialStem,trialnummatrix(1,c))));
+    averagefig = PiezoSineAverage([],h,'');
+        
+    ax_from = findobj(averagefig,'tag','response_ax');
+    
+    ylabe = get(get(ax_from,'ylabel'),'string');
+    delete(get(ax_from,'xlabel'));
+    delete(get(ax_from,'ylabel'));
+    delete(get(ax_from,'zlabel'));
+    delete(get(ax_from,'title'));
+    
+    ylims_from = get(ax_from,'ylim');
+    xlims_from = get(ax_from,'xlim');
+    ylims = [min(ylims(1),ylims_from(1)),...
+        max(ylims(2),ylims_from(2))];
+
+    pnl_hs(1,c) = p(c).select();
+    copyobj(get(ax_from,'children'),pnl_hs(1,c));
+
+    set(pnl_hs(1,c),'TickDir','out','YColor',[1 1 1],'YTick',[],'XColor',[1 1 1],'XTick',[],'xlim',xlims_from,'ylim',ylims_from);
+        
+        
+    % drawnow;
+    close(averagefig)
+end
+
+set(pnl_hs(:),'ylim',ylims)
+set(pnl_hs(:,1),'ytickmode','auto','ycolor',[0 0 0])
+p(1).ylabel(['Response (' ylabe ')']);
+p(1).de.fontsize = 18;
+
+savePDFandFIG(fig,savedir,'c','Figure1c')
+
+%% Figure 1c: Stimulus Examples
+% example amplitude 0.15 V
+
+Record_FS_HighFreqDepolB1s
+savedir = '/Users/tony/Dropbox/AzevedoWilson_B1_MS/Figure1/';
+
+% ax_hi = findobj(fig_hi,'type','axes','tag','mag_0.15');
+trial = load(example_cell.PiezoSineTrial);
+h = getShowFuncInputsFromTrial(trial);
+
+blocktrials = findLikeTrials('name',h.trial.name,'datastruct',h.prtclData,'exclude',{'freq'});
+t = 1;
+while t <= length(blocktrials)
+    trials = findLikeTrials('trial',blocktrials(t),'datastruct',h.prtclData);
+    blocktrials = setdiff(blocktrials,setdiff(trials,blocktrials(t)));
+    t = t+1;
+end
+
+fig = figure;
+fig.Units = 'inches';
+set(fig,'color',[1 1 1],'position',[1 7 14 3])
+
+p = panel(fig);
+
+freqs = h.trial.params.freqs(2:2:length(h.trial.params.freqs));
+fnum = length(freqs);
+p.pack('h', fnum)  % response panel, stimulus panel
+
+trialnummatrix = nan(1,fnum);
+pnl_hs = trialnummatrix;
+
+for bt = blocktrials;
+    params = load(fullfile(h.dir,sprintf(h.trialStem,bt)),'params');
+    
+    if sum(freqs == params.params.freq);
+        c = find(freqs == params.params.freq);
+        trialnummatrix(1,c) = bt;
+    end    
+end
+
+ylims = [Inf, -Inf];
+slims = [Inf, -Inf];
+
+ylims = [Inf, -Inf];
+slims = [Inf, -Inf];
+for c = 1:size(trialnummatrix,2)
+    h.trial = load(fullfile(h.dir,sprintf(h.trialStem,trialnummatrix(1,c))));
+    averagefig = PiezoSineAverage([],h,'');
+        
+    ax_from = findobj(averagefig,'tag','response_ax');
+    
+    ylabe = get(get(ax_from,'ylabel'),'string');
+    delete(get(ax_from,'xlabel'));
+    delete(get(ax_from,'ylabel'));
+    delete(get(ax_from,'zlabel'));
+    delete(get(ax_from,'title'));
+    
+    ylims_from = get(ax_from,'ylim');
+    xlims_from = get(ax_from,'xlim');
+    ylims = [min(ylims(1),ylims_from(1)),...
+        max(ylims(2),ylims_from(2))];
+
+    pnl_hs(1,c) = p(c).select();
+    copyobj(get(ax_from,'children'),pnl_hs(1,c));
+
+    set(pnl_hs(1,c),'TickDir','out','YColor',[1 1 1],'YTick',[],'XColor',[1 1 1],'XTick',[],'xlim',xlims_from,'ylim',ylims_from);
+        
+        
+        if r == 1
+            sax_from = findobj(averagefig,'tag','stimulus_ax');
+            slims_from = get(sax_from,'ylim');
+            slims = [min(slims(1),slims_from(1)),...
+                max(slims(2),slims_from(2))];
+            
+            copyobj(get(sax_from,'children'),p(2,r,c).select())
+            set(p(2,r,c).select(),'TickDir','out','YColor',[1 1 1],'YTick',[],'XColor',[1 1 1],'XTick',[],'xlim',xlims_from,'ylim',slims_from);
+
+            stimpnl_hs(r,c) = p(2,r,c).select();
+
+        end
+        % drawnow;
+        close(averagefig)
+    end
+end
+
+
 %% Vm 
 savedir = '/Users/tony/Dropbox/RAnalysis_Data/Record_FS';
 

@@ -5,7 +5,7 @@ function varargout = extractRawIdentifiers(name)
 if isempty(strfind(name,'.mat'))
     name = [name '.mat'];
 end
-[remain,D] = strtok(fliplr(name),'\');
+[remain,D] = strtok(fliplr(name),filesep);
 
 D = fliplr(D);
 D = regexprep(D,'Acquisition','Raw_Data');
