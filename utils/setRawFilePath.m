@@ -10,9 +10,12 @@ macpath = getpref('USERDIRECTORY','MAC');
 n = t.name;
 
 if ~isfield(t,'name_mac')
-    if strfind(n,pcpath)
-        n = [macpath n(length(pcpath)+1:end)];
+    raw_start = regexp(n,'\\R','once');
+    if isempty(raw_start)
+        raw_start = regexp(n,'/R','once');
     end
+    n = [macpath n(raw_start:end)];
+
     n = regexprep(n,'\','/');
     
     t.name_mac = n;
@@ -21,13 +24,42 @@ end
 n = t.name;
 
 if ~isfield(t,'name_pc')
-    if strfind(n,macpath)
-        n = [pcpath n(length(macpath)+1:end)];
+    raw_start = regexp(n,'\\R','once');
+    if isempty(raw_start)
+        raw_start = regexp(n,'/R','once');
     end
+    
+    n = [pcpath n(raw_start:end)];
+    
     n = regexprep(n,'/','\');
     
     t.name_pc = n;
 end
+
+n = t.name_pc;
+%Correction to change paths
+if isempty(strfind(n,pcpath))
+    n1 = n;
+    raw_start = regexp(n,'\\R','once');
+    n = [pcpath n(raw_start:end)];
+    t.name_pc = n;
+    if regexp(t.name_pc,filesep)
+        t.name = t.name_pc;
+    end
+end
+n = t.name_mac;
+%Correction to change to 'tony'
+if isempty(strfind(n,macpath))
+    n1 = n;
+    raw_start = regexp(n,'/R','once');
+    n = [macpath n(raw_start(1):end)];
+    t.name_mac = n;
+    if regexp(t.name_mac,filesep)
+        t.name = t.name_mac;
+    end
+end
+
+
 
 if regexp(t.name_mac,filesep)
     t.name = t.name_mac;
@@ -44,6 +76,13 @@ if ~strcmp(n0,t.name);
         t.name(1:8),t.params.protocol,t.name(end-7:end),...
         t.name_pc(1:8),t.name_pc(end-7:end),...
         t.name_mac(1:8),t.name_mac(end-7:end))
+elseif exist('n1','var') && ~(strcmp(n1,t.name_mac) || strcmp(n1,t.name_pc))
+    trial = t;
+    save(trial.name, '-struct', 'trial');
+    fprintf('Changing Paths - \nfrom: %s...%s...%s; \nto: %s...%s; \nmac: %s...%s\n',...
+        n1(1:20),t.params.protocol,t.name(end-7:end),...
+        t.name_pc(1:20),t.name_pc(end-7:end),...
+        t.name_mac(1:20),t.name_mac(end-7:end))
 else
     fprintf('Raw file - name: %s...%s...%s; pc: %s...%s; mac: %s...%s\n',...
         t.name(1:8),t.params.protocol,t.name(end-7:end),...

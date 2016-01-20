@@ -15,7 +15,80 @@ end
 % Script_FS_CurrentChirpAndSteps % and others
 % Script_FS_Vm
 
-%% Figure 1c: Example A2 Neuron - 
+%Figure widths in cm: 1 column 8.5 cm 1.5 column 11.4 cm 2 column 17.4 cm
+
+%% Figure 1c: Stimulus Examples - large 2 column figure
+% example amplitude 0.15 V
+
+Record_FS_HighFreqDepolB1s
+savedir = '/Users/tony/Dropbox/AzevedoWilson_B1_MS/Figure1/';
+
+% ax_hi = findobj(fig_hi,'type','axes','tag','mag_0.15');
+trial = load(example_cell.PiezoSineTrial);
+h = getShowFuncInputsFromTrial(trial);
+
+blocktrials = findLikeTrials('name',h.trial.name,'datastruct',h.prtclData,'exclude',{'freq'});
+t = 1;
+while t <= length(blocktrials)
+    trials = findLikeTrials('trial',blocktrials(t),'datastruct',h.prtclData);
+    blocktrials = setdiff(blocktrials,setdiff(trials,blocktrials(t)));
+    t = t+1;
+end
+
+fig = figure;
+fig.Units = 'inches';
+set(fig,'color',[1 1 1],'position',[1 7 getpref('FigureSizes','NeuronTwoColumn') 1.5])
+
+p = panel(fig);
+
+freqs = h.trial.params.freqs(2:2:length(h.trial.params.freqs));
+fnum = length(freqs);
+p.pack('h', fnum)  % response panel, stimulus panel
+
+trialnummatrix = nan(1,fnum);
+pnl_hs = trialnummatrix;
+
+for bt = blocktrials;
+    params = load(fullfile(h.dir,sprintf(h.trialStem,bt)),'params');
+    
+    if sum(freqs == params.params.freq);
+        c = find(freqs == params.params.freq);
+        trialnummatrix(1,c) = bt;
+    end    
+end
+
+ylims = [Inf, -Inf];
+slims = [Inf, -Inf];
+
+ylims = [Inf, -Inf];
+slims = [Inf, -Inf];
+for c = 1:size(trialnummatrix,2)
+    trial = load(fullfile(h.dir,sprintf(h.trialStem,trialnummatrix(1,c))));
+    h = getShowFuncInputsFromTrial(trial);
+    
+    stim = PiezoSineStim(h.trial.params);
+    x = makeInTime(h.trial.params);
+    x_win = x>= -.1 & x<trial.params.stimDurInSec+ min(.25,trial.params.postDurInSec);
+    
+    pnl_hs(1,c) = p(c).select();
+    line(x(x_win),stim(x_win),'parent',pnl_hs(1,c),'color',[0 0 1],'tag',[num2str(h.trial.params.freq), 'Hz']);
+    
+    set(pnl_hs(1,c),'TickDir','out','YColor',[1 1 1],'YTick',[],'XColor',[1 1 1],'XTick',[]);
+    axis(pnl_hs(1,c),'tight')
+    
+    slims_from = get(pnl_hs(1,c),'ylim');
+    slims = [min(slims(1),slims_from(1)),...
+        max(slims(2),slims_from(2))];
+    
+end
+set(pnl_hs(:),'ylim',slims)
+set(pnl_hs(:,1),'ytickmode','auto','ycolor',[0 0 0])
+p(1).ylabel(['Stimulus (V)']);
+p(1).de.fontsize = 18;
+
+savePDFandFIG(fig,savedir,[],'Figure1cStim')
+
+%% Figure 1c: Example A2 Neuron - A large full 2 column figure.
 % example neuron 151121_F1_C1, 
 % example amplitude 0.15 V
 % example frequencies [25 50 100 200 400]
@@ -37,7 +110,7 @@ end
 
 fig = figure;
 fig.Units = 'inches';
-set(fig,'color',[1 1 1],'position',[1 7 14 3])
+set(fig,'color',[1 1 1],'position',[1 7 getpref('FigureSizes','NeuronTwoColumn') 4])
 
 p = panel(fig);
 
@@ -91,12 +164,17 @@ set(pnl_hs(:,1),'ytickmode','auto','ycolor',[0 0 0])
 p(1).ylabel(['Response (' ylabe ')']);
 p(1).de.fontsize = 18;
 
-savePDFandFIG(fig,savedir,'c','Figure1c')
+savePDFandFIG(fig,savedir,[],'Figure1cFull')
+delete(findobj(pnl_hs(:),'color',[1 .7 .7]))
+delete(findobj(pnl_hs(:),'type','text'))
+savePDFandFIG(fig,savedir,[],'Figure1c')
 
-%% Figure 1c: Stimulus Examples
+%% Figure 1d: Example Band Pass High - A large full 2 column figure.
+% example neuron 151121_F1_C1, 
 % example amplitude 0.15 V
+% example frequencies [25 50 100 200 400]
 
-Record_FS_HighFreqDepolB1s
+Record_FS_BandPassHiB1s
 savedir = '/Users/tony/Dropbox/AzevedoWilson_B1_MS/Figure1/';
 
 % ax_hi = findobj(fig_hi,'type','axes','tag','mag_0.15');
@@ -113,7 +191,7 @@ end
 
 fig = figure;
 fig.Units = 'inches';
-set(fig,'color',[1 1 1],'position',[1 7 14 3])
+set(fig,'color',[1 1 1],'position',[1 7 getpref('FigureSizes','NeuronTwoColumn') 4])
 
 p = panel(fig);
 
@@ -132,9 +210,6 @@ for bt = blocktrials;
         trialnummatrix(1,c) = bt;
     end    
 end
-
-ylims = [Inf, -Inf];
-slims = [Inf, -Inf];
 
 ylims = [Inf, -Inf];
 slims = [Inf, -Inf];
@@ -161,101 +236,19 @@ for c = 1:size(trialnummatrix,2)
     set(pnl_hs(1,c),'TickDir','out','YColor',[1 1 1],'YTick',[],'XColor',[1 1 1],'XTick',[],'xlim',xlims_from,'ylim',ylims_from);
         
         
-        if r == 1
-            sax_from = findobj(averagefig,'tag','stimulus_ax');
-            slims_from = get(sax_from,'ylim');
-            slims = [min(slims(1),slims_from(1)),...
-                max(slims(2),slims_from(2))];
-            
-            copyobj(get(sax_from,'children'),p(2,r,c).select())
-            set(p(2,r,c).select(),'TickDir','out','YColor',[1 1 1],'YTick',[],'XColor',[1 1 1],'XTick',[],'xlim',xlims_from,'ylim',slims_from);
-
-            stimpnl_hs(r,c) = p(2,r,c).select();
-
-        end
-        % drawnow;
-        close(averagefig)
-    end
+    % drawnow;
+    close(averagefig)
 end
 
+set(pnl_hs(:),'ylim',ylims)
+set(pnl_hs(:,1),'ytickmode','auto','ycolor',[0 0 0])
+p(1).ylabel(['Response (' ylabe ')']);
+p(1).de.fontsize = 18;
 
-%% Vm 
-savedir = '/Users/tony/Dropbox/RAnalysis_Data/Record_FS';
-
-fig = figure;
-set(fig,'color',[1 1 1],'units','inches','position',[1 3 10 3.7],'name','Summary_Vm');
-pnl = panel(fig);
-pnl.margin = [20 18 6 12];
-pnl.pack(1);
-pnl.de.margin = [4 4 4 4];
-
-Vm = [];
-Vm_group = [];
-
-x = 1;
-uiopen('/Users/tony/Dropbox/RAnalysis_Data/Record_FS/Vm/LP_Vm.fig',1)
-fig_low = gcf;
-ax_low = findobj(fig_low,'type','axes');
-l = copyobj(get(ax_low,'children'),pnl(1).select());  
-set(l,'xdata',x); 
-v_ = cell2mat(get(l,'ydata')); 
-Vm = [Vm;v_];
-Vm_group = [Vm_group;x*ones(size(v_,1),1)];
-line(x+[-.2 .2],[mean(v_) mean(v_)],'parent',pnl(1).select());
-text(x,-28,['N=' num2str(length(l))],'parent',pnl(1).select(),'horizontalalignment','center');
-
-x = 2;
-uiopen('/Users/tony/Dropbox/RAnalysis_Data/Record_FS/Vm/BPL_Vm.fig',1)
-fig_bpl = gcf; 
-ax_bpl = findobj(fig_bpl,'type','axes');
-l = copyobj(get(ax_bpl,'children'),pnl(1).select());  
-set(l,'xdata',x); 
-v_ = cell2mat(get(l,'ydata')); 
-Vm = [Vm;v_];
-Vm_group = [Vm_group;x*ones(size(v_,1),1)];
-line(x+[-.2 .2],[mean(v_) mean(v_)],'parent',pnl(1).select());
-text(x,-28,['N=' num2str(length(l))],'parent',pnl(1).select(),'horizontalalignment','center');
-
-x = 3;
-uiopen('/Users/tony/Dropbox/RAnalysis_Data/Record_FS/Vm/BPH_Vm.fig',1); 
-fig_bph = gcf; 
-ax_bph  = findobj(fig_bph,'type','axes');
-l = copyobj(get(ax_bph,'children'),pnl(1).select());  
-set(l,'xdata',x); 
-v_ = cell2mat(get(l,'ydata')); 
-Vm = [Vm;v_];
-Vm_group = [Vm_group;x*ones(size(v_,1),1)];
-line(x+[-.2 .2],[mean(v_) mean(v_)],'parent',pnl(1).select());
-text(x,-28,['N=' num2str(length(l))],'parent',pnl(1).select(),'horizontalalignment','center');
-
-x = 4;
-uiopen('/Users/tony/Dropbox/RAnalysis_Data/Record_FS/Vm/HP_Vm.fig',1)
-fig_hi = gcf; 
-ax_hi = findobj(fig_hi,'type','axes');
-l = copyobj(get(ax_hi,'children'),pnl(1).select());  
-set(l,'xdata',x); 
-v_ = cell2mat(get(l,'ydata')); 
-Vm = [Vm;v_];
-Vm_group = [Vm_group;x*ones(size(v_,1),1)];
-line(x+[-.2 .2],[mean(v_) mean(v_)],'parent',pnl(1).select());
-text(x,-28,['N=' num2str(length(l))],'parent',pnl(1).select(),'horizontalalignment','center');
-
-
-set(pnl(1).select(),'xlim',[.5 4.5],'ylim',[-50 -25],'xtick',[1 2 3 4],'xticklabel',{'LP' 'BPL' 'BHP' 'HP-A2'})
-ylabel(pnl(1).select(),'V_m (mV)');
-savePDFandFIG(fig,savedir,[],'Summary_Vm')
-
-barfig = figure;
-set(barfig,'color',[1 1 1],'units','inches','position',[1 3 10 3.7],'name','Summary_Vm_Box');
-
-pnl = panel(barfig);
-pnl.margin = [20 20 10 10];
-pnl.pack('h',1);
-
-to_ax = pnl(1).select(); hold(to_ax,'on');
-boxplot(to_ax,Vm,Vm_group,'plotstyle','traditional','notch','on');
-savePDFandFIG(barfig,savedir,[],'Summary_Vm_Box')
-
+savePDFandFIG(fig,savedir,[],'Figure1cFull')
+delete(findobj(pnl_hs(:),'color',[1 .7 .7]))
+delete(findobj(pnl_hs(:),'type','text'))
+savePDFandFIG(fig,savedir,[],'Figure1c')
 
 
 %% Populations
