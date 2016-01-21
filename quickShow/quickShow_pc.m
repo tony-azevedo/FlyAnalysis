@@ -1,33 +1,33 @@
-function varargout = quickShow(varargin)
-% QUICKSHOW MATLAB code for quickShow.fig
-%      QUICKSHOW, by itself, creates a new QUICKSHOW or raises the existing
+function varargout = quickShow_pc(varargin)
+% QUICKSHOW_PC MATLAB code for quickShow_pc.fig
+%      QUICKSHOW_PC, by itself, creates a new QUICKSHOW_PC or raises the existing
 %      singleton*.
 %
-%      H = QUICKSHOW returns the handle to a new QUICKSHOW or the handle to
+%      H = QUICKSHOW_PC returns the handle to a new QUICKSHOW_PC or the handle to
 %      the existing singleton*.
 %
-%      QUICKSHOW('CALLBACK',hObject,eventData,handles,...) calls the local
-%      function named CALLBACK in QUICKSHOW.M with the given input arguments.
+%      QUICKSHOW_PC('CALLBACK',hObject,eventData,handles,...) calls the local
+%      function named CALLBACK in QUICKSHOW_PC.M with the given input arguments.
 %
-%      QUICKSHOW('Property','Value',...) creates a new QUICKSHOW or raises the
+%      QUICKSHOW_PC('Property','Value',...) creates a new QUICKSHOW_PC or raises the
 %      existing singleton*.  Starting from the left, property value pairs are
-%      applied to the GUI before quickShow_OpeningFcn gets called.  An
+%      applied to the GUI before quickShow_pc_OpeningFcn gets called.  An
 %      unrecognized property name or invalid value makes property application
-%      stop.  All inputs are passed to quickShow_OpeningFcn via varargin.
+%      stop.  All inputs are passed to quickShow_pc_OpeningFcn via varargin.
 %
 %      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
 %      instance to run (singleton)".
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 
-% Last Modified by GUIDE v2.5 20-Jan-2016 18:03:34
+% Last Modified by GUIDE v2.5 20-Jan-2016 17:17:48
 
 %% Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
                    'gui_Singleton',  gui_Singleton, ...
-                   'gui_OpeningFcn', @quickShow_OpeningFcn, ...
-                   'gui_OutputFcn',  @quickShow_OutputFcn, ...
+                   'gui_OpeningFcn', @quickShow_pc_OpeningFcn, ...
+                   'gui_OutputFcn',  @quickShow_pc_OutputFcn, ...
                    'gui_LayoutFcn',  [] , ...
                    'gui_Callback',   []);
 
@@ -48,8 +48,8 @@ else
 end
 % End initialization code - DO NOT EDIT
 
-% --- Executes just before quickShow is made visible.
-function quickShow_OpeningFcn(hObject, eventdata, handles, varargin)
+% --- Executes just before quickShow_pc is made visible.
+function quickShow_pc_OpeningFcn(hObject, eventdata, handles, varargin)
 handles.output = hObject;
 
 guidata(hObject, handles);
@@ -91,7 +91,7 @@ else
 end
 
 
-function varargout = quickShow_OutputFcn(hObject, eventdata, handles)
+function varargout = quickShow_pc_OutputFcn(hObject, eventdata, handles)
 
 % Get default command line output from handles structure
 varargout{1} = handles.output;
@@ -656,7 +656,7 @@ set(handles.infoPanel,'string',out)%,'position',position);
 
 
 function loadstr_button_Callback(hObject, eventdata, handles)
-% An earlier version printed the script for the quickShow function 4/27/15
+% An earlier version printed the script for the quickShow_pc function 4/27/15
 handles = guidata(hObject);
 evalin('base', ['trial = load(''' regexprep(handles.trial.name,'Acquisition','Raw_Data') ''')']);
 
