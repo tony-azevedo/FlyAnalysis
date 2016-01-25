@@ -42,7 +42,7 @@ for t = 1:length(trials)
     y(:,t) = trial.(y_name)(1:length(x));
 end
 
-x_win = x>= -.2 & x<trial.params.stimDurInSec+ min(.25,trial.params.postDurInSec);
+x_win = x>= -.2 & x<trial.params.stimDurInSec+ min(.2,trial.params.postDurInSec);
 
 plot(ax,x(x_win),y(x_win,:),'color',[1, .7 .7],'tag',savetag); hold on
 y_ = mean(y,2);

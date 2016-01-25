@@ -75,8 +75,9 @@ for p = 1:length(protocols)
             end
             tempfn = fieldnames(data(f));
             for name = 1:length(tempfn)
-                if strcmp(tempfn{name},'freq1')
-                    keyboard
+                if strcmp(tempfn{name},'combinedTrialBlock')
+                    
+                    trial.params.(tempfn{name}) = trial.params.trialBlock;
                 end
                 data(f).(tempfn{name}) = trial.params.(tempfn{name});
             end

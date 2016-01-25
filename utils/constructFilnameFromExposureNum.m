@@ -1,6 +1,6 @@
 function varargout = constructFilnameFromExposureNum(data,exposureNum)
 
-imdir = regexprep(regexprep(regexprep(data.name,'Raw','Images'),'.mat',''),'Acquisition','Raw_Data');
+imdir = regexprep(regexprep(regexprep(data.name,'_Raw_','_Images_'),'.mat',''),'Acquisition','Raw_Data');
 d = ls(fullfile(imdir,'*_Image_*'));
 jnk = d(1,:);
 pattern = ['_Image_' '\d+' '_'];
