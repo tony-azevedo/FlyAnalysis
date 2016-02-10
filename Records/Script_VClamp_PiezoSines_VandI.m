@@ -6,7 +6,7 @@
 %%
 close all
 yyddmm = ac.name(1:6);
-trial = load([fullfile('C:\Users\Anthony Azevedo\Raw_Data\',yyddmm,ac.name) '\PiezoSine_Raw_' ac.name '_1.mat']);  
+trial = load([fullfile('C:\Users\tony\Raw_Data\',yyddmm,ac.name) '\PiezoSine_Raw_' ac.name '_1.mat']);  
 h = getShowFuncInputsFromTrial(trial);
 
 % VClamp
@@ -44,35 +44,35 @@ end
 trial = load(VClampCtrlSineTrial);
 h = getShowFuncInputsFromTrial(trial);
 
-[fig, pnl_hs,stimpnl_hs] = PF_PiezoSineMatrix([],h,ac.genotype);
-if isempty(strfind(ac.genotype,'VT30609'))
-    set(pnl_hs(:),'ylim',[-40 30])
+% [fig, pnl_hs,stimpnl_hs] = PF_PiezoSineMatrix([],h,ac.genotype);
+% if isempty(strfind(ac.genotype,'VT30609'))
+%     set(pnl_hs(:),'ylim',[-60 40])
+% else
+%     set(pnl_hs(:),'ylim',[-20 10])
+% end
+% savePDF(fig,savedir,'VClampPiezoSineMatrices',[ac.name, '_VClamp']);
+% 
+% set(pnl_hs(:),'xlim',[-.02 .08])
+% set(stimpnl_hs(:),'xlim',[-.02 .08])
+% savePDF(fig,savedir,'VClampPiezoSineOnset',[ac.name, '_VClamp']);
+% 
+% [fig, pnl_hs] = PF_PiezoSineCycleMatrix([],h,ac.genotype);
+% if isempty(strfind(ac.genotype,'VT30609'))
+%     set(pnl_hs(:),'ylim',[-60 40])
+% else
+%     set(pnl_hs(:),'ylim',[-20 10])
+% end
+% 
+% savePDF(fig,savedir,'VClampPiezoSineCycles',[ac.name, '_VClamp']);
+
+if ~isempty(strfind(ac.comment,'A2'))
+fig2 = PF_PiezoSineDepolRespVsFreq_Current([],h,ac.genotype);
+savePDFandFIG(fig2,savedir,'VClampPiezoSineRvF',[ac.name, '_VClamp_RvF']);
 else
-    set(pnl_hs(:),'ylim',[-20 10])
+fig2 = PF_PiezoSineOsciRespVsFreq([],h,ac.genotype);
+savePDFandFIG(fig2,savedir,'VClampPiezoSineRvF',[ac.name, '_VClamp_RvF']);
 end
-savePDFandFIG(fig,savedir,'VClampPiezoSineMatrices',[ac.name, '_VClamp']);
-
-set(pnl_hs(:),'xlim',[-.02 .08])
-set(stimpnl_hs(:),'xlim',[-.02 .08])
-savePDFandFIG(fig,savedir,'VClampPiezoSineOnset',[ac.name, '_VClamp']);
-
-[fig, pnl_hs] = PF_PiezoSineCycleMatrix([],h,ac.genotype);
-set(pnl_hs(:),'ylim',[-12 5])
-
-savePDFandFIG(fig,savedir,'VClampPiezoSineCycles',[ac.name, '_VClamp']);
-
-% fig2 = PF_PiezoSineOsciRespVsFreq([],h,ac.genotype);
-% 
-% fn = fullfile(savedir,'PiezoSine',[ac.name, '_VClamp_RvF.pdf']);
-% 
-% figure(fig2)
-% eval(['export_fig ' regexprep(fn,'\sAzevedo',''' Azevedo''') ' -pdf -transparent']);
-% 
-% set(fig2,'paperpositionMode','auto');
-% saveas(fig2,fullfile(savedir,'PiezoSine',[ac.name, '_VClamp_RvF']),'fig');
-% 
-% close(fig)
-% close(fig2)
+close(fig2)
 
 
 % % IClamp
@@ -135,9 +135,3 @@ savePDFandFIG(fig,savedir,'VClampPiezoSineCycles',[ac.name, '_VClamp']);
 % end
     
     
-
-
-
-
-
-

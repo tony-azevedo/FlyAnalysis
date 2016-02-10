@@ -1,18 +1,18 @@
 %% Record of High Frequency Responsive B1 cells
-clear all
+clear analysis_cell analysis_cells c cnt id save_log example_cell analysis_grid
 savedir = '/Users/tony/Dropbox/RAnalysis_Data/Record_FS_HighPassB1s';
 if ~isdir(savedir)
     mkdir(savedir)
 end
-save_log = 1
+save_log = 1;
 id = 'HP_';
 
 %%
 
 analysis_grid = {
-'131211_F1_C2'      'UAS-ArcLight; VT30609-Gal4'        'Original finding in ArcLight line'
-'140530_F1_C1'      'UAS-ArcLight; VT30609-Gal4'        'Nice cell, but no Piezo Sine collection, wah wah'
-'140530_F2_C1'      'UAS-ArcLight; VT30609-Gal4'        'Nice cell in ArcLight'
+% '131211_F1_C2'      'UAS-ArcLight; VT30609-Gal4'        'Original finding in ArcLight line'
+% '140530_F1_C1'      'UAS-ArcLight; VT30609-Gal4'        'Nice cell, but no Piezo Sine collection, wah wah'
+% '140530_F2_C1'      'UAS-ArcLight; VT30609-Gal4'        'Nice cell in ArcLight'
 '151030_F1_C1'      '20XUAS-mCD8:GFP;VT30609-Gal4'               'Beautiful cell, current isolation'
 '151119_F2_C1'      '20XUAS-mCD8:GFP;VT30609-Gal4'               'Pretty good!'
 '151119_F3_C1'      '20XUAS-mCD8:GFP;VT30609-Gal4'               'Not great cell, unsteady, but worth including'
@@ -20,10 +20,10 @@ analysis_grid = {
 '151201_F2_C1'      '20XUAS-mCD8:GFP;VT30609-Gal4'               'Nice cell'
 
 %no piezo sine, VClamp, but useful for Vm measurement
-'151203_F3_C3'      '20XUAS-mCD8:GFP;VT30609-Gal4'              'No piezo sine, only steps to confirm'
-'151203_F4_C1'      '20XUAS-mCD8:GFP;VT30609-Gal4'               'No piezo sine, only steps to confirm'
-'151207_F1_C1'      '20XUAS-mCD8:GFP;VT30609-Gal4'        'Nice recording, cell in the nerve, quick dissection'
-'151207_F2_C1'      '20XUAS-mCD8:GFP;VT30609-Gal4'        'Nice recording, cell in the nerve, quick dissection'
+% '151203_F3_C3'      '20XUAS-mCD8:GFP;VT30609-Gal4'              'No piezo sine, only steps to confirm'
+% '151203_F4_C1'      '20XUAS-mCD8:GFP;VT30609-Gal4'               'No piezo sine, only steps to confirm'
+% '151207_F1_C1'      '20XUAS-mCD8:GFP;VT30609-Gal4'        'Nice recording, cell in the nerve, quick dissection'
+% '151207_F2_C1'      '20XUAS-mCD8:GFP;VT30609-Gal4'        'Nice recording, cell in the nerve, quick dissection'
 
 };
 
@@ -34,6 +34,9 @@ for c = 1:size(analysis_grid,1)
     analysis_cell(c).comment = analysis_grid{c,3};
     analysis_cells{c} = analysis_grid{c,1}; 
 end
+
+fprintf('A2 High Preferring: \n')
+fprintf('\t%s\n',analysis_cells{:})
 
 %% Example cell 
 example_cell.name = '151121_F1_C1';
@@ -56,6 +59,15 @@ example_cell.SweepTrial = ...
 % '';
 % example_cell.SweepTrial = ...
 % '';
+
+%% Figure 3 example
+
+fig3example_cell.name = '151121_F1_C1';
+fig3example_cell.PiezoStepTrialAnt = ...
+'C:\Users\tony\Raw_Data\151121\151121_F1_C1\PiezoStep_Raw_151121_F1_C1_8.mat';
+fig3example_cell.PiezoStepTrialPost = ...
+'C:\Users\tony\Raw_Data\151121\151121_F1_C1\PiezoStep_Raw_151121_F1_C1_7.mat';
+fig3example_cell.genotype = '20XUAS-mCD8:GFP;VT30609-Gal4'; %#ok<*SAGROW>
 
 
 %% 'UAS-ArcLight; VT30609-Gal4

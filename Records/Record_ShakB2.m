@@ -1,7 +1,7 @@
 
 %% Record of ShakB Experiments
 
-savedir = 'C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_ShakB2';
+savedir = 'C:\Users\tony\Dropbox\RAnalysis_Data\Record_ShakB2';
 if ~isdir(savedir)
     mkdir(savedir)
 end
@@ -12,34 +12,31 @@ id = 'ShakB_';
 Script_Shak2_ShakB_Ex
 
 auxid = 'ShakB_nodrugs';
-Script_ShakB2_PiezoSine
-Script_ShakB2_PiezoSineRvF
+% Script_ShakB2_PiezoSine
+% Script_ShakB2_PiezoSineRvF
+% Script_ShakB2_PiezoStepFam
 
-Script_ShakB2_PiezoStepFam
 Script_ShakB2_PiezoStep
 
 ShakB_cell = analysis_cell;
 
-fn = fullfile(savedir,['ShakB2Males.pdf']);
-figure(fig)
-eval(['export_fig ' regexprep(fn,'\sAzevedo',''' Azevedo''') ' -pdf -transparent']);
+savePDF(fig,savedir,[],'ShakB2Males')
 shakbmalesdots = findobj(fig,'tag','dots');
 
 %%
 Script_Shak2_ShakB_MLA_Ex
 
 auxid = 'ShakB';
-Script_ShakB2_PiezoStepFam
-Script_ShakB2_PiezoSineRvF
-Script_ShakB2_PiezoSine
+% Script_ShakB2_PiezoStepFam
+% Script_ShakB2_PiezoSineRvF
+% Script_ShakB2_PiezoSine
 
 Script_ShakB2_PiezoStep_Drug
 
 ShakB_drug_cell = analysis_cell;
 
-fn = fullfile(savedir,['ShakB2Males_Drug.pdf']);
-figure(fig)
-eval(['export_fig ' regexprep(fn,'\sAzevedo',''' Azevedo''') ' -pdf -transparent']);
+savePDF(fig,savedir,[],'ShakB2Males_Drug.pdf')
+
 shakbmalesdrugsdots = findobj(fig,'tag','dots');
 examplepnl = panel.recover(fig);
 shakB_ctrl_ax = examplepnl(5,1).select();
@@ -51,37 +48,34 @@ shakB_step_ax = examplepnl(5,3).select();
 Script_Shak2_Controls_Ex
 
 auxid = 'ShakBCtrl_nodrugs';
-Script_ShakB2_PiezoStepFam
-Script_ShakB2_PiezoSine
-Script_ShakB2_PiezoSineRvF
+% Script_ShakB2_PiezoStepFam
+% Script_ShakB2_PiezoSine
+% Script_ShakB2_PiezoSineRvF
 
 Script_ShakB2_PiezoStep
 
 ShakB_ctrl_cell = analysis_cell;
 
-fn = fullfile(savedir,['ShakB2Controls.pdf']);
-figure(fig)
-set(fig,'position',[610 558 992 420])
-eval(['export_fig ' regexprep(fn,'\sAzevedo',''' Azevedo''') ' -pdf -transparent']);
 shakbcontrolsdots = findobj(fig,'tag','dots');
+
+savePDF(fig,savedir,[],'ShakB2Controls')
 
 
 %%
 Script_Shak2_Controls_MLA_Ex
 
 auxid = 'ShakBCtrl';
-Script_ShakB2_PiezoStepFam
-Script_ShakB2_PiezoSine
-Script_ShakB2_PiezoSineRvF
+% Script_ShakB2_PiezoStepFam
+% Script_ShakB2_PiezoSine
+% Script_ShakB2_PiezoSineRvF
 
 Script_ShakB2_PiezoStep_Drug
 
 ShakB_ctrl_drug_cell = analysis_cell;
 
-fn = fullfile(savedir,['ShakB2Controls_Drug.pdf']);
-figure(fig)
-eval(['export_fig ' regexprep(fn,'\sAzevedo',''' Azevedo''') ' -pdf -transparent']);
 shakbcontrolsdrugsdots = findobj(fig,'tag','dots');
+savePDF(fig,savedir,[],'ShakB2Controls_Drug')
+
 examplepnl = panel.recover(fig);
 ctrl_ctrl_ax = examplepnl(5,1).select();
 ctrl_drug_ax = examplepnl(5,2).select();
@@ -146,9 +140,7 @@ xlabel(pnl(2,3).select(),'s')
 ylabel(pnl(1,4).select(),'Peak (mV)')
 
 
-fn = fullfile(savedir,['ShakB2StepFig.pdf']);
-figure(dots_fig)
-eval(['export_fig ' regexprep(fn,'\sAzevedo',''' Azevedo''') ' -pdf -transparent']);
+savePDF(dots_fig,savedir,[],'ShakB2StepFig')
 
 %% Stats
 
@@ -219,5 +211,4 @@ figure
 [p,tbl,stats,terms] = anovan(y,{g1,g2},'model','interaction','varnames',{'geno';'drug'});
 multcompare(stats,'ctyp','lsd','dimension',[1 2]);
 
-%% Need to look at the sine responses in these neurons.  Average across cycles to see what the responses look like
 

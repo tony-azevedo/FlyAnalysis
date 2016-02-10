@@ -19,6 +19,9 @@ if p.Results.plot
     if strcmp(get(fig,'type'),'figure'), set(fig,'name',mfilename);end
 end
 
+if isempty(trials)
+    keyboard
+end
 trial = load(fullfile(handles.dir,sprintf(handles.trialStem,trials(1))));
 x = makeTime(trial.params);
 stim = PiezoSineStim(trial.params);

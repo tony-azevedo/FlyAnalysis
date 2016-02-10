@@ -50,6 +50,8 @@ analysis_grid = {
 '151216_F3_C2'  'UAS-Dcr;20XUAS-mCD8:GFP/+;VT30609-Gal4/UAS-paraRNAi'   'A2, small input currents for steps,control cells for this fly'       
 '151217_F1_C3'  'UAS-Dcr;20XUAS-mCD8:GFP/+;VT30609-Gal4/UAS-paraRNAi'   'A2, really small input currents for steps, control antenna was free'           %'VClamp, whole cell on and off' 
 '151217_F2_C1'  'UAS-Dcr;20XUAS-mCD8:GFP/+;VT30609-Gal4/UAS-paraRNAi'   'A2, assymetric step responses, sine responses oscillate'           %'VClamp, whole cell on and off' 
+
+
 }
 
 offtarget_grid = {
@@ -69,7 +71,7 @@ offtarget_grid = {
 '151217_F1_C2'  'UAS-Dcr;20XUAS-mCD8:GFP/+;VT30609-Gal4/UAS-paraRNAi'   '-180 deg Band pass currents, smooth peak, antenna free'       'VClamp' 
 }
 
-savedir = 'C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_VoltageClampInputCurrents';
+savedir = 'C:\Users\tony\Dropbox\RAnalysis_Data\Record_VoltageClampInputCurrents';
 
 %%
 clear analysis_cell analysis_cells control_cells control_cells
@@ -93,13 +95,13 @@ end
 
 %%
 %for ac_ind = [6 11 4 3 2 1];
-for ac_ind = 15; %1:length(analysis_cell)
+for ac_ind = 14:length(analysis_cell)
     ac = analysis_cell(ac_ind);
     disp(ac.name);
     
      Script_VClamp_PiezoSines_VandI;
-     Script_VClamp_PiezoSteps_VandI;
-     Script_VClamp_VoltageCommands_Access; 
+%      Script_VClamp_PiezoSteps_VandI;
+%      Script_VClamp_VoltageCommands_Access; 
 
     % Vsteps
     % PiezoSteps
@@ -117,8 +119,8 @@ Script_VClampIinputs_RespVsFreq
 
 %% Impact of whole-cell compensation:
 
-% compensation_on = 'C:\Users\Anthony Azevedo\Raw_Data\151102\151102_F1_C1\PiezoStep_Raw_151102_F1_C1_115.mat';
-% compensation_off = 'C:\Users\Anthony Azevedo\Raw_Data\151102\151102_F1_C1\PiezoStep_Raw_151102_F1_C1_145.mat';
+% compensation_on = 'C:\Users\tony\Raw_Data\151102\151102_F1_C1\PiezoStep_Raw_151102_F1_C1_115.mat';
+% compensation_off = 'C:\Users\tony\Raw_Data\151102\151102_F1_C1\PiezoStep_Raw_151102_F1_C1_145.mat';
 % 
 % trial = load(compensation_on);
 % h = getShowFuncInputsFromTrial(trial);

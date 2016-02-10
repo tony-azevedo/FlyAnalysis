@@ -20,10 +20,10 @@ if ip.Results.plot
         delete(get(fig,'children'));
     end
     p = panel(fig);
-    p.pack('v',{2/3  1/3})  % response panel, stimulus panel
+    p.pack('v',{1})  % response panel, stimulus panel
     p.margin = [16 16 2 10];
-    p(1).marginbottom = 2;
-    p(2).marginleft = 13;
+%     p(1).marginbottom = 2;
+%     p(2).marginleft = 13;
 end
 % for each displacement example, get all the trials
 blocktrials = findBlockTrials(handles.trial,handles.prtclData);
@@ -106,35 +106,11 @@ for bt = blocktrials;
         title(ax,sprintf('%s : %s',...
             [prot '.' d '.' fly '.' cell '.' trialnum],...
             'Stim to V transfer function'));
-        
-        %         set(ax,'xlim',[...
-        %             max(min(handles.trial.params.freqStart,handles.trial.params.freqEnd),3),...
-        %             max(handles.trial.params.freqStart,handles.trial.params.freqEnd),...
-        %             ])
-        
-        %         ax = p(2).select();
-        %         line(f(1:length(f)/2),Z_phase(1:length(f)/2)/(2*pi)*360,...
-        %             'parent',ax,...
-        %             'linestyle','none',...
-        %             'displayname',[num2str(handles.trial.params.amp) ' pA'],...
-        %             'marker','.',...
-        %             'markerfacecolor',colr,...
-        %             'markeredgecolor',colr,...
-        %             'markersize',2);
-        %
-        %         ylabel(ax,'phase (deg)')
-        %         xlabel(ax,'Frequency (Hz)')
-        %         set(ax,'xlim',[...
-        %             max(min(handles.trial.params.freqStart,handles.trial.params.freqEnd),3),...
-        %             max(handles.trial.params.freqStart,handles.trial.params.freqEnd),...
-        %             ])
-        %
-        %         %set(get(fig,'children'),'xscale','log');
-        %         set(get(fig,'children'),'xscale','linear');
-        %         set(p.de.axis,'tickdir','out')
+                
     end
     cnt = cnt+1;
 end
 ax = p(1).select();
+axis(ax,'equal')
 % legend(ax,'show')
 % legend(ax,'boxoff')

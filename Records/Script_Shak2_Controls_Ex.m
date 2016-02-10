@@ -18,23 +18,23 @@ end
 
 cnt = find(strcmp(analysis_cells,'150602_F3_C1'));
 analysis_cell(cnt).PiezoStepTrial_IClamp = ...
-'C:\Users\Anthony Azevedo\Raw_Data\150602\150602_F3_C1\PiezoStep_Raw_150602_F3_C1_12.mat';
+'C:\Users\tony\Raw_Data\150602\150602_F3_C1\PiezoStep_Raw_150602_F3_C1_12.mat';
 analysis_cell(cnt).PiezoSineTrial_IClamp = ...
-'C:\Users\Anthony Azevedo\Raw_Data\150602\150602_F3_C1\PiezoSine_Raw_150602_F3_C1_1.mat';
+'C:\Users\tony\Raw_Data\150602\150602_F3_C1\PiezoSine_Raw_150602_F3_C1_1.mat';
 
 %% 'ShakB2/y;pJFRC7/Sp;45D07-Gal4/+'
 
 cnt = find(strcmp(analysis_cells,'150602_F3_C2'));
 analysis_cell(cnt).PiezoStepTrial_IClamp = ...
-'C:\Users\Anthony Azevedo\Raw_Data\150602\150602_F3_C2\PiezoStep_Raw_150602_F3_C2_31.mat';
+'C:\Users\tony\Raw_Data\150602\150602_F3_C2\PiezoStep_Raw_150602_F3_C2_31.mat';
 analysis_cell(cnt).PiezoSineTrial_IClamp = ...
-'C:\Users\Anthony Azevedo\Raw_Data\150602\150602_F3_C2\PiezoSine_Raw_150602_F3_C2_1.mat';
+'C:\Users\tony\Raw_Data\150602\150602_F3_C2\PiezoSine_Raw_150602_F3_C2_1.mat';
 
 %% 'ShakB2/y;pJFRC7/Sp;45D07-Gal4/+'
 
 cnt = find(strcmp(analysis_cells,'150625_F2_C1'));
 analysis_cell(cnt).PiezoStepTrial_IClamp = ...
-'C:\Users\Anthony Azevedo\Raw_Data\150625\150625_F2_C1\PiezoStep_Raw_150625_F2_C1_3.mat';
+'C:\Users\tony\Raw_Data\150625\150625_F2_C1\PiezoStep_Raw_150625_F2_C1_3.mat';
 analysis_cell(cnt).PiezoSineTrial_IClamp = ...
-'C:\Users\Anthony Azevedo\Raw_Data\150625\150625_F2_C1\PiezoSine_Raw_150625_F2_C1_1.mat';
+'C:\Users\tony\Raw_Data\150625\150625_F2_C1\PiezoSine_Raw_150625_F2_C1_1.mat';
 

@@ -1,12 +1,12 @@
 
-ac_ind = 19; %1:length(analysis_cell)
-ac = analysis_cell(ac_ind);
-disp(ac.name);
+%ac_ind = 19; %1:length(analysis_cell)
+%ac = analysis_cell(ac_ind);
+% disp(ac.name);
 
 %%
 close all
 yyddmm = ac.name(1:6);
-trial = load([fullfile('C:\Users\Anthony Azevedo\Raw_Data\',yyddmm,ac.name) '\PiezoStep_Raw_' ac.name '_1.mat']);  
+trial = load([fullfile('C:\Users\tony\Raw_Data\',yyddmm,ac.name) '\PiezoStep_Raw_' ac.name '_1.mat']);  
 h = getShowFuncInputsFromTrial(trial);
 
 % VClamp
@@ -54,5 +54,5 @@ h = getShowFuncInputsFromTrial(trial);
 % [fig, pnl_hs] = PF_PiezoStepFam2([],h,ac.genotype);
 % [fig, pnl_hs] = PF_PiezoStepFamPnl([],h,ac.genotype);
 %set(pnl_hs(:),'ylim',[-35 20])
-savePDFandFIG(fig,savedir,'VClampPiezoStep',[ac.name, '_VClamp']);
+savePDF(fig,savedir,'VClampPiezoStep',[ac.name, '_VClamp']);
 

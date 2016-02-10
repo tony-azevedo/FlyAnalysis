@@ -1,19 +1,19 @@
 %% Record of Low Frequency Responsive Cells
-clear all
+clear analysis_cell analysis_cells c cnt id save_log example_cell analysis_grid
 savedir = 'C:\Users\tony\Dropbox\RAnalysis_Data\Record_FS_LowPassB1s';
 if ~isdir(savedir)
     mkdir(savedir)
 end
-save_log = 1
+save_log = 1;
 id = 'LP_';
 
 %%
 
 analysis_grid = {...
-    '130911_F2_C1'  'GH86;pJFRC7'                   'coarse frequency, no current injections';                 
-    '131015_F3_C1'  'GH86;pJFRC7'                   'coarse frequency, no current injections';                  
-    '140122_F2_C1'  'pJFRC7;VT30609-Gal4'           'coarse freq sample, single amplitude, VCLAMP data!';      
-    '140128_F1_C1'  'pJFRC7;VT30609-Gal4'           'Complete over harmonics, slight band pass';                
+%     '130911_F2_C1'  'GH86;pJFRC7'                   'coarse frequency, no current injections';                 
+%     '131015_F3_C1'  'GH86;pJFRC7'                   'coarse frequency, no current injections';                  
+%     '140122_F2_C1'  'UAS-ArcLight/VT30609-Gal4'           'coarse freq sample, single amplitude, VCLAMP data!';      
+%     '140128_F1_C1'  'UAS-ArcLight/VT30609-Gal4'           'Complete over harmonics, slight band pass';                
     '150326_F1_C1'  '20XUAS-mCD8:GFP;VT27938-Gal4'  '';                  
     '150402_F3_C2'  '20XUAS-mCD8:GFP;VT27938-Gal4'  '';                 
     '150402_F1_C1'  '20XUAS-mCD8:GFP;VT27938-Gal4'  '';                 
@@ -25,9 +25,9 @@ analysis_grid = {...
 
 %     '150623_F1_C1'  'pJFRC7/[UAS-ort];45D07-Gal4/+' 'Very low pass, large, largest response to low frequencies';  
 
-%     '151103_F3_C1'  'ShakB2-y/X;pJFRC7;45D07'        'Crazy big responses. Beautiful, but wrecks the ShakB stats!'
-%     '151106_F1_C1'  'ShakB2-y/X;pJFRC7;45D07'       'More normal sized'
-%     '151106_F1_C3'  'ShakB2-y/X;pJFRC7;45D07'       'Big responses. No drugs!'
+    '151103_F3_C1'  'ShakB2-y/X;pJFRC7;45D07'        'Crazy big responses. Beautiful, but wrecks the ShakB stats!'
+    '151106_F1_C1'  'ShakB2-y/X;pJFRC7;45D07'       'More normal sized'
+    '151106_F1_C3'  'ShakB2-y/X;pJFRC7;45D07'       'Big responses. No drugs!'
 
     '151209_F1_C1'  '20XUAS-mCD8:GFP;VT27938-Gal4'  'Big responses. No drugs!'
     '151209_F1_C2'  '20XUAS-mCD8:GFP;VT27938-Gal4'  'Big responses. No drugs!'
@@ -50,7 +50,7 @@ male_grid = { ...
     '151103_F3_C1' 'ShakB2-y/X;pJFRC7;45D07'        'Crazy big responses. Beautiful, but wrecks the ShakB stats!'
     '151106_F1_C1'  'ShakB2-y/X;pJFRC7;45D07'       'More normal sized'
     '151106_F1_C3'  'ShakB2-y/X;pJFRC7;45D07'       'Big responses. No drugs!'
-    }
+    };
 
 clear analysis_cell analysis_cells
 for c = 1:size(analysis_grid,1)
@@ -59,7 +59,8 @@ for c = 1:size(analysis_grid,1)
     analysis_cell(c).comment = analysis_grid{c,3};
     analysis_cells{c} = analysis_grid{c,1};
 end
-analysis_cells
+fprintf('LowPass: \n')
+fprintf('\t%s\n',analysis_cells{:})
 
 
 %% Example cell 
@@ -82,12 +83,46 @@ example_cell.PiezoSineTrial = ...
 % example_cell.PiezoSineTrial = ...
 % 'C:\Users\tony\Raw_Data\151209\151209_F2_C3\PiezoSine_Raw_151209_F2_C3_3.mat';
 
+%% Figure 3 example
+
+fig3example_cell0.name = '151209_F1_C2';
+fig3example_cell0.PiezoStepTrialAnt = ...
+'C:\Users\tony\Raw_Data\151209\151209_F1_C2\PiezoStep_Raw_151209_F1_C2_19.mat';
+fig3example_cell0.PiezoStepTrialPost = ...
+'C:\Users\tony\Raw_Data\151209\151209_F1_C2\PiezoStep_Raw_151209_F1_C2_18.mat';
+
+fig3example_cell0.PiezoSine25 = ...
+'C:\Users\tony\Raw_Data\151209\151209_F1_C2\PiezoSine_Raw_151209_F1_C2_7.mat';
+fig3example_cell0.PiezoSine50 = ...
+'C:\Users\tony\Raw_Data\151209\151209_F1_C2\PiezoSine_Raw_151209_F1_C2_15.mat';
+fig3example_cell0.PiezoSine100 = ...
+'C:\Users\tony\Raw_Data\151209\151209_F1_C2\PiezoSine_Raw_151209_F1_C2_23.mat';
+
+fig3example_cell0.genotype = '20XUAS-mCD8:GFP;45D07-Gal4'; %#ok<*SAGROW>
+
+
+fig3example_cell180.name = '151211_F3_C1';
+fig3example_cell180.PiezoStepTrialAnt = ...
+'C:\Users\tony\Raw_Data\151211\151211_F3_C1\PiezoStep_Raw_151211_F3_C1_1.mat';
+fig3example_cell180.PiezoStepTrialPost = ...
+'C:\Users\tony\Raw_Data\151211\151211_F3_C1\PiezoStep_Raw_151211_F3_C1_6.mat';
+
+fig3example_cell180.PiezoSine25 = ...
+'C:\Users\tony\Raw_Data\151211\151211_F3_C1\PiezoSine_Raw_151211_F3_C1_7.mat';
+fig3example_cell180.PiezoSine50 = ...
+'C:\Users\tony\Raw_Data\151211\151211_F3_C1\PiezoSine_Raw_151211_F3_C1_15.mat';
+fig3example_cell180.PiezoSine100 = ...
+'C:\Users\tony\Raw_Data\151211\151211_F3_C1\PiezoSine_Raw_151211_F3_C1_23.mat';
+
+fig3example_cell180.genotype = '20XUAS-mCD8:GFP;45D07-Gal4'; %#ok<*SAGROW>
+
+
 %% 'GH86;pJFRC7'
 
 cnt = find(strcmp(analysis_cells,'131015_F3_C1'));
 if ~isempty(cnt)
     analysis_cell(cnt).PiezoSineTrial = ...
-        'C:\Users\tony\Raw_Data\131015\131015_F3_C1\PiezoSine_Raw_131015_F3_C1_1.mat';
+'C:\Users\tony\Raw_Data\131015\131015_F3_C1\PiezoSine_Raw_131015_F3_C1_2.mat';
     analysis_cell(cnt).CurrentStepTrial = ...
         '';
     analysis_cell(cnt).SweepTrial = ...
@@ -142,7 +177,7 @@ end
 cnt = find(strcmp(analysis_cells,'150326_F1_C1'));
 if ~isempty(cnt)
     analysis_cell(cnt).PiezoSineTrial = ...
-        'C:\Users\tony\Raw_Data\150326\150326_F1_C1\PiezoSine_Raw_150326_F1_C1_1.mat';
+'C:\Users\tony\Raw_Data\150326\150326_F1_C1\PiezoSine_Raw_150326_F1_C1_7.mat';
     analysis_cell(cnt).CurrentStepTrial = ...
         'C:\Users\tony\Raw_Data\150326\150326_F1_C1\CurrentStep_Raw_150326_F1_C1_1.mat';
     analysis_cell(cnt).CurrentChirpTrial = ...
@@ -156,7 +191,7 @@ end
 cnt = find(strcmp(analysis_cells,'150402_F3_C2'));
 if ~isempty(cnt)
     analysis_cell(cnt).PiezoSineTrial = ...
-        'C:\Users\tony\Raw_Data\150402\150402_F3_C2\PiezoSine_Raw_150402_F3_C2_1.mat';
+'C:\Users\tony\Raw_Data\150402\150402_F3_C2\PiezoSine_Raw_150402_F3_C2_7.mat';
     analysis_cell(cnt).CurrentStepTrial = ...
         '';
     analysis_cell(cnt).CurrentChirpTrial = ...
@@ -170,7 +205,7 @@ end
 cnt = find(strcmp(analysis_cells,'150402_F1_C1'));
 if ~isempty(cnt)
     analysis_cell(cnt).PiezoSineTrial = ...
-        'C:\Users\tony\Raw_Data\150402\150402_F1_C1\PiezoSine_Raw_150402_F1_C1_1.mat';
+'C:\Users\tony\Raw_Data\150402\150402_F1_C1\PiezoSine_Raw_150402_F1_C1_7.mat';
     analysis_cell(cnt).CurrentStepTrial = ...
         'C:\Users\tony\Raw_Data\150402\150402_F1_C1\CurrentStep_Raw_150402_F1_C1_1.mat';
     analysis_cell(cnt).CurrentChirpTrial = ...
@@ -183,7 +218,7 @@ end
 cnt = find(strcmp(analysis_cells,'150502_F1_C2'));
 if ~isempty(cnt)
     analysis_cell(cnt).PiezoSineTrial = ...
-        'C:\Users\tony\Raw_Data\150502\150502_F1_C2\PiezoSine_Raw_150502_F1_C2_1.mat';
+'C:\Users\tony\Raw_Data\150502\150502_F1_C2\PiezoSine_Raw_150502_F1_C2_7.mat';
     analysis_cell(cnt).CurrentStepTrial = ...
         'C:\Users\tony\Raw_Data\150502\150502_F1_C2\CurrentStep_Raw_150502_F1_C2_1.mat';
     analysis_cell(cnt).CurrentChirpTrial = ...
@@ -197,7 +232,7 @@ end
 cnt = find(strcmp(analysis_cells,'150504_F1_C1'));
 if ~isempty(cnt)
     analysis_cell(cnt).PiezoSineTrial = ...
-        'C:\Users\tony\Raw_Data\150504\150504_F1_C1\PiezoSine_Raw_150504_F1_C1_1.mat';
+        'C:\Users\tony\Raw_Data\150504\150504_F1_C1\PiezoSine_Raw_150504_F1_C1_7.mat';
     analysis_cell(cnt).CurrentStepTrial = ...
         '';
     analysis_cell(cnt).CurrentChirpTrial = ...
@@ -211,7 +246,7 @@ end
 cnt = find(strcmp(analysis_cells,'150504_F1_C2'));
 if ~isempty(cnt)
     analysis_cell(cnt).PiezoSineTrial = ...
-        'C:\Users\tony\Raw_Data\150504\150504_F1_C2\PiezoSine_Raw_150504_F1_C2_1.mat';
+        'C:\Users\tony\Raw_Data\150504\150504_F1_C2\PiezoSine_Raw_150504_F1_C2_7.mat';
     analysis_cell(cnt).CurrentStepTrial = ...
         'C:\Users\tony\Raw_Data\150504\150504_F1_C2\CurrentStep_Raw_150504_F1_C2_1.mat';
     analysis_cell(cnt).CurrentChirpTrial = ...
@@ -225,7 +260,7 @@ end
 cnt = find(strcmp(analysis_cells,'150504_F1_C3'));
 if ~isempty(cnt)
     analysis_cell(cnt).PiezoSineTrial = ...
-        'C:\Users\tony\Raw_Data\150504\150504_F1_C3\PiezoSine_Raw_150504_F1_C3_1.mat';
+        'C:\Users\tony\Raw_Data\150504\150504_F1_C3\PiezoSine_Raw_150504_F1_C3_7.mat';
     analysis_cell(cnt).CurrentStepTrial = ...
         'C:\Users\tony\Raw_Data\150504\150504_F1_C3\CurrentStep_Raw_150504_F1_C3_1.mat';
     analysis_cell(cnt).CurrentChirpTrial = ...
@@ -238,7 +273,7 @@ end
 cnt = find(strcmp(analysis_cells,'150623_F1_C1'));
 if ~isempty(cnt)
     analysis_cell(cnt).PiezoSineTrial = ...
-'C:\Users\tony\Raw_Data\150623\150623_F1_C1\PiezoSine_Raw_150623_F1_C1_1.mat';
+'C:\Users\tony\Raw_Data\150623\150623_F1_C1\PiezoSine_Raw_150623_F1_C1_6.mat';
     analysis_cell(cnt).CurrentStepTrial = ...
         '';
     analysis_cell(cnt).CurrentChirpTrial = ...
@@ -252,7 +287,7 @@ end
 cnt = find(strcmp(analysis_cells,'151103_F3_C1'));
 if ~isempty(cnt)
     analysis_cell(cnt).PiezoSineTrial = ...
-'C:\Users\tony\Raw_Data\151103\151103_F3_C1\PiezoSine_Raw_151103_F3_C1_25.mat';
+'C:\Users\tony\Raw_Data\151103\151103_F3_C1\PiezoSine_Raw_151103_F3_C1_11.mat';
     analysis_cell(cnt).CurrentStepTrial = ...
         '';
     analysis_cell(cnt).CurrentChirpTrial = ...
@@ -265,7 +300,7 @@ end
 cnt = find(strcmp(analysis_cells,'151106_F1_C1'));
 if ~isempty(cnt)
     analysis_cell(cnt).PiezoSineTrial = ...
-'C:\Users\tony\Raw_Data\151106\151106_F1_C1\PiezoSine_Raw_151106_F1_C1_1.mat';
+'C:\Users\tony\Raw_Data\151106\151106_F1_C1\PiezoSine_Raw_151106_F1_C1_11.mat';
     analysis_cell(cnt).CurrentStepTrial = ...
         '';
     analysis_cell(cnt).CurrentChirpTrial = ...
@@ -278,7 +313,7 @@ end
 cnt = find(strcmp(analysis_cells,'151106_F1_C3'));
 if ~isempty(cnt)
     analysis_cell(cnt).PiezoSineTrial = ...
-'C:\Users\tony\Raw_Data\151106\151106_F1_C3\PiezoSine_Raw_151106_F1_C3_4.mat';
+'C:\Users\tony\Raw_Data\151106\151106_F1_C3\PiezoSine_Raw_151106_F1_C3_11.mat';
     analysis_cell(cnt).CurrentStepTrial = ...
         '';
     analysis_cell(cnt).CurrentChirpTrial = ...
@@ -292,7 +327,7 @@ end
 cnt = find(strcmp(analysis_cells,'151209_F1_C1'));
 if ~isempty(cnt)
     analysis_cell(cnt).PiezoSineTrial = ...
-'C:\Users\tony\Raw_Data\151209\151209_F1_C1\PiezoSine_Raw_151209_F1_C1_1.mat';
+'C:\Users\tony\Raw_Data\151209\151209_F1_C1\PiezoSine_Raw_151209_F1_C1_11.mat';
     analysis_cell(cnt).CurrentStepTrial = ...
         '';
     analysis_cell(cnt).CurrentChirpTrial = ...
@@ -306,7 +341,7 @@ end
 cnt = find(strcmp(analysis_cells,'151209_F1_C2'));
 if ~isempty(cnt)
     analysis_cell(cnt).PiezoSineTrial = ...
-'C:\Users\tony\Raw_Data\151209\151209_F1_C2\PiezoSine_Raw_151209_F1_C2_1.mat';
+'C:\Users\tony\Raw_Data\151209\151209_F1_C2\PiezoSine_Raw_151209_F1_C2_11.mat';
     analysis_cell(cnt).CurrentStepTrial = ...
         '';
     analysis_cell(cnt).CurrentChirpTrial = ...
@@ -319,7 +354,7 @@ end
 cnt = find(strcmp(analysis_cells,'151209_F2_C3'));
 if ~isempty(cnt)
     analysis_cell(cnt).PiezoSineTrial = ...
-'C:\Users\tony\Raw_Data\151209\151209_F2_C3\PiezoSine_Raw_151209_F2_C3_1.mat';
+'C:\Users\tony\Raw_Data\151209\151209_F2_C3\PiezoSine_Raw_151209_F2_C3_11.mat';
     analysis_cell(cnt).PiezoChirpTrial = ...
 'C:\Users\tony\Raw_Data\151209\151209_F2_C3\PiezoChirp_Raw_151209_F2_C3_1.mat';
     analysis_cell(cnt).CurrentStepTrial = ...
@@ -336,7 +371,7 @@ end
 cnt = find(strcmp(analysis_cells,'151211_F2_C1'));
 if ~isempty(cnt)
     analysis_cell(cnt).PiezoSineTrial = ...
-'C:\Users\tony\Raw_Data\151211\151211_F2_C1\PiezoSine_Raw_151211_F2_C1_177.mat';
+'C:\Users\tony\Raw_Data\151211\151211_F2_C1\PiezoSine_Raw_151211_F2_C1_187.mat';
     analysis_cell(cnt).PiezoChirpTrial = ...
 'C:\Users\tony\Raw_Data\151211\151211_F2_C1\PiezoChirp_Raw_151211_F2_C1_7.mat';
     analysis_cell(cnt).CurrentStepTrial = ...
@@ -353,7 +388,7 @@ end
 cnt = find(strcmp(analysis_cells,'151211_F3_C1'));
 if ~isempty(cnt)
     analysis_cell(cnt).PiezoSineTrial = ...
-'C:\Users\tony\Raw_Data\151211\151211_F3_C1\PiezoSine_Raw_151211_F3_C1_1.mat';
+'C:\Users\tony\Raw_Data\151211\151211_F3_C1\PiezoSine_Raw_151211_F3_C1_11.mat';
     analysis_cell(cnt).PiezoChirpTrial = ...
 'C:\Users\tony\Raw_Data\151211\151211_F3_C1\PiezoChirp_Raw_151211_F3_C1_3.mat';
     analysis_cell(cnt).CurrentStepTrial = ...

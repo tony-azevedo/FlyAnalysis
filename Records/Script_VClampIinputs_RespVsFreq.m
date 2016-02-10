@@ -1,4 +1,4 @@
-cd 'C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_VoltageClampInputCurrents\PiezoSine\'
+cd 'C:\Users\tony\Dropbox\RAnalysis_Data\Record_VoltageClampInputCurrents\VClampPiezoSineRvF\'
 rvf_figs = dir('*VClamp_RvF.fig');
 
 close all
@@ -105,9 +105,8 @@ for g = 1:length(genotypes)
 end
 
 
-%%
-legend(legend_lines,genotypes);
-legend(get(legend_lines(1),'parent'),'boxoff');
+% legend(legend_lines,genotypes);
+% legend(get(legend_lines(1),'parent'),'boxoff');
 savePDFandFIG(fig,savedir,[],'RespVFreq')
 
 
@@ -118,7 +117,7 @@ example1 = '151017_F2_C1';
 %example1 = '151108_F2_C1';
 %example1 = '151030_F1_C1';
 
-cd 'C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_VoltageClampInputCurrents\PiezoSine\'
+cd 'C:\Users\tony\Dropbox\RAnalysis_Data\Record_VoltageClampInputCurrents\VClampPiezoSineRvF\'
 uiopen([example1 '_VClamp.fig'],1);
 exfig = gcf; 
 axchi = get(exfig,'children');

@@ -15,3 +15,15 @@ setpref('FigureMaking','Figure1Ylims',[-48 -26])
 
 %% Figure 2
 
+%% Figure 5
+
+setpref('FigureMaking','SaveToFolder','C:\Users\tony\Dropbox\AzevedoWilson_B1_MS\Figure5')
+setpref('FigureMaking','Figure5Xlims',[-.12 .42]);
+setpref('FigureMaking','Figure5XlimsShort',[-.12 .2])
+setpref('FigureMaking','Figure5Ylims',[-21.3 10.45])
+setpref('FigureMaking','Figure5IClampYlims',[-45 -25])
+setpref('FigureMaking','Figure5VStepYlims',[-210 160])
+setpref('FigureMaking','Figure5VStepXlims',[-210 160])
+setpref('FigureMaking','Figure5IChirpYlims',[-8 8])
+setpref('FigureMaking','Figure5IChirpZYlims',[0 3])
+

@@ -1,4 +1,4 @@
-function varargout = PiezoSineDepolRespVsFreq(fig,handles,savetag)
+function varargout = PF_PiezoSineDepolRespVsFreq_Current(fig,handles,savetag)
 % works on Current Sine, there for the blocks have a rang of amps and freqs
 % see also TransferFunctionOfLike
 
@@ -37,23 +37,30 @@ for ii = 1:length(dispexamples)
     freqexamples = blocktrials;
     for jj = 1:length(freqexamples)
         handles.trial = load(fullfile(handles.dir,sprintf(handles.trialStem,freqexamples(jj))));
-        [area(jj,ii),amp(jj,ii)] = PiezoSineDepolTransFunc([],handles,savetag);
+        [area(jj,ii)] = PF_PiezoSineDepolTransFunc_Current([],handles,savetag);
     end
 
     ax = p(1).select();
-    line(handles.trial.params.freqs', area(:,ii),...abs(area(:,ii)),... amp(:,ii),...
+    line(handles.trial.params.freqs',area(:,ii),... amp(:,ii),...
         'parent',ax,'color',[0 1/length(handles.trial.params.displacements) 0]*ii,...
         'tag',savetag);
-    ylabel(ax,'Peak (mV)') % 'Area (mV s)'
-    title(ax,'Freq Selectivity')
-    set(ax,'tag','magnitude_ax');
-
-    xlabel(ax,'Frequency (Hz)')
 end
+
+ylabel(ax,'Peak (mV)') % 'Area (mV s)'
+title(ax,'Freq Selectivity')
+set(ax,'tag','magnitude_ax');
+
+[protocol,dateID,flynum,cellnum,trialnum] = extractRawIdentifiers(handles.trial.name);
+p.title(regexprep(['PiezoSine ' dateID '_' flynum '_' cellnum ': ' savetag],'_','\\_'))
+% set(fig,'name',['PiezoSine_RespVFreq_' dateID '_' flynum '_' cellnum])
+
+xlabel(ax,'Frequency (Hz)')
+
 axis(get(fig,'children'),'tight')
 set(get(fig,'children'),'xscale','log');
 
-varargout{1} = area;
-varargout{2} = handles.trial.params.freqs;
-varargout{3} = handles.trial.params.displacements;
-varargout{4} = amp;
+varargout{1} = fig;
+varargout{2} = area;
+varargout{3} = handles.trial.params.freqs;
+varargout{4} = handles.trial.params.displacements;
+varargout{5} = amp;

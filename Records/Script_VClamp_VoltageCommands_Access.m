@@ -5,7 +5,7 @@
 %     'VoltageRamp_m50_p12_h_0_5s};
 
 yyddmm = ac.name(1:6);
-trial = load([fullfile('C:\Users\Anthony Azevedo\Raw_Data\',yyddmm,ac.name) '\VoltageStep_Raw_' ac.name '_1.mat']);  
+trial = load([fullfile('C:\Users\tony\Raw_Data\',yyddmm,ac.name) '\VoltageStep_Raw_' ac.name '_1.mat']);  
 h = getShowFuncInputsFromTrial(trial);
 
 % trial = load(ac.trials.VoltageCommand);
