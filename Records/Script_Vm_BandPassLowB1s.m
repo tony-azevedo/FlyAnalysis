@@ -8,10 +8,10 @@ save_log = 1;
 id = 'BPL_';
 
 %%
-analysis_grid = {...
-%     '131122_F2_C1'  '20XUAS-mCD8:GFP;VT30609-Gal4'       'coarse frequency, no current injections';
-%     '131126_F2_C3'  '20XUAS-mCD8:GFP;VT30609-Gal4'       'Complete over harmonics, slight band pass';
-%     '131126_F2_C1'  '20XUAS-mCD8:GFP;VT30609-Gal4'       'coarse freq sample, single amplitude, VCLAMP data!';
+vm_analysis_grid = {...
+%      '131122_F2_C1'  '20XUAS-mCD8:GFP;VT30609-Gal4'       'coarse frequency, no current injections';
+%      '131126_F2_C3'  '20XUAS-mCD8:GFP;VT30609-Gal4'       'Complete over harmonics, slight band pass';
+%      '131126_F2_C1'  '20XUAS-mCD8:GFP;VT30609-Gal4'       'coarse freq sample, single amplitude, VCLAMP data!';
 %     '131211_F2_C1'  'UAS-ArcLight/VT30609-Gal4'       'Low pass, first cell with more sine waves.  No clear spiking, sharper tuning';
     
 %     '140117_F2_C1'  'UAS-ArcLight/VT30609-Gal4'      'coarse frequency, no current injections';
@@ -63,11 +63,11 @@ no_nerve_grid = {
 % analysis_grid = possible_examples_grid;
 
 clear analysis_cell analysis_cells
-for c = 1:size(analysis_grid,1)
-    analysis_cell(c).name = analysis_grid{c,1};
-    analysis_cell(c).genotype = analysis_grid{c,2}; %#ok<*SAGROW>
-    analysis_cell(c).comment = analysis_grid{c,3};
-    analysis_cells{c} = analysis_grid{c,1};
+for c = 1:size(vm_analysis_grid,1)
+    analysis_cell(c).name = vm_analysis_grid{c,1};
+    analysis_cell(c).genotype = vm_analysis_grid{c,2}; %#ok<*SAGROW>
+    analysis_cell(c).comment = vm_analysis_grid{c,3};
+    analysis_cells{c} = vm_analysis_grid{c,1};
 end
 fprintf('BandPass-Low: \n')
 fprintf('\t%s\n',analysis_cells{:})

@@ -42,6 +42,9 @@ if sum(strcmp('VClamp',trial.params.mode))
         d1 = designfilt('lowpassiir','FilterOrder',8,'PassbandFrequency',2e3,'PassbandRipple',0.2,'SampleRate',trial.params.sampratein);
     end
     y_ = filtfilt(d1,y_);
+    for c = 1:size(y,2)
+        y(:,c) = filtfilt(d1,y(:,c));
+    end
 end
 
 sem_up = std(y,[],2)/sqrt(length(trials));

@@ -39,9 +39,9 @@ analysis_grid = {...
 
 vm_analysis_grid = {...
 %     '130911_F2_C1'  'GH86;pJFRC7'                   'coarse frequency, no current injections';                 
-%     '131015_F3_C1'  'GH86;pJFRC7'                   'coarse frequency, no current injections';                  
+     '131015_F3_C1'  'GH86;pJFRC7'                   'coarse frequency, no current injections';                  
 %     '140122_F2_C1'  'UAS-ArcLight/VT30609-Gal4'           'coarse freq sample, single amplitude, VCLAMP data!';      
-%     '140128_F1_C1'  'UAS-ArcLight/VT30609-Gal4'           'Complete over harmonics, slight band pass';                
+     '140128_F1_C1'  'UAS-ArcLight/VT30609-Gal4'           'Complete over harmonics, slight band pass';                
     '150326_F1_C1'  '20XUAS-mCD8:GFP;VT27938-Gal4'  '';                  
     '150402_F3_C2'  '20XUAS-mCD8:GFP;VT27938-Gal4'  '';                 
     '150402_F1_C1'  '20XUAS-mCD8:GFP;VT27938-Gal4'  '';                 
@@ -81,11 +81,11 @@ male_grid = { ...
     };
 
 clear analysis_cell analysis_cells
-for c = 1:size(analysis_grid,1)
-    analysis_cell(c).name = analysis_grid{c,1};
-    analysis_cell(c).genotype = analysis_grid{c,2}; %#ok<*SAGROW>
-    analysis_cell(c).comment = analysis_grid{c,3};
-    analysis_cells{c} = analysis_grid{c,1};
+for c = 1:size(vm_analysis_grid,1)
+    analysis_cell(c).name = vm_analysis_grid{c,1};
+    analysis_cell(c).genotype = vm_analysis_grid{c,2}; %#ok<*SAGROW>
+    analysis_cell(c).comment = vm_analysis_grid{c,3};
+    analysis_cells{c} = vm_analysis_grid{c,1};
 end
 fprintf('LowPass: \n')
 fprintf('\t%s\n',analysis_cells{:})

@@ -357,7 +357,7 @@ else
     savetag = 'delete';
     delete(findobj(handles.quickShowPanel,'tag','delete'));
 end
-set(get(handles.quickShowPanel,'children'),'xscale','linear');
+set(findobj(get(handles.quickShowPanel,'children'),'type','axes'),'xscale','linear');
 
 guidata(hObject,handles)
 updateInfoPanel(handles);

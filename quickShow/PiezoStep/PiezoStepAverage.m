@@ -31,7 +31,7 @@ end
 plot(ax,x,y,'color',[1, .7 .7],'tag',savetag); hold on
 plot(ax,x,mean(y,2),'color',[.7 0 0],'tag',savetag);
 xlim([-.1 trial.params.stimDurInSec+ min(.15,trial.params.postDurInSec)])
-xlim([-.12 .42])
+%xlim([-.12 .42])
 text(-.09,mean(mean(y(x<0),2),1),...
     [num2str(trial.params.displacement *3) ' \mum'],...
     'fontsize',7,'parent',ax,'tag',savetag)

@@ -10,7 +10,7 @@ id = 'BPH_';
 
 %%
 
-analysis_grid = {...
+vm_analysis_grid = {...
 %     '131014_F4_C1'  'GH86-Gal4;20XUAS-mCD8:GFP;'	'clear spiking (sweep), but not great stimulus control'
 %     '131014_F3_C1'  'GH86-Gal4;20XUAS-mCD8:GFP;'	'clear spiking, mid range frequency, holding potential is offset, but otherwise ok'
 %     '131016_F1_C1'  'GH86-Gal4;20XUAS-mCD8:GFP;'	'Clear spiking, not good stimulus control! exclude from PiezoStepAnalysis'
@@ -55,11 +55,11 @@ genotypes = {   '10XUAS-mCD8:GFP;Fru-Gal4'                           '20XUAS-mCD
     'UAS-Dcr;10XUAS-mCD8:GFP/+;FruGal4/UAS-paraRNAi'        'UAS-Dcr;20XUAS-mCD8:GFP/+;VT27938-Gal4/UAS-paraRNAi'
     };
 
-for c = 1:size(analysis_grid,1)
-    analysis_cell(c).name = analysis_grid{c,1};
-    analysis_cell(c).genotype = analysis_grid{c,2}; %#ok<*SAGROW>
-    analysis_cell(c).comment = analysis_grid{c,3};
-    analysis_cells{c} = analysis_grid{c,1};
+for c = 1:size(vm_analysis_grid,1)
+    analysis_cell(c).name = vm_analysis_grid{c,1};
+    analysis_cell(c).genotype = vm_analysis_grid{c,2}; %#ok<*SAGROW>
+    analysis_cell(c).comment = vm_analysis_grid{c,3};
+    analysis_cells{c} = vm_analysis_grid{c,1};
 end
 fprintf('BandPass-Hi: \n')
 fprintf('\t%s\n',analysis_cells{:})
@@ -80,64 +80,38 @@ exclude_cells = {
     };
 
 %% Example cell 
-example_cell.name = '151201_F1_C1';
-example_cell.PiezoSineTrial = ...
-'C:\Users\tony\Raw_Data\151201\151201_F1_C1\PiezoSine_Raw_151201_F1_C1_3.mat';
-example_cell.CurrentStepTrial = ...
-'';
-example_cell.CurrentChirpTrial = ...
-'';
+example_cell.name = '131126_F2_C2';
 example_cell.SweepTrial = ...
         'C:\Users\tony\Raw_Data\151201\151201_F1_C1\Sweep_Raw_151201_F1_C1_2.mat';
+example_cell.SpikeTrial = ...
+        'C:\Users\tony\Raw_Data\131126\131126_F2_C2\Sweep_Raw_131126_F2_C2_9.mat';
+example_cell.SpikeInterval = ...
+        [2 3];
 
-% other possibility
-% example_cell.name = '151201_F1_C2';
-% example_cell.PiezoSineTrial = ...
-% 'C:\Users\tony\Raw_Data\151201\151201_F1_C2\PiezoSine_Raw_151201_F1_C2_112.mat';
-% example_cell.CurrentStepTrial = ...
-% '';
-% example_cell.CurrentChirpTrial = ...
-% '';
+% % other possibilities
+% example_cell.name = '150513_F2_C1';
 % example_cell.SweepTrial = ...
-% '';
-
-%% Figure 3 example
-
-fig3example_cell0.name = '151201_F1_C1';
-fig3example_cell0.PiezoStepTrialAnt = ...
-'C:\Users\tony\Raw_Data\151201\151201_F1_C1\PiezoStep_Raw_151201_F1_C1_2.mat';
-fig3example_cell0.PiezoStepTrialPost = ...
-'C:\Users\tony\Raw_Data\151201\151201_F1_C1\PiezoStep_Raw_151201_F1_C1_7.mat';
-
-fig3example_cell0.PiezoSine25 = ...
-'C:\Users\tony\Raw_Data\151201\151201_F1_C1\PiezoSine_Raw_151201_F1_C1_7.mat';
-fig3example_cell0.PiezoSine50 = ...
-'C:\Users\tony\Raw_Data\151201\151201_F1_C1\PiezoSine_Raw_151201_F1_C1_15.mat';
-fig3example_cell0.PiezoSine100 = ...
-'C:\Users\tony\Raw_Data\151201\151201_F1_C1\PiezoSine_Raw_151201_F1_C1_23.mat';
-fig3example_cell0.PiezoSine200 = ...
-'C:\Users\tony\Raw_Data\151201\151201_F1_C1\PiezoSine_Raw_151201_F1_C1_31.mat';
-
-fig3example_cell0.genotype = '10XUAS-mCD8:GFP;Fru-Gal4'; %#ok<*SAGROW>
-
-
-fig3example_cell180.name = '131126_F2_C2';
-fig3example_cell180.PiezoStepTrialAnt = ...
-'C:\Users\tony\Raw_Data\131126\131126_F2_C2\PiezoStep_Raw_131126_F2_C2_7.mat';
-fig3example_cell180.PiezoStepTrialPost = ...
-'C:\Users\tony\Raw_Data\131126\131126_F2_C2\PiezoStep_Raw_131126_F2_C2_6.mat';
-
-fig3example_cell180.PiezoSine25 = ...
-'C:\Users\tony\Raw_Data\131126\131126_F2_C2\PiezoSine_Raw_131126_F2_C2_2.mat';
-fig3example_cell180.PiezoSine50 = ...
-'C:\Users\tony\Raw_Data\131126\131126_F2_C2\PiezoSine_Raw_131126_F2_C2_5.mat';
-fig3example_cell180.PiezoSine100 = ...
-'C:\Users\tony\Raw_Data\131126\131126_F2_C2\PiezoSine_Raw_131126_F2_C2_8.mat';
-fig3example_cell180.PiezoSine200 = ...
-'C:\Users\tony\Raw_Data\131126\131126_F2_C2\PiezoSine_Raw_131126_F2_C2_11.mat';
-
-fig3example_cell180.genotype = 'GH86-Gal4;20XUAS-mCD8:GFP;'; %#ok<*SAGROW>
-
+%     'C:\Users\tony\Raw_Data\150513\150513_F2_C1\Sweep_Raw_150513_F2_C1_5.mat';
+% example_cell.SpikeTrial = ...
+%     'C:\Users\tony\Raw_Data\150513\150513_F2_C1\Sweep_Raw_150513_F2_C1_36.mat';
+% example_cell.SpikeInterval = ...
+%         [0 1];
+% 
+% example_cell.name = '150531_F1_C1';
+% example_cell.SweepTrial = ...
+% 'C:\Users\tony\Raw_Data\150531\150531_F1_C1\Sweep_Raw_150531_F1_C1_2.mat';
+% example_cell.SpikeTrial = ...
+% 'C:\Users\tony\Raw_Data\150531\150531_F1_C1\Sweep_Raw_150531_F1_C1_20.mat';
+% example_cell.SpikeInterval = ...
+%         [1 2];
+%     
+% example_cell.name = '151125_F1_C1';
+% example_cell.SweepTrial = ...
+% 'C:\Users\tony\Raw_Data\151125\151125_F1_C1\PiezoSine_Raw_151125_F1_C1_8.mat';
+% example_cell.SpikeTrial = ...
+% 'C:\Users\tony\Raw_Data\151125\151125_F1_C1\PiezoSine_Raw_151125_F1_C1_215.mat';
+% example_cell.SpikeInterval = ...
+%         [-.2 .5];
 
 %% GH86
 cnt = find(strcmp(analysis_cells,'131014_F4_C1'));

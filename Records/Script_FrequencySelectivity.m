@@ -56,7 +56,7 @@ if save_log
             fn = [id,analysis_cell(c_ind).name '_'...
                 tb '_',...
                 func2str(funchandle)];
-            %savePDFandFIG(f,savedir,[],fn)
+            savePDF(f,savedir,[],fn)
         end
     end
         

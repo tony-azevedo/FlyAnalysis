@@ -411,13 +411,26 @@ percentreduced_shakB = (shkB_ctrl_p-shkB_drug_p)./shkB_ctrl_p
 % % ttest2
 % [H,P,CI] = ttest2(wt_ctrl,wt_drug)          % p = 0.1355
 % [H,P,CI] = ttest2(shkB_ctrl,shkB_drug)      % p = 0.0428
-% [H,P,CI] = ttest2(wt_ctrl,shkB_ctrl)        % p < 1E-4
+% [H,P,CI] = ttest2(wt_ctrl,shkB_ctrl)        % p < 2.2926e-04
 % [H,P,CI] = ttest2(percentreduced_wt,percentreduced_shakB)   % p <1E-6
+
+mean(percentreduced_wt) % 0.1954
+SEM_wt = std(percentreduced_wt)/sqrt(length(percentreduced_wt)); % 0.0580
+ts = tinv([0.005  0.995],length(percentreduced_wt)-1);
+CI_up = mean(percentreduced_wt) + ts(1)*SEM_wt; % 95% - 0.6901, 99% - -0.0197
+CI_down = mean(percentreduced_wt) + ts(2)*SEM_wt; % 95% - 0.6901, 99% - 0.4106
+
+mean(percentreduced_shakB) % 0.7845
+SEM_shakB = std(percentreduced_shakB)/sqrt(length(percentreduced_shakB)); % 0.0399
+ts = tinv([0.005  0.995],length(percentreduced_wt)-1);
+CI_up = mean(percentreduced_shakB) + ts(1)*SEM_shakB; % 95% - 0.6901, 99% - 0.5935
+CI_down = mean(percentreduced_shakB) + ts(2)*SEM_shakB; % 95% - 0.8788, 99% - 0.9324 
 
 % % ranksum
 % [P,H,CI] = ranksum(wt_ctrl,wt_drug)          % p = 0.1355
 % [P,H,CI] = ranksum(shkB_ctrl,shkB_drug)      % p < 1E-4
 % [P,H,CI] = ranksum(wt_ctrl,shkB_ctrl)        % p < 1E-4
+% [H,P,CI] = ranksum(percentreduced_wt,percentreduced_shakB) % p<1E-3
 
 %% 
 y = [wt_ctrl,wt_drug,shkB_ctrl,shkB_drug];

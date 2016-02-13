@@ -48,6 +48,8 @@ for d_ind = 1:length(all_dsplcmnts)
     ax2 = frompnl(2).select(); hold(ax2,'on')
     frompnl(1).title([num2str(all_dsplcmnts(d_ind)) ' V'])
     for c_ind = 1:length(transfer)
+        cnt = find(strcmp(analysis_cells,hasPiezoSineName{c_ind}));
+        
         dspl_o = dsplcmnts{c_ind};
         dspl = round(dspl_o*1000)/1000;
 
@@ -63,11 +65,11 @@ for d_ind = 1:length(all_dsplcmnts)
         plot(freqs{c_ind}(af_f),real(abs(transfer{c_ind}(af_f,d_i))),...
             'parent',ax1,'linestyle','-','color',0*[.85 .85 .85],...
             'marker','.','markerfacecolor',0*[.85 .85 .85],'markeredgecolor',0*[.85 .85 .85],...
-            'displayname',hasPiezoSineName{c_ind},'tag',genotype{c_ind},'userdata',dspl_o(d_i))
+            'displayname',hasPiezoSineName{c_ind},'tag',analysis_cell(cnt).genotype,'userdata',dspl_o(d_i))
         plot(freqs{c_ind}(af_f),real(abs(transfer{c_ind}(af_f,d_i)))/max(real(abs(transfer{c_ind}(af_f,d_i)))),...
             'parent',ax2,'linestyle','-','color',0*[.85 .85 .85],...
             'marker','.','markerfacecolor',0*[.85 .85 .85],'markeredgecolor',0*[.85 .85 .85],...
-            'displayname',hasPiezoSineName{c_ind},'tag',genotype{c_ind},'userdata',dspl_o(d_i))
+            'displayname',hasPiezoSineName{c_ind},'tag',analysis_cell(cnt).genotype,'userdata',dspl_o(d_i))
         
     end
     %plot(all_freqs(~isnan(dspltranf(3,:))),nanmean(dspltranf(:,~isnan(dspltranf(3,:))),1),'color',[0 1/length(all_dsplcmnts) 0]*d_ind);
