@@ -16,6 +16,7 @@ analysis_grid = {...
 %     '131016_F1_C1'  'GH86-Gal4;20XUAS-mCD8:GFP;'	'Clear spiking, not good stimulus control! exclude from PiezoStepAnalysis'
     '131126_F2_C2'  '20XUAS-mCD8:GFP;VT30609-Gal4'	'Banner cell, Current Sine @ hyp. Vm, was used in NRSA-resubmit, sharp tuning though coarse'
     
+
     '150421_F1_C1'  '10XUAS-mCD8:GFP;Fru-Gal4'      'Larger amplitudes produce lower amplitude responses'
     '150513_F2_C1'  '10XUAS-mCD8:GFP;Fru-Gal4'      'PiezoChirp is an interesting stimulus, strong spontaneous noise'
 %     '150527_F1_C3'  '20XUAS-mCD8:GFP/+;63A03-Gal4/+'    'Without perfusion, beautiful clear line, nice spiker, the somewhat dim one next to the big guy'

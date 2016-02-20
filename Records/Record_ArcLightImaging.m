@@ -1,4 +1,4 @@
-cd('C:\Users\Anthony Azevedo\Code\FlyAnalysis\Records\') % Go to the home folder
+cd('C:\Users\tony\Code\FlyAnalysis\Records\') % Go to the home folder
 
 %% Cells to Analyze
 % Note 6/11/14:  I'm taking three cells out of the analysis: 140207 - due
@@ -6,275 +6,316 @@ cd('C:\Users\Anthony Azevedo\Code\FlyAnalysis\Records\') % Go to the home folder
 
 clear all
 
-evidence_for_Inclusion = {
-    '140117_F2_C1', 'sound responsive',...
-'140121_F2_C1','sound responsive',...
-'140131_F3_C1','same kinds of currents',...
-'140206_F1_C1','same currents',...
-'140528_F1_C1','sound responsive',...
-'140530_F1_C1','sound responsive',...
-'140530_F2_C1','sound responsive',...
-'140602_F1_C1','sound responsive',...
-'140602_F2_C1','sound responsive',...
-'150119_F1_C1','NOT SURE!!',...
-'150220_F1_C1','Sound responsive',...
-'150220_F1_C1','Sound responsive',...
-    };
+analysis_grid = {
+    '140117_F2_C1'  'UAS-ArcLight/VT30609-Gal4'   'sound responsive'        -50
+    '140121_F2_C1'  'UAS-ArcLight;VT30609-Gal4'   'sound responsive'        -50 
+    '140131_F3_C1'  'UAS-ArcLight;VT30609-Gal4'   'same kinds of currents'  -50
+    '140206_F1_C1'  'UAS-ArcLight;VT30609-Gal4'   'same currents'           -50
+    '140528_F1_C1'  'UAS-ArcLight;VT30609-Gal4'   'sound responsive'        -25
+    '140530_F1_C1'  'UAS-ArcLight;VT30609-Gal4'   'A2 - sound responsive'        -25
+    '140530_F2_C1'  'UAS-ArcLight;VT30609-Gal4'   'sound responsive'        -25
+    '140602_F1_C1'  'UAS-ArcLight;VT30609-Gal4'   'sound responsive'        -25
+    '140602_F2_C1'  'UAS-ArcLight;VT30609-Gal4'   'sound responsive'        -25
+    '150119_F1_C1'  'UAS-ArcLight;VT30609-Gal4'   'NOT SURE!!'              -50
+    '150220_F1_C1'  'UAS-ArcLight;VT30609-Gal4'   'sound responsive'        -36
+%     '150504_F1_C2'  'UAS-ArcLight;R45D07-Gal4'   'sound responsive'         -50
+    '151123_F1_C1'  'UAS-ArcLight;R45D07-Gal4'   'sound responsive'         -47
+    '151123_F1_C2'  'UAS-ArcLight;R45D07-Gal4'   'sound responsive'         -50
+    '151123_F2_C1'  'UAS-ArcLight;R45D07-Gal4'   'sound responsive'         -50
+}
 
-cnt = 1;
+clear analysis_cell analysis_cells
+for c = 1:size(analysis_grid,1)
+    analysis_cell(c).name = analysis_grid{c,1};
+    analysis_cell(c).genotype = analysis_grid{c,2}; %#ok<*SAGROW>
+    analysis_cell(c).comment = analysis_grid{c,3};
+    analysis_cells{c} = analysis_grid{c,1};
+end
+fprintf('ArcLight: \n')
+fprintf('\t%s\n',analysis_cells{:})
+
+%% 
+cnt = find(strcmp(analysis_cells,'140117_F2_C1'));
+if ~isempty(cnt)
 analysis_cell(cnt).name = '140117_F2_C1';
 analysis_cell(cnt).comment = {'Bright, isolated','Prepoints on Voltage Plateau too few to get good dFoverF relationship'};
 analysis_cell(cnt).exampletrials = {...
-    'C:\Users\Anthony Azevedo\Raw_Data\140117\140117_F2_C1\Sweep_Raw_140117_F2_C1_2.mat';...
-    'C:\Users\Anthony Azevedo\Raw_Data\140117\140117_F2_C1\VoltagePlateau_Raw_140117_F2_C1_3.mat';...
+    'C:\Users\tony\Raw_Data\140117\140117_F2_C1\Sweep_Raw_140117_F2_C1_2.mat';...
+    'C:\Users\tony\Raw_Data\140117\140117_F2_C1\VoltagePlateau_Raw_140117_F2_C1_3.mat';...
     };
 analysis_cell(cnt).breakin_trial = {...
-    'C:\Users\Anthony Azevedo\Raw_Data\140117\140117_F2_C1\Sweep_Raw_140117_F2_C1_2.mat';...
+    'C:\Users\tony\Raw_Data\140117\140117_F2_C1\Sweep_Raw_140117_F2_C1_2.mat';...
     };
 analysis_cell(cnt).plateau_trial = {...
-    'C:\Users\Anthony Azevedo\Raw_Data\140117\140117_F2_C1\VoltagePlateau_Raw_140117_F2_C1_3.mat';...
+    'C:\Users\tony\Raw_Data\140117\140117_F2_C1\VoltagePlateau_Raw_140117_F2_C1_3.mat';...
     };
-
-cnt = 2;
+end
+cnt = find(strcmp(analysis_cells,'140121_F2_C1'));
+if ~isempty(cnt)
 analysis_cell(cnt).name = '140121_F2_C1';
 analysis_cell(cnt).comment = {'Example Cell, sound responsive, not spiking, just great! This is the Example cell for figure'};
 analysis_cell(cnt).exampletrials = {...
-    'C:\Users\Anthony Azevedo\Raw_Data\140121\140121_F2_C1\Sweep_Raw_140121_F2_C1_2.mat';...
-    'C:\Users\Anthony Azevedo\Raw_Data\140117\140117_F2_C1\VoltagePlateau_Raw_140117_F2_C1_3.mat';...
+    'C:\Users\tony\Raw_Data\140121\140121_F2_C1\Sweep_Raw_140121_F2_C1_2.mat';...
+    'C:\Users\tony\Raw_Data\140117\140117_F2_C1\VoltagePlateau_Raw_140117_F2_C1_3.mat';...
     };
 analysis_cell(cnt).breakin_trial = {...
-    'C:\Users\Anthony Azevedo\Raw_Data\140121\140121_F2_C1\Sweep_Raw_140121_F2_C1_2.mat';...
+    'C:\Users\tony\Raw_Data\140121\140121_F2_C1\Sweep_Raw_140121_F2_C1_2.mat';...
     };
 analysis_cell(cnt).plateau_trial = {...
-    'C:\Users\Anthony Azevedo\Raw_Data\140121\140121_F2_C1\VoltagePlateau_Raw_140121_F2_C1_4.mat';...
+    'C:\Users\tony\Raw_Data\140121\140121_F2_C1\VoltagePlateau_Raw_140121_F2_C1_4.mat';...
     };
 
-cnt = 3;
+end
+cnt = find(strcmp(analysis_cells,'140131_F3_C1'));
+if ~isempty(cnt)
 analysis_cell(cnt).name = '140131_F3_C1';
 analysis_cell(cnt).comment = {'Moving.  Nice bright cell, not sound responsive, otherwise classic B1'};
 analysis_cell(cnt).exampletrials = {...
-    'C:\Users\Anthony Azevedo\Raw_Data\140131\140131_F3_C1\Sweep_Raw_140131_F3_C1_2.mat';...
-    'C:\Users\Anthony Azevedo\Raw_Data\140131\140131_F3_C1\VoltagePlateau_Raw_140131_F3_C1_1.mat';...
+    'C:\Users\tony\Raw_Data\140131\140131_F3_C1\Sweep_Raw_140131_F3_C1_2.mat';...
+    'C:\Users\tony\Raw_Data\140131\140131_F3_C1\VoltagePlateau_Raw_140131_F3_C1_1.mat';...
     };
 analysis_cell(cnt).breakin_trial = {...
-    'C:\Users\Anthony Azevedo\Raw_Data\140131\140131_F3_C1\Sweep_Raw_140131_F3_C1_2.mat';...
+    'C:\Users\tony\Raw_Data\140131\140131_F3_C1\Sweep_Raw_140131_F3_C1_2.mat';...
     };
 analysis_cell(cnt).plateau_trial = {...
-    'C:\Users\Anthony Azevedo\Raw_Data\140131\140131_F3_C1\VoltagePlateau_Raw_140131_F3_C1_1.mat';...
+    'C:\Users\tony\Raw_Data\140131\140131_F3_C1\VoltagePlateau_Raw_140131_F3_C1_1.mat';...
     };
+end
 
 
-% New Internal
-cnt = 4;
+cnt = find(strcmp(analysis_cells,'140206_F1_C1'));
+if ~isempty(cnt)
 analysis_cell(cnt).name = '140206_F1_C1';
 analysis_cell(cnt).comment = {'Movement, Not sound responsive.  Good looking cell'};
 analysis_cell(cnt).exampletrials = {...
-    'C:\Users\Anthony Azevedo\Raw_Data\140206\140206_F1_C1\Sweep_Raw_140206_F1_C1_2.mat';...
-    'C:\Users\Anthony Azevedo\Raw_Data\140206\140206_F1_C1\Sweep_Raw_140206_F1_C1_1.mat';...
-    'C:\Users\Anthony Azevedo\Raw_Data\140206\140206_F1_C1\VoltagePlateau_Raw_140206_F1_C1_1.mat';...
-    'C:\Users\Anthony Azevedo\Raw_Data\140206\140206_F1_C1\PiezoSine_Raw_140206_F1_C1_26.mat';...
+    'C:\Users\tony\Raw_Data\140206\140206_F1_C1\Sweep_Raw_140206_F1_C1_2.mat';...
+    'C:\Users\tony\Raw_Data\140206\140206_F1_C1\Sweep_Raw_140206_F1_C1_1.mat';...
+    'C:\Users\tony\Raw_Data\140206\140206_F1_C1\VoltagePlateau_Raw_140206_F1_C1_1.mat';...
+    'C:\Users\tony\Raw_Data\140206\140206_F1_C1\PiezoSine_Raw_140206_F1_C1_26.mat';...
     };
 analysis_cell(cnt).breakin_trial = {...
-    'C:\Users\Anthony Azevedo\Raw_Data\140206\140206_F1_C1\Sweep_Raw_140206_F1_C1_2.mat';...
+    'C:\Users\tony\Raw_Data\140206\140206_F1_C1\Sweep_Raw_140206_F1_C1_2.mat';...
     };
 analysis_cell(cnt).plateau_trial = {...
-    'C:\Users\Anthony Azevedo\Raw_Data\140206\140206_F1_C1\VoltagePlateau_Raw_140206_F1_C1_1.mat';...
+    'C:\Users\tony\Raw_Data\140206\140206_F1_C1\VoltagePlateau_Raw_140206_F1_C1_1.mat';...
     };
+end
 
-cnt = 5;
+cnt = find(strcmp(analysis_cells,'140528_F1_C1'));
+if ~isempty(cnt)
 analysis_cell(cnt).name = '140528_F1_C1';
 analysis_cell(cnt).comment = {
 'Break in at -25, pretty good cell. Changed gain in Iclamp, though this doesnt matter'
 };
 analysis_cell(cnt).exampletrials = {...
-'C:\Users\Anthony Azevedo\Raw_Data\140528\140528_F1_C1\Sweep_Raw_140528_F1_C1_1.mat';
-'C:\Users\Anthony Azevedo\Raw_Data\140528\140528_F1_C1\VoltagePlateau_Raw_140528_F1_C1_1.mat';
+'C:\Users\tony\Raw_Data\140528\140528_F1_C1\Sweep_Raw_140528_F1_C1_1.mat';
+'C:\Users\tony\Raw_Data\140528\140528_F1_C1\VoltagePlateau_Raw_140528_F1_C1_1.mat';
     };
 analysis_cell(cnt).breakin_trial = {...
-'C:\Users\Anthony Azevedo\Raw_Data\140528\140528_F1_C1\Sweep_Raw_140528_F1_C1_1.mat';
+'C:\Users\tony\Raw_Data\140528\140528_F1_C1\Sweep_Raw_140528_F1_C1_1.mat';
     };
 analysis_cell(cnt).plateau_trial = {...
-'C:\Users\Anthony Azevedo\Raw_Data\140528\140528_F1_C1\VoltagePlateau_Raw_140528_F1_C1_1.mat';
+'C:\Users\tony\Raw_Data\140528\140528_F1_C1\VoltagePlateau_Raw_140528_F1_C1_1.mat';
     };
+end
 
-
-cnt = 6;
+cnt = find(strcmp(analysis_cells,'140530_F1_C1'));
+if ~isempty(cnt)
 analysis_cell(cnt).name = '140530_F1_C1';
 analysis_cell(cnt).comment = {
 'Break in at -25, High Frequency cell.'
 };
 analysis_cell(cnt).exampletrials = {...
-'C:\Users\Anthony Azevedo\Raw_Data\140530\140530_F1_C1\Sweep_Raw_140530_F1_C1_1.mat';
-'C:\Users\Anthony Azevedo\Raw_Data\140530\140530_F1_C1\VoltagePlateau_Raw_140530_F1_C1_1.mat';
+'C:\Users\tony\Raw_Data\140530\140530_F1_C1\Sweep_Raw_140530_F1_C1_1.mat';
+'C:\Users\tony\Raw_Data\140530\140530_F1_C1\VoltagePlateau_Raw_140530_F1_C1_1.mat';
     };
 analysis_cell(cnt).breakin_trial = {...
-'C:\Users\Anthony Azevedo\Raw_Data\140530\140530_F1_C1\Sweep_Raw_140530_F1_C1_1.mat';
+'C:\Users\tony\Raw_Data\140530\140530_F1_C1\Sweep_Raw_140530_F1_C1_1.mat';
     };
 analysis_cell(cnt).plateau_trial = {...
-'C:\Users\Anthony Azevedo\Raw_Data\140530\140530_F1_C1\VoltagePlateau_Raw_140530_F1_C1_1.mat';
+'C:\Users\tony\Raw_Data\140530\140530_F1_C1\VoltagePlateau_Raw_140530_F1_C1_1.mat';
     };
+end
 
-
-cnt = 7;
+cnt = find(strcmp(analysis_cells,'140530_F2_C1'));
+if ~isempty(cnt)
 analysis_cell(cnt).name = '140530_F2_C1';
 analysis_cell(cnt).comment = {
 'Break in at -25, High Frequency cell.'
 };
 analysis_cell(cnt).exampletrials = {...
-'C:\Users\Anthony Azevedo\Raw_Data\140530\140530_F2_C1\Sweep_Raw_140530_F2_C1_1.mat';
-'C:\Users\Anthony Azevedo\Raw_Data\140530\140530_F2_C1\VoltagePlateau_Raw_140530_F2_C1_2.mat';
+'C:\Users\tony\Raw_Data\140530\140530_F2_C1\Sweep_Raw_140530_F2_C1_1.mat';
+'C:\Users\tony\Raw_Data\140530\140530_F2_C1\VoltagePlateau_Raw_140530_F2_C1_2.mat';
     };
 analysis_cell(cnt).breakin_trial = {...
-'C:\Users\Anthony Azevedo\Raw_Data\140530\140530_F2_C1\Sweep_Raw_140530_F2_C1_1.mat';
+'C:\Users\tony\Raw_Data\140530\140530_F2_C1\Sweep_Raw_140530_F2_C1_1.mat';
     };
 analysis_cell(cnt).plateau_trial = {...
-'C:\Users\Anthony Azevedo\Raw_Data\140530\140530_F2_C1\VoltagePlateau_Raw_140530_F2_C1_2.mat';
+'C:\Users\tony\Raw_Data\140530\140530_F2_C1\VoltagePlateau_Raw_140530_F2_C1_2.mat';
     };
+end
 
-cnt = 8;
+cnt = find(strcmp(analysis_cells,'140602_F1_C1'));
+if ~isempty(cnt)
 analysis_cell(cnt).name = '140602_F1_C1';
 analysis_cell(cnt).comment = {
 'Break in at -25, Mid Range Spiking.'
 };
 analysis_cell(cnt).exampletrials = {...
-'C:\Users\Anthony Azevedo\Raw_Data\140602\140602_F1_C1\Sweep_Raw_140602_F1_C1_1.mat';
-'C:\Users\Anthony Azevedo\Raw_Data\140602\140602_F1_C1\VoltagePlateau_Raw_140602_F1_C1_1.mat';
+'C:\Users\tony\Raw_Data\140602\140602_F1_C1\Sweep_Raw_140602_F1_C1_1.mat';
+'C:\Users\tony\Raw_Data\140602\140602_F1_C1\VoltagePlateau_Raw_140602_F1_C1_1.mat';
     };
 analysis_cell(cnt).breakin_trial = {...
-'C:\Users\Anthony Azevedo\Raw_Data\140602\140602_F1_C1\Sweep_Raw_140602_F1_C1_1.mat';
+'C:\Users\tony\Raw_Data\140602\140602_F1_C1\Sweep_Raw_140602_F1_C1_1.mat';
     };
 analysis_cell(cnt).plateau_trial = {...
-'C:\Users\Anthony Azevedo\Raw_Data\140602\140602_F1_C1\VoltagePlateau_Raw_140602_F1_C1_1.mat';
+'C:\Users\tony\Raw_Data\140602\140602_F1_C1\VoltagePlateau_Raw_140602_F1_C1_1.mat';
     };
+end
 
-cnt = 9;
+cnt = find(strcmp(analysis_cells,'140602_F2_C1'));
+if ~isempty(cnt)
 analysis_cell(cnt).name = '140602_F2_C1';
 analysis_cell(cnt).comment = {
 'Break in at -25, Mid range, non spiking. Motion artifact'
 };
 analysis_cell(cnt).exampletrials = {...
-'C:\Users\Anthony Azevedo\Raw_Data\140602\140602_F2_C1\Sweep_Raw_140602_F2_C1_2.mat';
-'C:\Users\Anthony Azevedo\Raw_Data\140602\140602_F2_C1\VoltagePlateau_Raw_140602_F2_C1_1.mat';
+'C:\Users\tony\Raw_Data\140602\140602_F2_C1\Sweep_Raw_140602_F2_C1_2.mat';
+'C:\Users\tony\Raw_Data\140602\140602_F2_C1\VoltagePlateau_Raw_140602_F2_C1_1.mat';
     };
 analysis_cell(cnt).breakin_trial = {...
-'C:\Users\Anthony Azevedo\Raw_Data\140602\140602_F2_C1\Sweep_Raw_140602_F2_C1_2.mat';
+'C:\Users\tony\Raw_Data\140602\140602_F2_C1\Sweep_Raw_140602_F2_C1_2.mat';
     };
 analysis_cell(cnt).plateau_trial = {...
-'C:\Users\Anthony Azevedo\Raw_Data\140602\140602_F2_C1\VoltagePlateau_Raw_140602_F2_C1_1.mat';
+'C:\Users\tony\Raw_Data\140602\140602_F2_C1\VoltagePlateau_Raw_140602_F2_C1_1.mat';
     };
+end
 
-cnt = 10;
+cnt = find(strcmp(analysis_cells,'140603_F1_C1'));
+if ~isempty(cnt)
 analysis_cell(cnt).name = '140603_F1_C1';
 analysis_cell(cnt).comment = {
 'Break in at -25, Mid range, non spiking. There is a delay in the acquisition. didnt have the exposure trace'
 };
 analysis_cell(cnt).exampletrials = {...
-'C:\Users\Anthony Azevedo\Raw_Data\140603\140603_F1_C1\Sweep_Raw_140603_F1_C1_1.mat';
-'C:\Users\Anthony Azevedo\Raw_Data\140603\140603_F1_C1\VoltagePlateau_Raw_140603_F1_C1_1.mat';
+'C:\Users\tony\Raw_Data\140603\140603_F1_C1\Sweep_Raw_140603_F1_C1_1.mat';
+'C:\Users\tony\Raw_Data\140603\140603_F1_C1\VoltagePlateau_Raw_140603_F1_C1_1.mat';
     };
 analysis_cell(cnt).breakin_trial = {...
-'C:\Users\Anthony Azevedo\Raw_Data\140603\140603_F1_C1\Sweep_Raw_140603_F1_C1_1.mat';
+'C:\Users\tony\Raw_Data\140603\140603_F1_C1\Sweep_Raw_140603_F1_C1_1.mat';
     };
 analysis_cell(cnt).plateau_trial = {...
-'C:\Users\Anthony Azevedo\Raw_Data\140603\140603_F1_C1\VoltagePlateau_Raw_140603_F1_C1_1.mat';
+'C:\Users\tony\Raw_Data\140603\140603_F1_C1\VoltagePlateau_Raw_140603_F1_C1_1.mat';
     };
+end
 
-cnt = 11;
+cnt = find(strcmp(analysis_cells,'150119_F1_C1'));
+if ~isempty(cnt)
 analysis_cell(cnt).name = '150119_F1_C1';
 analysis_cell(cnt).comment = {
 'Break in at -50, Not sure this is a B1 neuron, no sound responses, have to image the cell'
 };
 analysis_cell(cnt).exampletrials = {...
-'C:\Users\Anthony Azevedo\Raw_Data\150119\150119_F1_C1\Sweep_Raw_150119_F1_C1_1.mat';
-'C:\Users\Anthony Azevedo\Raw_Data\150119\150119_F1_C1\VoltagePlateau_Raw_150119_F1_C1_1.mat';
+'C:\Users\tony\Raw_Data\150119\150119_F1_C1\Sweep_Raw_150119_F1_C1_1.mat';
+'C:\Users\tony\Raw_Data\150119\150119_F1_C1\VoltagePlateau_Raw_150119_F1_C1_1.mat';
     };
 analysis_cell(cnt).breakin_trial = {...
-'C:\Users\Anthony Azevedo\Raw_Data\150119\150119_F1_C1\Sweep_Raw_150119_F1_C1_1.mat';
+'C:\Users\tony\Raw_Data\150119\150119_F1_C1\Sweep_Raw_150119_F1_C1_1.mat';
     };
 analysis_cell(cnt).plateau_trial = {...
-'C:\Users\Anthony Azevedo\Raw_Data\150119\150119_F1_C1\VoltagePlateau_Raw_150119_F1_C1_1.mat';
+'C:\Users\tony\Raw_Data\150119\150119_F1_C1\VoltagePlateau_Raw_150119_F1_C1_1.mat';
     };
+end
 
-cnt = 12;
+cnt = find(strcmp(analysis_cells,'150220_F1_C1'));
+if ~isempty(cnt)
 analysis_cell(cnt).name = '150220_F1_C1';
 analysis_cell(cnt).comment = {
 'Break in at -37, nonspiking band-pass low'
 };
 analysis_cell(cnt).exampletrials = {...
-'C:\Users\Anthony Azevedo\Raw_Data\150220\150220_F1_C1\Sweep_Raw_150220_F1_C1_1.mat';
-'C:\Users\Anthony Azevedo\Raw_Data\150220\150220_F1_C1\VoltagePlateau_Raw_150220_F1_C1_1.mat';
+'C:\Users\tony\Raw_Data\150220\150220_F1_C1\Sweep_Raw_150220_F1_C1_1.mat';
+'C:\Users\tony\Raw_Data\150220\150220_F1_C1\VoltagePlateau_Raw_150220_F1_C1_1.mat';
     };
 analysis_cell(cnt).breakin_trial = {...
-'C:\Users\Anthony Azevedo\Raw_Data\150220\150220_F1_C1\Sweep_Raw_150220_F1_C1_1.mat';
+'C:\Users\tony\Raw_Data\150220\150220_F1_C1\Sweep_Raw_150220_F1_C1_1.mat';
     };
 analysis_cell(cnt).plateau_trial = {...
-'C:\Users\Anthony Azevedo\Raw_Data\150220\150220_F1_C1\VoltagePlateau_Raw_150220_F1_C1_1.mat';
+'C:\Users\tony\Raw_Data\150220\150220_F1_C1\VoltagePlateau_Raw_150220_F1_C1_1.mat';
     };
+end
 
-% cnt = 13;
-% analysis_cell(cnt).name = '150504_F1_C2';
-% analysis_cell(cnt).comment = {
-% 'Break in at -50, low pass neuron'
-% };
-% analysis_cell(cnt).exampletrials = {...
-% 'C:\Users\Anthony Azevedo\Raw_Data\150504\150504_F1_C2\Sweep_Raw_150504_F1_C2_1.mat';
-% 'C:\Users\Anthony Azevedo\Raw_Data\150504\150504_F1_C2\VoltagePlateau_Raw_150504_F1_C2_1.mat';
-%     };
-% analysis_cell(cnt).breakin_trial = {...
-% 'C:\Users\Anthony Azevedo\Raw_Data\150504\150504_F1_C2\Sweep_Raw_150504_F1_C2_1.mat';
-%     };
-% analysis_cell(cnt).plateau_trial = {...
-% 'C:\Users\Anthony Azevedo\Raw_Data\150504\150504_F1_C2\VoltagePlateau_Raw_150504_F1_C2_1.mat';
-%     };
+cnt = find(strcmp(analysis_cells,'150504_F1_C2'));
+if ~isempty(cnt)
+analysis_cell(cnt).name = '150504_F1_C2';
+analysis_cell(cnt).comment = {
+'Break in at -50, low pass neuron'
+};
+analysis_cell(cnt).exampletrials = {...
+'C:\Users\tony\Raw_Data\150504\150504_F1_C2\Sweep_Raw_150504_F1_C2_1.mat';
+'C:\Users\tony\Raw_Data\150504\150504_F1_C2\VoltagePlateau_Raw_150504_F1_C2_1.mat';
+    };
+analysis_cell(cnt).breakin_trial = {...
+'C:\Users\tony\Raw_Data\150504\150504_F1_C2\Sweep_Raw_150504_F1_C2_1.mat';
+    };
+analysis_cell(cnt).plateau_trial = {...
+'C:\Users\tony\Raw_Data\150504\150504_F1_C2\VoltagePlateau_Raw_150504_F1_C2_1.mat';
+    };
+end
 
-
-cnt = 13;
+cnt = find(strcmp(analysis_cells,'151123_F1_C1'));
+if ~isempty(cnt)
 analysis_cell(cnt).name = '151123_F1_C1';
 analysis_cell(cnt).comment = {
 'Break in at -50, low pass neuron'
 };
 analysis_cell(cnt).exampletrials = {...
-'C:\Users\Anthony Azevedo\Raw_Data\151123\151123_F1_C1\Sweep_Raw_151123_F1_C1_7.mat';
-'C:\Users\Anthony Azevedo\Raw_Data\151123\151123_F1_C1\VoltagePlateau_Raw_151123_F1_C1_6.mat';
+'C:\Users\tony\Raw_Data\151123\151123_F1_C1\Sweep_Raw_151123_F1_C1_7.mat';
+'C:\Users\tony\Raw_Data\151123\151123_F1_C1\VoltagePlateau_Raw_151123_F1_C1_6.mat';
     };
 analysis_cell(cnt).breakin_trial = {...
-'C:\Users\Anthony Azevedo\Raw_Data\151123\151123_F1_C1\Sweep_Raw_151123_F1_C1_7.mat';
+'C:\Users\tony\Raw_Data\151123\151123_F1_C1\Sweep_Raw_151123_F1_C1_7.mat';
     };
 analysis_cell(cnt).plateau_trial = {...
-'C:\Users\Anthony Azevedo\Raw_Data\151123\151123_F1_C1\VoltagePlateau_Raw_151123_F1_C1_6.mat';
+'C:\Users\tony\Raw_Data\151123\151123_F1_C1\VoltagePlateau_Raw_151123_F1_C1_6.mat';
     };
+end
 
-cnt = 14;
+cnt = find(strcmp(analysis_cells,'151123_F1_C2'));
+if ~isempty(cnt)
 analysis_cell(cnt).name = '151123_F1_C2';
 analysis_cell(cnt).comment = {
 'Break in at -50, low pass neuron'
 };
 analysis_cell(cnt).exampletrials = {...
-'C:\Users\Anthony Azevedo\Raw_Data\151123\151123_F1_C2\Sweep_Raw_151123_F1_C2_1.mat';
-'C:\Users\Anthony Azevedo\Raw_Data\151123\151123_F1_C2\VoltagePlateau_Raw_151123_F1_C2_2.mat';
+'C:\Users\tony\Raw_Data\151123\151123_F1_C2\Sweep_Raw_151123_F1_C2_1.mat';
+'C:\Users\tony\Raw_Data\151123\151123_F1_C2\VoltagePlateau_Raw_151123_F1_C2_2.mat';
     };
 analysis_cell(cnt).breakin_trial = {...
-'C:\Users\Anthony Azevedo\Raw_Data\151123\151123_F1_C2\Sweep_Raw_151123_F1_C2_1.mat';
+'C:\Users\tony\Raw_Data\151123\151123_F1_C2\Sweep_Raw_151123_F1_C2_1.mat';
     };
 analysis_cell(cnt).plateau_trial = {...
-'C:\Users\Anthony Azevedo\Raw_Data\151123\151123_F1_C2\VoltagePlateau_Raw_151123_F1_C2_2.mat';
+'C:\Users\tony\Raw_Data\151123\151123_F1_C2\VoltagePlateau_Raw_151123_F1_C2_2.mat';
     };
+end
 
-cnt = 15;
+cnt = find(strcmp(analysis_cells,'151123_F2_C1'));
+if ~isempty(cnt)
 analysis_cell(cnt).name = '151123_F2_C1';
 analysis_cell(cnt).comment = {
 'Break in at -50, Band pass low neuron'
 };
 analysis_cell(cnt).exampletrials = {...
-'C:\Users\Anthony Azevedo\Raw_Data\151123\151123_F2_C1\Sweep_Raw_151123_F2_C1_1.mat';
-'C:\Users\Anthony Azevedo\Raw_Data\151123\151123_F2_C1\VoltagePlateau_Raw_151123_F2_C1_6.mat';
+'C:\Users\tony\Raw_Data\151123\151123_F2_C1\Sweep_Raw_151123_F2_C1_1.mat';
+'C:\Users\tony\Raw_Data\151123\151123_F2_C1\VoltagePlateau_Raw_151123_F2_C1_6.mat';
         };
 analysis_cell(cnt).breakin_trial = {...
-'C:\Users\Anthony Azevedo\Raw_Data\151123\151123_F2_C1\Sweep_Raw_151123_F2_C1_1.mat';
+'C:\Users\tony\Raw_Data\151123\151123_F2_C1\Sweep_Raw_151123_F2_C1_1.mat';
     };
 analysis_cell(cnt).plateau_trial = {...
-'C:\Users\Anthony Azevedo\Raw_Data\151123\151123_F2_C1\VoltagePlateau_Raw_151123_F2_C1_6.mat';
+'C:\Users\tony\Raw_Data\151123\151123_F2_C1\VoltagePlateau_Raw_151123_F2_C1_6.mat';
     };
+end
 
 fprintf('Currently analyzing %d cells.\n\n',length(analysis_cell))
 for c_ind = 1:length(analysis_cell)
@@ -284,9 +325,9 @@ end
 
 backgroundCorrectionFlag =0;
 if backgroundCorrectionFlag
-    savedir = 'C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_ArcLightImaging\BackgroundCorrection';
+    savedir = 'C:\Users\tony\Dropbox\RAnalysis_Data\Record_ArcLightImaging\BackgroundCorrection';
 else
-    savedir = 'C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_ArcLightImaging\NoCorrection';
+    savedir = 'C:\Users\tony\Dropbox\RAnalysis_Data\Record_ArcLightImaging\NoCorrection';
 end
 if ~isdir(savedir)
     mkdir(savedir)
@@ -306,8 +347,8 @@ close all
 moving_cell(1).name = '140131_F3_C1';
 moving_cell(1).comment = {'Moving.  Nice bright cell, not sound responsive, otherwise classic B1'};
 moving_cell(1).exampletrials = {...
-    'C:\Users\Anthony Azevedo\Raw_Data\140131\140131_F3_C1\Sweep_Raw_140131_F3_C1_2.mat';...
-    'C:\Users\Anthony Azevedo\Raw_Data\140131\140131_F3_C1\VoltagePlateau_Raw_140131_F3_C1_1.mat';...
+    'C:\Users\tony\Raw_Data\140131\140131_F3_C1\Sweep_Raw_140131_F3_C1_2.mat';...
+    'C:\Users\tony\Raw_Data\140131\140131_F3_C1\VoltagePlateau_Raw_140131_F3_C1_1.mat';...
     };
 moving_cell(1).evidencecalls = {...
     };
@@ -316,10 +357,10 @@ moving_cell(1).evidencecalls = {...
 moving_cell(2).name = '140206_F1_C1';
 moving_cell(2).comment = {'Movement, Not sound responsive.  Good looking cell'};
 moving_cell(2).exampletrials = {...
-    'C:\Users\Anthony Azevedo\Raw_Data\140206\140206_F1_C1\Sweep_Raw_140206_F1_C1_1.mat';...
-    'C:\Users\Anthony Azevedo\Raw_Data\140206\140206_F1_C1\Sweep_Raw_140206_F1_C1_2.mat';...
-    'C:\Users\Anthony Azevedo\Raw_Data\140206\140206_F1_C1\VoltagePlateau_Raw_140206_F1_C1_1.mat';...
-    'C:\Users\Anthony Azevedo\Raw_Data\140206\140206_F1_C1\PiezoSine_Raw_140206_F1_C1_26.mat';...
+    'C:\Users\tony\Raw_Data\140206\140206_F1_C1\Sweep_Raw_140206_F1_C1_1.mat';...
+    'C:\Users\tony\Raw_Data\140206\140206_F1_C1\Sweep_Raw_140206_F1_C1_2.mat';...
+    'C:\Users\tony\Raw_Data\140206\140206_F1_C1\VoltagePlateau_Raw_140206_F1_C1_1.mat';...
+    'C:\Users\tony\Raw_Data\140206\140206_F1_C1\PiezoSine_Raw_140206_F1_C1_26.mat';...
     };
 moving_cell(2).evidencecalls = {...
     };
@@ -328,9 +369,9 @@ moving_cell(2).evidencecalls = {...
 % moving_cell(3).name = '140207_F1_C2';
 % moving_cell(3).comment = {'Cell is pressed against others. Moving a lot!  Should be able to fix, Not sound responsive.'};
 % moving_cell(3).exampletrials = {...
-%     'C:\Users\Anthony Azevedo\Raw_Data\140207\140207_F1_C2\Sweep_Raw_140207_F1_C2_1.mat';...
-%     'C:\Users\Anthony Azevedo\Raw_Data\140207\140207_F1_C2\Sweep_Raw_140207_F1_C2_2.mat';...
-%     'C:\Users\Anthony Azevedo\Raw_Data\140207\140207_F1_C2\VoltagePlateau_Raw_140207_F1_C2_5.mat';...
+%     'C:\Users\tony\Raw_Data\140207\140207_F1_C2\Sweep_Raw_140207_F1_C2_1.mat';...
+%     'C:\Users\tony\Raw_Data\140207\140207_F1_C2\Sweep_Raw_140207_F1_C2_2.mat';...
+%     'C:\Users\tony\Raw_Data\140207\140207_F1_C2\VoltagePlateau_Raw_140207_F1_C2_5.mat';...
 %     };
 % moving_cell(3).evidencecalls = {...
 %     };
@@ -445,11 +486,11 @@ plot([-.02 -.02],get(gca,'ylim'),'--','color',[1 .9 .9]);
 plot([.02 .02],get(gca,'ylim'),'--','color',[.9 .9 1]);
 plot([.1 .1],get(gca,'ylim'),'--','color',[.9 .9 1]);
 
-saveas(gcf,fullfile(regexprep(savedir,'''',''),'Break-in_Fluorescence'));
+% saveas(gcf,fullfile(regexprep(savedir,'''',''),'Break-in_Fluorescence'));
 
-eval(['export_fig ', ...
-    [savedir 'Break-in_Fluorescence'],...
-    ' -pdf -transparent'])
+% eval(['export_fig ', ...
+%     [savedir 'Break-in_Fluorescence'],...
+%     ' -pdf -transparent'])
 
 %% Detrended
 % With the time of break-in found and the change in fluorescence localized,
@@ -490,11 +531,11 @@ plot(ax,[-.02 -.02],get(gca,'ylim'),'--','color',[1 .9 .9]);
 plot(ax,[.03 .03],get(gca,'ylim'),'--','color',[.9 .9 1]);
 plot(ax,[.13 .13],get(gca,'ylim'),'--','color',[.9 .9 1]);
 
-saveas(fig,fullfile(regexprep(savedir,'''',''),'Break-in_Fluo_detrend'));
-
-eval(['export_fig ', ...
-    [savedir 'Break-in_Fluo_detrend'],...
-    ' -pdf -transparent'])
+% saveas(fig,fullfile(regexprep(savedir,'''',''),'Break-in_Fluo_detrend'));
+% 
+% eval(['export_fig ', ...
+%     [savedir 'Break-in_Fluo_detrend'],...
+%     ' -pdf -transparent'])
 
 %% Modelled trends (lines)
 % With the time of break-in found and the change in fluorescence localized,
@@ -925,22 +966,22 @@ panl.fontname = 'Arial';
 panl.fontsize = 18;
 panl.margin = [24 24 10 10]
 
-export_fig 'C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_ArcLightImaging\MainFigPoster.pdf'
+export_fig 'C:\Users\tony\Dropbox\RAnalysis_Data\Record_ArcLightImaging\MainFigPoster.pdf'
 %%
 panl.margin = [18 10 2 10];
 panl(2).marginleft = 18;
 %panl(2).margintop = 8;
 
 %% Fig for Allen Talk
-% uiopen('C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_ArcLightImaging\NoCorrection\ArcLightMainFig.fig',1)
+% uiopen('C:\Users\tony\Dropbox\RAnalysis_Data\Record_ArcLightImaging\NoCorrection\ArcLightMainFig.fig',1)
 panl.fontsize = 14
 panl.margin = [20 20 4 2];
-export_fig 'C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_ArcLightImaging\MainFigPPT.pdf'
+export_fig 'C:\Users\tony\Dropbox\RAnalysis_Data\Record_ArcLightImaging\MainFigPPT.pdf'
 
 
 %% Nice little spike figure
 close all
-trial = load('C:\Users\Anthony Azevedo\Raw_Data\140121\140121_F2_C1\CurrentStep_Raw_140121_F2_C1_6.mat');
+trial = load('C:\Users\tony\Raw_Data\140121\140121_F2_C1\CurrentStep_Raw_140121_F2_C1_6.mat');
 obj.trial = trial;
 [obj.currentPrtcl,dateID,flynum,cellnum,obj.currentTrialNum,obj.dir,obj.trialStem,dfile] = ...
     extractRawIdentifiers(trial.name);
@@ -960,7 +1001,7 @@ SpikeFig = figure();
 set(SpikeFig,'units','inches','position',[3 2 6  6])
 panl = panel(SpikeFig);
 panl.pack({[0 0 1 .15 ] [ 0 .28 1 .3] [ 0 .7 1 .3]});
-panl.marginleft = 24
+panl.marginleft = 24;
 ax_spikes = panl(3).select();
 ax_fluo = panl(2).select();
 ax_stim = panl(1).select();
@@ -992,7 +1033,7 @@ panl(2).ylabel('\DeltaF/F (%)')
 panl(1).ylabel('pA')
 panl(1).xlabel('Time (s)')
 
-cd('C:\Users\Anthony Azevedo\Dropbox\RAnalysis_Data\Record_ArcLightImaging\')
+cd('C:\Users\tony\Dropbox\RAnalysis_Data\Record_ArcLightImaging\')
 fn = ['SpikeSlide_', ...
     '.pdf'];
 
@@ -1017,7 +1058,7 @@ cnt = 0;
 cnt = cnt+1;
 reject_cells(cnt).name = '131203_F1_C1';
 reject_cells(cnt).reason = 'No images, lost cell';
-reject_cells(cnt).exampletrial = 'C:\Users\Anthony Azevedo\Raw_Data\131217\131217_F1_C1\Sweep_131217_F1_C1.mat';
+reject_cells(cnt).exampletrial = 'C:\Users\tony\Raw_Data\131217\131217_F1_C1\Sweep_131217_F1_C1.mat';
 
 cnt = cnt+1;
 reject_cells(cnt).name = '131203_F1_C2';
@@ -1037,7 +1078,7 @@ reject_cells(cnt).exampletrial = '';
 cnt = cnt+1;
 reject_cells(cnt).name = '131211_F1_C2';
 reject_cells(cnt).reason = 'No voltage clamp steps (no calibration). Cell Moved during CurrentPlateau';
-reject_cells(cnt).exampletrial = 'C:\Users\Anthony Azevedo\Raw_Data\131211\131211_F1_C2\CurrentPlateau_Raw_131211_F1_C2_2.mat';
+reject_cells(cnt).exampletrial = 'C:\Users\tony\Raw_Data\131211\131211_F1_C2\CurrentPlateau_Raw_131211_F1_C2_2.mat';
 reject_cells(cnt).evidencecalls = 'fluorescence(trial,trial.params)';
 
 cnt = cnt+1;
@@ -1048,52 +1089,52 @@ reject_cells(cnt).exampletrial = '';
 cnt = cnt+1;
 reject_cells(cnt).name = '131217_F1_C2';
 reject_cells(cnt).reason = 'Single bad sweep';
-reject_cells(cnt).exampletrial = 'C:\Users\Anthony Azevedo\Raw_Data\131217\131217_F2_C1\Sweep_Raw_131217_F2_C1_1.mat';
+reject_cells(cnt).exampletrial = 'C:\Users\tony\Raw_Data\131217\131217_F2_C1\Sweep_Raw_131217_F2_C1_1.mat';
 
 cnt = cnt+1;
 reject_cells(cnt).name = '131217_F2_C2';
 reject_cells(cnt).reason = 'Blew up the cell';
-reject_cells(cnt).exampletrial = 'C:\Users\Anthony Azevedo\Raw_Data\131217\131217_F2_C2\Sweep_Raw_131217_F2_C2_1.mat';
+reject_cells(cnt).exampletrial = 'C:\Users\tony\Raw_Data\131217\131217_F2_C2\Sweep_Raw_131217_F2_C2_1.mat';
 
 cnt = cnt+1;
 reject_cells(cnt).name = '140114_F1_C1';
 reject_cells(cnt).reason = 'Break in in I=0 Mode, and blew up the cell';
-reject_cells(cnt).exampletrial = 'C:\Users\Anthony Azevedo\Raw_Data\140114\140114_F1_C1\Sweep_Raw_140114_F1_C1_4.mat';
+reject_cells(cnt).exampletrial = 'C:\Users\tony\Raw_Data\140114\140114_F1_C1\Sweep_Raw_140114_F1_C1_4.mat';
 
 cnt = cnt+1;
 reject_cells(cnt).name = '140114_F2_C1';
 reject_cells(cnt).reason = 'Wrong Cell, image not zoomed in';
-reject_cells(cnt).exampletrial = 'C:\Users\Anthony Azevedo\Raw_Data\140114\140114_F2_C1\Sweep_Raw_140114_F2_C1_1.mat';
+reject_cells(cnt).exampletrial = 'C:\Users\tony\Raw_Data\140114\140114_F2_C1\Sweep_Raw_140114_F2_C1_1.mat';
 
 
 cnt = cnt+1;
 reject_cells(cnt).name = '140115_F1_C1';
 reject_cells(cnt).reason = 'Current Clamp Breakin, but only went to 5mV from 10, not inside cell';
-reject_cells(cnt).exampletrial = 'C:\Users\Anthony Azevedo\Raw_Data\140115\140115_F1_C1\Sweep_Raw_140115_F1_C1_2.mat';
+reject_cells(cnt).exampletrial = 'C:\Users\tony\Raw_Data\140115\140115_F1_C1\Sweep_Raw_140115_F1_C1_2.mat';
 
 
 cnt = cnt+1;
 reject_cells(cnt).name = '140115_F1_C2';
 reject_cells(cnt).reason = 'Couldn''t break in, weird voltage values';
-reject_cells(cnt).exampletrial = 'C:\Users\Anthony Azevedo\Raw_Data\140115\140115_F1_C2\Sweep_Raw_140115_F1_C2_1.mat';
+reject_cells(cnt).exampletrial = 'C:\Users\tony\Raw_Data\140115\140115_F1_C2\Sweep_Raw_140115_F1_C2_1.mat';
 
 cnt = cnt+1;
 reject_cells(cnt).name = '140115_F2_C1';
 reject_cells(cnt).reason = 'Good Motion example! Not good access, ran out of saline, no cell';
-reject_cells(cnt).exampletrial = 'C:\Users\Anthony Azevedo\Raw_Data\140115\140115_F2_C1\CurrentPlateau_Raw_140115_F2_C1_1.mat';
+reject_cells(cnt).exampletrial = 'C:\Users\tony\Raw_Data\140115\140115_F2_C1\CurrentPlateau_Raw_140115_F2_C1_1.mat';
 
 cnt = cnt+1;
 reject_cells(cnt).name = '140121_F1_C1';
 reject_cells(cnt).reason = 'Blew up the cell while patching';
-reject_cells(cnt).exampletrial = 'C:\Users\Anthony Azevedo\Raw_Data\140121\140121_F1_C1\Sweep_Raw_140121_F1_C1_2.mat';
+reject_cells(cnt).exampletrial = 'C:\Users\tony\Raw_Data\140121\140121_F1_C1\Sweep_Raw_140121_F1_C1_2.mat';
 
 
 cnt = cnt+1;
 reject_cells(cnt).name = '140122_F2_C1';
 reject_cells(cnt).reason = 'Moving a lot! Not a clear deliniation of the cell';
 reject_cells(cnt).exampletrials = {...
-    'C:\Users\Anthony Azevedo\Raw_Data\140122\140122_F2_C1\Sweep_Raw_140122_F2_C1_2.mat';...
-    'C:\Users\Anthony Azevedo\Raw_Data\140122\140122_F2_C1\PiezoSine_Raw_140122_F2_C1_12.mat';...
+    'C:\Users\tony\Raw_Data\140122\140122_F2_C1\Sweep_Raw_140122_F2_C1_2.mat';...
+    'C:\Users\tony\Raw_Data\140122\140122_F2_C1\PiezoSine_Raw_140122_F2_C1_12.mat';...
     };
 reject_cells(cnt).evidencecalls = {...
     };
@@ -1102,12 +1143,12 @@ reject_cells(cnt).evidencecalls = {...
 cnt = cnt+1;
 reject_cells(cnt).name = '140122_F2_C2';
 reject_cells(cnt).reason = 'Blew up the cell';
-reject_cells(cnt).exampletrial = 'C:\Users\Anthony Azevedo\Raw_Data\140122\140122_F2_C2\Sweep_Raw_140122_F2_C2_1.mat';
+reject_cells(cnt).exampletrial = 'C:\Users\tony\Raw_Data\140122\140122_F2_C2\Sweep_Raw_140122_F2_C2_1.mat';
 
 cnt = cnt+1;
 reject_cells(cnt).name = '140128_F1_C1';
 reject_cells(cnt).reason = 'Cell was up against some others, not clearly isolated';
-reject_cells(cnt).exampletrial = 'C:\Users\Anthony Azevedo\Raw_Data\140128\140128_F1_C1\Sweep_Raw_140128_F1_C1_5.mat';
+reject_cells(cnt).exampletrial = 'C:\Users\tony\Raw_Data\140128\140128_F1_C1\Sweep_Raw_140128_F1_C1_5.mat';
 
 cnt = cnt+1;
 reject_cells(cnt).name = '140131_F1_C1';
@@ -1117,12 +1158,12 @@ reject_cells(cnt).exampletrial = '';
 cnt = cnt+1;
 reject_cells(cnt).name = '140206_F2_C1';
 reject_cells(cnt).reason = 'Blew up the cell';
-reject_cells(cnt).exampletrial = 'C:\Users\Anthony Azevedo\Raw_Data\140206\140206_F2_C1\Sweep_Raw_140206_F2_C1_2.mat';
+reject_cells(cnt).exampletrial = 'C:\Users\tony\Raw_Data\140206\140206_F2_C1\Sweep_Raw_140206_F2_C1_2.mat';
 
 cnt = cnt+1;
 reject_cells(cnt).name = '140206_F3_C1';
 reject_cells(cnt).reason = 'Blew up the cell';
-reject_cells(cnt).exampletrial = 'C:\Users\Anthony Azevedo\Raw_Data\140206\140206_F3_C1\Sweep_Raw_140206_F3_C1_2.mat';
+reject_cells(cnt).exampletrial = 'C:\Users\tony\Raw_Data\140206\140206_F3_C1\Sweep_Raw_140206_F3_C1_2.mat';
 
 for c_ind = 1:length(reject_cells)
     fprintf('Cell ID: %s\n', reject_cells(c_ind).name);
@@ -1133,27 +1174,27 @@ end
 analysis_cell(5).name = '140205_F1_C1';
 analysis_cell(5).comment = {'Not a B1 cell, some spikes, smaller DF/F / DV'};
 analysis_cell(5).exampletrials = {...
-    'C:\Users\Anthony Azevedo\Raw_Data\140205\140205_F1_C1\Sweep_Raw_140205_F1_C1_3.mat';...
-    'C:\Users\Anthony Azevedo\Raw_Data\140205\140205_F1_C1\VoltagePlateau_Raw_140205_F1_C1_2.mat';...
+    'C:\Users\tony\Raw_Data\140205\140205_F1_C1\Sweep_Raw_140205_F1_C1_3.mat';...
+    'C:\Users\tony\Raw_Data\140205\140205_F1_C1\VoltagePlateau_Raw_140205_F1_C1_2.mat';...
     };
 analysis_cell(5).breakin_trial = {...
-    'C:\Users\Anthony Azevedo\Raw_Data\140205\140205_F1_C1\Sweep_Raw_140205_F1_C1_3.mat';...
+    'C:\Users\tony\Raw_Data\140205\140205_F1_C1\Sweep_Raw_140205_F1_C1_3.mat';...
     };
 analysis_cell(5).plateau_trial = {...
-    'C:\Users\Anthony Azevedo\Raw_Data\140205\140205_F1_C1\VoltagePlateau_Raw_140205_F1_C1_2.mat';...
+    'C:\Users\tony\Raw_Data\140205\140205_F1_C1\VoltagePlateau_Raw_140205_F1_C1_2.mat';...
     };
 
 analysis_cell(7).name = '140207_F1_C2';
 analysis_cell(7).comment = {'Moving a lot!  Should be able to fix, Not sound responsive. Cell is pressed against others'};
 analysis_cell(7).exampletrials = {...
-    'C:\Users\Anthony Azevedo\Raw_Data\140207\140207_F1_C2\Sweep_Raw_140207_F1_C2_2.mat';...
-    'C:\Users\Anthony Azevedo\Raw_Data\140207\140207_F1_C2\VoltagePlateau_Raw_140207_F1_C2_5.mat';...
+    'C:\Users\tony\Raw_Data\140207\140207_F1_C2\Sweep_Raw_140207_F1_C2_2.mat';...
+    'C:\Users\tony\Raw_Data\140207\140207_F1_C2\VoltagePlateau_Raw_140207_F1_C2_5.mat';...
     };
 analysis_cell(7).breakin_trial = {...
-    'C:\Users\Anthony Azevedo\Raw_Data\140207\140207_F1_C2\Sweep_Raw_140207_F1_C2_2.mat';...
+    'C:\Users\tony\Raw_Data\140207\140207_F1_C2\Sweep_Raw_140207_F1_C2_2.mat';...
     };
 analysis_cell(7).plateau_trial = {...
-    'C:\Users\Anthony Azevedo\Raw_Data\140207\140207_F1_C2\VoltagePlateau_Raw_140207_F1_C2_5.mat';...
+    'C:\Users\tony\Raw_Data\140207\140207_F1_C2\VoltagePlateau_Raw_140207_F1_C2_5.mat';...
     };
 
 analysis_cell(cnt).name = '150117_F3_C1';
@@ -1161,20 +1202,20 @@ analysis_cell(cnt).comment = {
 'Break in at -50, Not sure this is a B1 neuron, no sound responses, have to image the cell'
 };
 analysis_cell(cnt).exampletrials = {...
-'C:\Users\Anthony Azevedo\Raw_Data\150117\150117_F3_C1\Sweep_Raw_150117_F3_C1_1.mat';
-'C:\Users\Anthony Azevedo\Raw_Data\150117\150117_F3_C1\VoltagePlateau_Raw_150117_F3_C1_1.mat';
+'C:\Users\tony\Raw_Data\150117\150117_F3_C1\Sweep_Raw_150117_F3_C1_1.mat';
+'C:\Users\tony\Raw_Data\150117\150117_F3_C1\VoltagePlateau_Raw_150117_F3_C1_1.mat';
     };
 analysis_cell(cnt).breakin_trial = {...
-'C:\Users\Anthony Azevedo\Raw_Data\150117\150117_F3_C1\Sweep_Raw_150117_F3_C1_1.mat';
+'C:\Users\tony\Raw_Data\150117\150117_F3_C1\Sweep_Raw_150117_F3_C1_1.mat';
     };
 analysis_cell(cnt).plateau_trial = {...
-'C:\Users\Anthony Azevedo\Raw_Data\150117\150117_F3_C1\VoltagePlateau_Raw_150117_F3_C1_1.mat';
+'C:\Users\tony\Raw_Data\150117\150117_F3_C1\VoltagePlateau_Raw_150117_F3_C1_1.mat';
     };
 
 cnt = cnt+1;
 reject_cells(cnt).name = '150217_F1_C1';
 reject_cells(cnt).reason = 'Not a B1 cell, see the image';
-reject_cells(cnt).exampletrial = 'C:\Users\Anthony Azevedo\Raw_Data\150217\150217_F1_C1\Sweep_Raw_150217_F1_C1_1.mat';
+reject_cells(cnt).exampletrial = 'C:\Users\tony\Raw_Data\150217\150217_F1_C1\Sweep_Raw_150217_F1_C1_1.mat';
 
 
 cnt = 12;
@@ -1183,14 +1224,14 @@ analysis_cell(cnt).comment = {
 'Not a B1 cell, see the image';
 };
 analysis_cell(cnt).exampletrials = {...
-'C:\Users\Anthony Azevedo\Raw_Data\150217\150217_F1_C1\Sweep_Raw_150217_F1_C1_1.mat';
-'C:\Users\Anthony Azevedo\Raw_Data\150217\150217_F1_C1\VoltagePlateau_Raw_150217_F1_C1_12.mat';
+'C:\Users\tony\Raw_Data\150217\150217_F1_C1\Sweep_Raw_150217_F1_C1_1.mat';
+'C:\Users\tony\Raw_Data\150217\150217_F1_C1\VoltagePlateau_Raw_150217_F1_C1_12.mat';
     };
 analysis_cell(cnt).breakin_trial = {...
-'C:\Users\Anthony Azevedo\Raw_Data\150217\150217_F1_C1\Sweep_Raw_150217_F1_C1_1.mat';
+'C:\Users\tony\Raw_Data\150217\150217_F1_C1\Sweep_Raw_150217_F1_C1_1.mat';
     };
 analysis_cell(cnt).plateau_trial = {...
-'C:\Users\Anthony Azevedo\Raw_Data\150217\150217_F1_C1\VoltagePlateau_Raw_150217_F1_C1_12.mat';
+'C:\Users\tony\Raw_Data\150217\150217_F1_C1\VoltagePlateau_Raw_150217_F1_C1_12.mat';
     };
 
 % Note, in this commit, I lost the analysis_cell 140122 cell, for some

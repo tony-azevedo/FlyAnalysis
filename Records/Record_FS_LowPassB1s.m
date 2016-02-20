@@ -14,6 +14,7 @@ analysis_grid = {...
 %     '131015_F3_C1'  'GH86;pJFRC7'                   'coarse frequency, no current injections';                  
 %     '140122_F2_C1'  'UAS-ArcLight/VT30609-Gal4'           'coarse freq sample, single amplitude, VCLAMP data!';      
 %     '140128_F1_C1'  'UAS-ArcLight/VT30609-Gal4'           'Complete over harmonics, slight band pass';                
+%     '150119_F3_C1'  'GH86;pJFRC7'                   'strange depolarizing neuron, not great access?';                  
     '150326_F1_C1'  '20XUAS-mCD8:GFP;VT27938-Gal4'  '';                  
     '150402_F3_C2'  '20XUAS-mCD8:GFP;VT27938-Gal4'  '';                 
     '150402_F1_C1'  '20XUAS-mCD8:GFP;VT27938-Gal4'  '';                 

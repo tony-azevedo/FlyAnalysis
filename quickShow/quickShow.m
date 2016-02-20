@@ -488,7 +488,7 @@ delete(get(handles.quickShowPanel,'children'))
 function figButton_Callback(hObject, eventdata, handles)
 fig = figure('color',[1 1 1]);
 childs = get(handles.quickShowPanel,'children');
-copyobj(childs,repmat(fig,size(childs)));
+copyobj(childs,fig);
 findobj(fig,'ButtonDownFcn',@showClickedImage);
 
 % cp = uipanel('Title',handles.currentPrtcl,'FontSize',12,...

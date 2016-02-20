@@ -17,10 +17,13 @@ analysis_grid = {...
 %     '140117_F2_C1'  'UAS-ArcLight/VT30609-Gal4'      'coarse frequency, no current injections';
 %     '140602_F2_C1'  'UAS-ArcLight/VT30609-Gal4'      ''
 %     '140603_F1_C1'  'UAS-ArcLight/VT30609-Gal4'      'Has no PiezoSine data'
-    '150402_F2_C1'  'GH86-Gal4;20XUAS-mCD8:GFP;'          ''
-    
+
+'150402_F2_C1'  'GH86-Gal4;20XUAS-mCD8:GFP;'          ''
+%    '150408_F1_C1'  'GH86-Gal4;20XUAS-mCD8:GFP;'      'Larger amplitudes produce lower amplitude responses'    
+%    '150408_F2_C1'  'GH86-Gal4;20XUAS-mCD8:GFP;'      'Larger amplitudes produce lower amplitude responses'
     '150409_F1_C1'  '20XUAS-mCD8:GFP;VT27938-Gal4'        ''
     '150414_F1_C1'  '20XUAS-mCD8:GFP;VT27938-Gal4'        ''
+    '150417_F1_C1'  'GH86-Gal4;20XUAS-mCD8:GFP;'        ''
     
     '150502_F1_C1'  '20XUAS-mCD8:GFP;VT45599-Gal4'        ''
     '150502_F1_C3'  '20XUAS-mCD8:GFP;VT45599-Gal4'        ''

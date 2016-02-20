@@ -2,6 +2,7 @@
 fru_grid = {
 '151016_F1_C1'  'UAS-Dcr;10XUAS-mCD8:GFP/+;FruGal4/UAS-paraRNAi'    'Antennal nerve intact, BPH (dim cell body), CsAsp TEA internal'
 '151017_F1_C1'  'UAS-Dcr;10XUAS-mCD8:GFP/+;FruGal4/UAS-paraRNAi'    'still some Na currents remaining, band pass, identical to the others'
+'151027_F2_C1'  'UAS-Dcr;10XUAS-mCD8:GFP/+;FruGal4/UAS-paraRNAi'    'Antennal nerve intact, BPH (dim cell body), CsAsp TEA internal'
 '151027_F3_C1'  'UAS-Dcr;10XUAS-mCD8:GFP/+;FruGal4/UAS-paraRNAi'    'Antennal nerve intact, BPL (lower capacitance), CsAsp TEA internal'
 '151028_F2_C1'  'UAS-Dcr;10XUAS-mCD8:GFP/+;FruGal4/UAS-paraRNAi'    'Antennal nerve intact, BPL (lower capacitance), CsAsp TEA internal'
 '151110_F1_C1'  'UAS-Dcr;10XUAS-mCD8:GFP/+;FruGal4/UAS-paraRNAi'    'Antennal nerve intact, BPH (higher capacitance), CsAsp TEA internal'
@@ -303,6 +304,24 @@ fru_cell(cnt).VoltageCommandTrial = ...
 fru_cell(cnt).CurrentChirpTrial = ...
 'C:\Users\tony\Raw_Data\151017\151017_F1_C1\CurrentChirp_Raw_151017_F1_C1_1.mat';
 end
+
+% Good, but lots of transients, not great example
+cnt = find(strcmp(fru_cells,'151027_F2_C1'));
+if ~isempty(cnt)
+    fru_cell(cnt).PiezoSineTrial = ...
+'C:\Users\tony\Raw_Data\151027\151027_F2_C1\PiezoSine_Raw_151027_F2_C1_7.mat';
+fru_cell(cnt).PiezoStepTrial = ...
+'C:\Users\tony\Raw_Data\151027\151027_F2_C1\PiezoStep_Raw_151027_F2_C1_1.mat';
+fru_cell(cnt).PiezoSineTrial_IClamp = ...
+'';
+fru_cell(cnt).VoltageStepTrial = ...
+'C:\Users\tony\Raw_Data\151027\151027_F2_C1\VoltageStep_Raw_151027_F2_C1_1.mat';
+fru_cell(cnt).VoltageCommandTrial = ...
+'C:\Users\tony\Raw_Data\151027\151027_F2_C1\VoltageCommand_Raw_151027_F2_C1_1.mat';
+fru_cell(cnt).CurrentChirpTrial = ...
+'';
+end
+
 
 % Good, but lots of transients, not great example
 cnt = find(strcmp(fru_cells,'151027_F3_C1'));
