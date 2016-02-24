@@ -89,7 +89,7 @@ cesiumPara_grid = {
 '151215_F2_C1'  'UAS-Dcr;20XUAS-mCD8:GFP/+;VT30609-Gal4/UAS-paraRNAi'   'Got an A2, but this one has spikes!'      % 'VClamp, IClamp' 
 
 %Fru
-%??'150912_F2_C1'  'UAS-Dcr;10XUAS-mCD8:GFP/+;FruGal4/UAS-paraRNAi'    'BPL. What happens when blocking para with RNAi? Younger fly, seems like there is not much left?'
+'150912_F2_C1'  'UAS-Dcr;10XUAS-mCD8:GFP/+;FruGal4/UAS-paraRNAi'    'BPL. What happens when blocking para with RNAi? Younger fly, seems like there is not much left?'
 '151015_F3_C1'  'UAS-Dcr;10XUAS-mCD8:GFP/+;FruGal4/UAS-paraRNAi'    'Antennal nerve cut, BPH (dim cell body), CsGluc internal'
 '151016_F1_C1'  'UAS-Dcr;10XUAS-mCD8:GFP/+;FruGal4/UAS-paraRNAi'    'Antennal nerve intact, BPH (dim cell body), CsAsp TEA internal'
 '151017_F1_C1'  'UAS-Dcr;10XUAS-mCD8:GFP/+;FruGal4/UAS-paraRNAi'    'still some Na currents remaining, band pass, identical to the others'
@@ -149,3 +149,8 @@ example_a2.name = '151207_F1_C1';
 example_a2.VoltageSineTrial = ...
 'C:\Users\tony\Raw_Data\151207\151207_F1_C1\VoltageSine_Raw_151207_F1_C1_98.mat';
 
+example_fig8.VoltageStep = {
+'C:\Users\tony\Raw_Data\151207\151207_F1_C1\VoltageStep_Raw_151207_F1_C1_1.mat';
+'C:\Users\tony\Raw_Data\151022\151022_F1_C1\VoltageStep_Raw_151022_F1_C1_1.mat';
+'C:\Users\tony\Raw_Data\151118\151118_F1_C1\VoltageStep_Raw_151118_F1_C1_1.mat';
+}
