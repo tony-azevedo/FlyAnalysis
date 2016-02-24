@@ -49,7 +49,14 @@ interesting_but_ancillary = {
 };
 
 analysis_grid = {...
+%A2
+'151030_F1_C1'      '20XUAS-mCD8:GFP;VT30609-Gal4'              'Beautiful cell, current isolation'
+'151203_F3_C3'      '20XUAS-mCD8:GFP;VT30609-Gal4'        'Decent recording, saw spikes, but no current step injection before TTX'
+'151203_F4_C1'      '20XUAS-mCD8:GFP;VT30609-Gal4'        'Decent recording, saw spikes, but no current step injection before TTX'
+'151207_F1_C1'      '20XUAS-mCD8:GFP;VT30609-Gal4'        'Nice recording, cell in the nerve, quick dissection'
+'151207_F2_C1'      '20XUAS-mCD8:GFP;VT30609-Gal4'        'Nice recording, cell in the nerve, quick dissection'
 
+%Fru
 %'150722_F1_C2'  '10XUAS-mCD8:GFP;FruGal4'    'BPH. ZD does take out Ih. Only 2.5V'
 '150922_F2_C1'  '10XUAS-mCD8:GFP;FruGal4'    'BPH. Beautiful Cell in Fru Gal4, now need to switch the order of the drugs'
 '151001_F1_C1'  '10XUAS-mCD8:GFP;FruGal4'    'BPL.'
@@ -60,6 +67,7 @@ analysis_grid = {...
 '151210_F2_C1'  '10XUAS-mCD8:GFP;FruGal4'    'BPH! Access drifts up.'
 '151210_F3_C1'  '10XUAS-mCD8:GFP;FruGal4'    'BPH! Access drifts up.'
 
+%VT
 '151007_F1_C1'  '20XUAS-mCD8:GFP;VT27938-Gal4'  'LP. crapped out after TEA,NO TTX' % Should I throw this one out?
 '151007_F3_C1'  '20XUAS-mCD8:GFP;VT27938-Gal4'  'LP. Should be good enough for gvt work'
 '151009_F1_C1'  '20XUAS-mCD8:GFP;VT27938-Gal4'  'LP. '
@@ -67,19 +75,21 @@ analysis_grid = {...
 '151029_F3_C1'  '20XUAS-mCD8:GFP;VT27938-Gal4'  'LP. '
 '151118_F1_C1'  '20XUAS-mCD8:GFP;VT27938-Gal4'   'LP'
 '151121_F3_C1'  '20XUAS-mCD8:GFP;VT27938-Gal4'   'Did the ramp at a different potential. What to do?' % For this cell, the voltage changed during the curare, I've untagged the curare traces and excluded the cntrl trials
-
-'151030_F1_C1'      '20XUAS-mCD8:GFP;VT30609-Gal4'              'Beautiful cell, current isolation'
-'151203_F3_C3'      '20XUAS-mCD8:GFP;VT30609-Gal4'        'Decent recording, saw spikes, but no current step injection before TTX'
-'151203_F4_C1'      '20XUAS-mCD8:GFP;VT30609-Gal4'        'Decent recording, saw spikes, but no current step injection before TTX'
-'151207_F1_C1'      '20XUAS-mCD8:GFP;VT30609-Gal4'        'Nice recording, cell in the nerve, quick dissection'
-'151207_F2_C1'      '20XUAS-mCD8:GFP;VT30609-Gal4'        'Nice recording, cell in the nerve, quick dissection'
 }
 
 
 cesiumPara_grid = {
+%A2
+%'151212_F1_C1'  'UAS-Dcr;20XUAS-mCD8:GFP/+;VT30609-Gal4/UAS-paraRNAi'   'A2, decent input currents, crapped out on the piezosines'                      %'VClamp, -5 pA' 
+'151215_F3_C1'  'UAS-Dcr;20XUAS-mCD8:GFP/+;VT30609-Gal4/UAS-paraRNAi'   'A2, Gorgeous input currents for steps!'                                        %'VClamp, -5 pA' 
+'151216_F2_C3'  'UAS-Dcr;20XUAS-mCD8:GFP/+;VT30609-Gal4/UAS-paraRNAi'   'A2, small input currents for steps, control cells for this fly'                %'VClamp, IClamp' 
+'151216_F3_C2'  'UAS-Dcr;20XUAS-mCD8:GFP/+;VT30609-Gal4/UAS-paraRNAi'   'A2, small input currents for steps,control cells for this fly'       
+'151217_F1_C3'  'UAS-Dcr;20XUAS-mCD8:GFP/+;VT30609-Gal4/UAS-paraRNAi'   'A2, really small input currents for steps, control antenna was free'           %'VClamp, whole cell on and off' 
+'151217_F2_C1'  'UAS-Dcr;20XUAS-mCD8:GFP/+;VT30609-Gal4/UAS-paraRNAi'   'A2, assymetric step responses, sine responses oscillate'           %'VClamp, whole cell on and off' 
+'151215_F2_C1'  'UAS-Dcr;20XUAS-mCD8:GFP/+;VT30609-Gal4/UAS-paraRNAi'   'Got an A2, but this one has spikes!'      % 'VClamp, IClamp' 
+
 %Fru
 %??'150912_F2_C1'  'UAS-Dcr;10XUAS-mCD8:GFP/+;FruGal4/UAS-paraRNAi'    'BPL. What happens when blocking para with RNAi? Younger fly, seems like there is not much left?'
-
 '151015_F3_C1'  'UAS-Dcr;10XUAS-mCD8:GFP/+;FruGal4/UAS-paraRNAi'    'Antennal nerve cut, BPH (dim cell body), CsGluc internal'
 '151016_F1_C1'  'UAS-Dcr;10XUAS-mCD8:GFP/+;FruGal4/UAS-paraRNAi'    'Antennal nerve intact, BPH (dim cell body), CsAsp TEA internal'
 '151017_F1_C1'  'UAS-Dcr;10XUAS-mCD8:GFP/+;FruGal4/UAS-paraRNAi'    'still some Na currents remaining, band pass, identical to the others'
@@ -97,16 +107,7 @@ cesiumPara_grid = {
 '151108_F2_C1'  'UAS-Dcr;20XUAS-mCD8:GFP/+;VT27938-Gal4/UAS-paraRNAi'    'Antennal nerve intact, LP (lower capacitance), CsAsp TEA internal'
 '151109_F1_C1'  'UAS-Dcr;20XUAS-mCD8:GFP/+;VT27938-Gal4/UAS-paraRNAi'    'Antennal nerve intact, LP (lower capacitance), CsAsp TEA internal' % access drifts up
 '151109_F1_C2'  'UAS-Dcr;20XUAS-mCD8:GFP/+;VT27938-Gal4/UAS-paraRNAi'    'Antennal nerve intact, LP (lower capacitance), CsAsp TEA internal'
-
-%A2
-%'151212_F1_C1'  'UAS-Dcr;20XUAS-mCD8:GFP/+;VT30609-Gal4/UAS-paraRNAi'   'A2, decent input currents, crapped out on the piezosines'                      %'VClamp, -5 pA' 
-'151215_F3_C1'  'UAS-Dcr;20XUAS-mCD8:GFP/+;VT30609-Gal4/UAS-paraRNAi'   'A2, Gorgeous input currents for steps!'                                        %'VClamp, -5 pA' 
-'151216_F2_C3'  'UAS-Dcr;20XUAS-mCD8:GFP/+;VT30609-Gal4/UAS-paraRNAi'   'A2, small input currents for steps, control cells for this fly'                %'VClamp, IClamp' 
-'151216_F3_C2'  'UAS-Dcr;20XUAS-mCD8:GFP/+;VT30609-Gal4/UAS-paraRNAi'   'A2, small input currents for steps,control cells for this fly'       
-'151217_F1_C3'  'UAS-Dcr;20XUAS-mCD8:GFP/+;VT30609-Gal4/UAS-paraRNAi'   'A2, really small input currents for steps, control antenna was free'           %'VClamp, whole cell on and off' 
-'151217_F2_C1'  'UAS-Dcr;20XUAS-mCD8:GFP/+;VT30609-Gal4/UAS-paraRNAi'   'A2, assymetric step responses, sine responses oscillate'           %'VClamp, whole cell on and off' 
-'151215_F2_C1'  'UAS-Dcr;20XUAS-mCD8:GFP/+;VT30609-Gal4/UAS-paraRNAi'   'Got an A2, but this one has spikes!'      % 'VClamp, IClamp' 
-}
+};
 
 sham_grid = {
 '150923_F1_C1'  '10XUAS-mCD8:GFP;FruGal4'    'BPL. control cell to check for drift'    
@@ -116,18 +117,35 @@ sham_grid = {
 '151006_F3_C2'  '10XUAS-mCD8:GFP;FruGal4'                        'BPH. drift control, sham'    
 };
 
+
 %%
 clear analysis_cell analysis_cells
+% analysis_grid = cesiumPara_grid
 for c = 1:size(analysis_grid,1)
     analysis_cell(c).name = analysis_grid{c,1}; 
     analysis_cell(c).genotype = analysis_grid{c,2}; %#ok<*SAGROW>
     analysis_cell(c).comment = analysis_grid{c,3};
     analysis_cells{c} = analysis_grid{c,1}; 
 end
+genotypes = analysis_grid(:,2);
+[genotype_set,~,genotype_idx] = unique(genotypes);
+
 Script_VClamp_Cells_A2
 Script_VClamp_Cells_Fru
 Script_VClamp_Cells_VT
 
 Script_VClamp_Cells_Interesting
 Script_VClamp_Cells_Reject
+
+example_fru.name = '151210_F3_C1';
+example_fru.VoltageSineTrial = ...
+'C:\Users\tony\Raw_Data\151210\151210_F3_C1\VoltageSine_Raw_151210_F3_C1_98.mat';
+
+example_vt.name = '151118_F1_C1';
+example_vt.VoltageSineTrial = ...
+'C:\Users\tony\Raw_Data\151118\151118_F1_C1\VoltageSine_Raw_151118_F1_C1_98.mat';
+
+example_a2.name = '151207_F1_C1';
+example_a2.VoltageSineTrial = ...
+'C:\Users\tony\Raw_Data\151207\151207_F1_C1\VoltageSine_Raw_151207_F1_C1_98.mat';
 

@@ -2,56 +2,66 @@
 cnt = find(strcmp(analysis_cells,'151030_F1_C1'));
 
 if ~isempty(cnt)
-    analysis_cell(cnt).trials.VoltageCommand = ...
-        'C:\Users\Anthony Azevedo\Raw_Data\151030\151030_F1_C1\VoltageCommand_Raw_151030_F1_C1_1.mat';
-    analysis_cell(cnt).trials.Sweep = ...
-'C:\Users\Anthony Azevedo\Raw_Data\151030\151030_F1_C1\Sweep_Raw_151030_F1_C1_8.mat';
-    analysis_cell(cnt).drugs = {'' 'curare' 'TTX' '4AP TEA'};
+analysis_cell(cnt).trials.VoltageCommand = ...
+'C:\Users\tony\Raw_Data\151030\151030_F1_C1\VoltageCommand_Raw_151030_F1_C1_1.mat';
+    analysis_cell(cnt).trials.VoltageSine = ...
+'C:\Users\tony\Raw_Data\151030\151030_F1_C1\VoltageSine_Raw_151030_F1_C1_98.mat';
+analysis_cell(cnt).trials.Sweep = ...
+'C:\Users\tony\Raw_Data\151030\151030_F1_C1\Sweep_Raw_151030_F1_C1_8.mat';
+analysis_cell(cnt).drugs = {'' 'curare' 'TTX' '4AP TEA'};
 end
 
 
 cnt = find(strcmp(analysis_cells,'151203_F3_C3'));
 
 if ~isempty(cnt)
-    analysis_cell(cnt).trials.VoltageCommand = ...
-'C:\Users\Anthony Azevedo\Raw_Data\151203\151203_F3_C3\VoltageCommand_Raw_151203_F3_C3_2.mat';
-    analysis_cell(cnt).trials.Sweep = ...
-'C:\Users\Anthony Azevedo\Raw_Data\151203\151203_F3_C3\Sweep_Raw_151203_F3_C3_2.mat';
-    analysis_cell(cnt).drugs = {'' 'curare' 'TTX' '4AP TEA'};
+analysis_cell(cnt).trials.VoltageCommand = ...
+'C:\Users\tony\Raw_Data\151203\151203_F3_C3\VoltageCommand_Raw_151203_F3_C3_2.mat';
+analysis_cell(cnt).trials.VoltageSine = ...
+'C:\Users\tony\Raw_Data\151203\151203_F3_C3\VoltageSine_Raw_151203_F3_C3_98.mat';
+analysis_cell(cnt).trials.Sweep = ...
+'C:\Users\tony\Raw_Data\151203\151203_F3_C3\Sweep_Raw_151203_F3_C3_2.mat';
+analysis_cell(cnt).drugs = {'' 'curare' 'TTX' '4AP TEA'};
 end
 
 cnt = find(strcmp(analysis_cells,'151203_F4_C1'));
 
 if ~isempty(cnt)
-    analysis_cell(cnt).trials.VoltageCommand = ...
-        'C:\Users\Anthony Azevedo\Raw_Data\151203\151203_F4_C1\VoltageCommand_Raw_151203_F4_C1_1.mat';
-    analysis_cell(cnt).trials.Sweep = ...
-'C:\Users\Anthony Azevedo\Raw_Data\151203\151203_F4_C1\Sweep_Raw_151203_F4_C1_4.mat';
-    analysis_cell(cnt).drugs = {'' 'curare' 'TTX' '4AP TEA'};
+analysis_cell(cnt).trials.VoltageCommand = ...
+'C:\Users\tony\Raw_Data\151203\151203_F4_C1\VoltageCommand_Raw_151203_F4_C1_1.mat';
+analysis_cell(cnt).trials.VoltageSine = ...
+'C:\Users\tony\Raw_Data\151203\151203_F4_C1\VoltageSine_Raw_151203_F4_C1_2.mat';
+analysis_cell(cnt).trials.Sweep = ...
+'C:\Users\tony\Raw_Data\151203\151203_F4_C1\Sweep_Raw_151203_F4_C1_4.mat';
+analysis_cell(cnt).drugs = {'' 'curare' 'TTX' '4AP TEA'};
 end
 
 cnt = find(strcmp(analysis_cells,'151207_F1_C1'));
 
 if ~isempty(cnt)
-    analysis_cell(cnt).trials.VoltageCommand = ...
-'C:\Users\Anthony Azevedo\Raw_Data\151207\151207_F1_C1\VoltageCommand_Raw_151207_F1_C1_6.mat';
-    analysis_cell(cnt).trials.Sweep = ...
-'C:\Users\Anthony Azevedo\Raw_Data\151207\151207_F1_C1\Sweep_Raw_151207_F1_C1_2.mat';
-    analysis_cell(cnt).drugs = {'' 'curare' 'TTX' '4AP TEA'};
+analysis_cell(cnt).trials.VoltageCommand = ...
+'C:\Users\tony\Raw_Data\151207\151207_F1_C1\VoltageCommand_Raw_151207_F1_C1_6.mat';
+analysis_cell(cnt).trials.VoltageSine = ...
+'C:\Users\tony\Raw_Data\151207\151207_F1_C1\VoltageSine_Raw_151207_F1_C1_98.mat';
+analysis_cell(cnt).trials.Sweep = ...
+'C:\Users\tony\Raw_Data\151207\151207_F1_C1\Sweep_Raw_151207_F1_C1_2.mat';
+analysis_cell(cnt).drugs = {'' 'curare' 'TTX' '4AP TEA'};
 end
 
 cnt = find(strcmp(analysis_cells,'151207_F2_C1'));
 
 if ~isempty(cnt)
-    analysis_cell(cnt).trials.VoltageCommand = ...
-'C:\Users\Anthony Azevedo\Raw_Data\151207\151207_F2_C1\VoltageCommand_Raw_151207_F2_C1_1.mat';
-    analysis_cell(cnt).trials.Sweep = ...
-'C:\Users\Anthony Azevedo\Raw_Data\151207\151207_F2_C1\Sweep_Raw_151207_F2_C1_2.mat';
-    analysis_cell(cnt).drugs = {'' 'curare' 'TTX' '4AP TEA' 'IBTX Cd'};
+analysis_cell(cnt).trials.VoltageCommand = ...
+'C:\Users\tony\Raw_Data\151207\151207_F2_C1\VoltageCommand_Raw_151207_F2_C1_1.mat';
+analysis_cell(cnt).trials.VoltageSine = ...
+'C:\Users\tony\Raw_Data\151207\151207_F2_C1\VoltageSine_Raw_151207_F2_C1_98.mat';
+analysis_cell(cnt).trials.Sweep = ...
+'C:\Users\tony\Raw_Data\151207\151207_F2_C1\Sweep_Raw_151207_F2_C1_2.mat';
+analysis_cell(cnt).drugs = {'' 'curare' 'TTX' '4AP TEA' 'IBTX Cd'};
 end
 
 
-%% A2: 
+%% A2 paraKD: 
 
 % not a good recording
 cnt = find(strcmp(analysis_cells,'151212_F1_C1'));
