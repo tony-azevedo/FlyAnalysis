@@ -35,7 +35,7 @@ end
 
 fig = figure;
 fig.Units = 'inches';
-set(fig,'color',[1 1 1],'position',[1 3 getpref('FigureSizes','NeuronTwoColumn') 2])
+set(fig,'color',[1 1 1],'position',[1 3 getpref('FigureSizes','NeuronTwoColumn') 1.5])
 
 p = panel(fig);
 
@@ -120,8 +120,9 @@ p = panel(fig);
 freqs = h.trial.params.freqs(2:2:length(h.trial.params.freqs));
 fnum = length(freqs);
 p.pack('h', fnum)  % response panel, stimulus panel
+p.margin = [20 4 8 4];  % response panel, stimulus panel
 
-trialnummatrix = nan(1,fnum);
+trialnummatrix = nan(2,fnum);
 pnl_hs = trialnummatrix;
 
 for bt = blocktrials;
@@ -130,6 +131,7 @@ for bt = blocktrials;
     if sum(freqs == params.params.freq);
         c = find(freqs == params.params.freq);
         trialnummatrix(1,c) = bt;
+        trialnummatrix(2,c) = bt;
     end    
 end
 
@@ -137,7 +139,7 @@ ylims = [Inf, -Inf];
 slims = [Inf, -Inf];
 for c = 1:size(trialnummatrix,2)
     h.trial = load(fullfile(h.dir,sprintf(h.trialStem,trialnummatrix(1,c))));
-    averagefig = PiezoSineAverage([],h,'');
+    averagefig = PiezoSineAverage_A2filter([],h,'');
         
     ax_from = findobj(averagefig,'tag','response_ax');
     
@@ -152,10 +154,15 @@ for c = 1:size(trialnummatrix,2)
     ylims = [min(ylims(1),ylims_from(1)),...
         max(ylims(2),ylims_from(2))];
 
-    pnl_hs(1,c) = p(c).select();
-    copyobj(get(ax_from,'children'),pnl_hs(1,c));
-
-    set(pnl_hs(1,c),'TickDir','out','YColor',[1 1 1],'YTick',[],'XColor',[1 1 1],'XTick',[],'xlim',xlims_from,'ylim',ylims_from);
+    p(c).pack('v',2)  % response panel, stimulus panel
+    pnl_hs(1,c) = p(c,1).select();
+    pnl_hs(2,c) = p(c,2).select();
+    copyobj(get(ax_from,'children'),pnl_hs(2,c));
+    
+    l = findobj(pnl_hs(2,c),'type','line','color',[1 .7 .7]);
+    copyobj(l(1),pnl_hs(1,c));
+    
+    set(pnl_hs(:,c),'TickDir','out','YColor',[1 1 1],'YTick',[],'XColor',[1 1 1],'XTick',[],'xlim',xlims_from,'ylim',ylims_from);
         
         
     % drawnow;
@@ -164,19 +171,21 @@ end
 
 set(pnl_hs(:),'ylim',ylims)
 set(pnl_hs(:,1),'ytickmode','auto','ycolor',[0 0 0])
-p(1).ylabel(['Response (' ylabe ')']);
+p(1,1).ylabel(['Response (' ylabe ')']);
+p(1,2).ylabel(['Response (' ylabe ')']);
 p(1).de.fontsize = 18;
 
 set(pnl_hs(:),'ylim',getpref('FigureMaking','Figure1Ylims'))
 set(pnl_hs(:),'xlim',getpref('FigureMaking','Figure1Xlims'))
-savePDF(fig,savedir,[],'Figure1cFull')
+%savePDF(fig,savedir,[],'Figure1cFull')
 
-delete(findobj(pnl_hs(:),'color',[1 .7 .7]))
+delete(findobj(pnl_hs(2,:),'color',[1 .7 .7]))
 delete(findobj(pnl_hs(:),'type','text'))
-savePDF(fig,savedir,[],'Figure1c')
+% savePDF(fig,savedir,[],'Figure1c')
+savePDF(fig,savedir,[],'Figure1c_SD')
 
-set(pnl_hs(:),'xlim',getpref('FigureMaking','Figure1XlimsShort'))
-savePDF(fig,savedir,[],'Figure1cShort')
+%set(pnl_hs(:),'xlim',getpref('FigureMaking','Figure1XlimsShort'))
+%savePDF(fig,savedir,[],'Figure1cShort')
 
 %% Figure 1d: Example Band Pass High - A large full 2 column figure.
 % example neuron 151201_F1_C1 (possibly 151201_F1_C2)
@@ -207,8 +216,9 @@ p = panel(fig);
 freqs = h.trial.params.freqs(2:2:length(h.trial.params.freqs));
 fnum = length(freqs);
 p.pack('h', fnum)  % response panel, stimulus panel
+p.margin = [20 4 8 4];  % response panel, stimulus panel
 
-trialnummatrix = nan(1,fnum);
+trialnummatrix = nan(2,fnum);
 pnl_hs = trialnummatrix;
 
 for bt = blocktrials;
@@ -217,6 +227,7 @@ for bt = blocktrials;
     if sum(freqs == params.params.freq);
         c = find(freqs == params.params.freq);
         trialnummatrix(1,c) = bt;
+        trialnummatrix(2,c) = bt;
     end    
 end
 
@@ -224,7 +235,7 @@ ylims = [Inf, -Inf];
 slims = [Inf, -Inf];
 for c = 1:size(trialnummatrix,2)
     h.trial = load(fullfile(h.dir,sprintf(h.trialStem,trialnummatrix(1,c))));
-    averagefig = PiezoSineAverage([],h,'');
+    averagefig = PiezoSineAverage_B1SEM([],h,'');
         
     ax_from = findobj(averagefig,'tag','response_ax');
     
@@ -239,10 +250,15 @@ for c = 1:size(trialnummatrix,2)
     ylims = [min(ylims(1),ylims_from(1)),...
         max(ylims(2),ylims_from(2))];
 
-    pnl_hs(1,c) = p(c).select();
-    copyobj(get(ax_from,'children'),pnl_hs(1,c));
-
-    set(pnl_hs(1,c),'TickDir','out','YColor',[1 1 1],'YTick',[],'XColor',[1 1 1],'XTick',[],'xlim',xlims_from,'ylim',ylims_from);
+    p(c).pack('v',2)  % response panel, stimulus panel
+    pnl_hs(1,c) = p(c,1).select();
+    pnl_hs(2,c) = p(c,2).select();
+    copyobj(get(ax_from,'children'),pnl_hs(2,c));
+    
+    l = findobj(pnl_hs(2,c),'type','line','color',[1 .7 .7]);
+    copyobj(l(1),pnl_hs(1,c));
+    
+    set(pnl_hs(:,c),'TickDir','out','YColor',[1 1 1],'YTick',[],'XColor',[1 1 1],'XTick',[],'xlim',xlims_from,'ylim',ylims_from);
         
         
     % drawnow;
@@ -251,19 +267,21 @@ end
 
 set(pnl_hs(:),'ylim',ylims)
 set(pnl_hs(:,1),'ytickmode','auto','ycolor',[0 0 0])
-p(1).ylabel(['Response (' ylabe ')']);
+p(1,1).ylabel(['Response (' ylabe ')']);
+p(1,2).ylabel(['Response (' ylabe ')']);
 p(1).de.fontsize = 18;
 
 set(pnl_hs(:),'ylim',getpref('FigureMaking','Figure1Ylims'))
 set(pnl_hs(:),'xlim',getpref('FigureMaking','Figure1Xlims'))
-savePDF(fig,savedir,[],'Figure1dFull')
+%savePDF(fig,savedir,[],'Figure1cFull')
 
-delete(findobj(pnl_hs(:),'color',[1 .7 .7]))
+delete(findobj(pnl_hs(2,:),'color',[1 .7 .7]))
 delete(findobj(pnl_hs(:),'type','text'))
-savePDF(fig,savedir,[],'Figure1d')
+% savePDF(fig,savedir,[],'Figure1d')
+savePDF(fig,savedir,[],'Figure1d_SD')
 
-set(pnl_hs(:),'xlim',getpref('FigureMaking','Figure1XlimsShort'))
-savePDF(fig,savedir,[],'Figure1dShort')
+%set(pnl_hs(:),'xlim',getpref('FigureMaking','Figure1XlimsShort'))
+%savePDF(fig,savedir,[],'Figure1cShort')
 
 
 %% Figure 1e: Example Band Pass Low - A large full 2 column figure.
@@ -295,8 +313,9 @@ p = panel(fig);
 freqs = h.trial.params.freqs(2:2:length(h.trial.params.freqs));
 fnum = length(freqs);
 p.pack('h', fnum)  % response panel, stimulus panel
+p.margin = [20 4 8 4];  % response panel, stimulus panel
 
-trialnummatrix = nan(1,fnum);
+trialnummatrix = nan(2,fnum);
 pnl_hs = trialnummatrix;
 
 for bt = blocktrials;
@@ -305,6 +324,7 @@ for bt = blocktrials;
     if sum(freqs == params.params.freq);
         c = find(freqs == params.params.freq);
         trialnummatrix(1,c) = bt;
+        trialnummatrix(2,c) = bt;
     end    
 end
 
@@ -312,7 +332,7 @@ ylims = [Inf, -Inf];
 slims = [Inf, -Inf];
 for c = 1:size(trialnummatrix,2)
     h.trial = load(fullfile(h.dir,sprintf(h.trialStem,trialnummatrix(1,c))));
-    averagefig = PiezoSineAverage([],h,'');
+    averagefig = PiezoSineAverage_B1SEM([],h,'');
         
     ax_from = findobj(averagefig,'tag','response_ax');
     
@@ -327,10 +347,15 @@ for c = 1:size(trialnummatrix,2)
     ylims = [min(ylims(1),ylims_from(1)),...
         max(ylims(2),ylims_from(2))];
 
-    pnl_hs(1,c) = p(c).select();
-    copyobj(get(ax_from,'children'),pnl_hs(1,c));
-
-    set(pnl_hs(1,c),'TickDir','out','YColor',[1 1 1],'YTick',[],'XColor',[1 1 1],'XTick',[],'xlim',xlims_from,'ylim',ylims_from);
+    p(c).pack('v',2)  % response panel, stimulus panel
+    pnl_hs(1,c) = p(c,1).select();
+    pnl_hs(2,c) = p(c,2).select();
+    copyobj(get(ax_from,'children'),pnl_hs(2,c));
+    
+    l = findobj(pnl_hs(2,c),'type','line','color',[1 .7 .7]);
+    copyobj(l(1),pnl_hs(1,c));
+    
+    set(pnl_hs(:,c),'TickDir','out','YColor',[1 1 1],'YTick',[],'XColor',[1 1 1],'XTick',[],'xlim',xlims_from,'ylim',ylims_from);
         
         
     % drawnow;
@@ -339,19 +364,18 @@ end
 
 set(pnl_hs(:),'ylim',ylims)
 set(pnl_hs(:,1),'ytickmode','auto','ycolor',[0 0 0])
-p(1).ylabel(['Response (' ylabe ')']);
+p(1,1).ylabel(['Response (' ylabe ')']);
+p(1,2).ylabel(['Response (' ylabe ')']);
 p(1).de.fontsize = 18;
 
 set(pnl_hs(:),'ylim',getpref('FigureMaking','Figure1Ylims'))
 set(pnl_hs(:),'xlim',getpref('FigureMaking','Figure1Xlims'))
-savePDF(fig,savedir,[],'Figure1eFull')
+%savePDF(fig,savedir,[],'Figure1cFull')
 
-delete(findobj(pnl_hs(:),'color',[1 .7 .7]))
+delete(findobj(pnl_hs(2,:),'color',[1 .7 .7]))
 delete(findobj(pnl_hs(:),'type','text'))
-savePDF(fig,savedir,[],'Figure1e')
-
-set(pnl_hs(:),'xlim',getpref('FigureMaking','Figure1XlimsShort'))
-savePDF(fig,savedir,[],'Figure1eShort')
+% savePDF(fig,savedir,[],'Figure1e')
+savePDF(fig,savedir,[],'Figure1e_SD')
 
 %% Figure 1f: Example Low Pass  - A large full 2 column figure.
 % example neuron 151121_F1_C1, 
@@ -382,8 +406,9 @@ p = panel(fig);
 freqs = h.trial.params.freqs(2:2:length(h.trial.params.freqs));
 fnum = length(freqs);
 p.pack('h', fnum)  % response panel, stimulus panel
+p.margin = [20 4 8 4];  % response panel, stimulus panel
 
-trialnummatrix = nan(1,fnum);
+trialnummatrix = nan(2,fnum);
 pnl_hs = trialnummatrix;
 
 for bt = blocktrials;
@@ -392,6 +417,7 @@ for bt = blocktrials;
     if sum(freqs == params.params.freq);
         c = find(freqs == params.params.freq);
         trialnummatrix(1,c) = bt;
+        trialnummatrix(2,c) = bt;
     end    
 end
 
@@ -399,7 +425,7 @@ ylims = [Inf, -Inf];
 slims = [Inf, -Inf];
 for c = 1:size(trialnummatrix,2)
     h.trial = load(fullfile(h.dir,sprintf(h.trialStem,trialnummatrix(1,c))));
-    averagefig = PiezoSineAverage([],h,'');
+    averagefig = PiezoSineAverage_B1SEM([],h,'');
         
     ax_from = findobj(averagefig,'tag','response_ax');
     
@@ -414,10 +440,15 @@ for c = 1:size(trialnummatrix,2)
     ylims = [min(ylims(1),ylims_from(1)),...
         max(ylims(2),ylims_from(2))];
 
-    pnl_hs(1,c) = p(c).select();
-    copyobj(get(ax_from,'children'),pnl_hs(1,c));
-
-    set(pnl_hs(1,c),'TickDir','out','YColor',[1 1 1],'YTick',[],'XColor',[1 1 1],'XTick',[],'xlim',xlims_from,'ylim',ylims_from);
+    p(c).pack('v',2)  % response panel, stimulus panel
+    pnl_hs(1,c) = p(c,1).select();
+    pnl_hs(2,c) = p(c,2).select();
+    copyobj(get(ax_from,'children'),pnl_hs(2,c));
+    
+    l = findobj(pnl_hs(2,c),'type','line','color',[1 .7 .7]);
+    copyobj(l(1),pnl_hs(1,c));
+    
+    set(pnl_hs(:,c),'TickDir','out','YColor',[1 1 1],'YTick',[],'XColor',[1 1 1],'XTick',[],'xlim',xlims_from,'ylim',ylims_from);
         
         
     % drawnow;
@@ -426,17 +457,16 @@ end
 
 set(pnl_hs(:),'ylim',ylims)
 set(pnl_hs(:,1),'ytickmode','auto','ycolor',[0 0 0])
-p(1).ylabel(['Response (' ylabe ')']);
+p(1,1).ylabel(['Response (' ylabe ')']);
+p(1,2).ylabel(['Response (' ylabe ')']);
 p(1).de.fontsize = 18;
 
 set(pnl_hs(:),'ylim',getpref('FigureMaking','Figure1Ylims'))
 set(pnl_hs(:),'xlim',getpref('FigureMaking','Figure1Xlims'))
-savePDF(fig,savedir,[],'Figure1fFull')
+%savePDF(fig,savedir,[],'Figure1cFull')
 
-delete(findobj(pnl_hs(:),'color',[1 .7 .7]))
+delete(findobj(pnl_hs(2,:),'color',[1 .7 .7]))
 delete(findobj(pnl_hs(:),'type','text'))
-savePDF(fig,savedir,[],'Figure1f')
-
-set(pnl_hs(:),'xlim',getpref('FigureMaking','Figure1XlimsShort'))
-savePDF(fig,savedir,[],'Figure1fShort')
+% savePDF(fig,savedir,[],'Figure1f')
+savePDF(fig,savedir,[],'Figure1f_SD')
 

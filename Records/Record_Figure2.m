@@ -35,8 +35,8 @@ for cell_type = 1:length(Scripts)
     eval(Scripts{cell_type});
     Script_Figure2NormSelectivity;
     
-    copyobj(get(frompnl(2).select(),'children'),pnl(1,cell_type).select())
-    copyobj(get(frompnl(1).select(),'children'),pnl(2,cell_type).select())
+    copyobj(get(frompnl(1).select(),'children'),pnl(1,cell_type).select())
+    copyobj(get(frompnl(2).select(),'children'),pnl(2,cell_type).select())
     close(f)
         
 end
@@ -60,7 +60,7 @@ pnl(1).ylabel('normalized'), pnl(2).ylabel('|F(f)| (mV)'),pnl(3).ylabel('|F(f)| 
 pnl(1).xlabel('f (Hz)'), pnl(2).xlabel('f (Hz)'),pnl(3).xlabel('f (Hz)')
 
 set(pnl_hs(:),'tickdir','out');
-set(pnl_hs(:,3),'xscale','log')
+set(pnl_hs(:,3),'xscale','log','xlim',[15 600],'xtick',[25 50 100 200 400])
 
 text(300,10,[num2str(all_dsplcmnts(3),2) ' V'],'parent',pnl_hs(4,2));
 

@@ -21,6 +21,7 @@ vm_analysis_grid = {...
     
     '150409_F1_C1'  '20XUAS-mCD8:GFP;VT27938-Gal4'        ''
     '150414_F1_C1'  '20XUAS-mCD8:GFP;VT27938-Gal4'        ''
+    '150417_F1_C1'  'GH86-Gal4;20XUAS-mCD8:GFP;'        ''
     
     '150502_F1_C1'  '20XUAS-mCD8:GFP;VT45599-Gal4'        ''
     '150502_F1_C3'  '20XUAS-mCD8:GFP;VT45599-Gal4'        ''
@@ -301,6 +302,21 @@ if ~isempty(cnt)
     analysis_cell(cnt).SweepTrial = ...
         'C:\Users\tony\Raw_Data\150414\150414_F1_C1\Sweep_Raw_150414_F1_C1_4.mat';
 end
+
+%% 'GH86-Gal4;pJFRC7'
+
+cnt = find(strcmp(analysis_cells,'150417_F1_C1'));
+if ~isempty(cnt)
+    analysis_cell(cnt).PiezoSineTrial = ...
+'C:\Users\tony\Raw_Data\150417\150417_F1_C1\PiezoSine_Raw_150417_F1_C1_16.mat';
+    analysis_cell(cnt).CurrentStepTrial = ...
+'C:\Users\tony\Raw_Data\150417\150417_F1_C1\CurrentStep_Raw_150417_F1_C1_1.mat';
+    analysis_cell(cnt).CurrentChirpTrial = ...
+'C:\Users\tony\Raw_Data\150417\150417_F1_C1\CurrentChirp_Raw_150417_F1_C1_1.mat';
+    analysis_cell(cnt).SweepTrial = ...
+'C:\Users\tony\Raw_Data\150417\150417_F1_C1\Sweep_Raw_150417_F1_C1_1.mat';
+end
+
 
 %% 'pJFRC7;VT45599'
 cnt = find(strcmp(analysis_cells,'150502_F1_C1'));

@@ -14,6 +14,13 @@ analysis_cell(cnt).trials.CurrentChirp = ...
 'C:\Users\tony\Raw_Data\151007\151007_F1_C1\CurrentChirp_Raw_151007_F1_C1_1.mat';
 analysis_cell(cnt).trials.VoltagePlateau = ...
 'C:\Users\tony\Raw_Data\151007\151007_F1_C1\VoltagePlateau_Raw_151007_F1_C1_1.mat';
+analysis_cell(cnt).trials.VoltageStep_Drugs = {
+'C:\Users\tony\Raw_Data\151007\151007_F1_C1\VoltageStep_Raw_151007_F1_C1_61.mat';
+'C:\Users\tony\Raw_Data\151007\151007_F1_C1\VoltageStep_Raw_151007_F1_C1_181.mat';
+'';
+};
+analysis_cell(cnt).VSdrugs = ...
+{'curare' '4APTEA'};
 end
 
 cnt = find(strcmp(analysis_cells,'151007_F3_C1'));
@@ -31,6 +38,13 @@ analysis_cell(cnt).trials.CurrentChirp = ...
 'C:\Users\tony\Raw_Data\151007\151007_F3_C1\CurrentChirp_Raw_151007_F3_C1_1.mat';
 analysis_cell(cnt).trials.VoltagePlateau = ...
 'C:\Users\tony\Raw_Data\151007\151007_F3_C1\VoltagePlateau_Raw_151007_F3_C1_1.mat';
+analysis_cell(cnt).trials.VoltageStep_Drugs = {
+'C:\Users\tony\Raw_Data\151007\151007_F3_C1\VoltageStep_Raw_151007_F3_C1_1.mat';
+'C:\Users\tony\Raw_Data\151007\151007_F3_C1\VoltageStep_Raw_151007_F3_C1_61.mat';
+'C:\Users\tony\Raw_Data\151007\151007_F3_C1\VoltageStep_Raw_151007_F3_C1_121.mat';
+};
+analysis_cell(cnt).VSdrugs = ...
+{'curare'  '4APTEA' 'TTX'};
 end
 
 cnt = find(strcmp(analysis_cells,'151009_F1_C1'));
@@ -48,6 +62,13 @@ analysis_cell(cnt).trials.CurrentChirp = ...
 'C:\Users\tony\Raw_Data\151009\151009_F1_C1\CurrentChirp_Raw_151009_F1_C1_1.mat';
 analysis_cell(cnt).trials.VoltagePlateau = ...
 'C:\Users\tony\Raw_Data\151009\151009_F1_C1\VoltagePlateau_Raw_151009_F1_C1_1.mat';
+analysis_cell(cnt).trials.VoltageStep_Drugs = {
+'C:\Users\tony\Raw_Data\151009\151009_F1_C1\VoltageStep_Raw_151009_F1_C1_1.mat';
+'C:\Users\tony\Raw_Data\151009\151009_F1_C1\VoltageStep_Raw_151009_F1_C1_61.mat';
+'C:\Users\tony\Raw_Data\151009\151009_F1_C1\VoltageStep_Raw_151009_F1_C1_121.mat';
+};
+analysis_cell(cnt).VSdrugs = ...
+{'curare' '4APTEA' 'TTX' };
 end
 
 
@@ -66,6 +87,13 @@ analysis_cell(cnt).trials.CurrentChirp = ...
 'C:\Users\tony\Raw_Data\151022\151022_F2_C1\CurrentChirp_Raw_151022_F2_C1_1.mat';
 analysis_cell(cnt).trials.VoltagePlateau = ...
 'C:\Users\tony\Raw_Data\151022\151022_F2_C1\VoltagePlateau_Raw_151022_F2_C1_1.mat';
+analysis_cell(cnt).trials.VoltageStep_Drugs = {
+'C:\Users\tony\Raw_Data\151022\151022_F2_C1\VoltageStep_Raw_151022_F2_C1_41.mat';
+'C:\Users\tony\Raw_Data\151022\151022_F2_C1\VoltageStep_Raw_151022_F2_C1_81.mat';
+'C:\Users\tony\Raw_Data\151022\151022_F2_C1\VoltageStep_Raw_151022_F2_C1_121.mat';
+};
+analysis_cell(cnt).VSdrugs = ...
+{'curare' 'TTX' '4APTEA'};
 end
 
 cnt = find(strcmp(analysis_cells,'151029_F3_C1'));
@@ -83,6 +111,13 @@ analysis_cell(cnt).trials.CurrentChirp = ...
 'C:\Users\tony\Raw_Data\151029\151029_F3_C1\CurrentChirp_Raw_151029_F3_C1_1.mat';
 analysis_cell(cnt).trials.VoltagePlateau = ...
 'C:\Users\tony\Raw_Data\151029\151029_F3_C1\VoltagePlateau_Raw_151029_F3_C1_1.mat';
+analysis_cell(cnt).trials.VoltageStep_Drugs = {
+'C:\Users\tony\Raw_Data\151029\151029_F3_C1\VoltageStep_Raw_151029_F3_C1_41.mat';
+'C:\Users\tony\Raw_Data\151029\151029_F3_C1\VoltageStep_Raw_151029_F3_C1_81.mat';
+'C:\Users\tony\Raw_Data\151029\151029_F3_C1\VoltageStep_Raw_151029_F3_C1_161.mat';
+};
+analysis_cell(cnt).VSdrugs = ...
+{'curare' 'TTX' '4APTEA'};
 end
 
 
@@ -101,6 +136,13 @@ analysis_cell(cnt).trials.CurrentChirp = ...
 'C:\Users\tony\Raw_Data\151029\151029_F3_C1\VoltagePlateau_Raw_151029_F3_C1_1.mat';
 analysis_cell(cnt).trials.VoltagePlateau = ...
 'C:\Users\tony\Raw_Data\151118\151118_F1_C1\VoltagePlateau_Raw_151118_F1_C1_1.mat';
+analysis_cell(cnt).trials.VoltageStep_Drugs = {
+'C:\Users\tony\Raw_Data\151118\151118_F1_C1\VoltageStep_Raw_151118_F1_C1_61.mat';
+'C:\Users\tony\Raw_Data\151118\151118_F1_C1\VoltageStep_Raw_151118_F1_C1_121.mat';
+'C:\Users\tony\Raw_Data\151118\151118_F1_C1\VoltageStep_Raw_151118_F1_C1_181.mat';
+};
+analysis_cell(cnt).VSdrugs = ...
+{'curare' 'TTX' '4APTEA'};
 end
 
 cnt = find(strcmp(analysis_cells,'151121_F3_C1'));
@@ -118,6 +160,13 @@ analysis_cell(cnt).trials.CurrentChirp = ...
 'C:\Users\tony\Raw_Data\151121\151121_F3_C1\CurrentChirp_Raw_151121_F3_C1_1.mat';
 analysis_cell(cnt).trials.VoltagePlateau = ...
 'C:\Users\tony\Raw_Data\151121\151121_F3_C1\VoltagePlateau_Raw_151121_F3_C1_1.mat';
+analysis_cell(cnt).trials.VoltageStep_Drugs = {
+'C:\Users\tony\Raw_Data\151121\151121_F3_C1\VoltageStep_Raw_151121_F3_C1_41.mat';
+'C:\Users\tony\Raw_Data\151121\151121_F3_C1\VoltageStep_Raw_151121_F3_C1_81.mat';
+'C:\Users\tony\Raw_Data\151121\151121_F3_C1\VoltageStep_Raw_151121_F3_C1_201.mat';
+};
+analysis_cell(cnt).VSdrugs = ...
+{'curare' 'TTX' '4APTEA'};
 end
 
 

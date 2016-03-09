@@ -30,6 +30,8 @@ Record_FS_HighFreqDepolB1s
 fr = 2;
 pnl(fr).pack('h',{1/2 1/2});
 pnl(fr).marginbottom = 4;
+pnl(fr).marginright = 4;
+pnl(fr).marginleft = 4;
 clear pnl_hs
 for r = fr
     for c = 1
@@ -39,23 +41,28 @@ end
 
 trial = load(fig3example_cell.PiezoStepTrialPost);
 h = getShowFuncInputsFromTrial(trial);
-fig = PF_PiezoStepAverage([],h,fig3example_cell.genotype);
-l = copyobj(findobj(get(findobj(fig,'type','axes','tag','response_ax'),'Children'),'type','line','color',[ .7 0 0]),pnl(fr,1).select());
-x = l.XData;
-y = l.YData;
-set(l,'XData',x(x>=s_0 & x<s_f),'YData',y(x>=s_0 & x<s_f));
+fig = PF_PiezoStepAverage_A2([],h,fig3example_cell.genotype);
+l = copyobj(findobj(get(findobj(fig,'type','axes','tag','response_ax'),'Children'),'type','line'),pnl(fr,1).select());
+for i = 1:length(l)
+    x = l(i).XData;
+    y = l(i).YData;
+    set(l(i),'XData',x(x>=s_0 & x<s_f),'YData',y(x>=s_0 & x<s_f));
+end
 
 % -- Plot anterior step off --
-line(x(x>=.2+s_0 & x<.2+s_f)-.2 + gap*2,y(x>=.2+s_0 & x<.2+s_f),'parent',pnl(fr,1).select(),'color',[.7 0 0])
+% line(x(x>=.2+s_0 & x<.2+s_f)-.2 + gap*2,y(x>=.2+s_0 & x<.2+s_f),'parent',pnl(fr,1).select(),'color',[.7 0 0])
 close(fig)
 
 trial = load(fig3example_cell.PiezoStepTrialAnt);
 h = getShowFuncInputsFromTrial(trial);
-fig = PF_PiezoStepAverage([],h,fig3example_cell.genotype);
-l = copyobj(findobj(get(findobj(fig,'type','axes','tag','response_ax'),'Children'),'type','line','color',[ .7 0 0]),pnl(fr,1).select());
-x = l.XData;
-y = l.YData;
-set(l,'XData',x(x>=s_0 & x<s_f) + gap*1,'YData',y(x>=s_0 & x<s_f));
+fig = PF_PiezoStepAverage_A2([],h,fig3example_cell.genotype);
+l = copyobj(findobj(get(findobj(fig,'type','axes','tag','response_ax'),'Children'),'type','line'),pnl(fr,1).select());
+for i = 1:length(l)
+    x = l(i).XData;
+    y = l(i).YData;
+    set(l(i),'XData',x(x>=s_0 & x<s_f) + gap*1,'YData',y(x>=s_0 & x<s_f));
+end
+
 
 % -- Plot posterior step off --
 line(x(x>=.2+s_0 & x<.2+s_f)-.2 + gap*3,y(x>=.2+s_0 & x<.2+s_f),'parent',pnl(fr,1).select(),'color',[.7 0 0])
@@ -64,11 +71,14 @@ close(fig)
 % show the expanded timescale on the other side
 trial = load(fig3example_cell.PiezoStepTrialPost);
 h = getShowFuncInputsFromTrial(trial);
-fig = PF_PiezoStepAverage([],h,fig3example_cell.genotype);
-l = copyobj(findobj(get(findobj(fig,'type','axes','tag','response_ax'),'Children'),'type','line','color',[ .7 0 0]),pnl(fr,2).select());
-x = l.XData;
-y = l.YData;
-set(l,'XData',x(x>=-.1 & x<.3),'YData',y(x>=-.1 & x<.3));
+fig = PF_PiezoStepAverage_A2([],h,fig3example_cell.genotype);
+% l = copyobj(findobj(get(findobj(fig,'type','axes','tag','response_ax'),'Children'),'type','line','color',[ .7 0 0]),pnl(fr,2).select());
+l = copyobj(findobj(get(findobj(fig,'type','axes','tag','response_ax'),'Children'),'type','line'),pnl(fr,2).select());
+for i = 1:length(l)
+    x = l(i).XData;
+    y = l(i).YData;
+    set(l(i),'XData',x(x>=-.1 & x<.3),'YData',y(x>=-.1 & x<.3));
+end
 close(fig)
 
 
@@ -98,7 +108,9 @@ end
 fr = 1;
 pnl(fr).pack('h',{1/2 1/2});
 pnl(fr).marginbottom = 4;
-    
+pnl(fr).marginright = 4;
+pnl(fr).marginleft = 4;
+
 clear pnl_hs
 for r = fr
     for c = 1
@@ -140,6 +152,10 @@ for sc_ind = 2:length(Scripts)
     pnl(fr+1).pack('h',{1/2 1/2});
     pnl(fr).marginbottom = 4;
     pnl(fr+1).marginbottom = 4;
+    pnl(fr).marginright = 4;
+    pnl(fr+1).marginright = 4;
+    pnl(fr).marginleft = 4;
+    pnl(fr+1).marginleft = 4;
     
     clear pnl_hs
     for r = fr:fr+1
@@ -152,60 +168,70 @@ for sc_ind = 2:length(Scripts)
     trial = load(fig3example_cell0.PiezoStepTrialPost);
     h = getShowFuncInputsFromTrial(trial);
     fig = PF_PiezoStepAverage([],h,fig3example_cell0.genotype);
-    l = copyobj(findobj(get(findobj(fig,'type','axes','tag','response_ax'),'Children'),'type','line','color',[ .7 0 0]),pnl(fr,1).select());
-    x = l.XData;
-    y = l.YData;
-    set(l,'XData',x(x>=s_0 & x<s_f),'YData',y(x>=s_0 & x<s_f));
+    l = copyobj(findobj(get(findobj(fig,'type','axes','tag','response_ax'),'Children'),'type','line'),pnl(fr,1).select());
+    for i = 1:length(l)
+        x = l(i).XData;
+        y = l(i).YData;
+        set(l(i),'XData',x(x>=s_0 & x<s_f),'YData',y(x>=s_0 & x<s_f));
+    end
 
     % Post Cell: Plot anterior step off --
-    line(x(x>=.2+s_0 & x<.2+s_f)-.2 + gap*2,y(x>=.2+s_0 & x<.2+s_f),'parent',pnl(fr,1).select(),'color',[.7 0 0])
+%     line(x(x>=.2+s_0 & x<.2+s_f)-.2 + gap*2,y(x>=.2+s_0 & x<.2+s_f),'parent',pnl(fr,1).select(),'color',[.7 0 0])
     close(fig)
         
     % Post Cell: Plot posterior step --
     trial = load(fig3example_cell0.PiezoStepTrialAnt);
     h = getShowFuncInputsFromTrial(trial);
     fig = PF_PiezoStepAverage([],h,fig3example_cell0.genotype);
-    l = copyobj(findobj(get(findobj(fig,'type','axes','tag','response_ax'),'Children'),'type','line','color',[ .7 0 0]),pnl(fr,1).select());
-    x = l.XData;
-    y = l.YData;
-    set(l,'XData',x(x>=s_0 & x<s_f)+gap*1,'YData',y(x>=s_0 & x<s_f));
+    l = copyobj(findobj(get(findobj(fig,'type','axes','tag','response_ax'),'Children'),'type','line'),pnl(fr,1).select());
+    for i = 1:length(l)
+        x = l(i).XData;
+        y = l(i).YData;
+        set(l(i),'XData',x(x>=s_0 & x<s_f)+gap*1,'YData',y(x>=s_0 & x<s_f));
+    end
 
     % Post Cell: Plot posterior step off --
-    line(x(x>=.2+s_0 & x<.2+s_f)-.2 + gap*3,y(x>=.2+s_0 & x<.2+s_f),'parent',pnl(fr,1).select(),'color',[.7 0 0])
+%     line(x(x>=.2+s_0 & x<.2+s_f)-.2 + gap*3,y(x>=.2+s_0 & x<.2+s_f),'parent',pnl(fr,1).select(),'color',[.7 0 0])
     close(fig)
 
     % Ant Cell: Plot anterior step --
     trial = load(fig3example_cell180.PiezoStepTrialPost);
     h = getShowFuncInputsFromTrial(trial);
     fig = PF_PiezoStepAverage([],h,fig3example_cell180.genotype);
-    l = copyobj(findobj(get(findobj(fig,'type','axes','tag','response_ax'),'Children'),'type','line','color',[ .7 0 0]),pnl(fr+1,1).select());
-    x = l.XData;
-    y = l.YData;
-    set(l,'XData',x(x>=s_0 & x<s_f),'YData',y(x>=s_0 & x<s_f));
+    l = copyobj(findobj(get(findobj(fig,'type','axes','tag','response_ax'),'Children'),'type','line'),pnl(fr+1,1).select());
+    for i = 1:length(l)
+        x = l(i).XData;
+        y = l(i).YData;
+        set(l(i),'XData',x(x>=s_0 & x<s_f),'YData',y(x>=s_0 & x<s_f));
+    end
 
     % Ant Cell: Plot anterior step off --
-    line(x(x>=.2+s_0 & x<.2+s_f)-.2 + gap*2,y(x>=.2+s_0 & x<.2+s_f),'parent',pnl(fr+1,1).select(),'color',[.7 0 0])
+%     line(x(x>=.2+s_0 & x<.2+s_f)-.2 + gap*2,y(x>=.2+s_0 & x<.2+s_f),'parent',pnl(fr+1,1).select(),'color',[.7 0 0])
     close(fig)
 
     % Ant Cell: Plot posterior step --
     trial = load(fig3example_cell180.PiezoStepTrialAnt);
     h = getShowFuncInputsFromTrial(trial);
     fig = PF_PiezoStepAverage([],h,fig3example_cell180.genotype);
-    l = copyobj(findobj(get(findobj(fig,'type','axes','tag','response_ax'),'Children'),'type','line','color',[ .7 0 0]),pnl(fr+1,1).select());
-    x = l.XData;
-    y = l.YData;
-    set(l,'XData',x(x>=s_0 & x<s_f)+gap*1,'YData',y(x>=s_0 & x<s_f));
-
+    l = copyobj(findobj(get(findobj(fig,'type','axes','tag','response_ax'),'Children'),'type','line'),pnl(fr+1,1).select());
+    for i = 1:length(l)
+        x = l(i).XData;
+        y = l(i).YData;
+        set(l(i),'XData',x(x>=s_0 & x<s_f)+gap*1,'YData',y(x>=s_0 & x<s_f));
+    end
+    
     % Ant Cell: Plot posterior step off --
-    line(x(x>=.2+s_0 & x<.2+s_f)-.2 + gap*3,y(x>=.2+s_0 & x<.2+s_f),'parent',pnl(fr+1,1).select(),'color',[.7 0 0])
+%     line(x(x>=.2+s_0 & x<.2+s_f)-.2 + gap*3,y(x>=.2+s_0 & x<.2+s_f),'parent',pnl(fr+1,1).select(),'color',[.7 0 0])
     close(fig)
 
     set(pnl_hs(:),'tickdir','out','xcolor',[1 1 1],'xtick',[],'xlim',[s_0 s_0+2*gap]);
     set(pnl_hs(1,:),'ylim',[-45 -30]);
     set(pnl_hs(2,:),'ylim',[-40 -25]);
-    delete(findobj(pnl_hs(:),'type','line','color',[1 .7 .7]));
-    set(findobj(pnl_hs(2,:),'type','line','color',[.7 0 0]),'color',[0 0 1]);
-    set(findobj(pnl_hs(1,:),'type','line','color',[.7 0 0]),'color',[1 0 0]);
+%     delete(findobj(pnl_hs(:),'type','line','color',[1 .7 .7]));
+    set(findobj(pnl_hs(2,:),'type','line','color',[1 .7 .7]),'color',[.7 .7 1]);
+    set(findobj(pnl_hs(1,:),'type','line','color',[1 .7 .7]),'color',[1 .7 .7]);
+    set(findobj(pnl_hs(2,:),'type','line','color',[.7 0 0]),'color',[0 0 .7]);
+    set(findobj(pnl_hs(1,:),'type','line','color',[.7 0 0]),'color',[.7 0 0]);
     
     clear pnl_hs
     for r = fr:fr+1
@@ -217,20 +243,20 @@ for sc_ind = 2:length(Scripts)
     % ***** Plot sine cycles ****
     trial = load(fig3example_cell0.PiezoSine25);
     fig = PiezoSineCycle([],getShowFuncInputsFromTrial(trial),fig3example_cell0.genotype);
-    hs = copyobj(findobj(get(findobj(fig,'type','axes','tag','response_ax'),'Children'),'type','line'),pnl(fr,c).select());
+    hs = copyobj(findobj(get(findobj(fig,'type','axes','tag','response_ax'),'Children'),'type','line','-not','color',[.9 .9 .9]),pnl(fr,c).select());
     l_25 = findobj(hs,'type','line','color',[.7 0 0]);
     close(fig)
     
     trial = load(fig3example_cell0.PiezoSine50);
     fig = PiezoSineCycle([],getShowFuncInputsFromTrial(trial),fig3example_cell0.genotype);
-    hs = copyobj(findobj(get(findobj(fig,'type','axes','tag','response_ax'),'Children'),'type','line'),pnl(fr,c).select());
+    hs = copyobj(findobj(get(findobj(fig,'type','axes','tag','response_ax'),'Children'),'type','line','-not','color',[.9 .9 .9]),pnl(fr,c).select());
     l_50 = findobj(hs,'type','line','color',[.7 0 0]);
     set(hs,'XData',l_25.XData(end)+lilgap+l_50.XData)
     close(fig)
     
     trial = load(fig3example_cell0.PiezoSine100);
     fig = PiezoSineCycle([],getShowFuncInputsFromTrial(trial),fig3example_cell0.genotype);
-    hs = copyobj(findobj(get(findobj(fig,'type','axes','tag','response_ax'),'Children'),'type','line'),pnl(fr,c).select());
+    hs = copyobj(findobj(get(findobj(fig,'type','axes','tag','response_ax'),'Children'),'type','line','-not','color',[.9 .9 .9]),pnl(fr,c).select());
     l_100 = findobj(hs,'type','line','color',[.7 0 0]);
     set(hs,'XData',l_50.XData(end)+lilgap+l_100.XData)
     close(fig)
@@ -238,20 +264,20 @@ for sc_ind = 2:length(Scripts)
     % ***** Plot sine cycles ****
     trial = load(fig3example_cell180.PiezoSine25);
     fig = PiezoSineCycle([],getShowFuncInputsFromTrial(trial),fig3example_cell0.genotype);
-    hs = copyobj(findobj(get(findobj(fig,'type','axes','tag','response_ax'),'Children'),'type','line'),pnl(fr+1,c).select());
+    hs = copyobj(findobj(get(findobj(fig,'type','axes','tag','response_ax'),'Children'),'type','line','-not','color',[.9 .9 .9]),pnl(fr+1,c).select());
     l_25 = findobj(hs,'type','line','color',[.7 0 0]);
     close(fig)
     
     trial = load(fig3example_cell180.PiezoSine50);
     fig = PiezoSineCycle([],getShowFuncInputsFromTrial(trial),fig3example_cell0.genotype);
-    hs = copyobj(findobj(get(findobj(fig,'type','axes','tag','response_ax'),'Children'),'type','line'),pnl(fr+1,c).select());
+    hs = copyobj(findobj(get(findobj(fig,'type','axes','tag','response_ax'),'Children'),'type','line','-not','color',[.9 .9 .9]),pnl(fr+1,c).select());
     l_50 = findobj(hs,'type','line','color',[.7 0 0]);
     set(hs,'XData',l_25.XData(end)+lilgap+l_50.XData)
     close(fig)
     
     trial = load(fig3example_cell180.PiezoSine100);
     fig = PiezoSineCycle([],getShowFuncInputsFromTrial(trial),fig3example_cell0.genotype);
-    hs = copyobj(findobj(get(findobj(fig,'type','axes','tag','response_ax'),'Children'),'type','line'),pnl(fr+1,c).select());
+    hs = copyobj(findobj(get(findobj(fig,'type','axes','tag','response_ax'),'Children'),'type','line','-not','color',[.9 .9 .9]),pnl(fr+1,c).select());
     l_100 = findobj(hs,'type','line','color',[.7 0 0]);
     set(hs,'XData',l_50.XData(end)+lilgap+l_100.XData)
     close(fig)
@@ -282,6 +308,7 @@ for sc_ind = 2:length(Scripts)
         end
         
     end
+    drawnow
 end
 %
 %% Draw the stimuli
@@ -289,6 +316,9 @@ end
 fr = 3;
 pnl(fr).pack('h',{1/2 1/2});
 pnl(fr).marginbottom = 4;
+pnl(fr).marginright = 4;
+pnl(fr).marginleft = 4;
+    
     
 clear pnl_hs
 for r = fr
@@ -407,7 +437,7 @@ for sc_ind = 2:length(Scripts)
             transfer(c_ind) = PiezoSineOsciTransFunc([],h,'','plot',0) * h.trial.params.displacement;
         end
     end
-    transfer = transfer(~isnan(transfer));
+    %     transfer = transfer(~isnan(transfer));
     
     idxs = 1:length(transfer);
 

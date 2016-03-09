@@ -140,17 +140,34 @@ Script_VClamp_Cells_Reject
 example_fru.name = '151210_F3_C1';
 example_fru.VoltageSineTrial = ...
 'C:\Users\tony\Raw_Data\151210\151210_F3_C1\VoltageSine_Raw_151210_F3_C1_98.mat';
+example_fru.VoltageSineTrial_TTX = ...
+'C:\Users\tony\Raw_Data\151210\151210_F3_C1\VoltageSine_Raw_151210_F3_C1_194.mat';
+example_fru.VoltageSineTrial_4APTEA = ...
+'C:\Users\tony\Raw_Data\151210\151210_F3_C1\VoltageSine_Raw_151210_F3_C1_482.mat';
 
 example_vt.name = '151118_F1_C1';
 example_vt.VoltageSineTrial = ...
 'C:\Users\tony\Raw_Data\151118\151118_F1_C1\VoltageSine_Raw_151118_F1_C1_98.mat';
+example_vt.VoltageSineTrial_TTX = ...
+'C:\Users\tony\Raw_Data\151118\151118_F1_C1\VoltageSine_Raw_151118_F1_C1_189.mat';
+example_vt.VoltageSineTrial_4APTEA = ...
+'C:\Users\tony\Raw_Data\151118\151118_F1_C1\VoltageSine_Raw_151118_F1_C1_381.mat';
 
 example_a2.name = '151207_F1_C1';
 example_a2.VoltageSineTrial = ...
 'C:\Users\tony\Raw_Data\151207\151207_F1_C1\VoltageSine_Raw_151207_F1_C1_98.mat';
+example_a2.VoltageSineTrial_TTX = ...
+'C:\Users\tony\Raw_Data\151207\151207_F1_C1\VoltageSine_Raw_151207_F1_C1_194.mat';
+example_a2.VoltageSineTrial_4APTEA = ...
+'C:\Users\tony\Raw_Data\151207\151207_F1_C1\VoltageSine_Raw_151207_F1_C1_290.mat';
 
 example_fig8.VoltageStep = {
 'C:\Users\tony\Raw_Data\151207\151207_F1_C1\VoltageStep_Raw_151207_F1_C1_1.mat';
 'C:\Users\tony\Raw_Data\151022\151022_F1_C1\VoltageStep_Raw_151022_F1_C1_1.mat';
 'C:\Users\tony\Raw_Data\151118\151118_F1_C1\VoltageStep_Raw_151118_F1_C1_1.mat';
-}
+};
+example_fig8.example_cells = {
+'151207_F1_C1';
+'151022_F1_C1';
+'151118_F1_C1';
+};

@@ -1,4 +1,3 @@
-
 %% Record of V-gated conductance analysis
 close all
 
@@ -8,24 +7,33 @@ savedir = 'C:\Users\tony\Dropbox\RAnalysis_Data\Record_VoltageClampCurrentIsolat
 
 figure7 = figure;
 figure7.Units = 'inches';
-set(figure7,'color',[1 1 1],'position',[1 .4 getpref('FigureSizes','NeuronTwoColumn'), .9*getpref('FigureSizes','NeuronOneAndHalfColumn')])
+set(figure7,'color',[1 1 1],'position',[1 .4 getpref('FigureSizes','NeuronTwoColumn'), 4])
 
 pnl = panel(figure7);
 pnl.margin = [20 4 4 4];
 
-figurerows = [3 8 6];
+figurerows = [1 8];
 figurerows = num2cell(figurerows/sum(figurerows));
-pnl.pack('v',figurerows);
 
-pnl(1).pack('h',3)
-% pnl(1).margin = [4 4 4 4];
+pnl.pack('h',3)
+pnl.margin = [20 4 4 4];
 
-pnl(2).pack('h',3)
-pnl(2).margin = [4 4 4 4];
+figure7_Sbtrct = figure;
+figure7_Sbtrct.Units = 'inches';
+set(figure7_Sbtrct,'color',[1 1 1],'position',[1 0 getpref('FigureSizes','NeuronTwoColumn'), 12])
+
+pnl_S = panel(figure7_Sbtrct);
+pnl_S.margin = [20 4 4 4];
+pnl_S.pack('h',3)
 lilgap = .004;
 
-pnl(3).pack('h',3)
-pnl(3).margin = [4 4 4 4];
+figure7_Z = figure;
+figure7_Z.Units = 'inches';
+set(figure7_Z,'color',[1 1 1],'position',[1 .4 getpref('FigureSizes','NeuronTwoColumn'), 5])
+
+pnl_Z = panel(figure7_Z);
+pnl_Z.margin = [20 4 4 4];
+pnl_Z.pack('h',3)
 
 warning('off')
 geno_idx = [3 1 2];
@@ -35,36 +43,45 @@ for type_idx = 1:length(geno_idx)
     
     figurerows = [1 4*ones(size((1:length(DRUGS)+1)))];
     figurerows = num2cell(figurerows/sum(figurerows));
-    pnl(2,type_idx).pack('v',figurerows)
-    pnl(2,type_idx,1).pack('h',{1/10 9/10});     
-    stimax = pnl(2,type_idx,1,2).select();
+    pnl_S(type_idx).margin = [4 4 4 4];
+    
+    pnl_S(type_idx).pack('v',figurerows)
+%     pnl_S(type_idx,1).pack('h',{1/10 9/10});     
+%     stimax = pnl_S(type_idx,1,2).select();
+    stimax = pnl_S(type_idx,1).select();
     set(stimax,'tag',['stimax_' num2str(type_idx)],'tickdir','out','xcolor',[1 1 1],'xtick',[],'ycolor',[1 1 1],'ytick',[]);
 
     for c = 1:length(DRUGS)
-        pnl(2,type_idx,c+1).pack('h',{1/10 9/10});     
+%         pnl_S(type_idx,c+1).pack('h',{1/10 9/10});     
         
-        drugax = pnl(2,type_idx,c+1,1).select();
-        set(drugax,'tag',[DRUGS{c} '_b_' num2str(type_idx)],'tickdir','out','xcolor',[1 1 1],'xtick',[]);
-        baseax = pnl(2,type_idx,c+1,2).select();
-        set(baseax,'tag',[DRUGS{c} '_c_' num2str(type_idx)],'tickdir','out','xcolor',[1 1 1],'xtick',[])%,'ycolor',[1 1 1],'ytick',[]);
+%         baseax = pnl_S(type_idx,c+1,1).select();
+%         set(baseax,'tag',[DRUGS{c} '_b_' num2str(type_idx)],'tickdir','out','xcolor',[1 1 1],'xtick',[]);
+%         drugax = pnl_S(type_idx,c+1,2).select();
+        drugax = pnl_S(type_idx,c+1).select();
+        set(drugax,'tag',[DRUGS{c} '_c_' num2str(type_idx)],'tickdir','out','xcolor',[1 1 1],'xtick',[])%,'ycolor',[1 1 1],'ytick',[]);
     end
-    pnl(2,type_idx,c+2).pack('h',{1/10 9/10});
+%     pnl_S(type_idx,c+2).pack('h',{1/10 9/10});
 
-    drugax = pnl(2,type_idx,c+2,1).select();
-    set(drugax,'tag',['remainder_b_' num2str(type_idx)],'tickdir','out','xcolor',[1 1 1],'xtick',[]);
-    baseax = pnl(2,type_idx,c+2,2).select();
-    set(baseax,'tag',['remainder_c_' num2str(type_idx)],'tickdir','out','xcolor',[1 1 1],'xtick',[])%,'ycolor',[1 1 1],'ytick',[]);
+%     baseax = pnl_S(type_idx,c+2,1).select();
+%     set(baseax,'tag',['remainder_b_' num2str(type_idx)],'tickdir','out','xcolor',[1 1 1],'xtick',[]);
+%     drugax = pnl_S(type_idx,c+2,2).select();
+    drugax = pnl_S(type_idx,c+2).select();
+    set(drugax,'tag',['remainder_c_' num2str(type_idx)],'tickdir','out','xcolor',[1 1 1],'xtick',[])%,'ycolor',[1 1 1],'ytick',[]);
 
     % set up Z axes
-    pnl(3,type_idx).pack('h',{1/10 9/10});
-    figurerows = [1 1];
+    pnl_Z(type_idx).margin = [4 4 4 4];
+    %pnl_Z(type_idx).pack('h',{1/10 9/10});
+    figurerows = [2 1];
     figurerows = num2cell(figurerows/sum(figurerows));
 
     % BODE PLOT
-    pnl(3,type_idx,2).pack('v',figurerows)    
-    magax = pnl(3,type_idx,2,1).select();
+%     pnl_Z(type_idx,2).pack('v',figurerows)    
+    pnl_Z(type_idx).pack('v',figurerows)    
+%     magax = pnl_Z(type_idx,2,1).select();
+    magax = pnl_Z(type_idx,1).select();
     set(magax,'tag',['Z_mag_' num2str(type_idx)],'tickdir','out','xcolor',[1 1 1],'xtick',[]);
-    phaseax = pnl(3,type_idx,2,2).select();
+%     phaseax = pnl_Z(type_idx,2,2).select();
+    phaseax = pnl_Z(type_idx,2).select();
     set(phaseax,'tag',['Z_phase_' num2str(type_idx)],'tickdir','out','xcolor',[1 1 1],'xtick',[]);
     
     % Complex PLOT
@@ -75,77 +92,107 @@ for type_idx = 1:length(geno_idx)
 end
 
 %% plot 25 Hz oscillations and command potentials for A2 cells, Fru and VT cells
-
+figure(figure7)
 ex_trials = {example_a2.VoltageSineTrial
     example_fru.VoltageSineTrial
     example_vt.VoltageSineTrial
+    };
+ex_ttx_trials = {example_a2.VoltageSineTrial_TTX
+    example_fru.VoltageSineTrial_TTX
+    example_vt.VoltageSineTrial_TTX
+    };
+ex_tea_trials = {example_a2.VoltageSineTrial_4APTEA
+    example_fru.VoltageSineTrial_4APTEA
+    example_vt.VoltageSineTrial_4APTEA
     };
 
 ylims = [Inf -Inf];
 
 for fc = 1:length(ex_trials)
-    pnl(1,fc).pack('h',4)
-    pnl(1,fc).margin = [8 8 8 8];
+    figurerows = [1 7 7 7];
+    figurerows = num2cell(figurerows/sum(figurerows));
+
+    pnl(fc).pack('v',figurerows)
+    pnl(fc).margin = [8 8 8 8];
     
-    trial = load(ex_trials{fc});
-    h = getShowFuncInputsFromTrial(trial);
-    x = makeInTime(trial.params);
-    sine_trials = findLikeTrials('name',trial.name,'exclude',{'freq'});
-    t = 1;
-    while t <= length(sine_trials)
-        trials = findLikeTrials('trial',sine_trials(t),'datastruct',h.prtclData);
-        sine_trials = setdiff(sine_trials,setdiff(trials,sine_trials(t)));
-        t = t+1;
-    end
+    drug_conditions = ...
+        {ex_trials{fc}
+        ex_ttx_trials{fc}
+        ex_tea_trials{fc}};
     
-    for st = 1:length(sine_trials)
+    for dc = 1:length(drug_conditions)
         
-        pnl(1,fc,st).pack('v',{1/8 7/8})
-        pnl(1,fc,st).margin = [4 4 4 4];
-        pnl(1,fc,st).de.margin = [4 4 4 4];
-        
-        stimax = pnl(1,fc,st,1).select();
-        currax = pnl(1,fc,st,2).select();
-        curraxes(fc,st) = currax;
-        trial = load(fullfile(h.dir,sprintf(h.trialStem,sine_trials(st))));
-        
-        line(x,VoltageSineStim(trial.params),'parent',stimax,'color',.8*[1 1 1])
-        
-        d1 = getpref('FigureMaking','CurrentFilter');
-        trials = findLikeTrials('name',trial.name);
-        y = zeros(length(trial.current),length(trials));
-        for t = 1:length(trials)
-            trial = load(fullfile(h.dir,sprintf(h.trialStem,trials(t))));
-            y(:,t) = trial.current;
+        if dc == 1
+            pnl(fc,1).pack('h',4)
+            pnl(fc,1).margin = [4 4 4 4];
         end
-        y_ = mean(y,2);
-        for c = 1:size(y,2);
-            y(:,c) = filtfilt(d1,y(:,c));
+        pnl(fc,dc+1).pack('h',4)
+        pnl(fc,dc+1).margin = [4 4 4 4];
+        
+        trial = load(drug_conditions{dc});
+        h = getShowFuncInputsFromTrial(trial);
+        x = makeInTime(trial.params);
+        xwin = x >=-.04 & x<0.08;
+        sine_trials = findLikeTrials('name',trial.name,'exclude',{'freq'});
+        t = 1;
+        while t <= length(sine_trials)
+            trials = findLikeTrials('trial',sine_trials(t),'datastruct',h.prtclData);
+            sine_trials = setdiff(sine_trials,setdiff(trials,sine_trials(t)));
+            t = t+1;
         end
-        y_ = filtfilt(d1,y_);
+    
+        for st = 1:length(sine_trials)
+            trial = load(fullfile(h.dir,sprintf(h.trialStem,sine_trials(st))));
+            if dc==1
+                stimax = pnl(fc,1,st).select();
+                pnl(fc,1,st).margin = [4 4 4 4];
+
+                VS = VoltageSineStim(trial.params);
+                line(x(xwin),VS(xwin),'parent',stimax,'color',.8*[1 1 1])
+                axis(stimax,'tight');
+
+            end
+            currax = pnl(fc,dc+1,st).select();
+            
+            d1 = getpref('FigureMaking','CurrentFilter');
+            trials = findLikeTrials('name',trial.name);
+            y = zeros(length(trial.current),length(trials));
+            for t = 1:length(trials)
+                trial = load(fullfile(h.dir,sprintf(h.trialStem,trials(t))));
+                y(:,t) = trial.current;
+            end
+            y_ = mean(y,2);
+            for c = 1:size(y,2);
+                y(:,c) = filtfilt(d1,y(:,c));
+            end
+            y_ = filtfilt(d1,y_);
+            
+            line(x(xwin),y(xwin,1),'parent',currax,'color',0*[1 1 1])
+            % line(x,y_,'parent',currax,'color',0*[1 1 1])
+            % sem_up = std(y,[],2)/sqrt(length(trials));
+            % sem_down = y_-sem_up;
+            % sem_up = y_+sem_up;
+            %
+            % line(x(x_win),sem_down(x_win),'parent',ax,'color',[1 .7 .7],'tag',savetag);
+            % line(x(x_win),sem_up(x_win),'parent',ax,'color',[1 .7 .7],'tag',savetag);
         
-        line(x,y(:,1),'parent',currax,'color',0*[1 1 1])
-        % line(x,y_,'parent',currax,'color',0*[1 1 1])
-        % sem_up = std(y,[],2)/sqrt(length(trials));
-        % sem_down = y_-sem_up;
-        % sem_up = y_+sem_up;
-        %
-        % line(x(x_win),sem_down(x_win),'parent',ax,'color',[1 .7 .7],'tag',savetag);
-        % line(x(x_win),sem_up(x_win),'parent',ax,'color',[1 .7 .7],'tag',savetag);
-        
-        axis(currax,'tight');
-        ylims = [...
-            min([ylims(1) min(get(currax,'ylim'))]),...
-            max([ylims(2) max(get(currax,'ylim'))])];
-        
-        set([stimax,currax],'xlim',[-.04 0.08],'xcolor',[1 1 1],'xtick',[],'ycolor',[1 1 1],'ytick',[],'tickdir','out')
+            axis(currax,'tight');
+            ylims = [...
+                min([ylims(1) min(get(currax,'ylim'))]),...
+                max([ylims(2) max(get(currax,'ylim'))])];
+            
+            set([stimax,currax],'xcolor',[1 1 1],'xtick',[],'ycolor',[1 1 1],'ytick',[],'tickdir','out')
+            set(currax,'tag','current');
+            drawnow
+        end
     end
 end
-set(curraxes(:),'ylim',ylims);
-set(pnl(1,1,1,2).select(),'ycolor',0*[1 1 1],'ytickmode','auto')
+set(findobj(figure7,'type','axes','tag','current'),'ylim',ylims);
+% set(pnl(1,1,2).select(),'ycolor',0*[1 1 1],'ytickmode','auto')
 
+savePDF(figure7,'C:\Users\tony\Dropbox\AzevedoWilson_B1_MS\Figure7',[],'Figure7abc');
 
-%% For Fru, 
+%% Subtract currents and plot
 
 warning('off')
 geno_idx = [3 1 2];
@@ -325,7 +372,7 @@ for type_idx = 1:length(geno_idx)
             
             % then plot in the appropriate window
 
-            stimax = findobj('type','axes','tag',['stimax_' num2str(type_idx)]);
+            stimax = findobj(figure7_Sbtrct,'type','axes','tag',['stimax_' num2str(type_idx)]);
             line(x_,s_,'parent',stimax,'color',[.8 .8 .8]);
             
             clr = clrs(ac_idx,:);
@@ -334,11 +381,11 @@ for type_idx = 1:length(geno_idx)
                 line(x_,current_cycles(:,c),'parent',drugax,'color',clr,'tag',num2str(trial.params.freqs(r)),'DisplayName',ac.name);
                 drawnow
             end
-            drugax = findobj('type','axes','tag',['remainder_c_' num2str(type_idx)]);
+            drugax = findobj(figure7_Sbtrct,'type','axes','tag',['remainder_c_' num2str(type_idx)]);
             line(x_,current_cycles(:,c+1),'parent',drugax,'color',clr,'tag',num2str(trial.params.freqs(r)),'DisplayName',ac.name);
 
             x_start = x_(end) + lilgap;
-            figure(figure7)
+            figure(figure7_Sbtrct)
             drawnow;
         end
         for c = 1:length(drugs)
@@ -358,7 +405,7 @@ for type_idx = 1:length(geno_idx)
         % Plot Z_w for this cell
         
         % BODE PLOT
-        magax = findobj('type','axes','tag',['Z_mag_' num2str(type_idx)]);
+        magax = findobj(figure7_Z,'type','axes','tag',['Z_mag_' num2str(type_idx)]);
         % initial
         line(trial.params.freqs,abs(Z_w(:,1)),'parent',magax,...
             'color',[0 0 1],'linestyle','-',...
@@ -370,7 +417,7 @@ for type_idx = 1:length(geno_idx)
             'marker','o','markerfacecolor','none',...
             'tag','final','displayname',ac.name);
             
-        phaseax = findobj('type','axes','tag',['Z_phase_' num2str(type_idx)]);
+        phaseax = findobj(figure7_Z,'type','axes','tag',['Z_phase_' num2str(type_idx)]);
         % initial
         line(trial.params.freqs,angle(Z_w(:,1)),'parent',phaseax,...
             'color',[0 0 1],'linestyle','-',...
@@ -399,84 +446,163 @@ for type_idx = 1:length(geno_idx)
     end
 end
 
+savePDFandFIG(figure7_Sbtrct,'C:\Users\tony\Dropbox\AzevedoWilson_B1_MS\Figure7',[],'Figure7bcd');
+savePDFandFIG(figure7_Z,'C:\Users\tony\Dropbox\AzevedoWilson_B1_MS\Figure7',[],'Figure7efg');
+
+% old_figure7_Sbtrct = figure7_Sbtrct;
+% old_figure7_Z = figure7_Z;
+
+
 %% Go through and average and clean up all the axes.
+% close(figure7_Sbtrct)
+% close(figure7_Z)
+
+uiopen('C:\Users\tony\Dropbox\AzevedoWilson_B1_MS\Figure7\Figure7bcd.fig',1)
+figure7_Sbtrct = gcf;
+uiopen('C:\Users\tony\Dropbox\AzevedoWilson_B1_MS\Figure7\Figure7efg.fig',1)
+figure7_Z = gcf;
+
 
 for type_idx = 1:length(geno_idx)
     DRUGS = {'AchI','TTX','4AP_TEA'};
-    drugax = findobj('type','axes','tag',[DRUGS{1} '_c_' num2str(type_idx)]);
+    drugax = findobj(figure7_Sbtrct,'type','axes','tag',[DRUGS{1} '_c_' num2str(type_idx)]);
+    set(drugax,'ylim',[-50 80])
+
     for r = 1:length(trial.params.freqs)
         l = findobj(drugax,'type','line','tag',num2str(trial.params.freqs(r)));
         y = cell2mat(get(l,'ydata'));
         
         line(get(l(1),'xdata'),mean(y,1),'parent',drugax,'color',[0 0 1],'tag',['y_' num2str(trial.params.freqs(r))],'DisplayName',[num2str(trial.params.freqs(r)) ' Hz']);
+        sem_up = std(y,[],1);%/sqrt(length(l));
+        y_ = mean(y,1);
+        sem_down = y_-sem_up;
+        sem_up = y_+sem_up;
+
+        line(get(l(1),'xdata'),sem_up,'parent',drugax,'color',[.7 .7 1],'tag',['sem_up_' num2str(trial.params.freqs(r))],'DisplayName',[num2str(trial.params.freqs(r)) ' Hz']);
+        line(get(l(1),'xdata'),sem_down,'parent',drugax,'color',[.7 .7 1],'tag',['sem_down_' num2str(trial.params.freqs(r))],'DisplayName',[num2str(trial.params.freqs(r)) ' Hz']);
+        delete(l);
     end
     text(.0025, 100,['N=' num2str(length(l))],'parent',drugax,'verticalalignment','top','horizontalalignment','left');
     
     for c = 2:3
-        drugax = findobj('type','axes','tag',[DRUGS{c} '_c_' num2str(type_idx)]);
+        drugax = findobj(figure7_Sbtrct,'type','axes','tag',[DRUGS{c} '_c_' num2str(type_idx)]);
+        set(drugax,'ylim',[-50 80])
         for r = 1:length(trial.params.freqs)
             l = findobj(drugax,'type','line','tag',num2str(trial.params.freqs(r)));
             y = cell2mat(get(l,'ydata'));
             
             line(get(l(1),'xdata'),mean(y,1),'parent',drugax,'color',[0 0 0],'tag',['y_' num2str(trial.params.freqs(r))],'DisplayName',[num2str(trial.params.freqs(r)) ' Hz']);
+            sem_up = std(y,[],1);%/sqrt(length(l));
+            y_ = mean(y,1);
+            sem_down = y_-sem_up;
+            sem_up = y_+sem_up;
+            
+            line(get(l(1),'xdata'),sem_up,'parent',drugax,'color',[.7 .7 .7],'tag',['sem_up_' num2str(trial.params.freqs(r))],'DisplayName',[num2str(trial.params.freqs(r)) ' Hz']);
+            line(get(l(1),'xdata'),sem_down,'parent',drugax,'color',[.7 .7 .7],'tag',['sem_down_' num2str(trial.params.freqs(r))],'DisplayName',[num2str(trial.params.freqs(r)) ' Hz']);
+            delete(l);
         end
     end
 
-    drugax = findobj('type','axes','tag',['remainder_c_' num2str(type_idx)]);
+    drugax = findobj(figure7_Sbtrct,'type','axes','tag',['remainder_c_' num2str(type_idx)]);
+    set(drugax,'ylim',[-50 80])
     for r = 1:length(trial.params.freqs)
         l = findobj(drugax,'type','line','tag',num2str(trial.params.freqs(r)));
         y = cell2mat(get(l,'ydata'));
         
         line(get(l(1),'xdata'),mean(y,1),'parent',drugax,'color',[1 0 0],'tag',['y_' num2str(trial.params.freqs(r))],'DisplayName',[num2str(trial.params.freqs(r)) ' Hz']);
+        sem_up = std(y,[],1);%/sqrt(length(l));
+        y_ = mean(y,1);
+        sem_down = y_-sem_up;
+        sem_up = y_+sem_up;
+        
+        line(get(l(1),'xdata'),sem_up,'parent',drugax,'color',[1 .7 .7 ],'tag',['sem_up_' num2str(trial.params.freqs(r))],'DisplayName',[num2str(trial.params.freqs(r)) ' Hz']);
+        line(get(l(1),'xdata'),sem_down,'parent',drugax,'color',[1 .7 .7 ],'tag',['sem_down_' num2str(trial.params.freqs(r))],'DisplayName',[num2str(trial.params.freqs(r)) ' Hz']);
+        delete(l);
     end
     
     % magnitude
-    magax = findobj('type','axes','tag',['Z_mag_' num2str(type_idx)]);
-    set(magax,'xlim',[0 500],'ylim',[0 2E8])
+    magax = findobj(figure7_Z,'type','axes','tag',['Z_mag_' num2str(type_idx)]);
+    set(magax,'xlim',[0 250],'ylim',[0 2E8])
    
     % initial
     l = findobj(magax,'type','line','tag','initial');
     set(l,'linestyle','none','markeredgecolor',[.7 .7 1]);
     y = cell2mat(get(l,'ydata'));
-    line(get(l(1),'xdata'),mean(y,1),'parent',magax,...
+%     line(get(l(1),'xdata'),mean(y,1),'parent',magax,...
+%         'color',[0 0 1],'linestyle','-',...
+%         'marker','o','markeredgecolor',[0 0 1],'markerfacecolor',[0 0 1],...
+%         'tag',['y_initial' num2str(trial.params.freqs(r))],'DisplayName',[num2str(trial.params.freqs(r)) ' Hz']);
+
+    sem_up = std(y,[],1)/sqrt(length(l));
+    
+    hold(magax,'on')
+    errorbar(get(l(1),'xdata'),mean(y,1),sem_up,'parent',magax,...
         'color',[0 0 1],'linestyle','-',...
         'marker','o','markeredgecolor',[0 0 1],'markerfacecolor',[0 0 1],...
         'tag',['y_initial' num2str(trial.params.freqs(r))],'DisplayName',[num2str(trial.params.freqs(r)) ' Hz']);
+    delete(l);
 
+    
     % final (all drugs)
     l = findobj(magax,'type','line','tag','final');
     set(l,'linestyle','none','markeredgecolor',[1 .7 .7]);
     y = cell2mat(get(l,'ydata'));
-    line(get(l(1),'xdata'),mean(y,1),'parent',magax,...
+%     line(get(l(1),'xdata'),mean(y,1),'parent',magax,...
+%         'color',[1 0 0],'linestyle','-',...
+%         'marker','o','markeredgecolor',[1 0 0],'markerfacecolor',[1 0 0],...
+%         'tag',['y_initial' num2str(trial.params.freqs(r))],'DisplayName',[num2str(trial.params.freqs(r)) ' Hz']);
+    sem_up = std(y,[],1)/sqrt(length(l));
+    
+    hold(magax,'on')
+    errorbar(get(l(1),'xdata'),mean(y,1),sem_up,'parent',magax,...
         'color',[1 0 0],'linestyle','-',...
-        'marker','o','markeredgecolor',[1 0 0],'markerfacecolor',[1 0 0],...
+        'marker','o','markeredgecolor',[1 0 0],'markerfacecolor',[1 0 0 ],...
         'tag',['y_initial' num2str(trial.params.freqs(r))],'DisplayName',[num2str(trial.params.freqs(r)) ' Hz']);
+    delete(l);
 
     % phase
-    phaseax = findobj('type','axes','tag',['Z_phase_' num2str(type_idx)]);
-    set(phaseax,'xlim',[0 500],'ylim',[-pi/2 pi/4],'ytick',[-pi/2 -pi/4 0 pi/4],'yticklabel',{'-\pi/2','-\pi/4','0','\pi/4',})
+    phaseax = findobj(figure7_Z,'type','axes','tag',['Z_phase_' num2str(type_idx)]);
+    set(phaseax,'xlim',[0 250],'ylim',[-pi/2 pi/4],'ytick',[-pi/2 -pi/4 0 pi/4],'yticklabel',{'-\pi/2','-\pi/4','0','\pi/4',})
     
     % initial
     l = findobj(phaseax,'type','line','tag','initial');
     set(l,'linestyle','none','markeredgecolor',[.7 .7 1]);
     y = cell2mat(get(l,'ydata'));
-    line(get(l(1),'xdata'),mean(y,1),'parent',phaseax,...
+%     line(get(l(1),'xdata'),mean(y,1),'parent',phaseax,...
+%         'color',[0 0 1],'linestyle','-',...
+%         'marker','o','markeredgecolor',[0 0 1],'markerfacecolor',[0 0 1],...
+%         'tag',['y_initial' num2str(trial.params.freqs(r))],'DisplayName',[num2str(trial.params.freqs(r)) ' Hz']);
+    sem_up = std(y,[],1)/sqrt(length(l));
+    
+    hold(phaseax,'on')
+    errorbar(get(l(1),'xdata'),mean(y,1),sem_up,'parent',phaseax,...
         'color',[0 0 1],'linestyle','-',...
         'marker','o','markeredgecolor',[0 0 1],'markerfacecolor',[0 0 1],...
         'tag',['y_initial' num2str(trial.params.freqs(r))],'DisplayName',[num2str(trial.params.freqs(r)) ' Hz']);
+    delete(l);
 
     % final (all drugs)
     l = findobj(phaseax,'type','line','tag','final');
     set(l,'linestyle','none','markeredgecolor',[1 .7 .7]);
     y = cell2mat(get(l,'ydata'));
-    line(get(l(1),'xdata'),mean(y,1),'parent',phaseax,...
+%     line(get(l(1),'xdata'),mean(y,1),'parent',phaseax,...
+%         'color',[1 0 0],'linestyle','-',...
+%         'marker','o','markeredgecolor',[1 0 0],'markerfacecolor',[1 0 0],...
+%         'tag',['y_initial' num2str(trial.params.freqs(r))],'DisplayName',[num2str(trial.params.freqs(r)) ' Hz']);
+     sem_up = std(y,[],1)/sqrt(length(l));
+    
+    hold(phaseax,'on')
+    errorbar(get(l(1),'xdata'),mean(y,1),sem_up,'parent',phaseax,...
         'color',[1 0 0],'linestyle','-',...
         'marker','o','markeredgecolor',[1 0 0],'markerfacecolor',[1 0 0],...
         'tag',['y_initial' num2str(trial.params.freqs(r))],'DisplayName',[num2str(trial.params.freqs(r)) ' Hz']);
- 
+    delete(l);
+
 end
 
-savePDFandFIG(figure7,'C:\Users\tony\Dropbox\AzevedoWilson_B1_MS\Figure7',[],'Figure7');
+
+savePDF(figure7_Sbtrct,'C:\Users\tony\Dropbox\AzevedoWilson_B1_MS\Figure7',[],'Figure7bcd');
+savePDF(figure7_Z,'C:\Users\tony\Dropbox\AzevedoWilson_B1_MS\Figure7',[],'Figure7efg');
 
 
 

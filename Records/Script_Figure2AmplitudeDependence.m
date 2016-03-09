@@ -35,6 +35,24 @@ ax1 = frompnl(1).select(); hold(ax1,'on')
 
 ylims = [0 -Inf];
 
+cell_max_foralldisp = nan(length(transfer),1);
+for d_ind = 1:length(all_dsplcmnts)
+    for c_ind = 1:length(transfer)
+        dspl_o = dsplcmnts{c_ind};
+        dspl = round(dspl_o*1000)/1000;
+
+        d_i = find(dspl == all_dsplcmnts(d_ind));
+
+        if isempty(d_i)
+            continue
+        end
+
+        [~,af_i,af_f] = intersect(all_freqs,round(freqs{c_ind}*1000)/1000);
+        cell_max_foralldisp(c_ind) = max([cell_max_foralldisp(c_ind) max(real(abs(transfer{c_ind}(af_f,d_i))))]); %real(abs(transfer{c_ind}(af_f,d_i)))';
+                
+    end
+end
+
 for d_ind = 1:length(all_dsplcmnts)
     dspltranf = nan(length(transfer),length(all_freqs));
     for c_ind = 1:length(transfer)
@@ -48,7 +66,7 @@ for d_ind = 1:length(all_dsplcmnts)
         end
 
         [~,af_i,af_f] = intersect(all_freqs,round(freqs{c_ind}*1000)/1000);
-        dspltranf(c_ind,af_i) = real(abs(transfer{c_ind}(af_f,d_i)))';
+        dspltranf(c_ind,af_i) = real(abs(transfer{c_ind}(af_f,d_i)))'/cell_max_foralldisp(c_ind);
                 
     end
     %     plot(all_freqs(~isnan(dspltranf(3,:))),nanmean(dspltranf(:,~isnan(dspltranf(3,:))),1),'color',[0 1/length(all_dsplcmnts) 0]*d_ind);

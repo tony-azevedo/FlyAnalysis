@@ -1,4 +1,4 @@
-function varargout = PF_VoltageStepIVRelationship_NoPlot(h,savetag)
+function varargout = PF_VoltageStepIVRelationship_NP_From2trials(h,savetag)
 
 blocktrials = findBlockTrials(h.trial,h.prtclData);
 
@@ -43,7 +43,7 @@ r2 = (Vo(end-3+1:end)-mean(Vo(end-3+1:end)))\(Io(end-3+1:end) - mean(Io(end-3+1:
 varargout = {Vo,Io,mean(BaseV),1/r1*1000,1/r2*1000};
 
 
-function varargout = IandDeltaI(I,V)
+function varargout = IandDeltaI(handles)
 
 trials = findLikeTrials('name',handles.trial.name,'datastruct',handles.prtclData);
 x = makeTime(handles.trial.params);

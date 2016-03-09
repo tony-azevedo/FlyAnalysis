@@ -30,7 +30,7 @@ for t = 1:length(trials)
 end
 
 x_win = x>= -.2 & x<trial.params.stimDurInSec+ min(.2,trial.params.postDurInSec);
-% plot(ax,x(x_win),y(x_win,:),'color',[1, .7 .7],'tag',savetag); hold on
+plot(ax,x(x_win),y(x_win,:),'color',[1, .7 .7],'tag',savetag); hold on
 
 y_ = mean(y,2);
 
@@ -47,7 +47,7 @@ if sum(strcmp('VClamp',trial.params.mode))
     end
 end
 
-sem_up = std(y,[],2);%/sqrt(length(trials));
+sem_up = std(y,[],2)/sqrt(length(trials));
 sem_down = y_-sem_up;
 sem_up = y_+sem_up;
 % x_ptch = [x(x_win); flipud(x(x_win))];
@@ -56,8 +56,8 @@ sem_up = y_+sem_up;
 %ptch.EdgeColor = [1 .7 .7];
 %ptch.EdgeAlpha = 0;
 
-line(x(x_win),sem_down(x_win),'parent',ax,'color',[1 .7 .7],'tag',savetag);
-line(x(x_win),sem_up(x_win),'parent',ax,'color',[1 .7 .7],'tag',savetag);
+% line(x(x_win),sem_down(x_win),'parent',ax,'color',[1 .7 .7],'tag',savetag);
+% line(x(x_win),sem_up(x_win),'parent',ax,'color',[1 .7 .7],'tag',savetag);
 
 line(x(x_win),y_(x_win),'parent',ax,'color',[.7 0 0],'tag',savetag);
 

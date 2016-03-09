@@ -305,6 +305,19 @@ if ~isempty(cnt)
         'C:\Users\tony\Raw_Data\150414\150414_F1_C1\Sweep_Raw_150414_F1_C1_4.mat';
 end
 
+%% GH86-Gal4
+cnt = find(strcmp(analysis_cells,'150417_F1_C1'));
+if ~isempty(cnt)
+    analysis_cell(cnt).PiezoSineTrial = ...
+'C:\Users\tony\Raw_Data\150417\150417_F1_C1\PiezoSine_Raw_150417_F1_C1_16.mat';
+    analysis_cell(cnt).CurrentStepTrial = ...
+'C:\Users\tony\Raw_Data\150417\150417_F1_C1\CurrentStep_Raw_150417_F1_C1_1.mat';
+    analysis_cell(cnt).CurrentChirpTrial = ...
+'C:\Users\tony\Raw_Data\150417\150417_F1_C1\CurrentChirp_Raw_150417_F1_C1_1.mat';
+    analysis_cell(cnt).SweepTrial = ...
+'C:\Users\tony\Raw_Data\150417\150417_F1_C1\Sweep_Raw_150417_F1_C1_1.mat';
+end
+
 %% 'pJFRC7;VT45599'
 cnt = find(strcmp(analysis_cells,'150502_F1_C1'));
 if ~isempty(cnt)

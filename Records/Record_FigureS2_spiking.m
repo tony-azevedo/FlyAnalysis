@@ -1,5 +1,5 @@
 
-%% Record_Figure6 - Vm measurements, spiking 
+%% Record_FigureS2_Spiking - examples of spiking in different cell classes
 close all
 savedir = '/Users/tony/Dropbox/RAnalysis_Data/Record_FS';
 if ~isdir(savedir)
@@ -13,19 +13,18 @@ Scripts = {
     'Script_Vm_LowPassB1s'
     };
 
-figure6 = figure;
-figure6.Units = 'inches';
-set(figure6,'color',[1 1 1],'position',[1 .4 getpref('FigureSizes','NeuronOneColumn') 11]);
-pnl = panel(figure6);
+figure2 = figure;
+figure2.Units = 'inches';
+set(figure2,'color',[1 1 1],'position',[1 .4 getpref('FigureSizes','NeuronOneAndHalfColumn') 6]);
+pnl = panel(figure2);
 pnl.margin = [16 16 4 4];
 
-figurerows = [2 2 5];
+figurerows = [2 2];
 figurerows = num2cell(figurerows/sum(figurerows));
 pnl.pack('v',figurerows);
 
-pnl(1).pack('h',{1/3 2/3})
-pnl(1,2).pack('h',{1/2 1/2})
-pnl(1,2).margin = [8 4 4 4];
+pnl(1).pack('h',3)
+pnl(2).pack('h',4)
 
 %% Vm
 % 
@@ -137,7 +136,7 @@ set([ax_sweep ax_spike],'ylim',[-90 0],'xcolor',[1 1 1],'xtick',[],'tickdir','ou
 set([ ax_spike],'ycolor',[1 1 1],'ytick',[]);
 
 savedir = '/Users/tony/Dropbox/AzevedoWilson_B1_MS/Figure6/';
-savePDF(figure6,savedir,[],['Figure6_' example_cell.name]);
+savePDF(figure2,savedir,[],['Figure6_' example_cell.name]);
 
 
 %% Cell-Attached
@@ -395,5 +394,5 @@ line([x_s_min, x_s_max],[0 0],'parent',dots_ax,'linestyle','-','linewidth',2,'co
 % line(p21,[0 0],'parent',dots_ax,'linestyle','-','linewidth',2,'color',0*[.8 1 .8]);
 
 savedir = '/Users/tony/Dropbox/AzevedoWilson_B1_MS/Figure6/';
-savePDF(figure6,savedir,[],'Figure6');
+savePDF(figure2,savedir,[],'Figure6');
 
