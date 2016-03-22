@@ -272,6 +272,7 @@ trialnum_Callback(handles.trialnum,[],handles)
 
 
 function trialnum_Callback(hObject, eventdata, handles)
+tic
 trialnum = str2double(get(hObject,'string'));
 if isnan(trialnum)
     error('Bad trial number, enter integer');

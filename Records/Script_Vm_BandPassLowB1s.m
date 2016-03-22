@@ -31,11 +31,11 @@ vm_analysis_grid = {...
     
     '151205_F1_C1'  '20XUAS-mCD8:GFP;VT27938-Gal4'        ''
     '151208_F1_C1'  '20XUAS-mCD8:GFP;VT27938-Gal4'        ''
-    '151208_F2_C1'  '20XUAS-mCD8:GFP;VT27938-Gal4'        'Great recording, have to throw out the first blocks, starting at , cell sealed up'
+    '151208_F2_C1'  '20XUAS-mCD8:GFP;VT27938-Gal4'        'hyperpolarized, Great recording, have to throw out the first blocks, starting at , cell sealed up'
 
-    '151209_F1_C3'  '20XUAS-mCD8:GFP;VT27938-Gal4'        ''
-    '151209_F2_C1'  '20XUAS-mCD8:GFP;VT27938-Gal4'        ''
-    '151209_F2_C2'  '20XUAS-mCD8:GFP;VT27938-Gal4'        ''
+    '151209_F1_C3'  '20XUAS-mCD8:GFP;VT27938-Gal4'        'hyperpolarized'
+    '151209_F2_C1'  '20XUAS-mCD8:GFP;VT27938-Gal4'        'hyperpolarized'
+    '151209_F2_C2'  '20XUAS-mCD8:GFP;VT27938-Gal4'        'hyperpolarized'
 
     '151211_F1_C4'  '20XUAS-mCD8:GFP;45D07-Gal4'        ''
     };
@@ -79,15 +79,36 @@ reject_cells = {
     };
 
 %% Example cell 
-example_cell.name = '151208_F1_C1 ';
-example_cell.PiezoSineTrial = ...
-'C:\Users\tony\Raw_Data\151208\151208_F1_C1\PiezoSine_Raw_151208_F1_C1_22.mat';
-example_cell.CurrentStepTrial = ...
-'';
-example_cell.CurrentChirpTrial = ...
-'';
+example_cell.name = '150502_F1_C3';
 example_cell.SweepTrial = ...
-'';
+'C:\Users\tony\Raw_Data\150502\150502_F1_C3\Sweep_Raw_150502_F1_C3_6.mat';
+example_cell.SpikeTrial = ...
+'C:\Users\tony\Raw_Data\150502\150502_F1_C3\Sweep_Raw_150502_F1_C3_22.mat';
+example_cell.SpikeInterval = ...
+        [2 3];
+example_cell.CurrentStepTrialDown = ...
+'/Users/tony/Raw_Data/151121/151121_F1_C1/CurrentStep_Raw_151121_F1_C1_1.mat';
+example_cell.CurrentStepTrialUp = ...
+'C:\Users\tony\Raw_Data\151121\151121_F1_C1\CurrentStep_Raw_151121_F1_C1_9.mat';
+
+% % other possibilities
+example_cell.name = '131126_F2_C1';
+example_cell.SweepTrial = ...
+'C:\Users\tony\Raw_Data\131126\131126_F2_C1\Sweep_Raw_131126_F2_C1_3.mat';
+example_cell.SpikeTrial = ...
+'C:\Users\tony\Raw_Data\131126\131126_F2_C1\Sweep_Raw_131126_F2_C1_6.mat';
+example_cell.SpikeInterval = ...
+    [2 3];
+
+example_cell.CurrentStepTrialWayDown = ...
+'C:\Users\tony\Raw_Data\150417\150417_F1_C1\CurrentStep_Raw_150417_F1_C1_1.mat';
+example_cell.CurrentStepTrialDown = ...
+'C:\Users\tony\Raw_Data\150417\150417_F1_C1\CurrentStep_Raw_150417_F1_C1_3.mat';
+example_cell.CurrentStepTrialUp = ...
+'C:\Users\tony\Raw_Data\150417\150417_F1_C1\CurrentStep_Raw_150417_F1_C1_8.mat';
+
+'C:\Users\tony\Raw_Data\150417\150417_F1_C1\CurrentStep_Raw_150417_F1_C1_1.mat';
+
 
 % other possibility
 % example_cell.name = '';

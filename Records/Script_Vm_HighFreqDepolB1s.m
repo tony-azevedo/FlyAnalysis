@@ -10,7 +10,7 @@ id = 'HP_';
 %%
 
 vm_analysis_grid = {
-    '151030_F1_C1'      '20XUAS-mCD8:GFP;VT30609-Gal4'               'Beautiful cell, current isolation'
+'151030_F1_C1'      '20XUAS-mCD8:GFP;VT30609-Gal4'               'Beautiful cell, current isolation'
 '151119_F2_C1'      '20XUAS-mCD8:GFP;VT30609-Gal4'               'Pretty good!'
 '151119_F3_C1'      '20XUAS-mCD8:GFP;VT30609-Gal4'               'Not great cell, unsteady, but worth including'
 '151121_F1_C1'      '20XUAS-mCD8:GFP;VT30609-Gal4'               'Nice cell'
@@ -32,29 +32,36 @@ end
 fprintf('A2 High Preferring: \n')
 fprintf('\t%s\n',analysis_cells{:})
 
-% %% Example cell 
-% example_cell.name = '151121_F1_C1';
-% example_cell.PiezoSineTrial = ...
-% '/Users/tony/Raw_Data/151121/151121_F1_C1/PiezoSine_Raw_151121_F1_C1_3.mat';
-% example_cell.CurrentStepTrial = ...
-% '/Users/tony/Raw_Data/151121/151121_F1_C1/CurrentStep_Raw_151121_F1_C1_1.mat';
-% example_cell.CurrentChirpTrial = ...
-% '';
-% example_cell.SweepTrial = ...
-% '/Users/tony/Raw_Data/151121/151121_F1_C1/Sweep_Raw_151121_F1_C1_2.mat';
-% 
-% % % other possibility
-% % example_cell.name = '151119_F2_C1';
-% % example_cell.PiezoSineTrial = ...
-% % '/Users/tony/Raw_Data/151119/151119_F2_C1/PiezoSine_Raw_151119_F2_C1_3.mat';
-% % example_cell.CurrentStepTrial = ...
-% % '';
-% % example_cell.CurrentChirpTrial = ...
-% % '';
-% % example_cell.SweepTrial = ...
-% % '';
-% 
-% %% Figure 3 example
+%% Example cell 
+example_cell.name = '151121_F1_C1';
+example_cell.PiezoSineTrial = ...
+'/Users/tony/Raw_Data/151121/151121_F1_C1/PiezoSine_Raw_151121_F1_C1_3.mat';
+example_cell.CurrentStepTrialDown = ...
+'/Users/tony/Raw_Data/151121/151121_F1_C1/CurrentStep_Raw_151121_F1_C1_1.mat';
+example_cell.CurrentStepTrialUp = ...
+'C:\Users\tony\Raw_Data\151121\151121_F1_C1\CurrentStep_Raw_151121_F1_C1_9.mat';
+example_cell.CurrentChirpTrial = ...
+'';
+example_cell.SweepTrial = ...
+'/Users/tony/Raw_Data/151121/151121_F1_C1/Sweep_Raw_151121_F1_C1_2.mat';
+
+
+% other possibility
+example_cell.name = '151207_F2_C1';
+example_cell.CurrentStepTrialUp = ...
+'C:\Users\tony\Raw_Data\151207\151207_F2_C1\CurrentStep_Raw_151207_F2_C1_3.mat';
+example_cell.CurrentStepTrialDown = ...
+'C:\Users\tony\Raw_Data\151207\151207_F2_C1\CurrentStep_Raw_151207_F2_C1_1.mat';
+example_cell.CurrentStepTrialUpTTX = ...
+'C:\Users\tony\Raw_Data\151207\151207_F2_C1\CurrentStep_Raw_151207_F2_C1_35.mat';
+example_cell.CurrentStepTrialDownTTX = ...
+'C:\Users\tony\Raw_Data\151207\151207_F2_C1\CurrentStep_Raw_151207_F2_C1_33.mat';
+example_cell.CurrentChirpTrial = ...
+'';
+example_cell.SweepTrial = ...
+'';
+
+%% Figure 3 example
 
 % fig3example_cell.name = '151121_F1_C1';
 % fig3example_cell.PiezoStepTrialAnt = ...

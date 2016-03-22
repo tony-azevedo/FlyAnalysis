@@ -18,6 +18,7 @@ analysis_grid = {...
     
 
     '150421_F1_C1'  '10XUAS-mCD8:GFP;Fru-Gal4'      'Larger amplitudes produce lower amplitude responses'
+'150512_F1_C1'  '10XUAS-mCD8:GFP;Fru-Gal4'      'New one!'
     '150513_F2_C1'  '10XUAS-mCD8:GFP;Fru-Gal4'      'PiezoChirp is an interesting stimulus, strong spontaneous noise'
 %     '150527_F1_C3'  '20XUAS-mCD8:GFP/+;63A03-Gal4/+'    'Without perfusion, beautiful clear line, nice spiker, the somewhat dim one next to the big guy'
      '150528_F1_C1'  '20XUAS-mCD8:GFP/+;63A03-Gal4/+'       'Without perfusion, NO CLEAR SPIKING, but certainly band pass high'
@@ -239,6 +240,30 @@ if ~isempty(cnt)
     analysis_cell(cnt).VoltageStepEx = ...
         'C:\Users\tony\Raw_Data\150513\150513_F2_C1\VoltageStep_Raw_150513_F2_C1_3.mat';
 end
+
+%%
+cnt = find(strcmp(analysis_cells,'150512_F1_C1'));
+if ~isempty(cnt)
+    analysis_cell(cnt).PiezoSineTrial = ...
+'C:\Users\tony\Raw_Data\150512\150512_F1_C1\PiezoSine_Raw_150512_F1_C1_22.mat';
+    analysis_cell(cnt).PiezoChirpTrial = ...
+'C:\Users\tony\Raw_Data\150512\150512_F1_C1\PiezoChirp_Raw_150512_F1_C1_11.mat';
+    analysis_cell(cnt).CurrentStepTrial = ...
+'C:\Users\tony\Raw_Data\150512\150512_F1_C1\CurrentStep_Raw_150512_F1_C1_1.mat';
+    analysis_cell(cnt).CurrentChirpTrial = ...
+'C:\Users\tony\Raw_Data\150512\150512_F1_C1\CurrentChirp_Raw_150512_F1_C1_2.mat';
+    analysis_cell(cnt).SweepTrial = ...
+'C:\Users\tony\Raw_Data\150512\150512_F1_C1\Sweep_Raw_150512_F1_C1_5.mat';
+    analysis_cell(cnt).SweepVClampEx = ...
+        'C:\Users\tony\Raw_Data\150513\150513_F2_C1\Sweep_Raw_150513_F2_C1_2.mat';
+    analysis_cell(cnt).VoltageStepEx = ...
+'C:\Users\tony\Raw_Data\150512\150512_F1_C1\VoltageStep_Raw_150512_F1_C1_2.mat';
+    
+    
+    analysis_cell(cnt).extratrials = {...
+        };
+end
+
 
 %%
 cnt = find(strcmp(analysis_cells,'150513_F2_C1'));
