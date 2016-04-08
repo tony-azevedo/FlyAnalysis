@@ -264,6 +264,13 @@ if ~isempty(cnt)
         'C:\Users\tony\Raw_Data\150402\150402_F2_C1\CurrentChirp_Raw_150402_F2_C1_1.mat';
     analysis_cell(cnt).SweepTrial = ...
         'C:\Users\tony\Raw_Data\150402\150402_F2_C1\Sweep_Raw_150402_F2_C1_1.mat';
+    analysis_cell(cnt).PiezoBWCourtshipSong = ...
+'C:\Users\tony\Raw_Data\150402\150402_F2_C1\PiezoBWCourtshipSong_Raw_150402_F2_C1_1.mat';
+    analysis_cell(cnt).PiezoCourtshipSong = ...
+'C:\Users\tony\Raw_Data\150402\150402_F2_C1\PiezoCourtshipSong_Raw_150402_F2_C1_3.mat';
+    analysis_cell(cnt).PiezoLongCourtshipSong = ...
+'C:\Users\tony\Raw_Data\150402\150402_F2_C1\PiezoLongCourtshipSong_Raw_150402_F2_C1_1.mat';
+
 end
 
 %% 'pJFRC7;VT27938'
@@ -277,6 +284,12 @@ if ~isempty(cnt)
         'C:\Users\tony\Raw_Data\150402\150402_F3_C1\CurrentChirp_Raw_150402_F3_C1_1.mat';
     analysis_cell(cnt).SweepTrial = ...
         'C:\Users\tony\Raw_Data\150402\150402_F3_C1\Sweep_Raw_150402_F3_C1_1.mat';
+    analysis_cell(cnt).PiezoBWCourtshipSong = ...
+'C:\Users\tony\Raw_Data\150402\150402_F3_C1\PiezoBWCourtshipSong_Raw_150402_F3_C1_4.mat';
+    analysis_cell(cnt).PiezoCourtshipSong = ...
+'C:\Users\tony\Raw_Data\150402\150402_F3_C1\PiezoCourtshipSong_Raw_150402_F3_C1_1.mat';
+    analysis_cell(cnt).PiezoLongCourtshipSong = ...
+'C:\Users\tony\Raw_Data\150402\150402_F2_C1\PiezoLongCourtshipSong_Raw_150402_F2_C1_1.mat';
 end
 
 %% 'pJFRC7;VT27938'
@@ -290,6 +303,12 @@ if ~isempty(cnt)
         'C:\Users\tony\Raw_Data\150409\150409_F1_C1\CurrentChirp_Raw_150409_F1_C1_1.mat';
     analysis_cell(cnt).SweepTrial = ...
         'C:\Users\tony\Raw_Data\150409\150409_F1_C1\Sweep_Raw_150409_F1_C1_1.mat';
+    analysis_cell(cnt).PiezoBWCourtshipSong = ...
+'C:\Users\tony\Raw_Data\150409\150409_F1_C1\PiezoBWCourtshipSong_Raw_150409_F1_C1_1.mat';
+    analysis_cell(cnt).PiezoCourtshipSong = ...
+'C:\Users\tony\Raw_Data\150409\150409_F1_C1\PiezoCourtshipSong_Raw_150409_F1_C1_1.mat';
+    analysis_cell(cnt).PiezoLongCourtshipSong = ...
+'C:\Users\tony\Raw_Data\150409\150409_F1_C1\PiezoLongCourtshipSong_Raw_150409_F1_C1_1.mat';
 end
 
 %% 'pJFRC7;VT27938'
@@ -303,6 +322,12 @@ if ~isempty(cnt)
         'C:\Users\tony\Raw_Data\150414\150414_F1_C1\CurrentChirp_Raw_150414_F1_C1_1.mat';
     analysis_cell(cnt).SweepTrial = ...
         'C:\Users\tony\Raw_Data\150414\150414_F1_C1\Sweep_Raw_150414_F1_C1_4.mat';
+    analysis_cell(cnt).PiezoBWCourtshipSong = ...
+'C:\Users\tony\Raw_Data\150414\150414_F1_C1\PiezoBWCourtshipSong_Raw_150414_F1_C1_1.mat';
+    analysis_cell(cnt).PiezoCourtshipSong = ...
+'C:\Users\tony\Raw_Data\150414\150414_F1_C1\PiezoCourtshipSong_Raw_150414_F1_C1_1.mat';
+    analysis_cell(cnt).PiezoLongCourtshipSong = ...
+'C:\Users\tony\Raw_Data\150414\150414_F1_C1\PiezoLongCourtshipSong_Raw_150414_F1_C1_1.mat';
 end
 
 %% GH86-Gal4
@@ -316,6 +341,12 @@ if ~isempty(cnt)
 'C:\Users\tony\Raw_Data\150417\150417_F1_C1\CurrentChirp_Raw_150417_F1_C1_1.mat';
     analysis_cell(cnt).SweepTrial = ...
 'C:\Users\tony\Raw_Data\150417\150417_F1_C1\Sweep_Raw_150417_F1_C1_1.mat';
+    analysis_cell(cnt).PiezoBWCourtshipSong = ...
+'';
+analysis_cell(cnt).PiezoCourtshipSong = ...
+'';
+analysis_cell(cnt).PiezoLongCourtshipSong = ...
+'';
 end
 
 %% 'pJFRC7;VT45599'
@@ -331,6 +362,12 @@ if ~isempty(cnt)
         'C:\Users\tony\Raw_Data\150502\150502_F1_C1\Sweep_Raw_150502_F1_C1_6.mat';
     analysis_cell(cnt).SweepVClampEx = 'C:\Users\tony\Raw_Data\150502\150502_F1_C1\Sweep_Raw_150502_F1_C1_3.mat';
     analysis_cell(cnt).VoltageStepEx = 'C:\Users\tony\Raw_Data\150502\150502_F1_C1\VoltageStep_Raw_150502_F1_C1_1.mat';
+    analysis_cell(cnt).PiezoBWCourtshipSong = ...
+'';
+analysis_cell(cnt).PiezoCourtshipSong = ...
+'';
+analysis_cell(cnt).PiezoLongCourtshipSong = ...
+'';
 end
 
 %% 'pJFRC7;VT45599'
@@ -344,6 +381,12 @@ if ~isempty(cnt)
         'C:\Users\tony\Raw_Data\150502\150502_F1_C3\CurrentChirp_Raw_150502_F1_C3_1.mat';
     analysis_cell(cnt).SweepTrial = ...
         'C:\Users\tony\Raw_Data\150502\150502_F1_C3\Sweep_Raw_150502_F1_C3_7.mat';
+    analysis_cell(cnt).PiezoBWCourtshipSong = ...
+'';
+analysis_cell(cnt).PiezoCourtshipSong = ...
+'';
+analysis_cell(cnt).PiezoLongCourtshipSong = ...
+'';
 end
 
 %% '20XUAS-mCD8:GFP;VT30609-Gal4'
@@ -383,6 +426,12 @@ if ~isempty(cnt)
         'C:\Users\tony\Raw_Data\151205\151205_F1_C1\CurrentChirp_Raw_151205_F1_C1_1.mat';
     analysis_cell(cnt).SweepTrial = ...
         'C:\Users\tony\Raw_Data\151205\151205_F1_C1\Sweep_Raw_151205_F1_C1_4.mat';
+    analysis_cell(cnt).PiezoBWCourtshipSong = ...
+'C:\Users\tony\Raw_Data\151205\151205_F1_C1\PiezoBWCourtshipSong_Raw_151205_F1_C1_1.mat';
+analysis_cell(cnt).PiezoCourtshipSong = ...
+'C:\Users\tony\Raw_Data\151205\151205_F1_C1\PiezoCourtshipSong_Raw_151205_F1_C1_1.mat';
+analysis_cell(cnt).PiezoLongCourtshipSong = ...
+'C:\Users\tony\Raw_Data\151205\151205_F1_C1\PiezoLongCourtshipSong_Raw_151205_F1_C1_2.mat';
 end
 
 %% '20XUAS-mCD8:GFP;VT27938-Gal4'
@@ -396,6 +445,12 @@ if ~isempty(cnt)
 'C:\Users\tony\Raw_Data\151208\151208_F1_C1\CurrentChirp_Raw_151208_F1_C1_1.mat';
     analysis_cell(cnt).SweepTrial = ...
 'C:\Users\tony\Raw_Data\151208\151208_F1_C1\Sweep_Raw_151208_F1_C1_9.mat';
+    analysis_cell(cnt).PiezoBWCourtshipSong = ...
+'C:\Users\tony\Raw_Data\151208\151208_F1_C1\PiezoBWCourtshipSong_Raw_151208_F1_C1_1.mat';
+analysis_cell(cnt).PiezoCourtshipSong = ...
+'C:\Users\tony\Raw_Data\151208\151208_F1_C1\PiezoCourtshipSong_Raw_151208_F1_C1_1.mat';
+analysis_cell(cnt).PiezoLongCourtshipSong = ...
+'C:\Users\tony\Raw_Data\151208\151208_F1_C1\PiezoLongCourtshipSong_Raw_151208_F1_C1_1.mat';
 end
 
 %% '20XUAS-mCD8:GFP;VT27938-Gal4'
@@ -409,6 +464,12 @@ if ~isempty(cnt)
         '';
     analysis_cell(cnt).SweepTrial = ...
 'C:\Users\tony\Raw_Data\151208\151208_F2_C1\PiezoChirp_Raw_151208_F2_C1_3.mat';
+    analysis_cell(cnt).PiezoBWCourtshipSong = ...
+'C:\Users\tony\Raw_Data\151208\151208_F2_C1\PiezoBWCourtshipSong_Raw_151208_F2_C1_1.mat';
+analysis_cell(cnt).PiezoCourtshipSong = ...
+'C:\Users\tony\Raw_Data\151208\151208_F2_C1\PiezoCourtshipSong_Raw_151208_F2_C1_1.mat';
+analysis_cell(cnt).PiezoLongCourtshipSong = ...
+'C:\Users\tony\Raw_Data\151208\151208_F2_C1\PiezoLongCourtshipSong_Raw_151208_F2_C1_1.mat';
 end
 
 %% '20XUAS-mCD8:GFP;VT27938-Gal4'
@@ -424,6 +485,12 @@ if ~isempty(cnt)
 'C:\Users\tony\Raw_Data\151209\151209_F1_C3\CurrentChirp_Raw_151209_F1_C3_1.mat';
     analysis_cell(cnt).SweepTrial = ...
 'C:\Users\tony\Raw_Data\151209\151209_F1_C3\Sweep_Raw_151209_F1_C3_2.mat';
+    analysis_cell(cnt).PiezoBWCourtshipSong = ...
+'C:\Users\tony\Raw_Data\151209\151209_F2_C1\PiezoBWCourtshipSong_Raw_151209_F2_C1_1.mat';
+analysis_cell(cnt).PiezoCourtshipSong = ...
+'C:\Users\tony\Raw_Data\151209\151209_F2_C1\PiezoCourtshipSong_Raw_151209_F2_C1_1.mat';
+analysis_cell(cnt).PiezoLongCourtshipSong = ...
+'C:\Users\tony\Raw_Data\151209\151209_F2_C1\PiezoLongCourtshipSong_Raw_151209_F2_C1_1.mat';
 end
 
 %% '20XUAS-mCD8:GFP;VT27938-Gal4'
@@ -439,6 +506,12 @@ if ~isempty(cnt)
 'C:\Users\tony\Raw_Data\151209\151209_F2_C1\VoltageStep_Raw_151209_F2_C1_1.mat';
     analysis_cell(cnt).SweepTrial = ...
 'C:\Users\tony\Raw_Data\151209\151209_F2_C1\Sweep_Raw_151209_F2_C1_2.mat';
+    analysis_cell(cnt).PiezoBWCourtshipSong = ...
+'C:\Users\tony\Raw_Data\151209\151209_F2_C1\PiezoBWCourtshipSong_Raw_151209_F2_C1_1.mat';
+analysis_cell(cnt).PiezoCourtshipSong = ...
+'C:\Users\tony\Raw_Data\151209\151209_F2_C1\PiezoCourtshipSong_Raw_151209_F2_C1_1.mat';
+analysis_cell(cnt).PiezoLongCourtshipSong = ...
+'C:\Users\tony\Raw_Data\151209\151209_F2_C1\PiezoLongCourtshipSong_Raw_151209_F2_C1_1.mat';
 end
 
 %% '20XUAS-mCD8:GFP;VT27938-Gal4'
@@ -454,6 +527,12 @@ if ~isempty(cnt)
 'C:\Users\tony\Raw_Data\151209\151209_F2_C2\VoltageStep_Raw_151209_F2_C2_32.mat';
     analysis_cell(cnt).SweepTrial = ...
 'C:\Users\tony\Raw_Data\151209\151209_F2_C2\Sweep_Raw_151209_F2_C2_2.mat';
+    analysis_cell(cnt).PiezoBWCourtshipSong = ...
+'C:\Users\tony\Raw_Data\151209\151209_F2_C2\PiezoBWCourtshipSong_Raw_151209_F2_C2_1.mat';
+analysis_cell(cnt).PiezoCourtshipSong = ...
+'C:\Users\tony\Raw_Data\151209\151209_F2_C2\PiezoCourtshipSong_Raw_151209_F2_C2_1.mat';
+analysis_cell(cnt).PiezoLongCourtshipSong = ...
+'C:\Users\tony\Raw_Data\151209\151209_F2_C2\PiezoLongCourtshipSong_Raw_151209_F2_C2_1.mat';
 end
 
 %% '20XUAS-mCD8:GFP;45D07-Gal4'

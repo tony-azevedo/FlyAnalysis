@@ -487,8 +487,39 @@ for c_ind = 1:length(analysis_cell)
     end
 end
 
+l = findobj(step_ax_0,'type','line');
+y = cell2mat(get(l,'ydata'));
+
+x_ = get(l(1),'xdata');
+y_ = mean(y,1);
+
+x_transwin = (x_>0&x_<0.005);
+y_(x_transwin) = nan;
+y(:,x_transwin) = nan;
+
+y_ = y_(x_>0&x_<.1);
+y = y(:,x_>0&x_<.1);
+x_ = x_(x_>0&x_<.1);
+x_ = x_(~isnan(y_));
+y_ = y_(~isnan(y_));
+y = y(:,~isnan(y(1,:)));
+
+kon_ = nan(size(y,1),3);
+for i = 1:length(kon_)
+    kon_(i,:) = nlinfit(x_-x_(1),y(i,:),@exponential,[100,-50,.025]);
+    
+    line(x_,y(i,:),'parent',step_ax);
+    line(x_,exponential(kon_(i,:),x_-x_(1)),'color',[0 0 0],'parent',step_ax);
+end
+
+kon = nlinfit(x_-x_(1),y_,@exponential,[100,-50,.025]);
+%     line(x,exponential(kon,x-x(1)),'color',get(ls(l),'color')+[0 .7 0],'parent',VstepTTX_pnl_hs(1,2));
+line(x_,exponential(kon,x_-x_(1)),'color',[0 0 0],'parent',step_ax,'linewidth',2);
+text(0.03,kon(1),sprintf('k_a = %.2f ms',kon(3)*1000),'verticalalignment','bottom','horizontalalignment','right','parent',step_ax);
+
+
 set(step_ax(:),'ylim',[-40 120])
-set(pnl_hs(:),'xlim',getpref('FigureMaking','Figure5Xlims'))
+%set(pnl_hs(:),'xlim',getpref('FigureMaking','Figure5Xlims'))
 
 savedir = '/Users/tony/Dropbox/AzevedoWilson_B1_MS/Figure5/';
 savePDF(figure5,savedir,[],'Figure5_LowPassCells')

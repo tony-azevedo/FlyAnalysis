@@ -53,6 +53,7 @@ for d_ind = 1:length(all_dsplcmnts)
     end
 end
 
+lifetime_spareness = nan(length(transfer),length(all_dsplcmnts));
 for d_ind = 1:length(all_dsplcmnts)
     dspltranf = nan(length(transfer),length(all_freqs));
     for c_ind = 1:length(transfer)
@@ -67,7 +68,10 @@ for d_ind = 1:length(all_dsplcmnts)
 
         [~,af_i,af_f] = intersect(all_freqs,round(freqs{c_ind}*1000)/1000);
         dspltranf(c_ind,af_i) = real(abs(transfer{c_ind}(af_f,d_i)))'/cell_max_foralldisp(c_ind);
-                
+        r_ = dspltranf(c_ind,af_i);
+        lifetime_spareness(c_ind,d_ind) = ...
+            1/length(af_i) * ...
+            sum(((r_-mean(r_))/std(r_)).^4) - 3;
     end
     %     plot(all_freqs(~isnan(dspltranf(3,:))),nanmean(dspltranf(:,~isnan(dspltranf(3,:))),1),'color',[0 1/length(all_dsplcmnts) 0]*d_ind);
         

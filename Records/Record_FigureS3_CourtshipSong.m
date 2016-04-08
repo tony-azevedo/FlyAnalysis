@@ -1,4 +1,4 @@
-%% Record_Figure3 - take from the different types and agreggate here
+%% Record_Figure2 - take from the different types and agreggate here
 close all
 
 Scripts = {
@@ -7,6 +7,30 @@ Scripts = {
     'Record_FS_BandPassLowB1s'
     'Record_FS_LowPassB1s'
     };
+
+Cells = {
+
+% A2
+
+% BPH
+'131014_F3_C1'      % sine only
+
+% BPM
+'151205_F1_C1'      % sine only 
+'151208_F1_C1'      % sine only
+'151208_F2_C1'      % pulses! more so in (-) direction
+'151209_F1_C3'      % pulses in (-) direction but not (+)
+'151209_F2_C1'      % pulses in (+) direction but not (-)
+'151209_F2_C2'      % sine only
+
+% BPL
+'151106_F1_C3'      % pulses
+'151209_F1_C1'      % not clear
+'151209_F1_C2'      % pulses
+'151209_F2_C3'      % pulses, (+) asymmetric
+'151211_F2_C1'      % size, asymetric 
+'151211_F3_C1'      % pulses! 
+}
 
 % Script_FrequencySelectivity
 
@@ -43,15 +67,6 @@ end
 
 %% Figure 2C: amplitude dependence of the responses
 
-LTSfigure = figure; 
-ax = subplot(1,1,1,'parent',LTSfigure);
-Scripts_ = {
-    'A2'
-    'B1-BPH'
-    'B1-BPM'
-    'B1-BPL'
-    };
-
 for cell_type = 1:length(Scripts)
 
     eval(Scripts{cell_type});
@@ -59,27 +74,8 @@ for cell_type = 1:length(Scripts)
     
     copyobj(get(frompnl(1).select(),'children'),pnl(3,cell_type).select())
     close(f)
-    
-    fprintf('%s\n',Scripts_{cell_type});
-    nanmean(lifetime_spareness,1)
-    
-    clr = [1 1 0]/length(Scripts)*(cell_type-1) + [0 0 1/length(Scripts)]*cell_type;
-    plot(ax,(1:4)+(cell_type-1)*.15,lifetime_spareness,'.','color',clr,'displayname',Scripts_{cell_type}), hold on;
-    l(cell_type) = plot(ax,(1:4)+(cell_type-1)*.15,nanmean(lifetime_spareness,1),...
-        'marker','o','markersize',6,'markeredgecolor',clr,'markerfacecolor',clr,...
-        'color',clr,'displayname',Scripts{cell_type});
-    leg_str{cell_type} = Scripts_{cell_type};
+        
 end
-legend(ax,l,leg_str)
-set(ax,'xtick',[1 2 3 4],'XTickLabel',{'0.045' '0.15' '0.45' '1.5'})
-xlabel('amplitude (\mum)');
-ylabel('Lifetime Kurtosis');
-
-ylim(ax,[-2.3 4.1])
-xlim(ax,[.5 4.9])
-
-savedir = '/Users/tony/Dropbox/AzevedoWilson_B1_MS/Figure2/';
-savePDF(LTSfigure,savedir,[],'Figure2_Kurtosis')
 
 %% Clean up
 savedir = '/Users/tony/Dropbox/AzevedoWilson_B1_MS/Figure2/';

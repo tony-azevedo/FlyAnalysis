@@ -1,729 +1,475 @@
-%% Figure 5
+
+%% Figure 4: ShakB Experiments
+
+savedir = 'C:\Users\tony\Dropbox\RAnalysis_Data\Record_ShakB2';
+if ~isdir(savedir)
+    mkdir(savedir)
+end
+save = 1
+id = 'ShakB_';
+
 close all
-Record_VoltageClampInputCurrents
+figure4 = figure;
 
-figure5 = figure;
+figure4.Units = 'inches';
+set(figure4,'color',[1 1 1],'position',[1 1 getpref('FigureSizes','NeuronOneAndHalfColumn'),5])
+pnl = panel(figure4);
+pnl.margin = [16 2 4 4];
 
-figure5.Units = 'inches';
-set(figure5,'color',[1 1 1],'position',[1 .4 getpref('FigureSizes','NeuronOneAndHalfColumn'),10])
-pnl = panel(figure5);
-
-figurerows = [1 5 5 5  10 7 7];
+figurerows = [5 5 1 5 5 1];
 figurerows = num2cell(figurerows/sum(figurerows));
+
 pnl.pack('v',figurerows);
 
-pnl.margin = [20 4 4 4];
+figurecolumns = [2 2 2 2 2 2];
+figurecolumns = num2cell(figurecolumns/sum(figurecolumns));
 
-%% Aa: stimulus
-
-Record_VoltageClampInputCurrents
-savedir = '/Users/tony/Dropbox/AzevedoWilson_B1_MS/Figure5/';
-
-trial = load(a2example.PiezoSineTrial);
-h = getShowFuncInputsFromTrial(trial);
-
-blocktrials = findLikeTrials('name',h.trial.name,'datastruct',h.prtclData,'exclude',{'freq'});
-t = 1;
-while t <= length(blocktrials)
-    trials = findLikeTrials('trial',blocktrials(t),'datastruct',h.prtclData);
-    blocktrials = setdiff(blocktrials,setdiff(trials,blocktrials(t)));
-    t = t+1;
-end
-r = 1;
-freqs = h.trial.params.freqs(2:2:length(h.trial.params.freqs));
-fnum = length(freqs)+1;
-pnl(1).pack('h', fnum)  % response panel, stimulus panel
-pnl(r).de.margin = [4 4 4 4];
-pnl(r).marginbottom = 4;
-
-trialnummatrix = nan(1,length(freqs));
-pnl_hs = trialnummatrix;
-
-for bt = blocktrials;
-    params = load(fullfile(h.dir,sprintf(h.trialStem,bt)),'params');
-    
-    if sum(freqs == params.params.freq);
-        c = find(freqs == params.params.freq);
-        trialnummatrix(1,c) = bt;
-    end    
-end
-
-ylims = [Inf, -Inf];
-slims = [Inf, -Inf];
-
-ylims = [Inf, -Inf];
-slims = [Inf, -Inf];
-for c = 1:size(trialnummatrix,2)
-    trial = load(fullfile(h.dir,sprintf(h.trialStem,trialnummatrix(1,c))));
-    h = getShowFuncInputsFromTrial(trial);
-    
-    stim = PiezoSineStim(h.trial.params);
-    x = makeInTime(h.trial.params);
-    x_win = x>= -.2 & x<trial.params.stimDurInSec+ min(.2,trial.params.postDurInSec);
-    
-    pnl_hs(1,c) = pnl(1,c).select();
-    line(x(x_win),stim(x_win),'parent',pnl_hs(1,c),'color',[0 0 1],'tag',[num2str(h.trial.params.freq), 'Hz']);
-    
-    set(pnl_hs(1,c),'TickDir','out','YColor',[1 1 1],'YTick',[],'XColor',[1 1 1],'XTick',[]);
-    axis(pnl_hs(1,c),'tight')
-    
-    slims_from = get(pnl_hs(1,c),'ylim');
-    slims = [min(slims(1),slims_from(1)),...
-        max(slims(2),slims_from(2))];
-    
-end
-c = c+1;
-trial = load(a2example.PiezoStepTrial);
-h = getShowFuncInputsFromTrial(trial);
-
-stim = PiezoStepStim(h.trial.params);
-x = makeInTime(h.trial.params);
-x_win = x>= -.2 & x<trial.params.stimDurInSec+ min(.2,trial.params.postDurInSec);
-
-pnl_hs(1,c) = pnl(1,c).select();
-line(x(x_win),stim(x_win),'parent',pnl_hs(1,c),'color',[0 0 1],'tag',[num2str(h.trial.params.displacement), 'Hz']);
-
-set(pnl_hs(1,c),'TickDir','out','YColor',[1 1 1],'YTick',[],'XColor',[1 1 1],'XTick',[]);
-axis(pnl_hs(1,c),'tight')
-
-% slims_from = get(pnl_hs(1,c),'ylim');
-% slims = [min(slims(1),slims_from(1)),...
-%     max(slims(2),slims_from(2))];
-
-set(pnl_hs(:),'ylim',slims)
-axis(pnl_hs(1,c),'tight')
-set(pnl_hs(:),'xlim',getpref('FigureMaking','Figure5Xlims'))
-set(pnl_hs(:,1),'ytickmode','auto','ycolor',[0 0 0])
-pnl(1,1).ylabel(['V']);
-pnl(1,1).de.fontsize = 18;
-
-%% A: A2
-
-Record_VoltageClampInputCurrents
-savedir = '/Users/tony/Dropbox/AzevedoWilson_B1_MS/Figure5/';
-r = 2;
-trial = load(a2example.PiezoSineTrial);
-h = getShowFuncInputsFromTrial(trial);
-
-blocktrials = findLikeTrials('name',h.trial.name,'datastruct',h.prtclData,'exclude',{'freq'});
-t = 1;
-while t <= length(blocktrials)
-    trials = findLikeTrials('trial',blocktrials(t),'datastruct',h.prtclData);
-    blocktrials = setdiff(blocktrials,setdiff(trials,blocktrials(t)));
-    t = t+1;
-end
-
-freqs = h.trial.params.freqs(2:2:length(h.trial.params.freqs));
-fnum = length(freqs)+1;
-pnl(r).pack('h', fnum)  % response panel, stimulus panel
-pnl(r).de.margin = [4 4 4 4];
-pnl(r).marginbottom = 4;
-
-trialnummatrix = nan(1,length(freqs));
-pnl_hs = trialnummatrix;
-
-for bt = blocktrials;
-    params = load(fullfile(h.dir,sprintf(h.trialStem,bt)),'params');
-    
-    if sum(freqs == params.params.freq);
-        c = find(freqs == params.params.freq);
-        trialnummatrix(1,c) = bt;
-    end    
-end
-
-ylims = [Inf, -Inf];
-slims = [Inf, -Inf];
-
-ylims = [Inf, -Inf];
-slims = [Inf, -Inf];
-for c = 1:size(trialnummatrix,2)
-    trial = load(fullfile(h.dir,sprintf(h.trialStem,trialnummatrix(1,c))));
-    h = getShowFuncInputsFromTrial(trial);
-
-    averagefig = PF_PiezoSineAverage([],h,'');
-        
-    ax_from = findobj(averagefig,'tag','response_ax');
-    
-    ylabe = get(get(ax_from,'ylabel'),'string');
-    delete(get(ax_from,'xlabel'));
-    delete(get(ax_from,'ylabel'));
-    delete(get(ax_from,'zlabel'));
-    delete(get(ax_from,'title'));
-    
-    ylims_from = get(ax_from,'ylim');
-    xlims_from = get(ax_from,'xlim');
-    ylims = [min(ylims(1),ylims_from(1)),...
-        max(ylims(2),ylims_from(2))];
-
-    pnl_hs(r,c) = pnl(r,c).select();
-    copyobj(get(ax_from,'children'),pnl_hs(r,c));
-
-    set(pnl_hs(r,c),'TickDir','out','YColor',[1 1 1],'YTick',[],'XColor',[1 1 1],'XTick',[],'xlim',xlims_from,'ylim',ylims_from);
-        
-        
-    % drawnow;
-    close(averagefig)
-    
-end
-% Step
-c = c+1;
-trial = load(a2example.PiezoStepTrial);
-h = getShowFuncInputsFromTrial(trial);
-
-averagefig = PF_PiezoStepAverage_SEM([],h,'');
-ax_from = findobj(averagefig,'tag','response_ax');
-ylabe = get(get(ax_from,'ylabel'),'string');
-delete(get(ax_from,'xlabel'));
-delete(get(ax_from,'ylabel'));
-delete(get(ax_from,'zlabel'));
-delete(get(ax_from,'title'));
-pnl_hs(r,c) = pnl(r,c).select();
-copyobj(get(ax_from,'children'),pnl_hs(r,c));
-set(pnl_hs(r,c),'TickDir','out','YColor',[1 1 1],'YTick',[],'XColor',[1 1 1],'XTick',[],'xlim',xlims_from,'ylim',ylims_from);
-
-close(averagefig)
-ylims
-set(pnl_hs(r,:),'ylim',getpref('FigureMaking','Figure5Ylims'))
-set(pnl_hs(r,:),'xlim',getpref('FigureMaking','Figure5Xlims'))
-set(pnl_hs(r,1),'ytickmode','auto','ycolor',[0 0 0])
-pnl(r,1).ylabel(['V']);
-pnl(r,1).de.fontsize = 18;
-
-
-%% B: Fru example
-
-Record_VoltageClampInputCurrents
-savedir = '/Users/tony/Dropbox/AzevedoWilson_B1_MS/Figure5/';
-
-trial = load(fruexample.PiezoSineTrial);
-h = getShowFuncInputsFromTrial(trial);
-
-blocktrials = findLikeTrials('name',h.trial.name,'datastruct',h.prtclData,'exclude',{'freq'});
-t = 1;
-while t <= length(blocktrials)
-    trials = findLikeTrials('trial',blocktrials(t),'datastruct',h.prtclData);
-    blocktrials = setdiff(blocktrials,setdiff(trials,blocktrials(t)));
-    t = t+1;
-end
-r = 3;
-
-freqs = h.trial.params.freqs(2:2:length(h.trial.params.freqs));
-fnum = length(freqs)+1;
-pnl(r).pack('h', fnum)  % response panel, stimulus panel
-pnl(r).de.margin = [4 4 4 4];
-pnl(r).marginbottom = 4;
-
-trialnummatrix = nan(1,length(freqs));
-pnl_hs = trialnummatrix;
-
-for bt = blocktrials;
-    params = load(fullfile(h.dir,sprintf(h.trialStem,bt)),'params');
-    
-    if sum(freqs == params.params.freq);
-        c = find(freqs == params.params.freq);
-        trialnummatrix(1,c) = bt;
-    end    
-end
-
-ylims = [Inf, -Inf];
-slims = [Inf, -Inf];
-
-ylims = [Inf, -Inf];
-slims = [Inf, -Inf];
-for c = 1:size(trialnummatrix,2)
-    trial = load(fullfile(h.dir,sprintf(h.trialStem,trialnummatrix(1,c))));
-    h = getShowFuncInputsFromTrial(trial);
-
-    averagefig = PF_PiezoSineAverage([],h,'');
-        
-    ax_from = findobj(averagefig,'tag','response_ax');
-    
-    ylabe = get(get(ax_from,'ylabel'),'string');
-    delete(get(ax_from,'xlabel'));
-    delete(get(ax_from,'ylabel'));
-    delete(get(ax_from,'zlabel'));
-    delete(get(ax_from,'title'));
-    
-    ylims_from = get(ax_from,'ylim');
-    xlims_from = get(ax_from,'xlim');
-    ylims = [min(ylims(1),ylims_from(1)),...
-        max(ylims(2),ylims_from(2))];
-
-    pnl_hs(r,c) = pnl(r,c).select();
-    copyobj(get(ax_from,'children'),pnl(r,c).select());
-
-    set(pnl_hs(r,c),'TickDir','out','YColor',[1 1 1],'YTick',[],'XColor',[1 1 1],'XTick',[],'xlim',xlims_from,'ylim',ylims_from);
-        
-        
-    % drawnow;
-    close(averagefig)
-    
-end
-% Step
-c = c+1;
-trial = load(fruexample.PiezoStepTrial);
-h = getShowFuncInputsFromTrial(trial);
-
-averagefig = PF_PiezoStepAverage([],h,'');
-ax_from = findobj(averagefig,'tag','response_ax');
-ylabe = get(get(ax_from,'ylabel'),'string');
-delete(get(ax_from,'xlabel'));
-delete(get(ax_from,'ylabel'));
-delete(get(ax_from,'zlabel'));
-delete(get(ax_from,'title'));
-pnl_hs(r,c) = pnl(r,c).select();
-copyobj(get(ax_from,'children'),pnl_hs(r,c));
-set(pnl_hs(r,c),'TickDir','out','YColor',[1 1 1],'YTick',[],'XColor',[1 1 1],'XTick',[],'xlim',xlims_from,'ylim',ylims_from);
-
-close(averagefig)
-% ylims
-set(pnl_hs(r,:),'ylim',getpref('FigureMaking','Figure5Ylims'))
-set(pnl_hs(r,:),'xlim',getpref('FigureMaking','Figure5Xlims'))
-set(pnl_hs(r,1),'ytickmode','auto','ycolor',[0 0 0])
-pnl(r,1).ylabel(['V']);
-pnl(r,1).de.fontsize = 18;
-
-%% C: VT example
-
-Record_VoltageClampInputCurrents
-savedir = '/Users/tony/Dropbox/AzevedoWilson_B1_MS/Figure5/';
-
-trial = load(vtexample.PiezoSineTrial);
-h = getShowFuncInputsFromTrial(trial);
-
-blocktrials = findLikeTrials('name',h.trial.name,'datastruct',h.prtclData,'exclude',{'freq'});
-t = 1;
-while t <= length(blocktrials)
-    trials = findLikeTrials('trial',blocktrials(t),'datastruct',h.prtclData);
-    blocktrials = setdiff(blocktrials,setdiff(trials,blocktrials(t)));
-    t = t+1;
-end
-r = 4;
-
-freqs = h.trial.params.freqs(2:2:length(h.trial.params.freqs));
-fnum = length(freqs)+1;
-pnl(r).pack('h', fnum)  % response panel, stimulus panel
-pnl(r).de.margin = [4 4 4 4];
-pnl(r).marginbottom = 4;
-
-trialnummatrix = nan(1,length(freqs));
-pnl_hs = trialnummatrix;
-
-for bt = blocktrials;
-    params = load(fullfile(h.dir,sprintf(h.trialStem,bt)),'params');
-    
-    if sum(freqs == params.params.freq);
-        c = find(freqs == params.params.freq);
-        trialnummatrix(1,c) = bt;
-    end    
-end
-
-ylims = [Inf, -Inf];
-slims = [Inf, -Inf];
-
-ylims = [Inf, -Inf];
-slims = [Inf, -Inf];
-for c = 1:size(trialnummatrix,2)
-    trial = load(fullfile(h.dir,sprintf(h.trialStem,trialnummatrix(1,c))));
-    h = getShowFuncInputsFromTrial(trial);
-
-    averagefig = PF_PiezoSineAverage([],h,'');
-        
-    ax_from = findobj(averagefig,'tag','response_ax');
-    
-    ylabe = get(get(ax_from,'ylabel'),'string');
-    delete(get(ax_from,'xlabel'));
-    delete(get(ax_from,'ylabel'));
-    delete(get(ax_from,'zlabel'));
-    delete(get(ax_from,'title'));
-    
-    ylims_from = get(ax_from,'ylim');
-    xlims_from = get(ax_from,'xlim');
-    ylims = [min(ylims(1),ylims_from(1)),...
-        max(ylims(2),ylims_from(2))];
-
-    pnl_hs(r,c) = pnl(r,c).select();
-    copyobj(get(ax_from,'children'),pnl(r,c).select());
-
-    set(pnl_hs(r,c),'TickDir','out','YColor',[1 1 1],'YTick',[],'XColor',[1 1 1],'XTick',[],'xlim',xlims_from,'ylim',ylims_from);
-        
-        
-    % drawnow;
-    close(averagefig)
-    
-end
-% Step
-c = c+1;
-trial = load(vtexample.PiezoStepTrial);
-h = getShowFuncInputsFromTrial(trial);
-
-averagefig = PF_PiezoStepAverage([],h,'');
-ax_from = findobj(averagefig,'tag','response_ax');
-ylabe = get(get(ax_from,'ylabel'),'string');
-delete(get(ax_from,'xlabel'));
-delete(get(ax_from,'ylabel'));
-delete(get(ax_from,'zlabel'));
-delete(get(ax_from,'title'));
-pnl_hs(r,c) = pnl(r,c).select();
-copyobj(get(ax_from,'children'),pnl_hs(r,c));
-set(pnl_hs(r,c),'TickDir','out','YColor',[1 1 1],'YTick',[],'XColor',[1 1 1],'XTick',[],'xlim',xlims_from,'ylim',ylims_from);
-
-close(averagefig)
-% ylims
-% set(pnl_hs(r,:),'ylim',ylims)
-set(pnl_hs(r,:),'ylim',getpref('FigureMaking','Figure5Ylims'))
-set(pnl_hs(r,:),'xlim',getpref('FigureMaking','Figure5Xlims'))
-set(pnl_hs(r,1),'ytickmode','auto','ycolor',[0 0 0])
-pnl(r,1).ylabel(['V']);
-pnl(r,1).de.fontsize = 18;
-
-%% D: R45D07 example
-% 
-% Record_VoltageClampInputCurrents
-% savedir = '/Users/tony/Dropbox/AzevedoWilson_B1_MS/Figure5/';
-% 
-% trial = load(r45D07example.PiezoSineTrial);
-% h = getShowFuncInputsFromTrial(trial);
-% 
-% blocktrials = findLikeTrials('name',h.trial.name,'datastruct',h.prtclData,'exclude',{'freq'});
-% t = 1;
-% while t <= length(blocktrials)
-%     trials = findLikeTrials('trial',blocktrials(t),'datastruct',h.prtclData);
-%     blocktrials = setdiff(blocktrials,setdiff(trials,blocktrials(t)));
-%     t = t+1;
-% end
-% r = 5;
-% 
-% freqs = h.trial.params.freqs(2:2:length(h.trial.params.freqs));
-% fnum = length(freqs)+1;
-% pnl(r).pack('h', fnum)  % response panel, stimulus panel
-% pnl(r).de.margin = [4 4 4 4];
-% pnl(r).marginbottom = 4;
-% 
-% trialnummatrix = nan(1,length(freqs));
-% pnl_hs = trialnummatrix;
-% 
-% for bt = blocktrials;
-%     params = load(fullfile(h.dir,sprintf(h.trialStem,bt)),'params');
-%     
-%     if sum(freqs == params.params.freq);
-%         c = find(freqs == params.params.freq);
-%         trialnummatrix(1,c) = bt;
-%     end    
-% end
-% 
-% ylims = [Inf, -Inf];
-% slims = [Inf, -Inf];
-% 
-% ylims = [Inf, -Inf];
-% slims = [Inf, -Inf];
-% for c = 1:size(trialnummatrix,2)
-%     trial = load(fullfile(h.dir,sprintf(h.trialStem,trialnummatrix(1,c))));
-%     h = getShowFuncInputsFromTrial(trial);
-% 
-%     averagefig = PF_PiezoSineAverage([],h,'');
-%         
-%     ax_from = findobj(averagefig,'tag','response_ax');
-%     
-%     ylabe = get(get(ax_from,'ylabel'),'string');
-%     delete(get(ax_from,'xlabel'));
-%     delete(get(ax_from,'ylabel'));
-%     delete(get(ax_from,'zlabel'));
-%     delete(get(ax_from,'title'));
-%     
-%     ylims_from = get(ax_from,'ylim');
-%     xlims_from = get(ax_from,'xlim');
-%     ylims = [min(ylims(1),ylims_from(1)),...
-%         max(ylims(2),ylims_from(2))];
-% 
-%     pnl_hs(r,c) = pnl(r,c).select();
-%     copyobj(get(ax_from,'children'),pnl(r,c).select());
-% 
-%     set(pnl_hs(r,c),'TickDir','out','YColor',[1 1 1],'YTick',[],'XColor',[1 1 1],'XTick',[],'xlim',xlims_from,'ylim',ylims_from);
-%         
-%         
-%     % drawnow;
-%     close(averagefig)
-%     
-% end
-% % Step
-% c = c+1;
-% trial = load(r45D07example.PiezoStepTrial);
-% h = getShowFuncInputsFromTrial(trial);
-% 
-% averagefig = PF_PiezoStepAverage([],h,'');
-% ax_from = findobj(averagefig,'tag','response_ax');
-% ylabe = get(get(ax_from,'ylabel'),'string');
-% delete(get(ax_from,'xlabel'));
-% delete(get(ax_from,'ylabel'));
-% delete(get(ax_from,'zlabel'));
-% delete(get(ax_from,'title'));
-% pnl_hs(r,c) = pnl(r,c).select();
-% copyobj(get(ax_from,'children'),pnl_hs(r,c));
-% set(pnl_hs(r,c),'TickDir','out','YColor',[1 1 1],'YTick',[],'XColor',[1 1 1],'XTick',[],'xlim',xlims_from,'ylim',ylims_from);
-% 
-% close(averagefig)
-% % ylims
-% % set(pnl_hs(r,:),'ylim',ylims)
-% set(pnl_hs(r,:),'ylim',getpref('FigureMaking','Figure5Ylims'))
-% set(pnl_hs(r,:),'xlim',getpref('FigureMaking','Figure5Xlims'))
-% set(pnl_hs(r,1),'ytickmode','auto','ycolor',[0 0 0])
-% pnl(r,1).ylabel(['V']);
-% pnl(r,1).de.fontsize = 18;
-% 
-
-%% Sensitivity curves
-
-types = {
-    'a2_cell'
-    'fru_cell'
-    'vt_cell'
-    'offtarget_cell'
-    };
-
-r = 5;
-pnl(r).pack('h',3)  % response panel, stimulus panel
-pnl(r+1).pack('h',3)  % response panel, stimulus panel
-pnl(r).marginbottom = 4;  % response panel, stimulus panel
-pnl(r+1).margintop = 4;  % response panel, stimulus panel
-
-for t_ind = 1:3
-    clear transfer freqs dsplcmnts f
-    eval(['analysis_cell = ' types{t_ind} ';']);
-    eval(['analysis_cells = ' types{t_ind} 's;']);
-    
-    trial = load(analysis_cell(1).PiezoSineTrial);
-    h = getShowFuncInputsFromTrial(trial);
-    
-    fn = fullfile('C:\Users\tony\Dropbox\RAnalysis_Data\Record_VoltageClampInputCurrents\TransferFunctions',[types{t_ind}(1:regexp(types{t_ind},'_')) 'Xfunctions.mat']);
-    if exist(fn,'file')==2
-        s = load(fn);
-    else
-        if t_ind==1
-        funchandle = @PF_PiezoSineDepolRespVsFreq_Current;
-        else
-        funchandle = @PF_PiezoSineOsciRespVsFreq;
-        end
-        for c_ind = 1:length(analysis_cell)
-            trial = load(analysis_cell(c_ind).PiezoSineTrial);
-            h = getShowFuncInputsFromTrial(trial);
-            fprintf(1,'PF_PiezoSineOsciRVF: %s\n',analysis_cell(c_ind).name);
-            
-            [f,transfer{c_ind},freqs{c_ind},dsplcmnts{c_ind}] = feval(funchandle,[],h,analysis_cell(c_ind).genotype);
-            savePDF(f,'C:\Users\tony\Dropbox\RAnalysis_Data\Record_VoltageClampInputCurrents\TransferFunctions',[],[types{t_ind}(1:regexp(types{t_ind},'_')) 'Xfunctions_' analysis_cell(c_ind).name]);
-        end
-        s.name = analysis_cells;
-        s.transfer = transfer;
-        s.freqs = freqs;
-        s.dsplcmnts = dsplcmnts;
-        save(fn,'-struct','s')
+clear pnl_hs
+for r = 1:length(figurerows)
+    pnl(r).pack('h',figurecolumns);
+    pnl(r).marginleft = 4;
+    for c = 1:length(figurecolumns)
+        pnl_hs(r,c) = pnl(r,c).select();
     end
-    
-    name = s.name;
-    transfer = s.transfer;
-    freqs = s.freqs;
-    dsplcmnts = s.dsplcmnts;
-    
-    indv_ax = pnl(r,t_ind).select();
-    dspl_ax = pnl(r+1,t_ind).select();
-    hold(indv_ax,'on');
-    hold(dspl_ax,'on');
-    
+end
+
+% 151103_F3_C1 [curare] 25 Hz, 151106_F1_C1[curare] 50 Hz, 150701_F1_C1 [MLA] 100 Hz, 
+Script_Shak2_Controls_MLA_Ex
+example_cells = {
+    '151103_F3_C1'
+    '151106_F1_C1'
+    '150701_F1_C1'
+    }
+
+r = 0;
+for c=1:length(example_cells)
     ylims = [Inf -Inf];
+    ac = analysis_cell(strcmp(analysis_cells,example_cells{c}));
+
+% ---- PiezoSineTrial ------
+    trial = load(ac.PiezoSineTrial_IClamp);
+    h = getShowFuncInputsFromTrial(trial);
+
+    fig = PF_PiezoSineAverage([],h,ac.name);
     
-    displacements = dsplcmnts{1};
+    copyobj(get(findobj(fig,'type','axes','tag','response_ax'),'children'),pnl(r+1,2*c-1).select());
+    txt = findobj(pnl(r+1,2*c-1).select(),'type','text');
+    pstn = get(txt,'position');pstn(1) = 0;
+    set(txt,'position',pstn);
+    axis(pnl(r+1,2*c-1).select(),'tight')
+    ylims = [...
+        min([ylims(1) min(get(pnl(r+1,2*c-1).select(),'ylim'))]),...
+        max([ylims(2) max(get(pnl(r+1,2*c-1).select(),'ylim'))])];
+
+    close(fig)
+
+% ---- PiezoSine Drug Trial ------
+    trial = load(ac.PiezoSineTrial_IClamp_Drug);
+    h = getShowFuncInputsFromTrial(trial);
+
+    fig = PF_PiezoSineAverage([],h,ac.name);
     
-    show_freq = h.trial.params.freqs(7);
-    show_dsplc = h.trial.params.displacements(3);
+    copyobj(get(findobj(fig,'type','axes','tag','response_ax'),'children'),pnl(r+2,2*c-1).select());
+    txt = findobj(pnl(r+2,2*c-1).select(),'type','text');
+    pstn = get(txt,'position');pstn(1) = 0;
+    set(txt,'position',pstn);
+    axis(pnl(r+2,2*c-1).select(),'tight')
+    ylims = [...
+        min([ylims(1) min(get(pnl(r+2,2*c-1).select(),'ylim'))]),...
+        max([ylims(2) max(get(pnl(r+2,2*c-1).select(),'ylim'))])];
 
+    close(fig)
 
-    cell_max_foralldisp = nan(length(transfer),1);
-    for d_ind = 1:length(displacements)
-        for c_ind = 1:length(transfer)
-            dspl_o = dsplcmnts{c_ind};
-            dspl = round(dspl_o*1000)/1000;
+% ---- PiezoSine Stimulus ------
+    trial = load(ac.PiezoSineTrial_IClamp_Drug);
+    h = getShowFuncInputsFromTrial(trial);
+    x = makeInTime(trial.params);
+    y = PiezoSineStim(trial.params);
+    
+    line(x,y,'parent',pnl(r+3,2*c-1).select());
+    
 
-            d_i = find(dspl == displacements(d_ind));
+% ---- PiezoStepTrial ------
+    trial = load(ac.PiezoStepTrial_IClamp);
+    h = getShowFuncInputsFromTrial(trial);
 
-            if isempty(d_i)
-                continue
-            end
+    fig = PF_PiezoStepAverage([],h,ac.name);
+    
+    copyobj(get(findobj(fig,'type','axes','tag','response_ax'),'children'),pnl(r+1,2*c).select());
+    txt = findobj(pnl(r+1,2*c).select(),'type','text');
+    pstn = get(txt,'position');pstn(1) = 0;
+    set(txt,'position',pstn);
+    
+    axis(pnl(r+1,2*c).select(),'tight')
+    ylims = [...
+        min([ylims(1) min(get(pnl(r+1,2*c).select(),'ylim'))]),...
+        max([ylims(2) max(get(pnl(r+1,2*c).select(),'ylim'))])];
 
-            cell_max_foralldisp(c_ind) = max([cell_max_foralldisp(c_ind) max(real(abs(transfer{c_ind}(:,d_i))))]); %real(abs(transfer{c_ind}(af_f,d_i)))';
+    close(fig)
 
-        end
-    end
+% ---- PiezoStep Drug Trial ------
+    trial = load(ac.PiezoStepTrial_IClamp_Drug);
+    h = getShowFuncInputsFromTrial(trial);
 
-    for d_ind = 1:length(displacements)
-        dspltranf = nan(length(transfer),length(h.trial.params.freqs));
-        for c_ind = 1:length(transfer)
-            dspl = dsplcmnts{c_ind};
-            
-            d_i = find(dspl == displacements(d_ind));
-            if t_ind ==1
-                dspltranf(c_ind,:) = transfer{c_ind}(:,d_i)';%/cell_max_foralldisp(c_ind);
-            else
-                dspltranf(c_ind,:) = real(abs(transfer{c_ind}(:,d_i)))';%/cell_max_foralldisp(c_ind);
-            end
-            if displacements(d_ind)==show_dsplc
-                plot(freqs{c_ind},dspltranf(c_ind,:),...
-                    'parent',indv_ax,'linestyle','-','color',0*[.85 .85 .85],...
-                    'marker','.','markerfacecolor',0*[.85 .85 .85],'markeredgecolor',0*[.85 .85 .85],...
-                    'displayname',name{c_ind},'tag',types{t_ind},'userdata',dspl(d_i))
-            end
-            
-        end
-        if displacements(d_ind)==show_dsplc
-            if t_ind ==1
-                text(17,-10,['N=' num2str(length(indv_ax.Children))],'parent',indv_ax,'verticalalignment','bottom');
-            else
-                text(400,10,['N=' num2str(length(indv_ax.Children))],'parent',indv_ax,'verticalalignment','bottom');
-            end
-            
-%             plot(indv_ax,freqs{c_ind},nanmean(dspltranf,1),...
-%                 'marker','o','markerfacecolor',[0 1/4 0]*3,'markeredgecolor',[0 1/4 0]*3,...
-%                 'color',[0 1/4 0]*3);
-        end
-        for c_ind = 1:length(transfer)
-            dspltranf(c_ind,:) = dspltranf(c_ind,:)/cell_max_foralldisp(c_ind);
-        end
-        SEM = nanstd(dspltranf,[],1)/sqrt(sum(~isnan(dspltranf(:,1))));
-        %ts = tinv([0.025  0.975],sum(~isnan(dspltranf(:,1)))-1);
-        ts = [-1 1];
-        CI_up = ts(1)*SEM;
-        CI_down = ts(2)*SEM;
-        
-%         plot(indv_ax,freqs{c_ind},nanmean(dspltranf,1),...
-%             'marker','o','markerfacecolor',[0 1/4 0]*d_ind,'markeredgecolor',[0 1/4 0]*d_ind,...
-%             'color',[0 1/4 0]*d_ind);
-        errorbar(dspl_ax,freqs{c_ind},nanmean(dspltranf,1),CI_down,CI_up,'linestyle','-','marker','none','color',[0 1/4 0]*d_ind);
-        
-        ylims = [min(ylims(1),min(dspltranf(:))) max(ylims(2),max(dspltranf(:)))];
-    end
-    set(indv_ax,'xscale','log','TickDir','out','xlim',[15 600]);
-    line(all_freqs([1 end]), [0 0],'parent',indv_ax);
-    if t_ind ==1
-        set(indv_ax,'ylim',[-12 .4]);
-    else
-        set(indv_ax,'ylim',[-1 44]);
-    end
-    set(dspl_ax,'xscale','log','TickDir','out','xlim',[15 600]);
-    line(all_freqs([1 end]), [0 0],'parent',dspl_ax);
-    if t_ind ==1
-        set(dspl_ax,'ylim',[-1 .1]);
-    else
-        set(dspl_ax,'ylim',[-.1 1]);
-    end
+    fig = PF_PiezoStepAverage([],h,ac.name);
+    
+    copyobj(get(findobj(fig,'type','axes','tag','response_ax'),'children'),pnl(r+2,2*c).select());
+    txt = findobj(pnl(r+2,2*c).select(),'type','text');
+    pstn = get(txt,'position');pstn(1) = 0;
+    set(txt,'position',pstn);
+    axis(pnl(r+2,2*c).select(),'tight')
+    ylims = [...
+        min([ylims(1) min(get(pnl(r+2,2*c).select(),'ylim'))]),...
+        max([ylims(2) max(get(pnl(r+2,2*c).select(),'ylim'))])];
 
+    close(fig)
+
+% ---- PiezoStep Stimulus ------
+    trial = load(ac.PiezoStepTrial_IClamp_Drug);
+    h = getShowFuncInputsFromTrial(trial);
+    x = makeInTime(trial.params);
+    y = PiezoStepStim(trial.params);
+    
+    line(x,y,'parent',pnl(r+3,2*c).select());   
+    
+    ylims
+    set(pnl_hs(r+(1:2),2*(c-1)+[1 2]),'ylim',ylims)
+    set(pnl_hs(r+3,2*(c-1)+[1 2]),'ylim',[-1 1])
+    set(pnl_hs(r+(1:3),2*(1:3)),'ycolor',[1 1 1],'ytick',[]);
 end
 
-%% Plot the Voltage tuning curves
+% 151015_F1_C1 [curare] 50 Hz, Examples 151010_F1_C1[curare] 50 Hz, 150723_F1_C2 [MLA] 100 Hz, 
+Script_Shak2_ShakB_MLA_Ex
+example_cells = {
+    '151015_F1_C1'
+    '151010_F1_C1'
+    '150723_F1_C2'
+    }
 
-r = 7;
-pnl(r).pack('h',3)  % response panel, stimulus panel
-pnl(r).marginbottom = 4;  % response panel, stimulus panel
+ylims = [-Inf Inf];
+r = 3;
+for c=1:length(example_cells)
+    ylims = [Inf -Inf];
+    ac = analysis_cell(strcmp(analysis_cells,example_cells{c}));
 
-Scripts = {
-    'Record_FS_HighFreqDepolB1s'
-    'Record_FS_BandPassHiB1s'
-    'Record_FS_BandPassLowB1s'
-    'Record_FS_LowPassB1s'
-    };
-selected_geno = {
-    '20XUAS-mCD8:GFP;VT30609-Gal4'
-    '10XUAS-mCD8:GFP;Fru-Gal4'
-    '20XUAS-mCD8:GFP;VT27938-Gal4'
-    '20XUAS-mCD8:GFP;VT27938-Gal4'
-    };
+% ---- PiezoSineTrial ------
+    trial = load(ac.PiezoSineTrial_IClamp);
+    h = getShowFuncInputsFromTrial(trial);
 
-for cell_type = 1:length(Scripts)-1
+    fig = PF_PiezoSineAverage([],h,ac.name);
     
-    dspl_ax = pnl(r,cell_type).select();
-    hold(dspl_ax,'on');
+    copyobj(get(findobj(fig,'type','axes','tag','response_ax'),'children'),pnl(r+1,2*c-1).select());
+    txt = findobj(pnl(r+1,2*c-1).select(),'type','text');
+    pstn = get(txt,'position');pstn(1) = 0;
+    set(txt,'position',pstn);
+    axis(pnl(r+1,2*c-1).select(),'tight')
+    ylims = [...
+        min([ylims(1) min(get(pnl(r+1,2*c-1).select(),'ylim'))]),...
+        max([ylims(2) max(get(pnl(r+1,2*c-1).select(),'ylim'))])];
 
-    all_dsplcmnts = [0.015 0.05 0.15 .5];
-    all_dsplcmnts = [ 0.15 ];
-    all_freqs = round(25 * sqrt(2) .^ (-1:1:9) * 1000)/1000;
+    close(fig)
+
+% ---- PiezoSine Drug Trial ------
+    trial = load(ac.PiezoSineTrial_IClamp_Drug);
+    h = getShowFuncInputsFromTrial(trial);
+
+    fig = PF_PiezoSineAverage([],h,ac.name);
     
-    eval(Scripts{cell_type});
-    s = load(fullfile(savedir,'transfer_functions_data'));
-    indices = strcmp(s.genotype,selected_geno{cell_type});
+    copyobj(get(findobj(fig,'type','axes','tag','response_ax'),'children'),pnl(r+2,2*c-1).select());
+    txt = findobj(pnl(r+2,2*c-1).select(),'type','text');
+    pstn = get(txt,'position');pstn(1) = 0;
+    set(txt,'position',pstn);
+    axis(pnl(r+2,2*c-1).select(),'tight')
+    ylims = [...
+        min([ylims(1) min(get(pnl(r+2,2*c-1).select(),'ylim'))]),...
+        max([ylims(2) max(get(pnl(r+2,2*c-1).select(),'ylim'))])];
 
-    genotype = s.genotype(indices);
-    hasPiezoSineName = s.name(indices);
-    transfer = s.transfer(indices);
-    freqs = s.freqs(indices);
-    dsplcmnts = s.dsplcmnts(indices);
-    xfer_ct = ones(1,sum(indices));
-    if cell_type==3
-        eval(Scripts{cell_type+1});
-        s = load(fullfile(savedir,'transfer_functions_data'));
+    close(fig)
 
-        indices = strcmp(s.genotype,selected_geno{cell_type+1});
-        xfer_ct = [xfer_ct 2*ones(1,sum(indices))];
-        genotype = [genotype s.genotype(indices)];
-        
-        hasPiezoSineName = [hasPiezoSineName s.name(indices)];
-        transfer = [transfer s.transfer(indices)];
-        freqs = [freqs s.freqs(indices)];
-        dsplcmnts = [dsplcmnts s.dsplcmnts(indices)];
-    end
+% ---- PiezoSine Stimulus ------
+    trial = load(ac.PiezoSineTrial_IClamp_Drug);
+    h = getShowFuncInputsFromTrial(trial);
+    x = makeInTime(trial.params);
+    y = PiezoSineStim(trial.params);
     
-    cell_max_foralldisp = nan(length(transfer),1);
-    for d_ind = 1:length(all_dsplcmnts)
-        for c_ind = 1:length(transfer)
-            dspl_o = dsplcmnts{c_ind};
-            dspl = round(dspl_o*1000)/1000;
-            
-            d_i = find(dspl == all_dsplcmnts(d_ind));
-            
-            if isempty(d_i)
-                continue
-            end
-            
-            [~,af_i,af_f] = intersect(all_freqs,round(freqs{c_ind}*1000)/1000);
-            cell_max_foralldisp(c_ind) = max([cell_max_foralldisp(c_ind) max(real(abs(transfer{c_ind}(af_f,d_i))))]); %real(abs(transfer{c_ind}(af_f,d_i)))';
-            
-        end
-    end
-
-    for d_ind = 1:length(all_dsplcmnts)
-        dspltranf = nan(length(transfer),length(all_freqs));
-        for c_ind = 1:length(transfer)
-            dspl_o = dsplcmnts{c_ind};
-            dspl = round(dspl_o*1000)/1000;
-            
-            d_i = find(dspl == all_dsplcmnts(d_ind));
-            
-            if isempty(d_i)
-                continue
-            end
-            
-            [~,af_i,af_f] = intersect(all_freqs,round(freqs{c_ind}*1000)/1000);
-            dspltranf(c_ind,af_i) = real(abs(transfer{c_ind}(af_f,d_i)))'/cell_max_foralldisp(c_ind);
-
-            plot(freqs{c_ind}(af_f), dspltranf(c_ind,af_i),...
-                'parent',dspl_ax,'linestyle','-','color',(xfer_ct(c_ind)-1)*[1 0 0],...
-                'marker','.','markerfacecolor',(xfer_ct(c_ind)-1)*[1 0 0],'markeredgecolor',(xfer_ct(c_ind)-1)*[1 0 0],...
-                'displayname',hasPiezoSineName{c_ind},'tag',genotype{c_ind},'userdata',dspl_o(d_i))
-
-        end
-        
-        %         dspltranf = dspltranf(~isnan(dspltranf(:,1)),:);
-        %         SEM = nanstd(dspltranf,[],1)/sqrt(sum(~isnan(dspltranf(:,1))));
-        %         %     ts = tinv([0.025  0.975],sum(~isnan(dspltranf(:,1)))-1);
-        %         ts = [-1 1];
-        %         CI_up = ts(1)*SEM;
-        %         CI_down = ts(2)*SEM;
-        %         errorbar(dspl_ax,all_freqs,nanmean(dspltranf,1),CI_down,CI_up,'linestyle','-','marker','none','color',[0 1/length(all_dsplcmnts) 0]*d_ind);
-    end
+    line(x,y,'parent',pnl(r+3,2*c-1).select());
     
-    set(dspl_ax,'xscale','log','TickDir','out','xlim',[15 600]);
-    line(all_freqs([1 end]), [0 0],'parent',dspl_ax);
 
+% ---- PiezoStepTrial ------
+    trial = load(ac.PiezoStepTrial_IClamp);
+    h = getShowFuncInputsFromTrial(trial);
+
+    fig = PF_PiezoStepAverage([],h,ac.name);
+    
+    copyobj(get(findobj(fig,'type','axes','tag','response_ax'),'children'),pnl(r+1,2*c).select());
+    txt = findobj(pnl(r+1,2*c).select(),'type','text');
+    pstn = get(txt,'position');pstn(1) = 0;
+    set(txt,'position',pstn);
+    
+    axis(pnl(r+1,2*c).select(),'tight')
+    ylims = [...
+        min([ylims(1) min(get(pnl(r+1,2*c).select(),'ylim'))]),...
+        max([ylims(2) max(get(pnl(r+1,2*c).select(),'ylim'))])];
+
+    close(fig)
+
+% ---- PiezoStep Drug Trial ------
+    trial = load(ac.PiezoStepTrial_IClamp_Drug);
+    h = getShowFuncInputsFromTrial(trial);
+
+    fig = PF_PiezoStepAverage([],h,ac.name);
+    
+    copyobj(get(findobj(fig,'type','axes','tag','response_ax'),'children'),pnl(r+2,2*c).select());
+    txt = findobj(pnl(r+2,2*c).select(),'type','text');
+    pstn = get(txt,'position');pstn(1) = 0;
+    set(txt,'position',pstn);
+    axis(pnl(r+2,2*c).select(),'tight')
+    ylims = [...
+        min([ylims(1) min(get(pnl(r+2,2*c).select(),'ylim'))]),...
+        max([ylims(2) max(get(pnl(r+2,2*c).select(),'ylim'))])];
+
+    close(fig)
+
+% ---- PiezoStep Stimulus ------
+    trial = load(ac.PiezoStepTrial_IClamp_Drug);
+    h = getShowFuncInputsFromTrial(trial);
+    x = makeInTime(trial.params);
+    y = PiezoStepStim(trial.params);
+    
+    line(x,y,'parent',pnl(r+3,2*c).select());   
+    
+    ylims
+    set(pnl_hs(r+(1:2),2*(c-1)+[1 2]),'ylim',ylims)
+    set(pnl_hs(r+3,2*(c-1)+[1 2]),'ylim',[-1 1])
+    set(pnl_hs(r+(1:3),2*(1:3)),'ycolor',[1 1 1],'ytick',[]);
 end
 
+% ---- Clean up ----
+set(pnl_hs(:),'xlim',[-.05 .1])
+set(pnl_hs(:),'tickdir','out','xcolor',[1 1 1],'xtick',[]);
+%delete(findobj(pnl_hs(:),'type','line','color',[1 .7 .7]));
+
+figure4dir = '/Users/tony/Dropbox/AzevedoWilson_B1_MS/Figure4/';
+savePDF(figure4,figure4dir,[],'Figure4af');
 
 %%
-savedir = '/Users/tony/Dropbox/AzevedoWilson_B1_MS/Figure5/';
-savePDF(figure5,savedir,[],'Figure5_normalized')
+Script_Shak2_ShakB_Ex
+
+auxid = 'ShakB_nodrugs';
+% Script_ShakB2_PiezoSine
+% Script_ShakB2_PiezoSineRvF
+% Script_ShakB2_PiezoStepFam
+
+Script_ShakB2_PiezoStep
+
+ShakB_cell = analysis_cell;
+
+% savePDF(fig,savedir,[],'ShakB2Males')
+shakbmalesdots = findobj(fig,'tag','dots');
+
+% ShakB flies with drug trials 
+% Examples 151010F1C1[curare] 50 Hz, 150723F1C2 [MLA] 100 Hz, 151015F1C1
+% [curare] 50 Hz
+
+Script_Shak2_ShakB_MLA_Ex
+
+auxid = 'ShakB';
+% Script_ShakB2_PiezoStepFam
+% Script_ShakB2_PiezoSineRvF
+% Script_ShakB2_PiezoSine
+
+Script_ShakB2_PiezoStep_Drug
+
+ShakB_drug_cell = analysis_cell;
+
+% savePDF(fig,savedir,[],'ShakB2Males_Drug.pdf')
+
+shakbmalesdrugsdots = findobj(fig,'tag','dots');
+examplepnl = panel.recover(fig);
+shakB_ctrl_ax = examplepnl(5,1).select();
+shakB_drug_ax = examplepnl(5,2).select();
+shakB_step_ax = examplepnl(5,3).select();
+
+
+% Controls with no drugs
+Script_Shak2_Controls_Ex
+
+auxid = 'ShakBCtrl_nodrugs';
+% Script_ShakB2_PiezoStepFam
+% Script_ShakB2_PiezoSine
+% Script_ShakB2_PiezoSineRvF
+
+Script_ShakB2_PiezoStep
+
+ShakB_ctrl_cell = analysis_cell;
+
+shakbcontrolsdots = findobj(fig,'tag','dots');
+
+% savePDF(fig,savedir,[],'ShakB2Controls')
+
+
+% Controls that have drug trials
+% Examples: 151106F1C1[curare] 50 Hz, 150701F1C1 [MLA] 100 Hz, 151103F3C1 [curare]
+% 25 Hz
+
+Script_Shak2_Controls_MLA_Ex
+
+auxid = 'ShakBCtrl';
+% Script_ShakB2_PiezoStepFam
+% Script_ShakB2_PiezoSine
+% Script_ShakB2_PiezoSineRvF
+
+Script_ShakB2_PiezoStep_Drug
+
+ShakB_ctrl_drug_cell = analysis_cell;
+
+shakbcontrolsdrugsdots = findobj(fig,'tag','dots');
+% savePDF(fig,savedir,[],'ShakB2Controls_Drug')
+
+examplepnl = panel.recover(fig);
+ctrl_ctrl_ax = examplepnl(5,1).select();
+ctrl_drug_ax = examplepnl(5,2).select();
+ctrl_step_ax = examplepnl(5,3).select();
+
+
+%
+dots_fig = figure;
+dots_fig.Units = 'inches';
+set(dots_fig,'color',[1 1 1],'position',[1 1 (getpref('FigureSizes','NeuronTwoColumn')-getpref('FigureSizes','NeuronOneAndHalfColumn')),5])
+pnl = panel(dots_fig);
+
+pnl.pack('h',2)  % response panel, stimulus panel
+pnl.margin = [16 16 4 4];
+pnl.fontname = 'Arial';
+copyobj(get(shakbcontrolsdrugsdots,'children'),pnl(1).select());
+copyobj(get(shakbcontrolsdots,'children'),pnl(1).select());
+
+copyobj(get(shakbmalesdrugsdots,'children'),pnl(2).select());
+copyobj(get(shakbmalesdots,'children'),pnl(2).select());
+
+linkaxes([pnl(1).select() pnl(2).select()])
+xlim(pnl(2).select(),[-.5 1.5])
+ylim(pnl(2).select(),[0 15])
+
+set(pnl(1).select(),'xticklabel',{'ctrl','drug'},'xtick',[0 1],'tag','dots','tag','wt')
+set(pnl(2).select(),'xticklabel',{'ctrl','drug'},'xtick',[0 1],'tag','dots','tag','shakB2')
+
+ylabel(pnl(1).select(),'Peak (mV)')
+
+
+savePDFandFIG(dots_fig,figure4dir,[],'ShakB2StepFig')
+
+%% Stats
+close all
+
+pnl = panel.recover(dots_fig);
+uiopen(fullfile(figure4dir,'ShakB2StepFig.fig'),1)
+
+wt_dots = get(findobj(gcf,'tag','wt'),'children');
+wt_ctrl = [];
+wt_drug = [];
+wt_ctrl_p = [];
+wt_drug_p = [];
+for d_ind = 1:length(wt_dots)
+    yd = get(wt_dots(d_ind),'ydata');
+    switch length(yd)
+        case 1
+            wt_ctrl(end+1) = yd;
+        case 2
+            wt_ctrl(end+1) = yd(1);
+            wt_drug(end+1) = yd(2);
+            wt_ctrl_p(end+1) = yd(1);
+            wt_drug_p(end+1) = yd(2);
+    end
+end
+
+shkB_dots = get(findobj(gcf,'tag','shakB2'),'children');
+shkB_ctrl = [];
+shkB_drug = [];
+shkB_ctrl_p = [];
+shkB_drug_p = [];
+for d_ind = 1:length(shkB_dots)
+    yd = get(shkB_dots(d_ind),'ydata');
+    switch length(yd)
+        case 1
+            shkB_ctrl(end+1) = yd;
+        case 2
+            shkB_ctrl(end+1) = yd(1);
+            shkB_drug(end+1) = yd(2);
+            shkB_ctrl_p(end+1) = yd(1);
+            shkB_drug_p(end+1) = yd(2);
+    end
+end
+
+percentreduced_wt = (wt_ctrl_p-wt_drug_p)./wt_ctrl_p
+percentreduced_shakB = (shkB_ctrl_p-shkB_drug_p)./shkB_ctrl_p
+
+% % ttest
+% [H,P,CI] = ttest(wt_ctrl_p,wt_drug_p)       % p = 0.17
+% [H,P,CI] = ttest(shkB_ctrl_p,shkB_drug_p)   % p = 0.0015
+
+% % ttest2
+% [H,P,CI] = ttest2(wt_ctrl,wt_drug)          % p = 0.1355
+% [H,P,CI] = ttest2(shkB_ctrl,shkB_drug)      % p = 0.0428
+% [H,P,CI] = ttest2(wt_ctrl,shkB_ctrl)        % p < 2.2926e-04
+% [H,P,CI] = ttest2(percentreduced_wt,percentreduced_shakB)   % p <1E-6
+
+mean(percentreduced_wt) % 0.1954
+SEM_wt = std(percentreduced_wt)/sqrt(length(percentreduced_wt)); % 0.0580
+ts = tinv([0.005  0.995],length(percentreduced_wt)-1);
+CI_up = mean(percentreduced_wt) + ts(1)*SEM_wt; % 95% - 0.6901, 99% - -0.0197
+CI_down = mean(percentreduced_wt) + ts(2)*SEM_wt; % 95% - 0.6901, 99% - 0.4106
+
+mean(percentreduced_shakB) % 0.7845
+SEM_shakB = std(percentreduced_shakB)/sqrt(length(percentreduced_shakB)); % 0.0399
+ts = tinv([0.005  0.995],length(percentreduced_wt)-1);
+CI_up = mean(percentreduced_shakB) + ts(1)*SEM_shakB; % 95% - 0.6901, 99% - 0.5935
+CI_down = mean(percentreduced_shakB) + ts(2)*SEM_shakB; % 95% - 0.8788, 99% - 0.9324 
+
+% % ranksum
+% [P,H,CI] = ranksum(wt_ctrl,wt_drug)          % p = 0.1355
+% [P,H,CI] = ranksum(shkB_ctrl,shkB_drug)      % p < 1E-4
+% [P,H,CI] = ranksum(wt_ctrl,shkB_ctrl)        % p < 1E-4
+% [H,P,CI] = ranksum(percentreduced_wt,percentreduced_shakB) % p<1E-3
+
+%% 
+y = [wt_ctrl,wt_drug,shkB_ctrl,shkB_drug];
+g1 = cat(2,...
+    repmat({'wt'},size(wt_ctrl)),...
+    repmat({'wt'},size(wt_drug)),...
+    repmat({'shakB2'},size(shkB_ctrl)),...
+    repmat({'shakB2'},size(shkB_drug)))%,...
+g2 = cat(2,...
+    repmat({'ctrl'},size(wt_ctrl)),...
+    repmat({'drug'},size(wt_drug)),...
+    repmat({'ctrl'},size(shkB_ctrl)),...
+    repmat({'drug'},size(shkB_drug)))%,...
+
+% y = [wt_ctrl_p,wt_drug_p,shkB_ctrl_p,shkB_drug_p];
+% g1 = cat(2,...
+%     repmat({'wt'},size(wt_ctrl_p)),...
+%     repmat({'wt'},size(wt_drug_p)),...
+%     repmat({'shakB2'},size(shkB_ctrl_p)),...
+%     repmat({'shakB2'},size(shkB_drug_p)))%,...
+% g2 = cat(2,...
+%     repmat({'ctrl'},size(wt_ctrl_p)),...
+%     repmat({'drug'},size(wt_drug_p)),...
+%     repmat({'ctrl'},size(shkB_ctrl_p)),...
+%     repmat({'drug'},size(shkB_drug_p)))%,...
+
+%% anova
+
+figure
+[p,tbl,stats,terms] = anovan(y,{g1,g2},'model','linear','varnames',{'geno';'cond'});
+multcompare(stats,'ctyp','lsd','dimension',[1 2]);
+
+%% kruskalwallis
+for i = 1:length(g1)
+    g3{i} = [g1{i} '_' g2{i}];
+end
+    
+[P,ANOVATAB,STATS] = kruskalwallis(y,g3);
+results = multcompare(STATS,'ctype','hsd');
+
+
+

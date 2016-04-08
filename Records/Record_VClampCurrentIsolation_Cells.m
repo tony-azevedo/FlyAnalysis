@@ -63,9 +63,9 @@ analysis_grid = {...
 '151001_F2_C1'  '10XUAS-mCD8:GFP;FruGal4'    'BPL.' % For this cell, the voltage changed during the curare, I've untagged the curare traces and excluded the cntrl trials
 '151021_F3_C1'  '10XUAS-mCD8:GFP;FruGal4'    'BPH! Nice.'
 '151022_F1_C1'  '10XUAS-mCD8:GFP;FruGal4'    'BPH! Access drifts up.'
-'151210_F1_C1'  '10XUAS-mCD8:GFP;FruGal4'    'BPH! Access drifts up.'
-'151210_F2_C1'  '10XUAS-mCD8:GFP;FruGal4'    'BPH! Access drifts up.'
-'151210_F3_C1'  '10XUAS-mCD8:GFP;FruGal4'    'BPH! Access drifts up.'
+'151210_F1_C1'  '10XUAS-mCD8:GFP;FruGal4'    'BPH! Access drifts up.' %
+'151210_F2_C1'  '10XUAS-mCD8:GFP;FruGal4'    'BPH! Access drifts up.' 
+'151210_F3_C1'  '10XUAS-mCD8:GFP;FruGal4'    'BPH! Access drifts up.' % ok
 
 %VT
 '151007_F1_C1'  '20XUAS-mCD8:GFP;VT27938-Gal4'  'LP. crapped out after TEA,NO TTX' % Should I throw this one out?
