@@ -11,31 +11,25 @@ id = 'BPH_';
 %%
 
 analysis_grid = {...
-%     '131014_F4_C1'  'GH86-Gal4;20XUAS-mCD8:GFP;'	'clear spiking (sweep), but not great stimulus control'
-%     '131014_F3_C1'  'GH86-Gal4;20XUAS-mCD8:GFP;'	'clear spiking, mid range frequency, holding potential is offset, but otherwise ok'
-%     '131016_F1_C1'  'GH86-Gal4;20XUAS-mCD8:GFP;'	'Clear spiking, not good stimulus control! exclude from PiezoStepAnalysis'
-    '131126_F2_C2'  '20XUAS-mCD8:GFP;VT30609-Gal4'	'Banner cell, Current Sine @ hyp. Vm, was used in NRSA-resubmit, sharp tuning though coarse'
-    
+%     '131126_F2_C2'  '20XUAS-mCD8:GFP;VT30609-Gal4'          'FS'
+    '150421_F1_C1'  '10XUAS-mCD8:GFP;Fru-Gal4'              'FS'
+    '150512_F1_C1'  '10XUAS-mCD8:GFP;Fru-Gal4'              'FS'
+    '150513_F2_C1'  '10XUAS-mCD8:GFP;Fru-Gal4'              'FS'
+    '150528_F1_C1'  '20XUAS-mCD8:GFP/+;63A03-Gal4/+'        'FS'
+    '150531_F1_C1'  '10XUAS-mCD8:GFP;Fru-Gal4'              'FS'
+    '150602_F3_C1'  'ShakB2-y/X;20XUAS-mCD8:GFP;45D07-Gal4' 'FS'
+%     '151201_F1_C1'  '10XUAS-mCD8:GFP;Fru-Gal4'              'FS'
+%     '151201_F1_C2'  '10XUAS-mCD8:GFP;Fru-Gal4'              'FS'
+    '150722_F1_C2'  '10XUAS-mCD8:GFP;Fru-Gal4'              'VS'
+    '150509_F2_C2'  '10XUAS-mCD8:GFP;Fru-Gal4'              'Spontaneous Noise'
+    '150519_F1_C1'  '10XUAS-mCD8:GFP;Fru-Gal4'              'Spontaneous Noise, Glued'
+    '150519_F1_C2'  '10XUAS-mCD8:GFP;Fru-Gal4'              'Spontaneous Noise, Glued'
+    '150526_F1_C2'  '20XUAS-mCD8:GFP/+;63A03-Gal4/+'        'Spontaneous Noise'
+    '150527_F1_C2'  '20XUAS-mCD8:GFP/+;63A03-Gal4/+'        'Spontaneous Noise'
 
-    '150421_F1_C1'  '10XUAS-mCD8:GFP;Fru-Gal4'      'Larger amplitudes produce lower amplitude responses'
-'150512_F1_C1'  '10XUAS-mCD8:GFP;Fru-Gal4'      'New one!'
-    '150513_F2_C1'  '10XUAS-mCD8:GFP;Fru-Gal4'      'PiezoChirp is an interesting stimulus, strong spontaneous noise'
-%     '150527_F1_C3'  '20XUAS-mCD8:GFP/+;63A03-Gal4/+'    'Without perfusion, beautiful clear line, nice spiker, the somewhat dim one next to the big guy'
-     '150528_F1_C1'  '20XUAS-mCD8:GFP/+;63A03-Gal4/+'       'Without perfusion, NO CLEAR SPIKING, but certainly band pass high'
-    
-    '150531_F1_C1'  '10XUAS-mCD8:GFP;Fru-Gal4'     'Without perfusion, Very nice cell, tall spikes, also has hyperpolarized responses'
-    
-    '150602_F3_C1'  'ShakB2-y/X;20XUAS-mCD8:GFP;45D07-Gal4'  'Without perfusion, Weird cell, a ton of spontaneous noise.  Where is this from?'  %Male
-
-    '151125_F1_C1'  '10XUAS-mCD8:GFP;Fru-Gal4'     'hyperpolarized responses'
-    
-    '151130_F1_C1'  '20XUAS-mCD8:GFP;VT30609-Gal4'     'Lots of noise, appears to be due to antennal input, tall spikes, hyperpolarized responses didnt work'
-    
-    '151201_F1_C1'  '10XUAS-mCD8:GFP;Fru-Gal4'     'Hyperpolarization responses didnt work'
-    '151201_F1_C2'  '10XUAS-mCD8:GFP;Fru-Gal4'     'Lots of noise, appears to be due to antennal input, tall spikes, hyperpolar responses didnt work'
-    '151201_F1_C2_2'  '10XUAS-mCD8:GFP;Fru-Gal4'     'This is the second set of responses in the other block'
-    '151201_F1_C3'  '10XUAS-mCD8:GFP;Fru-Gal4'     'Lots of noise, appears to be due to antennal input, tall spikes, hyperpolar responses didnt work'
-    
+    '150617_F2_C1'  '20XUAS-mCD8:GFP/+;63A03-Gal4/+'              'VS'
+    %'150704_F1_C1'  '10XUAS-mCD8:GFP;FruGal4'    'Testing drugs, 4AP->Cs->TTX->Cd'
+    '150706_F1_C1'  '10XUAS-mCD8:GFP;FruGal4'    'Testing drugs, TTX->4AP->Cs->Cd'
     };
 
 no_nerve_grid = {
@@ -366,6 +360,7 @@ end
 %% Tons of spontaneous noise MALE!!
 
 cnt = find(strcmp(analysis_cells,'150602_F3_C1'));
+
 if ~isempty(cnt)
     analysis_cell(cnt).PiezoSineTrial = ...
         'C:\Users\tony\Raw_Data\150602\150602_F3_C1\PiezoSine_Raw_150602_F3_C1_17.mat';
@@ -411,6 +406,7 @@ end
 
 %%
 cnt = find(strcmp(analysis_cells,'151130_F1_C1'));
+
 if ~isempty(cnt)
     analysis_cell(cnt).PiezoSineTrial = ...
 'C:\Users\tony\Raw_Data\151130\151130_F1_C1\PiezoSine_Raw_151130_F1_C1_155.mat';
@@ -455,6 +451,7 @@ end
 
 %% '10XUAS-mCD8:GFP;Fru-Gal4'
 cnt = find(strcmp(analysis_cells,'151201_F1_C2'));
+
 if ~isempty(cnt)
     analysis_cell(cnt).PiezoSineTrial = ...
 'C:\Users\tony\Raw_Data\151201\151201_F1_C2\PiezoSine_Raw_151201_F1_C2_122.mat';
@@ -508,7 +505,6 @@ end
 
 %% 10XUAS-mCD8:GFP/+;FruGal4/+
 cnt = find(strcmp(analysis_cells,'150722_F1_C2'));
-
 if ~isempty(cnt)
     analysis_cell(cnt).trials.VoltageCommand = ...
         'C:\Users\tony\Raw_Data\150722\150722_F1_C2\VoltageCommand_Raw_150722_F1_C2_1.mat';
@@ -591,5 +587,55 @@ if ~isempty(cnt)
 end
 
 %%
-%Script_FrequencySelectivity
+
+%% 10XUAS-mCD8:GFP/+;FruGal4/+
+cnt = find(strcmp(analysis_cells,'150509_F2_C2'));
+if ~isempty(cnt)
+    analysis_cell(cnt).CurrentStepTrial = ...
+'C:\Users\tony\Raw_Data\150509\150509_F2_C2\CurrentStep_Raw_150509_F2_C2_1.mat';
+end
+
+cnt = find(strcmp(analysis_cells,'150519_F1_C1'));
+if ~isempty(cnt)
+    analysis_cell(cnt).CurrentStepTrial = ...
+'C:\Users\tony\Raw_Data\150519\150519_F1_C1\CurrentStep_Raw_150519_F1_C1_11.mat';
+
+end
+
+cnt = find(strcmp(analysis_cells,'150519_F1_C2'));
+if ~isempty(cnt)
+    analysis_cell(cnt).CurrentStepTrial = ...
+'C:\Users\tony\Raw_Data\150519\150519_F1_C2\CurrentStep_Raw_150519_F1_C2_1.mat';
+
+end
+
+cnt = find(strcmp(analysis_cells,'150526_F1_C2'));
+if ~isempty(cnt)
+    analysis_cell(cnt).CurrentStepTrial = ...
+'C:\Users\tony\Raw_Data\150526\150526_F1_C2\CurrentStep_Raw_150526_F1_C2_1.mat';
+
+end
+
+cnt = find(strcmp(analysis_cells,'150527_F1_C2'));
+if ~isempty(cnt)
+    analysis_cell(cnt).CurrentStepTrial = ...
+'C:\Users\tony\Raw_Data\150527\150527_F1_C2\CurrentStep_Raw_150527_F1_C2_4.mat';
+end
+
+
+%% 
+
+%% No nerve, part of the Voltage Sine protocol testing set.
+cnt = find(strcmp(analysis_cells,'150617_F2_C1'));
+if ~isempty(cnt)
+    analysis_cell(cnt).CurrentStepTrial = ...
+'C:\Users\tony\Raw_Data\150617\150617_F2_C1\CurrentStep_Raw_150617_F2_C1_1.mat';
+end
+
+cnt = find(strcmp(analysis_cells,'150706_F1_C1'));
+if ~isempty(cnt)
+    analysis_cell(cnt).CurrentStepTrial = ...
+'C:\Users\tony\Raw_Data\150706\150706_F1_C1\CurrentStep_Raw_150706_F1_C1_1.mat';
+end
+
 

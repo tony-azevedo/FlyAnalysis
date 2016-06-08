@@ -431,7 +431,7 @@ if ~isempty(cnt)
 analysis_cell(cnt).PiezoCourtshipSong = ...
 'C:\Users\tony\Raw_Data\151205\151205_F1_C1\PiezoCourtshipSong_Raw_151205_F1_C1_1.mat';
 analysis_cell(cnt).PiezoLongCourtshipSong = ...
-'C:\Users\tony\Raw_Data\151205\151205_F1_C1\PiezoLongCourtshipSong_Raw_151205_F1_C1_2.mat';
+'C:\Users\tony\Raw_Data\151205\151205_F1_C1\PiezoLongCourtshipSong_Raw_151205_F1_C1_4.mat';
 end
 
 %% '20XUAS-mCD8:GFP;VT27938-Gal4'

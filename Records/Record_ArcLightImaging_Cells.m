@@ -5,22 +5,22 @@
 
 
 analysis_grid = {
-    '140117_F2_C1'  'UAS-ArcLight/VT30609-Gal4'   'sound responsive'        -50
-    '140121_F2_C1'  'UAS-ArcLight;VT30609-Gal4'   'sound responsive'        -50 
-    '140131_F3_C1'  'UAS-ArcLight;VT30609-Gal4'   'same kinds of currents'  -50
-    '140206_F1_C1'  'UAS-ArcLight;VT30609-Gal4'   'same currents'           -50
-    '140528_F1_C1'  'UAS-ArcLight;VT30609-Gal4'   'sound responsive'        -25
-    '140530_F1_C1'  'UAS-ArcLight;VT30609-Gal4'   'A2 - sound responsive'        -25
-    '140530_F2_C1'  'UAS-ArcLight;VT30609-Gal4'   'A2 - sound responsive'        -25
-    '140602_F1_C1'  'UAS-ArcLight;VT30609-Gal4'   'sound responsive'        -25
-    '140602_F2_C1'  'UAS-ArcLight;VT30609-Gal4'   'sound responsive'        -25
-    '140603_F1_C1'  'UAS-ArcLight;VT30609-Gal4'   'sound responsive'        -25
-    '150119_F1_C1'  'UAS-ArcLight;VT30609-Gal4'   'NOT SURE!!'              -50
-    '150220_F1_C1'  'UAS-ArcLight;VT30609-Gal4'   'sound responsive'        -36
+    '140117_F2_C1'  'UAS-ArcLight/VT30609-Gal4'   'sound responsive'        %-50 % spiking, kinda
+    '140121_F2_C1'  'UAS-ArcLight;VT30609-Gal4'   'sound responsive'        %-50 % spiking
+    '140131_F3_C1'  'UAS-ArcLight;VT30609-Gal4'   'same kinds of currents'  %-50 % spiking
+    '140206_F1_C1'  'UAS-ArcLight;VT30609-Gal4'   'same currents'           %-50 % not
+    '140528_F1_C1'  'UAS-ArcLight;VT30609-Gal4'   'sound responsive'        %-25 % not
+    '140530_F1_C1'  'UAS-ArcLight;VT30609-Gal4'   'A2 - sound responsive'   %     -25
+    '140530_F2_C1'  'UAS-ArcLight;VT30609-Gal4'   'A2 - sound responsive'   %     -25
+    '140602_F1_C1'  'UAS-ArcLight;VT30609-Gal4'   'sound responsive'        %-25 % spiking
+    '140602_F2_C1'  'UAS-ArcLight;VT30609-Gal4'   'sound responsive'        %-25 % not
+    '140603_F1_C1'  'UAS-ArcLight;VT30609-Gal4'   'sound responsive'        %-25 % not
+    '150119_F1_C1'  'UAS-ArcLight;VT30609-Gal4'   'NOT SURE!!'              %-50
+    '150220_F1_C1'  'UAS-ArcLight;VT30609-Gal4'   'sound responsive'        %-36 % not
 %     '150504_F1_C2'  'UAS-ArcLight;R45D07-Gal4'   'sound responsive'         -50
-    '151123_F1_C1'  'UAS-ArcLight;R45D07-Gal4'   'sound responsive'         -47
-    '151123_F1_C2'  'UAS-ArcLight;R45D07-Gal4'   'sound responsive'         -50
-    '151123_F2_C1'  'UAS-ArcLight;R45D07-Gal4'   'sound responsive'         -50
+    '151123_F1_C1'  'UAS-ArcLight;R45D07-Gal4'   'sound responsive'         %-47 % not
+    '151123_F1_C2'  'UAS-ArcLight;R45D07-Gal4'   'sound responsive'         %-50 % not
+    '151123_F2_C1'  'UAS-ArcLight;R45D07-Gal4'   'sound responsive'         %-50 % not
 }
 
 clear analysis_cell analysis_cells

@@ -1,9 +1,9 @@
 %%
 % Compare CurrentStepFam and CurrentChirp
-close all
+% close all
 c_indv = [];
 for c_ind = 1:length(analysis_cell)
-    if ~isempty(analysis_cell(c_ind).CurrentChirpTrial) || ~isempty(analysis_cell(c_ind).CurrentStepTrial)
+    if ~isempty(analysis_cell(c_ind).CurrentStepTrial) % || ~isempty(analysis_cell(c_ind).CurrentChirpTrial)
         c_indv(end+1) = c_ind;
     end
 end
@@ -11,7 +11,7 @@ end
 f = figure;
 set(f,'position',[482     9   854   988],'color',[1 1 1])
 pnl = panel(f);
-pnl.pack(length(c_indv),3)  % response panel, stimulus panel
+pnl.pack(length(c_indv),2)  % response panel, stimulus panel
 pnl.margin = [20 20 10 10];
 pnl.de.margin = [10 10 10 10];
 pnl.de.fontsize = 7;
@@ -34,44 +34,41 @@ for c_ind = 1:length(c_indv)
         PF_CurrentStepIV(pnl(c_ind,2).select(),obj,'');
         pnl(c_ind,2).title(regexprep(analysis_cell(c_indv(c_ind)).name,'_','\\_'));
         pnl(c_ind,2).ylabel('mV');
-    end
-    drawnow
-    if ~isempty(analysis_cell(c_indv(c_ind)).CurrentChirpTrial)
-        trial = load(analysis_cell(c_indv(c_ind)).CurrentChirpTrial);
-        obj.trial = trial;
-        
-        [obj.currentPrtcl,dateID,flynum,cellnum,obj.currentTrialNum,obj.dir,obj.trialStem,dfile] = ...
-            extractRawIdentifiers(trial.name);
-        
-        prtclData = load(dfile);
-        obj.prtclData = prtclData.data;
-        obj.prtclTrialNums = obj.currentTrialNum;
-                        
-        pnl(c_ind,3).pack('v',{2/3 1/3});
-        pnl(c_ind,3).de.margin = [10 2 10 2];
 
-        PF_CurrentChirpZAPFam([pnl(c_ind,3,1).select(),pnl(c_ind,3,2).select()],obj,'');
-        set(pnl(c_ind,3,1).select(),'XTick',[]);
-        pnl(c_ind,3,1).ylabel('|Z(f)| (mV/pA)');
-        pnl(c_ind,3,2).ylabel('\phi');
+        xlim(pnl(c_ind,2).select(),[-120 40]);
+        ylim(pnl(c_ind,2).select(),[-60 30]);
+        %xlim(pnl(c_ind,1).select(),[-60 30]);
+        ylim(pnl(c_ind,1).select(),[-130 0]);
+        
+        set(pnl(c_ind,2).select(),'tag',['IV_' analysis_cell(c_indv(c_ind)).name]);
+        
     end
     drawnow
+%     if ~isempty(analysis_cell(c_indv(c_ind)).CurrentChirpTrial)
+%         trial = load(analysis_cell(c_indv(c_ind)).CurrentChirpTrial);
+%         obj.trial = trial;
+%         
+%         [obj.currentPrtcl,dateID,flynum,cellnum,obj.currentTrialNum,obj.dir,obj.trialStem,dfile] = ...
+%             extractRawIdentifiers(trial.name);
+%         
+%         prtclData = load(dfile);
+%         obj.prtclData = prtclData.data;
+%         obj.prtclTrialNums = obj.currentTrialNum;
+%                         
+%         pnl(c_ind,3).pack('v',{2/3 1/3});
+%         pnl(c_ind,3).de.margin = [10 2 10 2];
+% 
+%         PF_CurrentChirpZAPFam([pnl(c_ind,3,1).select(),pnl(c_ind,3,2).select()],obj,'');
+%         set(pnl(c_ind,3,1).select(),'XTick',[]);
+%         pnl(c_ind,3,1).ylabel('|Z(f)| (mV/pA)');
+%         pnl(c_ind,3,2).ylabel('\phi');
+%     end
+%     drawnow
 end
 
 pnl(c_ind,1).xlabel('s');
 pnl(c_ind,2).xlabel('pA');
-try pnl(c_ind,3,2).xlabel('(Hz)');
-catch
-    pnl(c_ind-1,3,2).xlabel('(Hz)');
-end
 
-    fn = fullfile(savedir,[id '_IntrinsicProperties.pdf']);
-    pnl.fontname = 'Arial';
-    figure(f)
-    eval(['export_fig ' regexprep(fn,'\sAzevedo',''' Azevedo''') ' -pdf -transparent']);
-    
-    %pnl.export(fn, '-rp','-a1.4');
-    %saveas(f, regexprep(fn,'.pdf',''), 'fig')
 
     
     %% Others

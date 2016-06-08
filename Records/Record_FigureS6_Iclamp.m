@@ -379,7 +379,7 @@ end
 
 %%
 Record_VoltageClampInputCurrents
-savedir = '/Users/tony/Dropbox/AzevedoWilson_B1_MS/Figure5/';
+savedir = '/Users/tony/Dropbox/AzevedoWilson_B1_MS/Figure6/';
 
 trial = load(fruexample.PiezoSineTrial_IClamp);
 h = getShowFuncInputsFromTrial(trial);
@@ -476,8 +476,8 @@ pnl(r,1,1).ylabel(['V']);
 pnl(r,2,1).ylabel(['V']);
 % pnl(r,1).de.fontsize = 18;
 
-savedir = '/Users/tony/Dropbox/AzevedoWilson_B1_MS/Figure5/';
-savePDF(figure5,savedir,[],'Figure5_IClamp')
+savedir = '/Users/tony/Dropbox/AzevedoWilson_B1_MS/Figure6/';
+savePDF(figure5,savedir,[],'Figure6_IClamp')
 
 
 

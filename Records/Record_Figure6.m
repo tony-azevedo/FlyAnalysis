@@ -2,11 +2,11 @@
 close all
 Record_VoltageClampInputCurrents
 
-figure5 = figure;
+figure6 = figure;
 
-figure5.Units = 'inches';
-set(figure5,'color',[1 1 1],'position',[1 .4 getpref('FigureSizes','NeuronOneAndHalfColumn'),10])
-pnl = panel(figure5);
+figure6.Units = 'inches';
+set(figure6,'color',[1 1 1],'position',[1 .4 getpref('FigureSizes','NeuronOneAndHalfColumn'),10])
+pnl = panel(figure6);
 
 figurerows = [1 5 5 5  10 7 7];
 figurerows = num2cell(figurerows/sum(figurerows));
@@ -17,7 +17,7 @@ pnl.margin = [20 4 4 4];
 %% Aa: stimulus
 
 Record_VoltageClampInputCurrents
-savedir = '/Users/tony/Dropbox/AzevedoWilson_B1_MS/Figure5/';
+savedir = '/Users/tony/Dropbox/AzevedoWilson_B1_MS/Figure6/';
 
 trial = load(a2example.PiezoSineTrial);
 h = getShowFuncInputsFromTrial(trial);
@@ -92,7 +92,7 @@ axis(pnl_hs(1,c),'tight')
 
 set(pnl_hs(:),'ylim',slims)
 axis(pnl_hs(1,c),'tight')
-set(pnl_hs(:),'xlim',getpref('FigureMaking','Figure5Xlims'))
+set(pnl_hs(:),'xlim',getpref('FigureMaking','Figure6Xlims'))
 set(pnl_hs(:,1),'ytickmode','auto','ycolor',[0 0 0])
 pnl(1,1).ylabel(['V']);
 pnl(1,1).de.fontsize = 18;
@@ -100,7 +100,7 @@ pnl(1,1).de.fontsize = 18;
 %% A: A2
 
 Record_VoltageClampInputCurrents
-savedir = '/Users/tony/Dropbox/AzevedoWilson_B1_MS/Figure5/';
+savedir = '/Users/tony/Dropbox/AzevedoWilson_B1_MS/Figure6/';
 r = 2;
 trial = load(a2example.PiezoSineTrial);
 h = getShowFuncInputsFromTrial(trial);
@@ -183,8 +183,8 @@ set(pnl_hs(r,c),'TickDir','out','YColor',[1 1 1],'YTick',[],'XColor',[1 1 1],'XT
 
 close(averagefig)
 ylims
-set(pnl_hs(r,:),'ylim',getpref('FigureMaking','Figure5Ylims'))
-set(pnl_hs(r,:),'xlim',getpref('FigureMaking','Figure5Xlims'))
+set(pnl_hs(r,:),'ylim',getpref('FigureMaking','Figure6Ylims'))
+set(pnl_hs(r,:),'xlim',getpref('FigureMaking','Figure6Xlims'))
 set(pnl_hs(r,1),'ytickmode','auto','ycolor',[0 0 0])
 pnl(r,1).ylabel(['V']);
 pnl(r,1).de.fontsize = 18;
@@ -193,7 +193,7 @@ pnl(r,1).de.fontsize = 18;
 %% B: Fru example
 
 Record_VoltageClampInputCurrents
-savedir = '/Users/tony/Dropbox/AzevedoWilson_B1_MS/Figure5/';
+savedir = '/Users/tony/Dropbox/AzevedoWilson_B1_MS/Figure6/';
 
 trial = load(fruexample.PiezoSineTrial);
 h = getShowFuncInputsFromTrial(trial);
@@ -234,7 +234,7 @@ for c = 1:size(trialnummatrix,2)
     trial = load(fullfile(h.dir,sprintf(h.trialStem,trialnummatrix(1,c))));
     h = getShowFuncInputsFromTrial(trial);
 
-    averagefig = PF_PiezoSineAverage([],h,'');
+    averagefig = PF_PiezoStepAverage_SEM([],h,'');
         
     ax_from = findobj(averagefig,'tag','response_ax');
     
@@ -277,8 +277,8 @@ set(pnl_hs(r,c),'TickDir','out','YColor',[1 1 1],'YTick',[],'XColor',[1 1 1],'XT
 
 close(averagefig)
 % ylims
-set(pnl_hs(r,:),'ylim',getpref('FigureMaking','Figure5Ylims'))
-set(pnl_hs(r,:),'xlim',getpref('FigureMaking','Figure5Xlims'))
+set(pnl_hs(r,:),'ylim',getpref('FigureMaking','Figure6Ylims'))
+set(pnl_hs(r,:),'xlim',getpref('FigureMaking','Figure6Xlims'))
 set(pnl_hs(r,1),'ytickmode','auto','ycolor',[0 0 0])
 pnl(r,1).ylabel(['V']);
 pnl(r,1).de.fontsize = 18;
@@ -286,7 +286,7 @@ pnl(r,1).de.fontsize = 18;
 %% C: VT example
 
 Record_VoltageClampInputCurrents
-savedir = '/Users/tony/Dropbox/AzevedoWilson_B1_MS/Figure5/';
+savedir = '/Users/tony/Dropbox/AzevedoWilson_B1_MS/Figure6/';
 
 trial = load(vtexample.PiezoSineTrial);
 h = getShowFuncInputsFromTrial(trial);
@@ -327,7 +327,7 @@ for c = 1:size(trialnummatrix,2)
     trial = load(fullfile(h.dir,sprintf(h.trialStem,trialnummatrix(1,c))));
     h = getShowFuncInputsFromTrial(trial);
 
-    averagefig = PF_PiezoSineAverage([],h,'');
+    averagefig = PF_PiezoStepAverage_SEM([],h,'');
         
     ax_from = findobj(averagefig,'tag','response_ax');
     
@@ -371,8 +371,8 @@ set(pnl_hs(r,c),'TickDir','out','YColor',[1 1 1],'YTick',[],'XColor',[1 1 1],'XT
 close(averagefig)
 % ylims
 % set(pnl_hs(r,:),'ylim',ylims)
-set(pnl_hs(r,:),'ylim',getpref('FigureMaking','Figure5Ylims'))
-set(pnl_hs(r,:),'xlim',getpref('FigureMaking','Figure5Xlims'))
+set(pnl_hs(r,:),'ylim',getpref('FigureMaking','Figure6Ylims'))
+set(pnl_hs(r,:),'xlim',getpref('FigureMaking','Figure6Xlims'))
 set(pnl_hs(r,1),'ytickmode','auto','ycolor',[0 0 0])
 pnl(r,1).ylabel(['V']);
 pnl(r,1).de.fontsize = 18;
@@ -380,7 +380,7 @@ pnl(r,1).de.fontsize = 18;
 %% D: R45D07 example
 % 
 % Record_VoltageClampInputCurrents
-% savedir = '/Users/tony/Dropbox/AzevedoWilson_B1_MS/Figure5/';
+% savedir = '/Users/tony/Dropbox/AzevedoWilson_B1_MS/Figure6/';
 % 
 % trial = load(r45D07example.PiezoSineTrial);
 % h = getShowFuncInputsFromTrial(trial);
@@ -465,8 +465,8 @@ pnl(r,1).de.fontsize = 18;
 % close(averagefig)
 % % ylims
 % % set(pnl_hs(r,:),'ylim',ylims)
-% set(pnl_hs(r,:),'ylim',getpref('FigureMaking','Figure5Ylims'))
-% set(pnl_hs(r,:),'xlim',getpref('FigureMaking','Figure5Xlims'))
+% set(pnl_hs(r,:),'ylim',getpref('FigureMaking','Figure6Ylims'))
+% set(pnl_hs(r,:),'xlim',getpref('FigureMaking','Figure6Xlims'))
 % set(pnl_hs(r,1),'ytickmode','auto','ycolor',[0 0 0])
 % pnl(r,1).ylabel(['V']);
 % pnl(r,1).de.fontsize = 18;
@@ -562,7 +562,7 @@ for t_ind = 1:3
         end
     end
     
-    lifetime_spareness = nan(length(transfer),length(all_dsplcmnts));
+    lifetime_spareness = nan(length(transfer),length(displacements));
     for d_ind = 1:length(displacements)
         dspltranf = nan(length(transfer),length(h.trial.params.freqs));
         for c_ind = 1:length(transfer)
@@ -581,7 +581,7 @@ for t_ind = 1:3
                 sum(((r_-mean(r_))/std(r_)).^4) - 3;
 
             if displacements(d_ind)==show_dsplc
-                plot(freqs{c_ind},dspltranf(c_ind,:),...
+                plot(freqs{c_ind},dspltranf(c_ind,:)/max(abs(dspltranf(c_ind,:))),.../cell_max_foralldisp(c_ind),...
                     'parent',indv_ax,'linestyle','-','color',0*[.85 .85 .85],...
                     'marker','.','markerfacecolor',0*[.85 .85 .85],'markeredgecolor',0*[.85 .85 .85],...
                     'displayname',name{c_ind},'tag',types{t_ind},'userdata',dspl(d_i))
@@ -624,32 +624,34 @@ for t_ind = 1:3
     leg_str{t_ind} = Scripts_{t_ind};
     
     set(indv_ax,'xscale','log','TickDir','out','xlim',[15 600]);
-    line(all_freqs([1 end]), [0 0],'parent',indv_ax);
+    line(freqs{c_ind}([1 end]), [0 0],'parent',indv_ax);
     if t_ind ==1
         set(indv_ax,'ylim',[-12 .4]);
     else
         set(indv_ax,'ylim',[-1 44]);
     end
     set(dspl_ax,'xscale','log','TickDir','out','xlim',[15 600]);
-    line(all_freqs([1 end]), [0 0],'parent',dspl_ax);
+    line(freqs{c_ind}([1 end]), [0 0],'parent',dspl_ax);
     if t_ind ==1
         set(dspl_ax,'ylim',[-1 .1]);
+        set(indv_ax,'ylim',[-1 .1]);
     else
         set(dspl_ax,'ylim',[-.1 1]);
+        set(indv_ax,'ylim',[-.1 1]);
     end
 
 end
 
 legend(LTSax,l,leg_str)
 set(LTSax,'xtick',[1 2 3 4],'XTickLabel',{'0.045' '0.15' '0.45' '1.5'})
-xlabel('amplitude (\mum)');
-ylabel('Lifetime Kurtosis');
+xlabel(LTSax,'amplitude (\mum)');
+ylabel(LTSax,'Lifetime Kurtosis');
 
 ylim(LTSax,[-2.3 4.1])
 xlim(LTSax,[.5 4.9])
 
-savedir = '/Users/tony/Dropbox/AzevedoWilson_B1_MS/Figure5/';
-savePDF(LTSfigure,savedir,[],'Figure5_CurrentKurtosis')
+% savedir = '/Users/tony/Dropbox/AzevedoWilson_B1_MS/Figure6/';
+% savePDF(LTSfigure,savedir,[],'Figure6_CurrentKurtosis')
 
 %% Plot the Voltage tuning curves
 
@@ -676,7 +678,7 @@ for cell_type = 1:length(Scripts)-1
     hold(dspl_ax,'on');
 
     all_dsplcmnts = [0.015 0.05 0.15 .5];
-    all_dsplcmnts = [ 0.15 ];
+    %all_dsplcmnts = [ 0.15 ];
     all_freqs = round(25 * sqrt(2) .^ (-1:1:9) * 1000)/1000;
     
     eval(Scripts{cell_type});
@@ -735,21 +737,21 @@ for cell_type = 1:length(Scripts)-1
             
             [~,af_i,af_f] = intersect(all_freqs,round(freqs{c_ind}*1000)/1000);
             dspltranf(c_ind,af_i) = real(abs(transfer{c_ind}(af_f,d_i)))'/cell_max_foralldisp(c_ind);
-
-            plot(freqs{c_ind}(af_f), dspltranf(c_ind,af_i),...
-                'parent',dspl_ax,'linestyle','-','color',(xfer_ct(c_ind)-1)*[1 0 0],...
-                'marker','.','markerfacecolor',(xfer_ct(c_ind)-1)*[1 0 0],'markeredgecolor',(xfer_ct(c_ind)-1)*[1 0 0],...
-                'displayname',hasPiezoSineName{c_ind},'tag',genotype{c_ind},'userdata',dspl_o(d_i))
+            
+            % plot(freqs{c_ind}(af_f), dspltranf(c_ind,af_i),...
+            %     'parent',dspl_ax,'linestyle','-','color',(xfer_ct(c_ind)-1)*[1 0 0],...
+            %     'marker','.','markerfacecolor',(xfer_ct(c_ind)-1)*[1 0 0],'markeredgecolor',(xfer_ct(c_ind)-1)*[1 0 0],...
+            %     'displayname',hasPiezoSineName{c_ind},'tag',genotype{c_ind},'userdata',dspl_o(d_i))
 
         end
         
-        %         dspltranf = dspltranf(~isnan(dspltranf(:,1)),:);
-        %         SEM = nanstd(dspltranf,[],1)/sqrt(sum(~isnan(dspltranf(:,1))));
-        %         %     ts = tinv([0.025  0.975],sum(~isnan(dspltranf(:,1)))-1);
-        %         ts = [-1 1];
-        %         CI_up = ts(1)*SEM;
-        %         CI_down = ts(2)*SEM;
-        %         errorbar(dspl_ax,all_freqs,nanmean(dspltranf,1),CI_down,CI_up,'linestyle','-','marker','none','color',[0 1/length(all_dsplcmnts) 0]*d_ind);
+        dspltranf = dspltranf(~isnan(dspltranf(:,1)),:);
+        SEM = nanstd(dspltranf,[],1)/sqrt(sum(~isnan(dspltranf(:,1))));
+        %     ts = tinv([0.025  0.975],sum(~isnan(dspltranf(:,1)))-1);
+        ts = [-1 1];
+        CI_up = ts(1)*SEM;
+        CI_down = ts(2)*SEM;
+        errorbar(dspl_ax,all_freqs,nanmean(dspltranf,1),CI_down,CI_up,'linestyle','-','marker','none','color',[0 1/length(all_dsplcmnts) 0]*d_ind);
     end
     
     set(dspl_ax,'xscale','log','TickDir','out','xlim',[15 600]);
@@ -759,5 +761,5 @@ end
 
 
 %%
-savedir = '/Users/tony/Dropbox/AzevedoWilson_B1_MS/Figure5/';
-savePDF(figure5,savedir,[],'Figure5_normalized')
+savedir = '/Users/tony/Dropbox/AzevedoWilson_B1_MS/Figure6/';
+savePDF(figure6,savedir,[],'Figure6_normalized')

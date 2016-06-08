@@ -1,4 +1,3 @@
-
 %% Record_Figure2 - Vm measurements, spiking 
 close all
 savedir = '/Users/tony/Dropbox/RAnalysis_Data/Record_FS';
@@ -169,12 +168,12 @@ for tr = 1:length(gh298_trials)
     c = trial.current(1:length(t));
     ax = pnl(2,1,tr).select();
         
-    c = (c - mean(c(t<1)))/(std(c(t<1)));
+    c = (c - mean(c(t<1)));%/(std(c(t<1)));
     line(t,c,'parent',ax,...
         'color',[0 0 0],...
         'Displayname',getFlyGenotype(trial.name));
     set(ax,'TickDir','out','XColor',[1 1 1],'XTick',[],'XTickLabel','');
-    set(ax,'ylim',[-20 10])
+    %set(ax,'ylim',[-20 10])
     set(ax,'xlim',[0 1])
     
     % This is for the strange neurons
@@ -194,13 +193,13 @@ for tr = 1:length(gh86_trials)
     c = trial.current(1:length(t));
     ax = pnl(2,2,tr).select();
         
-    c = (c - mean(c(t<1)))/(std(c(t<1)));
+    c = (c - mean(c(t<1)));%/(std(c(t<1)));
     line(t,c,'parent',ax,...
         'color',[0 0 0],...
         'Displayname',getFlyGenotype(trial.name));
     set(ax,'TickDir','out','XColor',[1 1 1],'XTick',[],'XTickLabel','');
-    set(ax,'ylim',[-20 10])
-    set(ax,'xlim',[0 1])
+    %set(ax,'ylim',[-20 10])
+    set(ax,'xlim',[2 3])
     
     % This is for the strange neurons
 %     if x == 3 && y== 8
@@ -394,6 +393,6 @@ line([x_s_min, x_s_max],[0 0],'parent',dots_ax,'linestyle','-','linewidth',2,'co
 % p21 = predint(fitresult,0,0.95,'functional','off');
 % line(p21,[0 0],'parent',dots_ax,'linestyle','-','linewidth',2,'color',0*[.8 1 .8]);
 
-savedir = '/Users/tony/Dropbox/AzevedoWilson_B1_MS/Figure6/';
-savePDF(figure6,savedir,[],'Figure6');
+savedir = 'C:\Users\tony\Dropbox\AzevedoWilson_B1_MS\Figure6_Resting_membrane_potential\draft_material';
+savePDF(figure6,savedir,[],'Figure6_StandUnits');
 

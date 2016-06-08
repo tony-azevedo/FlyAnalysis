@@ -13,7 +13,7 @@ Cells = {
 % A2
 
 % BPH
-'131014_F3_C1'      % sine only
+%'131014_F3_C1'      % sine only
 
 % BPM
 '151205_F1_C1'      % sine only 
@@ -37,59 +37,98 @@ Cells = {
 % Plotting transfer from all cells at all displacements
 fig = figure;
 fig.Units = 'inches';
-set(fig,'color',[1 1 1],'position',[1 2 getpref('FigureSizes','NeuronOneColumn'), getpref('FigureSizes','NeuronOneColumn')])
+set(fig,'color',[1 1 1],'position',[.2 .4 19, 11])
+
+fig_S = figure;
+fig_S.Units = 'inches';
+set(fig_S,'color',[1 1 1],'position',[.2 .4 19, 11])
 
 pnl = panel(fig);
-pnl.margin = [16 16 4 4];
-pnl.pack('h',3)  
-pnl_hs = nan(4,3);
-for panl = 1:3
-    pnl(panl).pack('v',4);
-    for cell_type = 1:length(Scripts)
-        pnl_hs(cell_type,panl) = pnl(panl,cell_type).select();
+pnl.margin = [16 10 4 4];
+pnl.pack('v',length(Cells)+1)  
+
+pnl_S = panel(fig_S);
+pnl_S.margin = [16 10 4 4];
+pnl_S.pack('v',length(Cells)+1)  
+
+
+ac = Cells{1};
+for s = 1:length(Scripts)
+    eval(Scripts{s});
+    if ~isempty(find(strcmp(analysis_cells,ac)))
+        ac = analysis_cell(find(strcmp(analysis_cells,ac)));
+        break
     end
 end
-pnl.de.marginbottom = 12;
-pnl.de.margintop = 2;
 
-%% Figure 2AB: normalized response frequency curves for each type
+trial = load(ac.PiezoLongCourtshipSong);
 
-for cell_type = 1:length(Scripts)
+%pnl(length(Cells)+1).pack('v',2);
 
-    eval(Scripts{cell_type});
-    Script_Figure2NormSelectivity;
+plot(makeInTime(trial.params),trial.sgsmonitor,'b','parent',pnl(length(Cells)+1).select());
+set(pnl(length(Cells)+1).select(),'xcolor',[1 1 1],'xtick',[])
+axis(pnl(length(Cells)+1).select(),'tight');
+
+f = df:df:600;
+
+[S,F,T,P] = spectrogram(trial.sgsmonitor-mean(trial.sgsmonitor),2048,1024,f,trial.params.sampratein);
+h = pcolor(pnl_S(length(Cells)+1).select(),T,F,abs(S));
+set(h,'EdgeColor','none');
+
+set(pnl_S(length(Cells)+1).select(),'ylim',[0 300])
+drawnow
+
+
+%%
+for c_ind = 1:length(Cells)
+    ac = Cells{c_ind};
+    for s = 1:length(Scripts)
+        eval(Scripts{s});
+        if ~isempty(find(strcmp(analysis_cells,ac)))
+            ac = analysis_cell(find(strcmp(analysis_cells,ac)));
+            break
+        end
+    end
+%     if ~isstruct(ac)
+%         clear analysis_cell
+%         analysis_cell.PiezoBWCourtshipSong = ...
+%             'C:\Users\tony\Raw_Data\131014\131014_F3_C1\PiezoBWCourtshipSong_Raw_131014_F3_C1_1.mat';
+%         analysis_cell.PiezoCourtshipSong = ...
+%             'C:\Users\tony\Raw_Data\131014\131014_F3_C1\PiezoCourtshipSong_Raw_131014_F3_C1_1.mat';
+%         analysis_cell.name = ac;
+%         ac = analysis_cell;
+%     end
+    trial = load(ac.PiezoLongCourtshipSong);
+    h = getShowFuncInputsFromTrial(trial);
     
-    copyobj(get(frompnl(1).select(),'children'),pnl(1,cell_type).select())
-    copyobj(get(frompnl(2).select(),'children'),pnl(2,cell_type).select())
-    close(f)
+    trials = findLikeTrials('name',h.trial.name,'datastruct',h.prtclData);
+    y = zeros(length(trial.sgsmonitor),length(trials));
+    for t_ind = 1:length(trials)
+        trial = load(fullfile(h.dir,sprintf(h.trialStem,trials(t_ind))));
+        y(:,t_ind) = trial.voltage;
+    end
         
-end
-
-%% Figure 2C: amplitude dependence of the responses
-
-for cell_type = 1:length(Scripts)
-
-    eval(Scripts{cell_type});
-    Script_Figure2AmplitudeDependence;
+    t = makeInTime(trial.params);
+    y_ = mean(y,2);
     
-    copyobj(get(frompnl(1).select(),'children'),pnl(3,cell_type).select())
-    close(f)
-        
+    plot(makeInTime(trial.params),y_,'k','parent',pnl(c_ind).select(),'tag',ac.name);
+    set(pnl(c_ind).select(),'xcolor',[1 1 1],'xtick',[])
+    
+    axis(pnl(c_ind).select(),'tight');
+    
+    df = 600/256;
+    f = df:df:600;
+    
+    [S,F,T,P] = spectrogram(y_-mean(y_(t>.07)),2048,1024,f,trial.params.sampratein);
+    h = pcolor(pnl_S(c_ind).select(),T,F,abs(S));
+    set(h,'EdgeColor','none');
+
+    set(pnl_S(c_ind).select(),'ylim',[0 300],'xcolor',[1 1 1],'xtick',[]);
+
+    drawnow
 end
 
 %% Clean up
-savedir = '/Users/tony/Dropbox/AzevedoWilson_B1_MS/Figure2/';
-
-pnl(1).ylabel('normalized'), pnl(2).ylabel('|F(f)| (mV)'),pnl(3).ylabel('|F(f)| (mV)')
-pnl(1).xlabel('f (Hz)'), pnl(2).xlabel('f (Hz)'),pnl(3).xlabel('f (Hz)')
-
-set(pnl_hs(:),'tickdir','out');
-set(pnl_hs(:,3),'xscale','log','xlim',[15 600],'xtick',[25 50 100 200 400])
-
-text(300,10,[num2str(all_dsplcmnts(3),2) ' V'],'parent',pnl_hs(4,2));
-
-h = findobj(pnl(3,4).select(),'type','line','-not','linestyle','none');
-legend(pnl(3,4).select(),h,get(h,'DisplayName'))
-legend(pnl(3,4).select(),'boxoff');
-
-savePDF(fig,savedir,[],'Figure2')
+savedir = '/Users/tony/Dropbox/AzevedoWilson_B1_MS/Figure3/';
+savePDF(fig,savedir,[],'FigureS3_CourtshipSongV')
+savePDF(fig_S,savedir,[],'FigureS3_CourtshipSongSG')

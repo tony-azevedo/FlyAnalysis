@@ -39,33 +39,33 @@ for r = fr
     end
 end
 
-trial = load(fig3example_cell.PiezoStepTrialPost);
-h = getShowFuncInputsFromTrial(trial);
-fig = PF_PiezoStepAverage_A2([],h,fig3example_cell.genotype);
-l = copyobj(findobj(get(findobj(fig,'type','axes','tag','response_ax'),'Children'),'type','line'),pnl(fr,1).select());
-for i = 1:length(l)
-    x = l(i).XData;
-    y = l(i).YData;
-    set(l(i),'XData',x(x>=s_0 & x<s_f),'YData',y(x>=s_0 & x<s_f));
-end
+% trial = load(fig3example_cell.PiezoStepTrialPost);
+% h = getShowFuncInputsFromTrial(trial);
+% fig = PF_PiezoStepAverage_A2([],h,fig3example_cell.genotype);
+% l = copyobj(findobj(get(findobj(fig,'type','axes','tag','response_ax'),'Children'),'type','line'),pnl(fr,1).select());
+% for i = 1:length(l)
+%     x = l(i).XData;
+%     y = l(i).YData;
+%     set(l(i),'XData',x(x>=s_0 & x<s_f),'YData',y(x>=s_0 & x<s_f));
+% end
 
 % -- Plot anterior step off --
 % line(x(x>=.2+s_0 & x<.2+s_f)-.2 + gap*2,y(x>=.2+s_0 & x<.2+s_f),'parent',pnl(fr,1).select(),'color',[.7 0 0])
-close(fig)
+% close(fig)
 
 trial = load(fig3example_cell.PiezoStepTrialAnt);
 h = getShowFuncInputsFromTrial(trial);
 fig = PF_PiezoStepAverage_A2([],h,fig3example_cell.genotype);
 l = copyobj(findobj(get(findobj(fig,'type','axes','tag','response_ax'),'Children'),'type','line'),pnl(fr,1).select());
-for i = 1:length(l)
-    x = l(i).XData;
-    y = l(i).YData;
-    set(l(i),'XData',x(x>=s_0 & x<s_f) + gap*1,'YData',y(x>=s_0 & x<s_f));
-end
+% for i = 1:length(l)
+%     x = l(i).XData;
+%     y = l(i).YData;
+%     set(l(i),'XData',x(x>=s_0 & x<s_f) + gap*1,'YData',y(x>=s_0 & x<s_f));
+% end
 
 
 % -- Plot posterior step off --
-line(x(x>=.2+s_0 & x<.2+s_f)-.2 + gap*3,y(x>=.2+s_0 & x<.2+s_f),'parent',pnl(fr,1).select(),'color',[.7 0 0])
+% line(x(x>=.2+s_0 & x<.2+s_f)-.2 + gap*3,y(x>=.2+s_0 & x<.2+s_f),'parent',pnl(fr,1).select(),'color',[.7 0 0])
 close(fig)
 
 % show the expanded timescale on the other side
@@ -99,6 +99,7 @@ for r = 2
         ax.YLim = ylims;
         set(ax,'tickdir','out','xcolor',[1 1 1],'xtick',[],'xlim',[s_0 s_0+2*gap]);
     end
+    set(pnl(fr,1).select(),'xlim',[-.1 .3]);
     set(pnl(fr,2).select(),'xlim',[-.1 .3]);
 end
 
@@ -118,18 +119,25 @@ for r = fr
     end
 end
 
-trial = load(fig3example_cell0.PiezoStepTrialPost);
-x = makeInTime(trial.params);
-y = PiezoStepStim(trial.params);
-line(x(x>=s_0 & x<s_f),y(x>=s_0 & x<s_f),'parent',pnl(fr,1).select());
-line(x(x>=.2+s_0 & x<.2+s_f)-.2 + gap*2,y(x>=.2+s_0 & x<.2+s_f),'parent',pnl(fr,1).select())
+% trial = load(fig3example_cell0.PiezoStepTrialPost);
+% x = makeInTime(trial.params);
+% y = PiezoStepStim(trial.params);
+% line(x(x>=s_0 & x<s_f),y(x>=s_0 & x<s_f),'parent',pnl(fr,1).select());
+% line(x(x>=.2+s_0 & x<.2+s_f)-.2 + gap*2,y(x>=.2+s_0 & x<.2+s_f),'parent',pnl(fr,1).select())
 
+% trial = load(fig3example_cell0.PiezoStepTrialAnt);
+% x = makeInTime(trial.params);
+% y = PiezoStepStim(trial.params);
+% line(x(x>=s_0 & x<s_f)+ gap*1,y(x>=s_0 & x<s_f),'parent',pnl(fr,1).select());
+% line(x(x>=.2+s_0 & x<.2+s_f)-.2 + gap*3,y(x>=.2+s_0 & x<.2+s_f),'parent',pnl(fr,1).select())
+% set(pnl_hs(:),'tickdir','out','xcolor',[1 1 1],'xtick',[],'xlim',[s_0 s_0+2*gap]);
+
+% put the full step and its timescale here
 trial = load(fig3example_cell0.PiezoStepTrialAnt);
 x = makeInTime(trial.params);
 y = PiezoStepStim(trial.params);
-line(x(x>=s_0 & x<s_f)+ gap*1,y(x>=s_0 & x<s_f),'parent',pnl(fr,1).select());
-line(x(x>=.2+s_0 & x<.2+s_f)-.2 + gap*3,y(x>=.2+s_0 & x<.2+s_f),'parent',pnl(fr,1).select())
-set(pnl_hs(:),'tickdir','out','xcolor',[1 1 1],'xtick',[],'xlim',[s_0 s_0+2*gap]);
+line(x,y,'parent',pnl(fr,1).select());
+set(pnl(fr,1).select(),'tickdir','out','xcolor',[1 1 1],'xtick',[],'xlim',[-.1 .3],'ylim',[-1 1]);
 
 % put the full step and its timescale here
 trial = load(fig3example_cell0.PiezoStepTrialPost);
@@ -138,7 +146,7 @@ y = PiezoStepStim(trial.params);
 line(x,y,'parent',pnl(fr,2).select());
 set(pnl(fr,2).select(),'tickdir','out','xcolor',[1 1 1],'xtick',[],'xlim',[-.1 .3],'ylim',[-1 1]);
 
-savedir = '/Users/tony/Dropbox/AzevedoWilson_B1_MS/Figure4/';
+%savedir = '/Users/tony/Dropbox/AzevedoWilson_B1_MS/Figure4/';
 
 %% ****** Figure 3B: Steps and cycles for BPH ******
 
@@ -478,5 +486,5 @@ for sc_ind = 2:length(Scripts)
     set(ax,'box','off','TickDir','out')
     axis(ax,'equal')
 end
-savedir = '/Users/tony/Dropbox/AzevedoWilson_B1_MS/Figure4/';
-savePDF(figure4,savedir,[],'Figure4')
+savedir = 'C:\Users\tony\Dropbox\AzevedoWilson_B1_MS\Figure3_Impulse_responses_and_phase_characteristics';
+savePDF(figure4,savedir,[],'A2_Ant_Post')

@@ -201,365 +201,365 @@ end
 % set(iv_ax,'ytickmode','auto','ycolor',[0 0 0]);
 
 %% plot the on and off steps in drug conditions
-% pnl(3).pack('h',2) 
-% pnl(3).margin = [16 10 4 4];
-% 
-% geno_idx = [3 1 2];
-% dT = [...
-%     0.0004 0.0003
-%     0.00035 0.00018
-%     0.0003 0.00018];
-% 
-% on_ax = pnl(3,1).select(); hold(on_ax,'on');
-% off_ax = pnl(3,2).select(); hold(off_ax,'on');
-% 
-% lght_clrs = [
-%     .7 1 .7
-%     .7 .7 1
-%     1 .7 .7];
-% clrs = [
-%     0 .5 0
-%     0 0 .7
-%     .7 0 0];
-% 
-% for type_idx = 1:length(geno_idx)
-%     ac = analysis_cell(genotype_idx==geno_idx(type_idx));
-%     %clrs = distinguishable_colors(length(ac),{'w','k',[1 1 0],[1 1 1]*.75});
-%     
-%     for ac_idx = 1:length(ac)
-%         
-%         disp(ac(ac_idx).name)
-%         TEA_idx = find(strcmp(ac(ac_idx).VSdrugs,'4APTEA'));
-%         TTX_idx = find(strcmp(ac(ac_idx).VSdrugs,'TTX'));
-%         
-%         for idx = TEA_idx-1:TEA_idx
-%             trial = load(ac(ac_idx).trials.VoltageStep_Drugs{idx});
-%             h = getShowFuncInputsFromTrial(trial);
-%             if ~sum(h.trial.params.steps == 10)
-%                 continue
-%             end
-%             
-%             for pd_ind = trial.params.trial:trial.params.trial+length(h.trial.params.steps)
-%                 if h.prtclData(pd_ind).step == 10
-%                     TEA_ex = load(fullfile(h.dir,sprintf(h.trialStem,h.prtclData(pd_ind).trial)),'excluded');
-%                     if isfield(ex,'excluded') && ex.excluded
-%                         continue
-%                     else
-%                         break
-%                     end
-%                 end
-%             end
-%             trial = load(fullfile(h.dir,sprintf(h.trialStem,h.prtclData(pd_ind).trial)));
-%             h = getShowFuncInputsFromTrial(trial);
-%             trials = findLikeTrials('name',h.trial.name,'datastruct',h.prtclData);
-%             
-%             if idx == TEA_idx-1
-%             x = makeInTime(trial.params);
-%             x_win = x>=-.015 & x<+.03;
-%             x_transwin = (x>0&x<dT(type_idx,1))|(x>trial.params.stimDurInSec&x<trial.params.stimDurInSec+dT(type_idx,2));
-%             end
-%             
-%             current = zeros(size(x));
-%             for trial_ind = 1:length(trials);
-%                 trial = load(fullfile(h.dir,sprintf(h.trialStem,trials(trial_ind))));
-%                 current = current+trial.current;
-%             end
-%             current = current/length(trials);
-%             current(x_transwin) = nan;
-% 
-%             if idx == TEA_idx-1
-%                 current_ = current;
-%             elseif idx == TEA_idx
-%                 plot(on_ax,x(x_win),current_(x_win)-current(x_win),...
-%                     'tag',['geno_' num2str(type_idx)],...
-%                     'displayname',ac(ac_idx).name,...
-%                     'color',lght_clrs(type_idx,:));
-%                 drawnow
-%             end
-%         end
-%         
-%         for idx = TTX_idx-1:TTX_idx
-%             trial = load(ac(ac_idx).trials.VoltageStep_Drugs{idx});
-%             h = getShowFuncInputsFromTrial(trial);
-%             if ~sum(h.trial.params.steps == -60)
-%                 continue
-%             end
-%             
-%             for pd_ind = trial.params.trial:trial.params.trial+length(h.trial.params.steps)
-%                 if h.prtclData(pd_ind).step == -60
-%                     TEA_ex = load(fullfile(h.dir,sprintf(h.trialStem,h.prtclData(pd_ind).trial)),'excluded');
-%                     if isfield(ex,'excluded') && ex.excluded
-%                         continue
-%                     else
-%                         break
-%                     end
-%                 end
-%             end
-%             trial = load(fullfile(h.dir,sprintf(h.trialStem,h.prtclData(pd_ind).trial)));
-%             h = getShowFuncInputsFromTrial(trial);
-%             trials = findLikeTrials('name',h.trial.name,'datastruct',h.prtclData);
-%             
-%             if idx == TTX_idx-1
-%                 x = makeInTime(trial.params);
-%                 x_win = x>=trial.params.stimDurInSec-.004 & x<trial.params.stimDurInSec+.008;
-%                 x_transwin = (x>0&x<dT(type_idx,1))|(x>trial.params.stimDurInSec&x<trial.params.stimDurInSec+dT(type_idx,2));
-%             end
-%             
-%             current = zeros(size(x));
-%             for trial_ind = 1:length(trials);
-%                 trial = load(fullfile(h.dir,sprintf(h.trialStem,trials(trial_ind))));
-%                 current = current+trial.current;
-%             end
-%             current = current/length(trials);
-%             current(x_transwin) = nan;
-%             
-%             if idx == TTX_idx-1
-%                 current_ = current;
-%             elseif idx == TTX_idx
-%                 plot(off_ax,x(x_win),current_(x_win)-current(x_win),...
-%                     'tag',['geno_' num2str(type_idx)],...
-%                     'displayname',ac(ac_idx).name,...
-%                     'color',lght_clrs(type_idx,:));
-%                 drawnow
-%             end
-%         end
-%         
-%     end
-%     set(off_ax,'ylim',[-800 100],...
-%         'tickdir','out');
-%     
-%     l = findobj(off_ax,'type','line','tag',['geno_' num2str(type_idx)]);
-%     set(l,'color',lght_clrs(type_idx,:));
-%     y = cell2mat(get(l,'ydata'));
-%     line(get(l(1),'xdata'),mean(y,1),'parent',off_ax,...
-%         'color',clrs(type_idx,:),'linestyle','-',...
-%         'tag',['ave_geno_' num2str(type_idx)],'DisplayName',[ac(1).genotype]);
-% 
-%     set(on_ax,'ylim',[-50 250],...
-%         'tickdir','out');
-%     
-%     l = findobj(on_ax,'type','line','tag',['geno_' num2str(type_idx)]);
-%     set(l,'color',lght_clrs(type_idx,:));
-%     y = cell2mat(get(l,'ydata'));
-%     line(get(l(1),'xdata'),mean(y,1),'parent',on_ax,...
-%         'color',clrs(type_idx,:),'linestyle','-',...
-%         'tag',['ave_geno_' num2str(type_idx)],'DisplayName',[ac(1).genotype]);
-% 
-% end
-% 
+pnl(3).pack('h',2) 
+pnl(3).margin = [16 10 4 4];
+
+geno_idx = [3 1 2];
+dT = [...
+    0.0004 0.0003
+    0.00035 0.00018
+    0.0003 0.00018];
+
+on_ax = pnl(3,1).select(); hold(on_ax,'on');
+off_ax = pnl(3,2).select(); hold(off_ax,'on');
+
+lght_clrs = [
+    .7 1 .7
+    .7 .7 1
+    1 .7 .7];
+clrs = [
+    0 .5 0
+    0 0 .7
+    .7 0 0];
+
+for type_idx = 1:length(geno_idx)
+    ac = analysis_cell(genotype_idx==geno_idx(type_idx));
+    %clrs = distinguishable_colors(length(ac),{'w','k',[1 1 0],[1 1 1]*.75});
+    
+    for ac_idx = 1:length(ac)
+        
+        disp(ac(ac_idx).name)
+        TEA_idx = find(strcmp(ac(ac_idx).VSdrugs,'4APTEA'));
+        TTX_idx = find(strcmp(ac(ac_idx).VSdrugs,'TTX'));
+        
+        for idx = TEA_idx-1:TEA_idx
+            trial = load(ac(ac_idx).trials.VoltageStep_Drugs{idx});
+            h = getShowFuncInputsFromTrial(trial);
+            if ~sum(h.trial.params.steps == 10)
+                continue
+            end
+            
+            for pd_ind = trial.params.trial:trial.params.trial+length(h.trial.params.steps)
+                if h.prtclData(pd_ind).step == 10
+                    TEA_ex = load(fullfile(h.dir,sprintf(h.trialStem,h.prtclData(pd_ind).trial)),'excluded');
+                    if isfield(ex,'excluded') && ex.excluded
+                        continue
+                    else
+                        break
+                    end
+                end
+            end
+            trial = load(fullfile(h.dir,sprintf(h.trialStem,h.prtclData(pd_ind).trial)));
+            h = getShowFuncInputsFromTrial(trial);
+            trials = findLikeTrials('name',h.trial.name,'datastruct',h.prtclData);
+            
+            if idx == TEA_idx-1
+            x = makeInTime(trial.params);
+            x_win = x>=-.015 & x<+.03;
+            x_transwin = (x>0&x<dT(type_idx,1))|(x>trial.params.stimDurInSec&x<trial.params.stimDurInSec+dT(type_idx,2));
+            end
+            
+            current = zeros(size(x));
+            for trial_ind = 1:length(trials);
+                trial = load(fullfile(h.dir,sprintf(h.trialStem,trials(trial_ind))));
+                current = current+trial.current;
+            end
+            current = current/length(trials);
+            current(x_transwin) = nan;
+
+            if idx == TEA_idx-1
+                current_ = current;
+            elseif idx == TEA_idx
+                plot(on_ax,x(x_win),current_(x_win)-current(x_win),...
+                    'tag',['geno_' num2str(type_idx)],...
+                    'displayname',ac(ac_idx).name,...
+                    'color',lght_clrs(type_idx,:));
+                drawnow
+            end
+        end
+        
+        for idx = TTX_idx-1:TTX_idx
+            trial = load(ac(ac_idx).trials.VoltageStep_Drugs{idx});
+            h = getShowFuncInputsFromTrial(trial);
+            if ~sum(h.trial.params.steps == -60)
+                continue
+            end
+            
+            for pd_ind = trial.params.trial:trial.params.trial+length(h.trial.params.steps)
+                if h.prtclData(pd_ind).step == -60
+                    TEA_ex = load(fullfile(h.dir,sprintf(h.trialStem,h.prtclData(pd_ind).trial)),'excluded');
+                    if isfield(ex,'excluded') && ex.excluded
+                        continue
+                    else
+                        break
+                    end
+                end
+            end
+            trial = load(fullfile(h.dir,sprintf(h.trialStem,h.prtclData(pd_ind).trial)));
+            h = getShowFuncInputsFromTrial(trial);
+            trials = findLikeTrials('name',h.trial.name,'datastruct',h.prtclData);
+            
+            if idx == TTX_idx-1
+                x = makeInTime(trial.params);
+                x_win = x>=trial.params.stimDurInSec-.004 & x<trial.params.stimDurInSec+.008;
+                x_transwin = (x>0&x<dT(type_idx,1))|(x>trial.params.stimDurInSec&x<trial.params.stimDurInSec+dT(type_idx,2));
+            end
+            
+            current = zeros(size(x));
+            for trial_ind = 1:length(trials);
+                trial = load(fullfile(h.dir,sprintf(h.trialStem,trials(trial_ind))));
+                current = current+trial.current;
+            end
+            current = current/length(trials);
+            current(x_transwin) = nan;
+            
+            if idx == TTX_idx-1
+                current_ = current;
+            elseif idx == TTX_idx
+                plot(off_ax,x(x_win),current_(x_win)-current(x_win),...
+                    'tag',['geno_' num2str(type_idx)],...
+                    'displayname',ac(ac_idx).name,...
+                    'color',lght_clrs(type_idx,:));
+                drawnow
+            end
+        end
+        
+    end
+    set(off_ax,'ylim',[-800 100],...
+        'tickdir','out');
+    
+    l = findobj(off_ax,'type','line','tag',['geno_' num2str(type_idx)]);
+    set(l,'color',lght_clrs(type_idx,:));
+    y = cell2mat(get(l,'ydata'));
+    line(get(l(1),'xdata'),mean(y,1),'parent',off_ax,...
+        'color',clrs(type_idx,:),'linestyle','-',...
+        'tag',['ave_geno_' num2str(type_idx)],'DisplayName',[ac(1).genotype]);
+
+    set(on_ax,'ylim',[-50 250],...
+        'tickdir','out');
+    
+    l = findobj(on_ax,'type','line','tag',['geno_' num2str(type_idx)]);
+    set(l,'color',lght_clrs(type_idx,:));
+    y = cell2mat(get(l,'ydata'));
+    line(get(l(1),'xdata'),mean(y,1),'parent',on_ax,...
+        'color',clrs(type_idx,:),'linestyle','-',...
+        'tag',['ave_geno_' num2str(type_idx)],'DisplayName',[ac(1).genotype]);
+
+end
+
 % savePDFandFIG(figure8,'C:\Users\tony\Dropbox\AzevedoWilson_B1_MS\Figure8',[],'Figure8');
 
 %% plot the on and off steps in drug conditions
-% pnl(3).margin = [16 10 4 4];
-% 
-% geno_idx = [3 1 2];
-% dT = [...
-%     0.0004 0.0003
-%     0.00035 0.00018
-%     0.0003 0.00018];
-% 
-% on_ax = pnl(3).select(); hold(on_ax,'on');
-% gap = .01;
-% 
-% lght_clrs = [
-%     .7 1 .7
-%     .7 .7 1
-%     1 .7 .7];
-% clrs = [
-%     0 .5 0
-%     0 0 .7
-%     .7 0 0];
-% 
-% for type_idx = 1:length(geno_idx)
-%     ac = analysis_cell(genotype_idx==geno_idx(type_idx));
-%     %clrs = distinguishable_colors(length(ac),{'w','k',[1 1 0],[1 1 1]*.75});
-%     
-%     for ac_idx = 1:length(ac)
-%         
-%         disp(ac(ac_idx).name)
-%         TEA_idx = find(strcmp(ac(ac_idx).VSdrugs,'4APTEA'));
-%         TTX_idx = find(strcmp(ac(ac_idx).VSdrugs,'TTX'));
-%         
-%         for idx = TEA_idx-1:TEA_idx
-%             trial = load(ac(ac_idx).trials.VoltageStep_Drugs{idx});
-%             h = getShowFuncInputsFromTrial(trial);
-%             if ~sum(h.trial.params.steps == 10)
-%                 continue
-%             end
-%             
-%             for pd_ind = trial.params.trial:trial.params.trial+length(h.trial.params.steps)
-%                 if h.prtclData(pd_ind).step == 10
-%                     TEA_ex = load(fullfile(h.dir,sprintf(h.trialStem,h.prtclData(pd_ind).trial)),'excluded');
-%                     if isfield(TEA_ex,'excluded') && TEA_ex.excluded
-%                         continue
-%                     else
-%                         break
-%                     end
-%                 end
-%             end
-%             trial = load(fullfile(h.dir,sprintf(h.trialStem,h.prtclData(pd_ind).trial)));
-%             h = getShowFuncInputsFromTrial(trial);
-%             trials = findLikeTrials('name',h.trial.name,'datastruct',h.prtclData);
-%             
-%             if idx == TEA_idx-1
-%             x = makeInTime(trial.params);
-%             x_win_on = x>-.01 & x<0.03;
-%             x_win_off = x>=trial.params.stimDurInSec-.005 & x<trial.params.stimDurInSec+.01;
-%             x_transwin = (x>0&x<dT(type_idx,1))|(x>trial.params.stimDurInSec&x<trial.params.stimDurInSec+dT(type_idx,2));
-%             end
-%             
-%             current = zeros(size(x));
-%             for trial_ind = 1:length(trials);
-%                 trial = load(fullfile(h.dir,sprintf(h.trialStem,trials(trial_ind))));
-%                 current = current+trial.current;
-%             end
-%             current = current/length(trials);
-%             current(x_transwin) = nan;
-% 
-%             if idx == TEA_idx-1
-%                 current_ = current;
-%             elseif idx == TEA_idx
-%                 gap_ = 0.03+gap;
-%                 plot(on_ax,x(x_win_on),current_(x_win_on)-current(x_win_on),...
-%                     'tag',['on_TEA_geno_' num2str(type_idx)],...
-%                     'displayname',ac(ac_idx).name,...
-%                     'color',lght_clrs(type_idx,:));
-% %                 plot(on_ax,x(x_win_off)-trial.params.stimDurInSec+gap_,current_(x_win_off)-current(x_win_off),...
-% %                     'tag',['off_TEA_geno_' num2str(type_idx)],...
-% %                     'displayname',ac(ac_idx).name,...
-% %                     'color',lght_clrs(type_idx,:));
-%                 drawnow
-%             end
-%         end
-%                 
-%         for idx = TTX_idx-1:TTX_idx
-%             trial = load(ac(ac_idx).trials.VoltageStep_Drugs{idx});
-%             h = getShowFuncInputsFromTrial(trial);
-%             if ~sum(h.trial.params.steps == -60)
-%                 continue
-%             end
-%             
-%             for pd_ind = trial.params.trial:trial.params.trial+length(h.trial.params.steps)
-%                 if h.prtclData(pd_ind).step == -60
-%                     TTX_ex = load(fullfile(h.dir,sprintf(h.trialStem,h.prtclData(pd_ind).trial)),'excluded');
-%                     if isfield(TTX_ex,'excluded') && TTX_ex.excluded
-%                         continue
-%                     else
-%                         break
-%                     end
-%                 end
-%             end
-%             trial = load(fullfile(h.dir,sprintf(h.trialStem,h.prtclData(pd_ind).trial)));
-%             h = getShowFuncInputsFromTrial(trial);
-%             trials = findLikeTrials('name',h.trial.name,'datastruct',h.prtclData);
-%             
-%             if idx == TTX_idx-1
-%                 x = makeInTime(trial.params);
-%                 x_win_on = x>-.01 & x<0.03;
-%                 x_win_off = x>=trial.params.stimDurInSec-.005 & x<trial.params.stimDurInSec+.01;
-%                 x_transwin = (x>0&x<dT(type_idx,1))|(x>trial.params.stimDurInSec&x<trial.params.stimDurInSec+dT(type_idx,2));
-%             end
-%             
-%             current = zeros(size(x));
-%             for trial_ind = 1:length(trials);
-%                 trial = load(fullfile(h.dir,sprintf(h.trialStem,trials(trial_ind))));
-%                 current = current+trial.current;
-%             end
-%             current = current/length(trials);
-%             current(x_transwin) = nan;
-%             
-%             if idx == TTX_idx-1
-%                 current_ = current;
-%             elseif idx == TTX_idx
-%                 gap_ = 0.03+gap;
-% %                 plot(on_ax,x(x_win_on),current_(x_win_on)-current(x_win_on),...
-% %                     'tag',['on_TTX_geno_' num2str(type_idx)],...
-% %                     'displayname',ac(ac_idx).name,...
-% %                     'color',lght_clrs(type_idx,:));
+pnl(3).margin = [16 10 4 4];
+
+geno_idx = [3 1 2];
+dT = [...
+    0.0004 0.0003
+    0.00035 0.00018
+    0.0003 0.00018];
+
+on_ax = pnl(3).select(); hold(on_ax,'on');
+gap = .01;
+
+lght_clrs = [
+    .7 1 .7
+    .7 .7 1
+    1 .7 .7];
+clrs = [
+    0 .5 0
+    0 0 .7
+    .7 0 0];
+
+for type_idx = 1:length(geno_idx)
+    ac = analysis_cell(genotype_idx==geno_idx(type_idx));
+    %clrs = distinguishable_colors(length(ac),{'w','k',[1 1 0],[1 1 1]*.75});
+    
+    for ac_idx = 1:length(ac)
+        
+        disp(ac(ac_idx).name)
+        TEA_idx = find(strcmp(ac(ac_idx).VSdrugs,'4APTEA'));
+        TTX_idx = find(strcmp(ac(ac_idx).VSdrugs,'TTX'));
+        
+        for idx = TEA_idx-1:TEA_idx
+            trial = load(ac(ac_idx).trials.VoltageStep_Drugs{idx});
+            h = getShowFuncInputsFromTrial(trial);
+            if ~sum(h.trial.params.steps == 10)
+                continue
+            end
+            
+            for pd_ind = trial.params.trial:trial.params.trial+length(h.trial.params.steps)
+                if h.prtclData(pd_ind).step == 10
+                    TEA_ex = load(fullfile(h.dir,sprintf(h.trialStem,h.prtclData(pd_ind).trial)),'excluded');
+                    if isfield(TEA_ex,'excluded') && TEA_ex.excluded
+                        continue
+                    else
+                        break
+                    end
+                end
+            end
+            trial = load(fullfile(h.dir,sprintf(h.trialStem,h.prtclData(pd_ind).trial)));
+            h = getShowFuncInputsFromTrial(trial);
+            trials = findLikeTrials('name',h.trial.name,'datastruct',h.prtclData);
+            
+            if idx == TEA_idx-1
+            x = makeInTime(trial.params);
+            x_win_on = x>-.01 & x<0.03;
+            x_win_off = x>=trial.params.stimDurInSec-.005 & x<trial.params.stimDurInSec+.01;
+            x_transwin = (x>0&x<dT(type_idx,1))|(x>trial.params.stimDurInSec&x<trial.params.stimDurInSec+dT(type_idx,2));
+            end
+            
+            current = zeros(size(x));
+            for trial_ind = 1:length(trials);
+                trial = load(fullfile(h.dir,sprintf(h.trialStem,trials(trial_ind))));
+                current = current+trial.current;
+            end
+            current = current/length(trials);
+            current(x_transwin) = nan;
+
+            if idx == TEA_idx-1
+                current_ = current;
+            elseif idx == TEA_idx
+                gap_ = 0.03+gap;
+                plot(on_ax,x(x_win_on),current_(x_win_on)-current(x_win_on),...
+                    'tag',['on_TEA_geno_' num2str(type_idx)],...
+                    'displayname',ac(ac_idx).name,...
+                    'color',lght_clrs(type_idx,:));
 %                 plot(on_ax,x(x_win_off)-trial.params.stimDurInSec+gap_,current_(x_win_off)-current(x_win_off),...
-%                     'tag',['off_TTX_geno_' num2str(type_idx)],...
+%                     'tag',['off_TEA_geno_' num2str(type_idx)],...
 %                     'displayname',ac(ac_idx).name,...
 %                     'color',lght_clrs(type_idx,:));
-%                 drawnow
-%             end
-%         end
-%         
-%     end
-%     set(on_ax,'ylim',[-20 130],'xlim',[-.005 gap_+0.01],...
-%         'tickdir','out');
-%     
-%     l = findobj(on_ax,'type','line','tag',['off_TTX_geno_' num2str(type_idx)]);
-%     set(l,'color',lght_clrs(type_idx,:));
-%     x = l(1).XData;
-%     y = cell2mat(get(l,'ydata'));
-%     y_ = nanmean(y,1);
-%     line(x,y_,'parent',on_ax,...
-%         'color',clrs(type_idx,:),'linestyle','-',...
-%         'tag',['ave_geno_' num2str(type_idx)],'DisplayName',[ac(1).genotype]);
-%     
-%     sem_up = nanstd(y,[],1)/sqrt(size(y,1));
-%     sem_down = y_-sem_up;
-%     sem_up = y_+sem_up;
-%     
-%     line(x,sem_down,'parent',on_ax,'color',[.8 1 1]*(10 - (type_idx-1))/10,'tag',['off_TTX_geno_sem_' num2str(type_idx)]);
-%     line(x,sem_up,'parent',on_ax,'color',[.8 1 1]*(10 - (type_idx-1))/10,'tag',['off_TTX_geno_sem_' num2str(type_idx)]);
-%     delete(l);
-%     
-%     l = findobj(on_ax,'type','line','tag',['on_TEA_geno_' num2str(type_idx)]);
-%     set(l,'color',lght_clrs(type_idx,:));
-%     x = l(1).XData;
-%     y = cell2mat(get(l,'ydata'));
-%     y_ = mean(y,1);
-%     line(x,y_,'parent',on_ax,...
-%         'color',clrs(type_idx,:),'linestyle','-',...
-%         'tag',['ave_geno_' num2str(type_idx)],'DisplayName',[ac(1).genotype]);
-% 
-%     sem_up = std(y,[],1)/sqrt(size(y,1));
-%     sem_down = y_-sem_up;
-%     sem_up = y_+sem_up;
-%     
-%     line(x,sem_down,'parent',on_ax,'color',[1 .8 1]*(10 - (type_idx-1))/10,'tag',['on_TEA_geno__sem_' num2str(type_idx)]);
-%     line(x,sem_up,'parent',on_ax,'color',[1 .8 1]*(10 - (type_idx-1))/10,'tag',['on_TEA_geno__sem_' num2str(type_idx)]);
-% 
-%     x_ = get(l(1),'xdata');
-%     y_ = mean(y,1);
-%     y_ = y_(x_>0);
-%     x_ = x_(x_>0);
-%     x_ = x_(~isnan(y_));
-%     y_ = y_(~isnan(y_));
-%     
-%     kon = nlinfit(x_-x_(1),y_,@exponential,[100,-100,.001]);
-% %     line(x,exponential(kon,x-x(1)),'color',get(ls(l),'color')+[0 .7 0],'parent',VstepTTX_pnl_hs(1,2));
-% %     line(x_,exponential(kon,x_-x_(1)),'color',[0 0 0],'parent',on_ax,'linewidth',2);
-%     text(0.03,kon(1),sprintf('k_a = %.2f ms',kon(3)*1000),'verticalalignment','bottom','horizontalalignment','right','parent',on_ax);
-%     delete(l);
-%     
-%     disp(type_idx)
-%     disp(kon);
-% end
-% 
-% savePDFandFIG(figure8,'C:\Users\tony\Dropbox\AzevedoWilson_B1_MS\Figure8',[],'Figure8_sem_on');
-% 
-% figure8_off_ax = figure;
-% 
-% Record_VClampCurrentIsolation_Cells
-% figure8_off_ax.Units = 'inches';
-% set(figure8_off_ax,'color',[1 1 1],'position',[1 .4 getpref('FigureSizes','NeuronOneColumn'),10])
-% pnl_2 = panel(figure8_off_ax);
-% 
-% figurerows = [8 4 4];
-% figurerows = num2cell(figurerows/sum(figurerows));
-% pnl_2.pack('v',figurerows);
-% pnl_2.margin = [16 16 4 4];
-% 
-% pnl_2(3).margin = [16 10 4 4];
-% 
-% off_ax = pnl_2(3).select(); hold(off_ax,'on');
-% tmp = copyobj(get(on_ax,'children'),off_ax);
-% 
-% set(off_ax,'ylim',[-800 60],'xlim',[-.005 gap_+0.01],...
-%     'tickdir','out');
-% 
+                drawnow
+            end
+        end
+                
+        for idx = TTX_idx-1:TTX_idx
+            trial = load(ac(ac_idx).trials.VoltageStep_Drugs{idx});
+            h = getShowFuncInputsFromTrial(trial);
+            if ~sum(h.trial.params.steps == -60)
+                continue
+            end
+            
+            for pd_ind = trial.params.trial:trial.params.trial+length(h.trial.params.steps)
+                if h.prtclData(pd_ind).step == -60
+                    TTX_ex = load(fullfile(h.dir,sprintf(h.trialStem,h.prtclData(pd_ind).trial)),'excluded');
+                    if isfield(TTX_ex,'excluded') && TTX_ex.excluded
+                        continue
+                    else
+                        break
+                    end
+                end
+            end
+            trial = load(fullfile(h.dir,sprintf(h.trialStem,h.prtclData(pd_ind).trial)));
+            h = getShowFuncInputsFromTrial(trial);
+            trials = findLikeTrials('name',h.trial.name,'datastruct',h.prtclData);
+            
+            if idx == TTX_idx-1
+                x = makeInTime(trial.params);
+                x_win_on = x>-.01 & x<0.03;
+                x_win_off = x>=trial.params.stimDurInSec-.005 & x<trial.params.stimDurInSec+.01;
+                x_transwin = (x>0&x<dT(type_idx,1))|(x>trial.params.stimDurInSec&x<trial.params.stimDurInSec+dT(type_idx,2));
+            end
+            
+            current = zeros(size(x));
+            for trial_ind = 1:length(trials);
+                trial = load(fullfile(h.dir,sprintf(h.trialStem,trials(trial_ind))));
+                current = current+trial.current;
+            end
+            current = current/length(trials);
+            current(x_transwin) = nan;
+            
+            if idx == TTX_idx-1
+                current_ = current;
+            elseif idx == TTX_idx
+                gap_ = 0.03+gap;
+%                 plot(on_ax,x(x_win_on),current_(x_win_on)-current(x_win_on),...
+%                     'tag',['on_TTX_geno_' num2str(type_idx)],...
+%                     'displayname',ac(ac_idx).name,...
+%                     'color',lght_clrs(type_idx,:));
+                plot(on_ax,x(x_win_off)-trial.params.stimDurInSec+gap_,current_(x_win_off)-current(x_win_off),...
+                    'tag',['off_TTX_geno_' num2str(type_idx)],...
+                    'displayname',ac(ac_idx).name,...
+                    'color',lght_clrs(type_idx,:));
+                drawnow
+            end
+        end
+        
+    end
+    set(on_ax,'ylim',[-20 130],'xlim',[-.005 gap_+0.01],...
+        'tickdir','out');
+    
+    l = findobj(on_ax,'type','line','tag',['off_TTX_geno_' num2str(type_idx)]);
+    set(l,'color',lght_clrs(type_idx,:));
+    x = l(1).XData;
+    y = cell2mat(get(l,'ydata'));
+    y_ = nanmean(y,1);
+    line(x,y_,'parent',on_ax,...
+        'color',clrs(type_idx,:),'linestyle','-',...
+        'tag',['ave_geno_' num2str(type_idx)],'DisplayName',[ac(1).genotype]);
+    
+    sem_up = nanstd(y,[],1)/sqrt(size(y,1));
+    sem_down = y_-sem_up;
+    sem_up = y_+sem_up;
+    
+    line(x,sem_down,'parent',on_ax,'color',[.8 1 1]*(10 - (type_idx-1))/10,'tag',['off_TTX_geno_sem_' num2str(type_idx)]);
+    line(x,sem_up,'parent',on_ax,'color',[.8 1 1]*(10 - (type_idx-1))/10,'tag',['off_TTX_geno_sem_' num2str(type_idx)]);
+    delete(l);
+    
+    l = findobj(on_ax,'type','line','tag',['on_TEA_geno_' num2str(type_idx)]);
+    set(l,'color',lght_clrs(type_idx,:));
+    x = l(1).XData;
+    y = cell2mat(get(l,'ydata'));
+    y_ = mean(y,1);
+    line(x,y_,'parent',on_ax,...
+        'color',clrs(type_idx,:),'linestyle','-',...
+        'tag',['ave_geno_' num2str(type_idx)],'DisplayName',[ac(1).genotype]);
+
+    sem_up = std(y,[],1)/sqrt(size(y,1));
+    sem_down = y_-sem_up;
+    sem_up = y_+sem_up;
+    
+    line(x,sem_down,'parent',on_ax,'color',[1 .8 1]*(10 - (type_idx-1))/10,'tag',['on_TEA_geno__sem_' num2str(type_idx)]);
+    line(x,sem_up,'parent',on_ax,'color',[1 .8 1]*(10 - (type_idx-1))/10,'tag',['on_TEA_geno__sem_' num2str(type_idx)]);
+
+    x_ = get(l(1),'xdata');
+    y_ = mean(y,1);
+    y_ = y_(x_>0);
+    x_ = x_(x_>0);
+    x_ = x_(~isnan(y_));
+    y_ = y_(~isnan(y_));
+    
+    kon = nlinfit(x_-x_(1),y_,@exponential,[100,-100,.001]);
+%     line(x,exponential(kon,x-x(1)),'color',get(ls(l),'color')+[0 .7 0],'parent',VstepTTX_pnl_hs(1,2));
+%     line(x_,exponential(kon,x_-x_(1)),'color',[0 0 0],'parent',on_ax,'linewidth',2);
+    text(0.03,kon(1),sprintf('k_a = %.2f ms',kon(3)*1000),'verticalalignment','bottom','horizontalalignment','right','parent',on_ax);
+    delete(l);
+    
+    disp(type_idx)
+    disp(kon);
+end
+
+savePDFandFIG(figure8,'C:\Users\tony\Dropbox\AzevedoWilson_B1_MS\Figure8',[],'Figure8_sem_on');
+
+figure8_off_ax = figure;
+
+Record_VClampCurrentIsolation_Cells
+figure8_off_ax.Units = 'inches';
+set(figure8_off_ax,'color',[1 1 1],'position',[1 .4 getpref('FigureSizes','NeuronOneColumn'),10])
+pnl_2 = panel(figure8_off_ax);
+
+figurerows = [8 4 4];
+figurerows = num2cell(figurerows/sum(figurerows));
+pnl_2.pack('v',figurerows);
+pnl_2.margin = [16 16 4 4];
+
+pnl_2(3).margin = [16 10 4 4];
+
+off_ax = pnl_2(3).select(); hold(off_ax,'on');
+tmp = copyobj(get(on_ax,'children'),off_ax);
+
+set(off_ax,'ylim',[-800 60],'xlim',[-.005 gap_+0.01],...
+    'tickdir','out');
+
 % savePDFandFIG(figure8_off_ax,'C:\Users\tony\Dropbox\AzevedoWilson_B1_MS\Figure8',[],'Figure8_sem_off');
 % 
 %% plot the on and off steps in normal conditions
