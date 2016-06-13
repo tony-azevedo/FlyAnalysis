@@ -1,4 +1,4 @@
-function varargout = findLikeTrials(varargin)
+function varargout = findLikeTrials_includingExcluded(varargin)
 % [nums,inds] = findLikeTrials('name',name,'trial',trial,'window',window,'datastruct',datastruct)
 
 p = inputParser;

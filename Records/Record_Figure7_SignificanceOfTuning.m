@@ -37,11 +37,31 @@ for type_idx = 1:length(geno_idx)
 
 end
 
+figure7_Amps = figure;
+figure7_Amps.Units = 'inches';
+set(figure7_Amps,'color',[1 1 1],'position',[1 .4 getpref('FigureSizes','NeuronOneColumn'), 5])
+
+pnl_A = panel(figure7_Amps);
+pnl_A.margin = [16 16 10 10];
+pnl_A.pack('h',2)
+
+pnl_A(1).pack('v',2);
+ampax = pnl_A(1,1).select();
+set(ampax,'tag',[DRUGS{2} '_a_2'],'tickdir','out','xcolor',[1 1 1],'xtick',[])%,'ycolor',[1 1 1],'ytick',[]);
+ampax = pnl_A(1,2).select();
+set(ampax,'tag',[DRUGS{3} '_a_2'],'tickdir','out','xcolor',[1 1 1],'xtick',[])%,'ycolor',[1 1 1],'ytick',[]);
+
+pnl_A(2).pack('v',2);
+ampax = pnl_A(2,1).select();
+set(ampax,'tag',[DRUGS{2} '_a_3'],'tickdir','out','xcolor',[1 1 1],'xtick',[])%,'ycolor',[1 1 1],'ytick',[]);
+ampax = pnl_A(2,2).select();
+set(ampax,'tag',[DRUGS{3} '_a_3'],'tickdir','out','xcolor',[1 1 1],'xtick',[])%,'ycolor',[1 1 1],'ytick',[]);
+
 %% Subtract currents and plot
 
 warning('off')
 geno_idx = [3 1 2];
-for type_idx = 1:length(geno_idx)
+for type_idx = 2:length(geno_idx)
     DRUGS = {'AchI','TTX','4AP_TEA'};
     
     g_idx = find(genotype_idx==geno_idx(type_idx));
@@ -49,7 +69,9 @@ for type_idx = 1:length(geno_idx)
     clrs = distinguishable_colors(length(g_idx),{'w','k',[1 1 0],[1 1 1]*.8});
     clrs(:) = .8;
     for ac_idx = 1:length(g_idx)
-        
+        current_amp_vs_freq = zeros(4,2);
+        freq = zeros(4);
+
         DRUGS = {'AchI','TTX','4AP_TEA'};
         clear tag_collections_ tag_collections_VS
         
@@ -159,7 +181,7 @@ for type_idx = 1:length(geno_idx)
                 
                 trials = findLikeTrials('name',trial.name);
 
-         % store that in some structure
+                % store that in some structure
                 Z = zeros(size(xwin));
                 s = VoltageSineStim(trial.params)/trial.params.amp;
                 Vz = hilbert(s);
@@ -217,12 +239,14 @@ for type_idx = 1:length(geno_idx)
 
             current_cycles = zeros(N,size(current_,2));
             for c = 2:3 %size(current_cycles,2)
-                y = zeros(N,length(diff(ascd)));
-                y_inwin = g_diff(:,c);
+                yhigh = zeros(N,length(diff(ascd)));
+                %y_inwin = g_diff(:,c);
+                y_inwin = current_(:,c);
                 for dN = 1:length(diff(ascd))
-                    y(:,dN) = y_inwin(ascd(dN):ascd(dN)+N-1);
+                    yhigh(:,dN) = y_inwin(ascd(dN):ascd(dN)+N-1);
                 end
-                current_cycles(:,c) = mean(y,2);
+                current_cycles(:,c) = mean(yhigh,2);
+                current_amp_vs_freq(r,c-1) = max(current_cycles(:,c)-min(current_cycles(:,c)));
             end
             
             drugs_ = drugs;
@@ -239,11 +263,11 @@ for type_idx = 1:length(geno_idx)
             for c = 1:length(drugs_)
                 drugax = findobj('type','axes','tag',[drugs_{c} '_c_' num2str(type_idx)]);
                 line(x_,current_cycles(:,c),'parent',drugax,'color',clr,'tag',num2str(trial.params.freqs(r)),'DisplayName',ac.name);
-                drawnow
+                
             end
             drugax = findobj(figure7_Sbtrct,'type','axes','tag',['remainder_c_' num2str(type_idx)]);
             line(x_,current_cycles(:,c+1),'parent',drugax,'color',clr,'tag',num2str(trial.params.freqs(r)),'DisplayName',ac.name);
-
+            
             x_start = x_(end) + lilgap;
             figure(figure7_Sbtrct)
             drawnow;
@@ -253,7 +277,7 @@ for type_idx = 1:length(geno_idx)
             line([0 x_(end)],[0 0],'parent',drugax,'color',clr,'DisplayName',ac.name);
             baseax = findobj('type','axes','tag',[drugs_{c} '_b_' num2str(type_idx)]);
             line(0,mean(baselinecurrent_(:,c)),'parent',baseax,'linestyle','none','marker','o','markeredgecolor',[0 0 0],'markerfacecolor','none');
-            set([drugax baseax],'ylim',[-.2 1])
+            set([drugax baseax],'ylim',[-50 80])
         end
         drugax = findobj('type','axes','tag',['remainder_c_' num2str(type_idx)]);
         line([0 x_(end)],[0 0],'parent',drugax,'color',[.8 .8 .8],'DisplayName',ac.name);
@@ -261,48 +285,84 @@ for type_idx = 1:length(geno_idx)
         line(0,mean(baselinecurrent_(:,end)),'parent',baseax,'linestyle','none','marker','o','markeredgecolor',[0 0 0],'markerfacecolor','none');
         set([drugax baseax],'ylim',[-70 100])
         
+        for c = 2:length(drugs_)            
+            ampaxdrug = findobj('type','axes','tag',[drugs_{c} '_a_' num2str(type_idx)]);
+            line(trial.params.freqs,current_amp_vs_freq(:,c-1),'parent',ampaxdrug,'color',clr,'tag',num2str(ac_idx),'DisplayName',ac.name);
+            drawnow
+        end
+
     end
 end
 
 % savePDFandFIG(figure7_Sbtrct,'C:\Users\tony\Dropbox\AzevedoWilson_B1_MS\Figure8_Sinusoidal_voltage_commands\draft_material',[],['VoltageSineConductances_' sprintf('%.0f',ENa)]);
+%% Clean up and look at frequency dependence of K current
+B1highKNormax = findobj('type','axes','tag','TTX_a_2'); cla(B1highKNormax)
+B1mlKNormax = findobj('type','axes','tag','TTX_a_3'); cla(B1mlKNormax)
 
+B1highKax = findobj('type','axes','tag','4AP_TEA_a_2');
+set(B1highKax,'box','off','tickdir','out','xcolor',[0 0 0],'xtick',[25 100 141 200])%,'ycolor',[1 1 1],'ytick',[]);
+xlabel(B1highKax,'f (Hz)');
+ylabel(B1highKax,'Amp');
 
-%% Go through and average and clean up all the axes.
-% close(figure7_Sbtrct)
-% close(figure7_Z)
-
-ENastr = '115';
-uiopen(['C:\Users\tony\Dropbox\AzevedoWilson_B1_MS\Figure8_Sinusoidal_voltage_commands\draft_material\VoltageSineConductances_' ENastr '.fig'],1)
-figure7_Sbtrct = gcf;
-
-
-for type_idx = 1:length(geno_idx)
-    DRUGS = {'AchI','TTX','4AP_TEA'};
-    drugax = findobj(figure7_Sbtrct,'type','axes','tag',[DRUGS{1} '_c_' num2str(type_idx)]);
-    %set(drugax,'ylim',[-50 80])
-    
-    for c = 2:3
-        drugax = findobj(figure7_Sbtrct,'type','axes','tag',[DRUGS{c} '_c_' num2str(type_idx)]);
-        set(drugax,'ylim',[-.2 1])
-        for r = 1:length(trial.params.freqs)
-            l = findobj(drugax,'type','line','tag',num2str(trial.params.freqs(r)));
-            y = cell2mat(get(l,'ydata'));
-            
-            line(get(l(1),'xdata'),mean(y,1),'parent',drugax,'color',[0 0 0],'tag',['y_' num2str(trial.params.freqs(r))],'DisplayName',[num2str(trial.params.freqs(r)) ' Hz']);
-            sem_up = std(y,[],1)/sqrt(length(l));
-            y_ = mean(y,1);
-            sem_down = y_-sem_up;
-            sem_up = y_+sem_up;
-            
-            line(get(l(1),'xdata'),sem_up,'parent',drugax,'color',[.7 .7 .7],'tag',['sem_up_' num2str(trial.params.freqs(r))],'DisplayName',[num2str(trial.params.freqs(r)) ' Hz']);
-            line(get(l(1),'xdata'),sem_down,'parent',drugax,'color',[.7 .7 .7],'tag',['sem_down_' num2str(trial.params.freqs(r))],'DisplayName',[num2str(trial.params.freqs(r)) ' Hz']);
-            delete(l);
-        end
-    end
-
+l = findobj(B1highKax,'type','line');
+yhigh = get(l(1),'YData');
+yhigh = repmat(yhigh,length(l),1);
+xhigh = get(l(1),'YData');
+xhigh = repmat(xhigh,length(l),1);
+for l_ = 1:length(l)
+    z = copyobj(l(l_),B1highKNormax);
+    z.YData = z.YData/mean(z.YData);
+    yhigh(l_,:) = z.YData;
+    xhigh(l_,:) = z.XData;
 end
 
-% savePDF(figure7_Sbtrct,'C:\Users\tony\Dropbox\AzevedoWilson_B1_MS\Figure8_Sinusoidal_voltage_commands\draft_material',[],['VoltageSineConductances_' ENastr]);
+a = xhigh(:,2:end);
+a = a(:);
 
+b = yhigh(:,2:end);
+b = b(:);
 
+[R,P]=corrcoef(a,b)
+line(xhigh(1,2:end),[1 1 1],'parent',B1highKNormax,'color',[1 0 0]);
+text(xhigh(1,end),1,['R=' num2str(R(1,2)) '; P=' num2str(P(1,2))],'parent',B1highKNormax,'HorizontalAlignment','right','VerticalAlignment','bottom');
+
+set(B1highKNormax,'box','off','tickdir','out','xcolor',[0 0 0],'xtick',[25 100 141 200])%,'ycolor',[1 1 1],'ytick',[]);
+xlabel(B1highKNormax,'f (Hz)');
+ylabel(B1highKNormax,'Amp/mean(Amp)');
+title(B1highKNormax,'B1-high');
+
+% - B1 mid low
+B1midlowKax = findobj('type','axes','tag','4AP_TEA_a_3');
+set(B1midlowKax,'box','off','tickdir','out','xcolor',[0 0 0],'xtick',[25 100 141 200])%,'ycolor',[1 1 1],'ytick',[]);
+xlabel(B1midlowKax,'f (Hz)');
+ylabel(B1midlowKax,'Amp');
+
+l = findobj(B1midlowKax,'type','line');
+yml = get(l(1),'YData');
+yml = repmat(yml,length(l),1);
+xml = get(l(1),'YData');
+xml = repmat(xml,length(l),1);
+for l_ = 1:length(l)
+    z = copyobj(l(l_),B1mlKNormax);
+    z.YData = z.YData/mean(z.YData);
+    yml(l_,:) = z.YData;
+    xml(l_,:) = z.XData;
+end
+
+a = xml(:,2:end);
+a = a(:);
+
+b = yml(:,2:end);
+b = b(:);
+
+[R,P]=corrcoef(a,b)
+line(xhigh(1,2:end),[1 1 1],'parent',B1mlKNormax,'color',[1 0 0]);
+text(xhigh(1,end),1,['R=' num2str(R(1,2)) '; P=' num2str(P(1,2))],'parent',B1mlKNormax,'HorizontalAlignment','right','VerticalAlignment','bottom');
+
+set(B1mlKNormax,'tickdir','out','xcolor',[0 0 0],'xtick',[25 100 141 200])%,'ycolor',[1 1 1],'ytick',[]);
+xlabel(B1mlKNormax,'f (Hz)');
+ylabel(B1mlKNormax,'Amp/mean(Amp)');
+title(B1mlKNormax,'B1-mid/low');
+
+savePDFandFIG(figure7_Amps,'C:\Users\tony\Dropbox\AzevedoWilson_B1_MS\Figure8_Sinusoidal_voltage_commands',[],['Figure8_AmplitudeVsFreqCorr']);
 

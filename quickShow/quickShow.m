@@ -980,6 +980,7 @@ helperfuncs = ...
 'rename_tag'
 'cleanuptags'
 'excludeBlock_toggle'
+'removeSpikes'
 };
 set(hObject,'String',helperfuncs);
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
@@ -1105,6 +1106,28 @@ if strcmp(button,'Yes')
 else
     trial = handles.trial;
     save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
+end
+
+guidata(hObject, handles);
+
+function removeSpikes(hObject,eventdata,handles)
+button = questdlg('RemoveSpikes for entire block?','Remove Spikes','Yes');
+if strcmp(button,'Cancel'), return, end
+
+handles = guidata(hObject);
+if strcmp(button,'Yes')
+    nums = findLikeTrials_includingExcluded('name',handles.trial.name,'datastruct',handles.prtclData,...
+        'exclude',{'step','amp','displacement','freq'});
+    for n_ind = 1:length(nums);
+        trial = load(fullfile(handles.dir,sprintf(handles.trialStem,nums(n_ind))));
+        trial = rmfield(trial,'spikes');
+        save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
+    end
+else
+    trial = handles.trial;
+    trial = rmfield(trial,'spikes');
+    save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
+    handles.trial = trial;
 end
 
 guidata(hObject, handles);
