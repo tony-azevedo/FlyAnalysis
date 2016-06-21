@@ -4,10 +4,10 @@
 
 close all
 types = {
-%     'a2_cell'
+    'a2_cell'
     'fru_cell'
     'vt_cell'
-    'offtarget_cell'
+%    'offtarget_cell'
     };
 
 figure5 = figure;
@@ -56,7 +56,7 @@ for t_ind = 1:3
     end
     
     pnl(r+1,t_ind).pack('h',{1/2 1/2});
-    iv_ax = pnl(r+1,t_ind,1).select();
+    iv_ax = pnl(r+1,t_ind,1).select(); set(iv_ax,'tag','iv_ax')
     ramp_ax = pnl(r+1,t_ind,2).select();
     pnl(r+1,t_ind).marginbottom = 16;
     hold(iv_ax,'on');
@@ -200,6 +200,28 @@ for t_ind = 1:3
     figure(figure5)
     drawnow
 end
+% 
+% savedir = '/Users/tony/Dropbox/AzevedoWilson_B1_MS/Figure5/';
+% savePDF(figure5,savedir,[],'Figure5_CsPara_IntrinsicProperties')
 
-savedir = '/Users/tony/Dropbox/AzevedoWilson_B1_MS/Figure5/';
-savePDF(figure5,savedir,[],'Figure5_CsPara_IntrinsicProperties')
+%% Average steps and save for intrinsic properties supplemental figure
+
+iv_axs = findobj(figure5,'tag','iv_ax');
+
+for idx = 1:length(iv_axs)
+    ax = iv_axs(idx);
+    ls = findobj(ax,'type','line');
+    V = ls(1).XData;
+    I = ls(1).YData;
+    I = repmat(I,length(ls),1);
+    for lidx = 1:length(ls)
+        I(lidx,:) = ls(lidx).YData;
+    end
+    sem_ = std(I,[],1)/sqrt(length(ls));
+    errorbar(ax,V,mean(I,1),sem_,'k');
+
+end
+
+savedir = 'C:\Users\tony\Dropbox\AzevedoWilson_B1_MS\Figure7_Step_voltage_commands_IV_curves';
+savePDF(figure5,savedir,[],'Figure7_CsPara_IntrinsicProperties')
+
