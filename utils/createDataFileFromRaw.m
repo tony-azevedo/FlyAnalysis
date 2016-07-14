@@ -7,6 +7,11 @@ function varargout = createDataFileFromRaw(dfn,varargin)
 % if  ~isempty(dir(dfn)) && ~override
 %     return
 % end
+
+%% performance test
+% 160706 - 160630_F1_C1: 16.36 seconds - 160630_F2_C1: 3.27 seconds 
+%
+tic 
 dfn = regexprep(dfn,'Acquisition','Raw_Data');
 
 [filename,remain] = strtok(dfn,filesep);
@@ -137,5 +142,6 @@ for p = 1:length(protocols)
     save(dfns{p},'data');
     fprintf('\t%s\n',protocols{p});
 end
-
+fprintf('Done creating and renaming raw files: %s',D)
+toc
 varargout = {dfn,dfns};

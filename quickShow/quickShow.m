@@ -31,6 +31,9 @@ gui_State = struct('gui_Name',       mfilename, ...
                    'gui_LayoutFcn',  [] , ...
                    'gui_Callback',   []);
 
+% setpref('USERDIRECTORY','MAC','/Users/tony')
+% setpref('USERDIRECTORY','PC','C:\Users\tony')
+
 if nargin
     str2test = varargin{1};
 end
@@ -488,6 +491,9 @@ delete(get(handles.quickShowPanel,'children'))
 %% helper button callbacks
 function figButton_Callback(hObject, eventdata, handles)
 fig = figure('color',[1 1 1]);
+set(fig,'Units',get(handles.quickShowPanel,'Units'));
+set(fig,'Position',get(handles.quickShowPanel,'position'));
+
 childs = get(handles.quickShowPanel,'children');
 copyobj(childs,fig);
 findobj(fig,'ButtonDownFcn',@showClickedImage);
@@ -516,10 +522,12 @@ trialnum_Callback(handles.trialnum,[],handles)
 
 
 function epsButton_Callback(hObject, eventdata, handles)
-
 fig = figure('color',[1 1 1]);
+set(fig,'Units',get(handles.quickShowPanel,'Units'));
+set(fig,'Position',get(handles.quickShowPanel,'position'));
+
 childs = get(handles.quickShowPanel,'children');
-copyobj(childs,repmat(fig,size(childs)));
+copyobj(childs,fig);
 findobj(fig,'ButtonDownFcn',@showClickedImage);
 
 % cp = uipanel('Title',handles.currentPrtcl,'FontSize',12,...
