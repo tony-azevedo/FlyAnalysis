@@ -221,7 +221,7 @@ changeFileNames = isempty(strfind(trial.name,filesep)) || ~isfield(trial,'name_m
 % Creating the data file and testing what platform I'm on and what the name should be
 if ~length(dataFileExist) || length(d.data) ~= length(rawfiles) || changeFileNames
     createDataFileFromRaw(handles.prtclDataFileName);
-    FlySoundDataStruct2csv(handles.prtclDataFileName);
+    %FlySoundDataStruct2csv(handles.prtclDataFileName);
     d = load(handles.prtclDataFileName);
 end
 
