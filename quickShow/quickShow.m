@@ -214,7 +214,10 @@ if length(dataFileExist)
 end
 
 trial = load(fullfile(handles.dir,rawfiles(1).name));
-changeFileNames = isempty(strfind(trial.name,filesep)) || ~isfield(trial,'name_mac');
+changeFileNames = isempty(strfind(trial.name,filesep)); %|| ~isfield(trial,'name_mac');
+if changeFileNames
+    error('On the wrong system');
+end
 % once all cells have been examined, next line can be commented out.
 % changeFileNames = true;
 
@@ -448,7 +451,7 @@ guidata(hObject,handles);
 
 % --- Executes during object creation, after setting all properties.
 function analysis_popup_CreateFcn(hObject, eventdata, handles)
-analyses = what('Analysis');
+analyses = what('postHocAnalysis');
 for i = 1:length(analyses.m)
     analyses.m{i} = regexprep(analyses.m{i},'\.m','');
 end

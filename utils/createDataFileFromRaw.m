@@ -130,7 +130,7 @@ for p = 1:length(protocols)
             if numImages > length(trial.exposure_time)
                 error('Problem moving files into %s',fullfile(imdir,'extras'));
             end
-            save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
+            % save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
         end
     end
     for f = 1:length(rawfiles)

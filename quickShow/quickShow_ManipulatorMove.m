@@ -15,7 +15,6 @@ if isfield(obj.trial,'voltage')
     voltage = obj.trial.voltage(1:length(x));
     current = obj.trial.current(1:length(x));
 end
-% sgsmonitor = obj.trial.sgsmonitor(1:length(x));
 
 [prot,d,fly,cell,trial] = extractRawIdentifiers(obj.trial.name);
 panl.title(sprintf('%s', [prot '.' d '.' fly '.' cell '.' trial]));
@@ -38,10 +37,10 @@ if isfield(obj.trial,'voltage')
 end
 
 
-if isfield(obj.trial,'exposure')
+if isfield(obj.trial.params,'coordinate')
     ax2 = panl(2).select();
     
-    line(x,obj.trial.exposure,'parent',ax2,'color',[0 0 1],'tag',savetag);
+    line(x,ManipulatorMoveStim(obj.trial.params),'parent',ax2,'color',[0 0 1],'tag',savetag);
     ylabel(ax2,'exposure'); %xlim([0 max(t)]);
     box(ax2,'off'); set(ax2,'TickDir','out','tag','quickshow_outax'); axis(ax2,'tight');
     xlabel(ax2,'Time (s)'); %xlim([0 max(t)]);

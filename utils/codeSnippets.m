@@ -161,5 +161,9 @@ ylims(2) = max([ylims(2) max(current_diff(x>i &x<f))]);
 
 ylims = [...
     min([ylims(1) min(get(pnl1,'ylim'))]),...
-    max([ylims(2) max(get(pnl1,'ylim')))])];
+    max([ylims(2) max(get(pnl1,'ylim'))])];
 
+%% exposure times
+t = makeInTime(trial.params);
+trial.exposure_time = t(trial.exposure);
+    

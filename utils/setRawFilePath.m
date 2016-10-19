@@ -2,6 +2,12 @@ function t = setRawFilePath(t)
 
 n0 = t.name;
 
+if ~isempty(strfind(t.name,'tony')) && isempty(strfind(t.name,'Anthony'))
+    return;
+else
+    fprintf('Old naming cnvtn - ');
+    keyboard
+end
 t.name = regexprep(t.name,'Acquisition','Raw_Data');
 
 pcpath = getpref('USERDIRECTORY','PC');
