@@ -1,4 +1,4 @@
-function h = PiezoStepAverage(h,handles,savetag)
+function h = ManipulatorStepAverage(h,handles,savetag)
 
 trials = findLikeTrials('name',handles.trial.name,'datastruct',handles.prtclData);
 if isempty(h) || ~ishghandle(h)
@@ -31,7 +31,7 @@ end
 plot(ax,x,y,'color',[1, .7 .7],'tag',savetag); hold on
 plot(ax,x,mean(y,2),'color',[.7 0 0],'tag',savetag);
 %xlim([-.1 trial.params.stimDurInSec+ min(.15,trial.params.postDurInSec)])
-xlim([-1 2])
+xlim([-2 2])
 % text(-.09,mean(mean(y(x<0),2),1),...
 %     [num2str(trial.params.displacement *3) ' \mum'],...
 %     'fontsize',7,'parent',ax,'tag',savetag)

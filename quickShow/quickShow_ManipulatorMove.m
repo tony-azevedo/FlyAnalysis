@@ -38,12 +38,18 @@ end
 
 
 if isfield(obj.trial.params,'coordinate')
-    ax2 = panl(2).select();
-    
-    line(x,ManipulatorMoveStim(obj.trial.params),'parent',ax2,'color',[0 0 1],'tag',savetag);
-    ylabel(ax2,'exposure'); %xlim([0 max(t)]);
-    box(ax2,'off'); set(ax2,'TickDir','out','tag','quickshow_outax'); axis(ax2,'tight');
+    [~,m] = ManipulatorMoveStim(obj.trial.params);
+    panl(2).pack('v',size(m,1));
+
+    for i = 1:size(m,1)
+        ax2 = panl(2,i).select();
+        line(x,m(i,:),'parent',ax2,'color',[0 0 1],'tag',savetag);
+        ylabel(ax2,['coord ' num2str(i)]); %xlim([0 max(t)]);
+        box(ax2,'off'); 
+        set(ax2,'TickDir','out');axis(ax2,'tight');
+    end
     xlabel(ax2,'Time (s)'); %xlim([0 max(t)]);
+    set(ax2,'TickDir','out','tag','quickshow_outax'); 
 end
 
 % % setupStimulus
