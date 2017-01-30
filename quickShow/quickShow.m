@@ -188,6 +188,15 @@ else
     end
     handles = reload_notes([],'loadCellFromDir',handles);
 
+    a = dir([handles.dir filesep '*_ContRaw*']);
+    for i = 1:length(a)
+        ind = regexpi(a(i).name,'_');
+        if ~isempty(strfind(char(65:90),a(i).name(1))) && ...
+                ~isempty(ind) && ...
+                ~sum(strcmp(protocols,a(i).name(1:ind(1)-1)))
+            protocols{end+1} = a(i).name(1:ind(1)-1);
+        end
+    end
     set(handles.protocolMenu, 'String', protocols,'value',1);
     guidata(handles.protocolMenu,handles)
     protocolMenu_Callback(handles.protocolMenu, [], handles);
@@ -200,7 +209,11 @@ handles.currentPrtcl = protocols{get(hObject,'value')};
 
 % give handles the information on the Trials involved
 rawfiles = dir(fullfile(handles.dir,[handles.currentPrtcl '_Raw*']));
-
+if length(rawfiles)==0
+    
+    contProtocolMenu_callback(hObject,eventdata,handles);
+    return
+end
 ind_ = regexp(rawfiles(1).name,'_');
 indDot = regexp(rawfiles(1).name,'\.');
 handles.trialStem = [rawfiles(1).name((1:length(rawfiles(1).name)) <= ind_(end)) '%d' rawfiles(1).name(1:length(rawfiles(1).name) >= indDot(1))];
@@ -241,6 +254,31 @@ guidata(hObject,handles)
 showMenu_CreateFcn(handles.showMenu, eventdata, handles);
 handles = guidata(hObject);
 trialnum_Callback(handles.trialnum,[],handles)
+
+
+function contProtocolMenu_callback(hObject,eventdata,handles)
+rawfiles = dir(fullfile(handles.dir,[handles.currentPrtcl '_ContRaw*']));
+if length(rawfiles)==0
+    error('No continuous raw files either')
+end
+ind_ = regexp(rawfiles(1).name,'_');
+indDot = regexp(rawfiles(1).name,'\.');
+handles.trialStem = [rawfiles(1).name((1:length(rawfiles(1).name)) <= ind_(end)) '%d' rawfiles(1).name(1:length(rawfiles(1).name) >= indDot(1))];
+dfile = rawfiles(1).name(~(1:length(rawfiles(1).name) >= ind_(end) & 1:length(rawfiles(1).name) < indDot(1)));
+dfile = regexprep(dfile,'_ContRaw','');
+handles.prtclDataFileName = fullfile(handles.dir,dfile);
+
+dataFileExist = dir(handles.prtclDataFileName);
+if length(dataFileExist)
+    d = load(handles.prtclDataFileName);
+end
+
+% Creating the data file and testing what platform I'm on and what the name should be
+if ~length(dataFileExist) || length(d.data) ~= length(rawfiles)
+    createDataFileFromContRaw(handles.prtclDataFileName);
+    %FlySoundDataStruct2csv(handles.prtclDataFileName);
+    d = load(handles.prtclDataFileName);
+end
 
 
 function protocolMenu_CreateFcn(hObject, eventdata, handles)

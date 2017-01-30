@@ -1,4 +1,4 @@
-function quickShow_ManipulatorMove(plotcanvas,obj,savetag)
+function plotcanvas = SweepLegPosition(plotcanvas,obj,savetag,varargin)
 
 % setupStimulus
 delete(get(plotcanvas,'children'));
@@ -10,14 +10,11 @@ panl(1).marginbottom = 2;
 panl(2).marginbottom = 2;
 
 % setupStimulus
-x = ((1:obj.trial.params.sampratein*obj.params.durSweep) - obj.trial.params.preDurInSec*obj.trial.params.sampratein)/obj.trial.params.sampratein;
-if isfield(obj.trial,'voltage')
-    voltage = obj.trial.voltage(1:length(x));
-    current = obj.trial.current(1:length(x));
-end
+x = makeInTime(obj.trial.params);
 
 [prot,d,fly,cell,trial] = extractRawIdentifiers(obj.trial.name);
 panl.title(sprintf('%s', [prot '.' d '.' fly '.' cell '.' trial]));
+
 
 % displayTrial
 if isfield(obj.trial,'voltage')
@@ -27,10 +24,10 @@ if isfield(obj.trial,'voltage')
     end
     switch mode
         case 'VClamp'
-            line(x,current,'parent',ax1,'color',[1 0 0],'tag',savetag);
+            line(x,obj.trial.current,'parent',ax1,'color',[1 0 0],'tag',savetag);
             ylabel(ax1,'I (pA)'); %xlim([0 max(t)]);
         case 'IClamp'
-            line(x,voltage,'parent',ax1,'color',[1 0 0],'tag',savetag);
+            line(x,obj.trial.voltage,'parent',ax1,'color',[1 0 0],'tag',savetag);
             ylabel(ax1,'V_m (mV)'); %xlim([0 max(t)]);
     end
     box(ax1,'off'); set(ax1,'TickDir','out','tag','quickshow_inax'); axis(ax1,'tight');
@@ -40,18 +37,19 @@ if isfield(obj.trial,'legposition')
     panl(2).pack('v',2);
     lp = obj.trial.legposition;
     [fe,ti,ta] = legAngles(lp,'deg');
+%     [fe,ti,ta] = legPositions(lp,'delta');
            
     exp_times = find(obj.trial.exposure);
     frametimes = exp_times(obj.trial.frame_roi);
 
     plot(panl(2,1).select(),x(frametimes),ta,'tag',savetag)
-    ylim(panl(2,1).select(),[-90 90]);
+    ylim(panl(2,1).select(),[-50 10]);
     xlim(panl(2,1).select(),[x(1) x(end)]);
     ylabel(panl(2,1).select(),'tarsus'); %xlim([0 max(t)]);
     set(panl(2,1).select(),'TickDir','out'); 
 
     plot(panl(2,2).select(),x(frametimes),ti,'tag',savetag)
-    ylim(panl(2,2).select(),[-90 90]);
+    ylim(panl(2,2).select(),[10 70]);
     xlim(panl(2,2).select(),[x(1) x(end)]);
     ylabel(panl(2,2).select(),'tibia'); %xlim([0 max(t)]);
     set(panl(2,2).select(),'TickDir','out','tag','quickshow_outax'); 

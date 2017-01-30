@@ -29,7 +29,8 @@ analysis_grid = {...
 %tidm
 '160913_F1_C1'      '81A07-Gal4/20XUAS-mCD8:GFP'        'Banner cell. caffeine, manipulator movements, fill'
 
-% tirm
+%tilm
+'170104_F2_C1'      '16H01-Gal4/20XUAS-mCD8:GFP'        'No spikes, but depolarizations'
 
 %ltm1?
 '160915_F1_C1'      '91A02-Gal4/20XUAS-mCD8:GFP'        'Hmm. Shit is happening here, but no video. Not convincing'
@@ -42,12 +43,18 @@ analysis_grid = {...
 
 % tadm
 '161011_F1_C1'      '76E09-Gal4/20XUAS-mCD8:GFP'        'Very bright line! Maybe. No spikes, still!'
+% Something to do with tadm ?
+'161221_F1_C1'      '56F06-Gal4/20XUAS-mCD8:GFP'        'Great cell! Green, spiking, good recording, clear movement related activity.'
+% ??
+'161214_F1_C1'      '52D06-Gal4/20XUAS-mCD8:GFP'        'Great cell! Green, spiking, good recording, eventually crapped out, no video'
 
 % ltm2 ?
 '161109_F1_C1'      '63A03-Gal4/20XUAS-mCD8:GFP'        'Nothing, no leg movement either'
 
 % Unknown but useful
 '161123_F2_C2'      '16H01-Gal4/20XUAS-mCD8:GFP'        'John was watching, good recording, apparently, but no spiking, no leg movement'
+
+
 
 }
 
