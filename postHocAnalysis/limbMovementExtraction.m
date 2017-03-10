@@ -12,6 +12,13 @@ set(0, 'DefaultAxesFontName', 'Arial');
 % make movie and pdf of each data file
 filename = h.name;
 moviename = [regexprep(filename, {'Acquisition','_Raw_'},{'Raw_Data','_Images_'}) '.avi'];
+checkdir = dir(moviename);
+if ~length(checkdir)
+    foldername = regexprep(moviename, '.mat.avi','\');
+    moviename = dir([foldername protocol '_Image_*']);
+    moviename = [foldername moviename(1).name];
+    fprintf(1,'Looking for a folder named %s\n',foldername);
+end
 filename = [protocol '_Raw_' dateID '_' flynum '_' cellnum '_' trialnum '.mat'];
 
 
@@ -102,15 +109,15 @@ open(writerObj);
 
 %% Go through the frames, clicking on the femur, the tibia, the tarsus
 measuref = figure;           
-set(measuref,'position',[20 240 vid.Width vid.Height]);
+set(measuref,'position',[20 240 560 488]);
 
 camax = axes('parent',measuref,'units','normalized','position',[0 0 1 1]);
 set(camax,'box','on','xtick',[],'ytick',[],'tag','camax');
 colormap(camax,'gray')
 
 displayf = figure;           
-set(displayf,'position',[720 40 vid.Width vid.Height+200]);
-dispax = axes('parent',displayf,'units','pixels','position',[0 200 vid.Width vid.Height]);
+set(displayf,'position',[720 40 560 488+200]);
+dispax = axes('parent',displayf,'units','pixels','position',[0 200 560 488]);
 set(dispax,'box','on','xtick',[],'ytick',[],'tag','dispax');
 colormap(dispax,'gray')
 
@@ -119,7 +126,7 @@ x = t(t>=t_win(1)&t<=t_win(2));
 v = h.voltage(t>=t_win(1)&t<=t_win(2));
 y = nan(size(x));
 
-traceax = axes('parent',displayf,'units','pixels','position',[0 0 vid.Width 200]);
+traceax = axes('parent',displayf,'units','pixels','position',[0 0 560 200]);
 set(traceax,'box','on','xtick',[],'ytick',[],'tag','traceax','ylim',[min(v) max(v)],'xlim',t_win);
 hold(traceax,'on');
 
@@ -130,11 +137,16 @@ ta = nan(size(frame_times_roi));
 
 legposition = nan(4,2,length(mov));
 for kk = 1:length(mov)
-    imagesc(mov(kk).cdata,'parent',camax);    
+    imagesc(mov(kk).cdata,'parent',camax);  
+    if kk>1
+        hold(camax,'on');
+        leg_outline = plot(camax,legx,legy,'linestyle','none','marker','o','markeredgecolor',[0 1 0]);
+        hold(camax,'on');
+    end
     a = getline(camax);
     while size(a,1)~=4
         beep
-        fprintf('Leg must have 4 points: femur, tib, tars ')
+        fprintf('Leg must have 4 points: femur, tib, tars \n')
         a = getline(camax);
     end 
     mov(kk).legposition = a;

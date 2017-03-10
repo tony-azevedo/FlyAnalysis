@@ -357,21 +357,23 @@ if ~isdir(imdir) || length(dir(imdir))==2
 elseif isdir(imdir) && length(dir(imdir))>2
     set(handles.image_button,'enable','on');
     imagefiles = dir(imdir);
-    i_info = imfinfo(fullfile(imdir,imagefiles(3).name));
-    if isempty(strfind(i_info(1).ImageDescription,'Hamamatsu'))
-        chan = str2num(i_info(1).ImageDescription(regexp(i_info(1).ImageDescription,'state.acq.numberOfChannelsSave=','end')+1));
-        imstr = sprintf('Image: %d x %d x %d chan x %d',...
-            i_info(1).Width,...
-            i_info(1).Height,...
-            chan,...
-            length(i_info)/chan);
-    elseif ~isempty(strfind(i_info(1).ImageDescription,'Hamamatsu'))
-        imstr = sprintf('Image: %d x %d',...
-            i_info(1).Width,...
-            i_info(1).Height);        
-    end
+    if isempty(strfind(imagefiles(3).name,'.avi'));
+        i_info = imfinfo(fullfile(imdir,imagefiles(3).name));
+        if isempty(strfind(i_info(1).ImageDescription,'Hamamatsu'))
+            chan = str2num(i_info(1).ImageDescription(regexp(i_info(1).ImageDescription,'state.acq.numberOfChannelsSave=','end')+1));
+            imstr = sprintf('Image: %d x %d x %d chan x %d',...
+                i_info(1).Width,...
+                i_info(1).Height,...
+                chan,...
+                length(i_info)/chan);
+        elseif ~isempty(strfind(i_info(1).ImageDescription,'Hamamatsu'))
+            imstr = sprintf('Image: %d x %d',...
+                i_info(1).Width,...
+                i_info(1).Height);
+        end
         
-    set(handles.image_info,'String',imstr);
+        set(handles.image_info,'String',imstr);
+    end
 end
 if ~isfield(handles.trial,'ROI')
     set(handles.clear_ROI_button,'enable','off');
@@ -412,16 +414,28 @@ if get(handles.showmenu_chkbx,'value')
 else
     feval(str2func(handles.quickShowFunction),handles.quickShowPanel,handles,savetag);
     if isfield(handles.trial,'exposure') && (isfield(handles.trial,'imageNum') || 7 == exist(regexprep(regexprep(handles.trial.name(1:end-4),'Raw','Images'),'Acquisition','Raw_Data')))
-        obj = copyobj(handles.clearcanvas,get(handles.clearcanvas,'parent'));
-        pos = get(obj,'position');
-        set(obj,'position',get(obj,'position')+([0 pos(4) 0 0]))
-        set(obj,'callback',@(hObject,eventdata)quickShow('trialImages_Callback',hObject,eventdata,handles))
-        set(obj,'tag','image','String','Image');
+        if isempty(findobj('String','Image','Style','pushbutton'))
+            obj = copyobj(handles.loadstr_button,get(handles.loadstr_button,'parent'));
+            pos = get(obj,'position');
+            set(obj,'position',get(obj,'position')+([0 pos(4) 0 0]))
+            set(obj,'callback',@(hObject,eventdata)quickShow('trialImages_Callback',hObject,eventdata,handles))
+            set(obj,'tag','image','String','Image');
+        end
         
+        if isempty(findobj('String','avi+ephz','Style','pushbutton'))
+            obj = copyobj(handles.epsButton,get(handles.epsButton,'parent'));
+            pos = get(obj,'position');
+            set(obj,'position',get(obj,'position')+([0 pos(4) 0 0]))
+            set(obj,'callback',@(hObject,eventdata)quickShow('aviMoviesAndData_Callback',hObject,eventdata,handles))
+            set(obj,'tag','aviAndEphys','String','avi+ephz');
+        end
+
         drawnow
         addClickableExposureTimeline(handles,savetag);
     else
         obj2 = findobj(get(handles.clearcanvas,'parent'),'tag','image');
+        delete(obj2);
+        obj2 = findobj(get(handles.clearcanvas,'parent'),'tag','aviAndEphys');
         delete(obj2);
     end
     if get(handles.analyses_chckbox,'value')
@@ -718,24 +732,44 @@ if strcmp(get(hObject,'type'),'line')
 else
     exposureNum = 1;
 end
-feval(@playImages,handles.trial,handles.trial.params,exposureNum);
+feval(@playAviMovies,handles.trial,handles.trial.params,exposureNum);
+
+function aviMoviesAndData_Callback(hObject, eventdata, handles,varargin)
+handles = guidata(hObject);
+if strcmp(get(hObject,'type'),'line')
+    exposureNum = get(hObject,'userData');
+else
+    exposureNum = 1;
+end
+feval(@playAviAndData,handles.trial,handles.trial.params,exposureNum);
 
     
 function addClickableExposureTimeline(handles,savetag)
-x = (1:handles.trial.params.sampratein*handles.params.durSweep)/handles.trial.params.sampratein;
-if isfield(handles.trial.params,'preDurInSec')
-    x = ((1:handles.trial.params.sampratein*handles.params.durSweep) - handles.trial.params.preDurInSec*handles.trial.params.sampratein)/handles.trial.params.sampratein;
-end
-ax = findobj('tag','quickshow_outax','parent',handles.quickShowPanel);
-exposure = handles.trial.exposure(1:length(x));
-expostimes = x(logical(exposure));
-lims = get(ax,'ylim');
-for t= 1:length(expostimes)
-    l = line([expostimes(t) expostimes(t)],lims,'parent',ax,'color',[1 1 1] *.8,'tag',savetag,'userdata',t);
-    set(l,'ButtonDownFcn',@showClickedImage);
-end
-set(ax,'children',flipud(get(ax,'Children')));
+% x = (1:handles.trial.params.sampratein*handles.params.durSweep)/handles.trial.params.sampratein;
+% if isfield(handles.trial.params,'preDurInSec')
+%     x = ((1:handles.trial.params.sampratein*handles.params.durSweep) - handles.trial.params.preDurInSec*handles.trial.params.sampratein)/handles.trial.params.sampratein;
+% end
+% ax = findobj('tag','quickshow_outax','parent',handles.quickShowPanel);
+% exposure = handles.trial.exposure(1:length(x));
+% expostimes = x(logical(exposure));
+% lims = get(ax,'ylim');
+% for t= 1:length(expostimes)
+%     l = line([expostimes(t) expostimes(t)],lims,'parent',ax,'color',[1 1 1] *.8,'tag',savetag,'userdata',t);
+%     set(l,'ButtonDownFcn',@showClickedImage);
+% end
+% set(ax,'children',flipud(get(ax,'Children')));
 
+ax1 = findobj(handles.quickShowPanel,'tag','quickshow_outax');
+ax2 = findobj(handles.quickShowPanel,'tag','quickshow_inax');
+
+xlims = get(ax1,'xlim');
+ylims = get(ax1,'ylim');
+str = sprintf('%d Exposures, %.1f fps', sum(handles.trial.exposure),handles.trial.params.sampratein/mean(diff(find(handles.trial.exposure))));
+if ~isempty(xlims)
+    text(xlims(1)+.05*diff(xlims),ylims(2)-.05*diff(ylims),...
+        str,...
+        'parent',ax1,'fontsize',7,'tag','delete');
+end
 
 function showClickedImage(l,eventdata,handles)
 handles = guidata(l);

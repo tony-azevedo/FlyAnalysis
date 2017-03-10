@@ -41,8 +41,14 @@ analysis_grid = {...
 
 '161014_F1_C1'      '47F09-Gal4/20XUAS-mCD8:GFP'        'No spikes, no movement' %'Stray spikes! where did these come from?'
 
-% tadm
+% tadm - certainly looks like one, but it's not clear.
 '161011_F1_C1'      '76E09-Gal4/20XUAS-mCD8:GFP'        'Very bright line! Maybe. No spikes, still!'
+'170202_F2_C1'      '76E09-Gal4/20XUAS-mCD8:GFP'        'Spikes for sure!, still!'
+
+% talm
+'170207_F1_C1'      '76E09-Gal4/20XUAS-mCD8:GFP'        'Movement, beautiful responses'
+
+
 % Something to do with tadm ?
 '161221_F1_C1'      '56F06-Gal4/20XUAS-mCD8:GFP'        'Great cell! Green, spiking, good recording, clear movement related activity.'
 % ??
@@ -54,8 +60,8 @@ analysis_grid = {...
 % Unknown but useful
 '161123_F2_C2'      '16H01-Gal4/20XUAS-mCD8:GFP'        'John was watching, good recording, apparently, but no spiking, no leg movement'
 
-
-
+% EMG
+'161116_F1_C2'
 }
 
 clear analysis_cell analysis_cells
