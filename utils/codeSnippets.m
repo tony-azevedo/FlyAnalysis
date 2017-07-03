@@ -167,3 +167,6 @@ ylims = [...
 t = makeInTime(trial.params);
 trial.exposure_time = t(trial.exposure);
     
+%% extract elements from a cell array
+b = [a,{'r'}];
+

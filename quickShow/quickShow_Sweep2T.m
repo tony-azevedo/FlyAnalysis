@@ -56,7 +56,7 @@ set(ax2,'TickDir','out');
 
 % Trode 2 
 ax2 = subplot(3,1,2,'parent',plotcanvas);
-set(ax2,'tag','quickshow_inax');
+set(ax2,'tag','quickshow_inax_2');
 
 if strcmp('IClamp',obj.trial.params.mode_2)
     yname = 'voltage';

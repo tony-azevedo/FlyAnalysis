@@ -64,6 +64,17 @@ for p = 1:length(protocols)
     tags = repmat(tags,size(rawfiles));
     
     trialnums = nan(size(rawfiles));
+    savedirmat = ls(D)';
+    savedirconts = savedirmat(:)';
+
+    % Find all the matched avis, their trial nums, and their size
+    pattern = [trial.params.protocol,'_Image_(\d+)_' datestr(trial.timestamp,29) '-(\d+)-\d+.avi'];
+    matchedavifiles = regexp(savedirconts,pattern,'match');
+
+    if ~isempty(matchedavifiles)
+        aviFileAssignmentAssessment(trial.name);
+    end
+    
     for f = 1:length(rawfiles)
         trial = load([D rawfiles(f).name]);
         trial = setRawFilePath(trial);
@@ -95,42 +106,54 @@ for p = 1:length(protocols)
         end
         trialnums(f) = trial.params.trial;
         
-        if isfield(trial,'exposure')
+        if isfield(trial,'exposure') && (~isfield(trial,'imageFile') || exist(regexprep(trial.imageFile,'Acquisition','Raw_Data'),'file')~=2)
             % add an exposure time vector to the trial, and adjust images
             % and exposure vector to include only times associated 
             % with images
-            imdir = regexprep(trial.name,{'_Raw_','.mat'},{'_Images_',''});
-            fprintf('%s\n',imdir);
-
-            d = dir(fullfile(imdir,'*_Image_*'));
-            numImages = length(d);
             
-            t = makeInTime(trial.params);
-            
-            if numImages>0 && ~sum(trial.exposure)
-                % fucked up, no exposure input, but images were saved
-                [trial.exposure_time,trial.exposure] = exposureTimeFromImages(trial,imdir);
-            else
-                trial.exposure_time = t(trial.exposure);
-            end
-
-            % trial.exposure(cumsum(trial.exposure)>numImages) = 0;
-            trial.exposure_time = trial.exposure_time(1:min(numImages,length(trial.exposure_time)));
-            if numImages > length(trial.exposure_time)
-                mkdir(fullfile(imdir,'extras'))
-                for im_ind = numImages - diff([length(trial.exposure_time),numImages])+1:numImages
-                    imfilename = constructFilnameFromExposureNum(trial,im_ind);
-                    if ~isempty(imfilename)
-                        movefile(imfilename,fullfile(imdir,'extras'))
+            % This is the case where avi files are being stored, rather
+            % than image folders.
+            d = dir(fullfile(D,[trial.params.protocol,'_Image_' datestr(trial.timestamp,29) '*.avi']));
+            d2 = dir(fullfile(D,[trial.params.protocol,'_Images_' '*.avi']));
+            if length(d)
+                
+                
+                
+            elseif length(d2)
+                
+                imdir = regexprep(trial.name,{'_Raw_','.mat'},{'_Images_',''});
+                fprintf('%s\n',imdir);
+                
+                d = dir(fullfile(imdir,'*_Image_*'));
+                numImages = length(d);
+                
+                t = makeInTime(trial.params);
+                
+                if numImages>0 && ~sum(trial.exposure)
+                    % fucked up, no exposure input, but images were saved
+                    [trial.exposure_time,trial.exposure] = exposureTimeFromImages(trial,imdir);
+                else
+                    trial.exposure_time = t(trial.exposure);
+                end
+                
+                % trial.exposure(cumsum(trial.exposure)>numImages) = 0;
+                trial.exposure_time = trial.exposure_time(1:min(numImages,length(trial.exposure_time)));
+                if numImages > length(trial.exposure_time)
+                    mkdir(fullfile(imdir,'extras'))
+                    for im_ind = numImages - diff([length(trial.exposure_time),numImages])+1:numImages
+                        imfilename = constructFilnameFromExposureNum(trial,im_ind);
+                        if ~isempty(imfilename)
+                            movefile(imfilename,fullfile(imdir,'extras'))
+                        end
                     end
                 end
+                d = dir(fullfile(imdir,'*_Image_*'));
+                numImages = length(d);
+                if numImages > length(trial.exposure_time)
+                    error('Problem moving files into %s',fullfile(imdir,'extras'));
+                end
+                % save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
             end
-            d = dir(fullfile(imdir,'*_Image_*'));
-            numImages = length(d);
-            if numImages > length(trial.exposure_time)
-                error('Problem moving files into %s',fullfile(imdir,'extras'));
-            end
-            % save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
         end
     end
     for f = 1:length(rawfiles)

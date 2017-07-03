@@ -126,12 +126,12 @@ delete(handles.figure1)
 
 
 function folderButton_Callback(hObject, eventdata, handles)
-if ~isempty(strfind(pwd,'C:\Users\Anthony Azevedo\Raw_Data\'))
+if ~isempty(strfind(pwd,'B:\Raw_Data\'))
     [~, remain] = strtok(fliplr(pwd),'\');
     curdir = fliplr(remain);
 else
     if ispc
-    curdir = 'C:\Users\Anthony Azevedo\Raw_Data\';
+    curdir = 'B:\Raw_Data\';
     elseif ismac
     curdir = '/Users/tony/Raw_Data/';
     end        
@@ -349,31 +349,21 @@ end
 set(handles.allow_excluding,'value',0);
 set(handles.exclude,'enable','off');
 
-imdir = regexprep(handles.trial.name,{'_Raw_','.mat'},{'_Images_',''});
+% imdir = regexprep(handles.trial.name,{'_Raw_','.mat'},{'_Images_',''});
 
-if ~isdir(imdir) || length(dir(imdir))==2
+if ~isfield(handles.trial,'imageFile') || isempty(handles.trial.imageFile)
     set(handles.image_button,'enable','off');
     set(handles.image_info,'String','');
-elseif isdir(imdir) && length(dir(imdir))>2
+elseif isfield(handles.trial,'imageFile') && ~isempty(handles.trial.imageFile)
     set(handles.image_button,'enable','on');
-    imagefiles = dir(imdir);
-    if isempty(strfind(imagefiles(3).name,'.avi'));
-        i_info = imfinfo(fullfile(imdir,imagefiles(3).name));
-        if isempty(strfind(i_info(1).ImageDescription,'Hamamatsu'))
-            chan = str2num(i_info(1).ImageDescription(regexp(i_info(1).ImageDescription,'state.acq.numberOfChannelsSave=','end')+1));
-            imstr = sprintf('Image: %d x %d x %d chan x %d',...
-                i_info(1).Width,...
-                i_info(1).Height,...
-                chan,...
-                length(i_info)/chan);
-        elseif ~isempty(strfind(i_info(1).ImageDescription,'Hamamatsu'))
-            imstr = sprintf('Image: %d x %d',...
-                i_info(1).Width,...
-                i_info(1).Height);
-        end
-        
-        set(handles.image_info,'String',imstr);
-    end
+    exp = postHocExposure(handles.trial);
+    a = dir(regexprep(handles.trial.imageFile,'Acquisition','Raw_Data'));
+    samprate = handles.trial.params.sampratein;
+    imstr = sprintf('Exp: %d - rate: %.2f - size: %dMB',...
+        sum(exp.exposure),...
+        samprate/mean(diff(find(exp.exposure))),...
+        round(a.bytes/1E6));
+    set(handles.image_info,'String',imstr,'fontsize',7);
 end
 if ~isfield(handles.trial,'ROI')
     set(handles.clear_ROI_button,'enable','off');
@@ -915,25 +905,15 @@ guidata(hObject,handles)
 % --- Executes on button press in image_button.
 function image_button_Callback(hObject, eventdata, handles)
 handles = guidata(hObject);
-imdir = regexprep(handles.trial.name,{'Raw','.mat','Acquisition'},{'Images','','Raw_Data'});
-a = dir(imdir);
-for a_ind = 1:length(a)
-    if ~a(a_ind).isdir
-        fn = a(a_ind).name;
-        break
-    end
-end
-winopen(imdir);
-% javaaddpath 'C:\Program Files (x86)\MATLAB\R2013b\java\jar\ij-1.49g.jar'
-% javaaddpath 'C:\Program Files (x86)\MATLAB\R2013b\java\jar\mij.jar'
-% try a = MIJ.help;
-% catch
-%     Miji
-% end
-% 
-% pathstr = regexprep(sprintf('path=[%s]',fullfile(imdir,fn)),'\\','\\\');
-% MIJ.run('Open...', pathstr);
-% guidata(hObject,handles)
+vid = VideoReader(regexprep(handles.trial.imageFile,'Acquisition','Raw_Data'));
+imstr = sprintf('Video Reader Info, trial %d:\nDuration: %.2f\nFrameRate: %.2f\nSize: %d x %d x %.0f',...
+    handles.trial.params.trial,...
+    vid.Duration,...
+    vid.FrameRate,...
+    vid.Width,...
+    vid.Height,...
+    vid.FrameRate*vid.Duration);
+msgbox(imstr,'VideoReader Info')
 
 
 % --- Executes on button press in tag_button.

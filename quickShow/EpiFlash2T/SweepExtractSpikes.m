@@ -1,4 +1,4 @@
-function varargout = extractSpikes_v2(fig,handles,savetag,varargin)
+function varargout = SweepExtractSpikes(fig,handles,savetag,varargin)
 
 p = inputParser;
 p.PartialMatching = 0;
@@ -93,16 +93,16 @@ end
 
 ax = subplot(3,1,[1 2],'parent',fig);
 cla(ax,'reset')
-title(ax,[handles.currentPrtcl ' - ' num2str(handles.trial.params.stimDurInSec) ' s duration'])
+title(ax,[handles.currentPrtcl ' - ' num2str(handles.trial.params.durSweep) ' s duration'])
 
 hold(ax,'on')
 
 plot(ax,t,spike_waveform,'tag',savetag); hold on
 plot(ax,t,patch,'color',[1 .7 .7],'tag',savetag);
 spikes = t(spikelocs);
-spikelocs_ = spikelocs(spikes>-trial.params.preDurInSec+.1);
+spikelocs_ = spikelocs(spikes>.1);
 % spikes = spikes(spikes>-trial.params.preDurInSec+.1);
-plot(ax,t(spikelocs_),patch(spikelocs_),'.','color',[.7 0 0])
+plot(ax,t(spikelocs_),patch(spikelocs_),'.','color',[.7 0 0],'tag',savetag)
 
 axis(ax,'tight')
 % xlim(ax,[-.4 trial.params.stimDurInSec+ min(.8,trial.params.postDurInSec)])
@@ -116,8 +116,10 @@ drawnow
 %
 ax = subplot(3,1,3,'parent',fig);
 cla(ax)
-plot(ax,t,EpiFlashStim(trial.params),'color',[0 0 1],'tag',savetag); hold(ax,'on')
-plot(ax,t,trial.exposure,'color',[0 .7 .3],'tag',savetag); hold(ax,'on')
+% plot(ax,t,EpiFlashStim(trial.params),'color',[0 0 1],'tag',savetag); hold(ax,'on')
+if isfield(trial,'exposure')
+    plot(ax,t,trial.exposure,'color',[0 .7 .3],'tag',savetag); hold(ax,'on')
+end
 axis(ax,'tight')
 % xlim(ax,[-.4 trial.params.stimDurInSec+ min(.8,trial.params.postDurInSec)])
 

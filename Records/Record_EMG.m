@@ -1,6 +1,5 @@
 analysis_grid = {...
 % EMG
-'170224_F1_C1'  ''      ''
 '170224_F2_C1'  ''      ''
 '170227_F1_C1'  ''      ''
 '170227_F2_C1'  ''      ''
@@ -12,6 +11,7 @@ bummerreject_grid = {...
 % EMG
 '161116_F1_C2'  '' 'Early example. Nice units, but Im not sure its really movement and stuff';
 '170222_F1_C1'  '' 'No exposure!! Great signals though. Entered with right electrode, parallel to leg' 
+'170224_F1_C1'  ''      'no exposure again! there are videos those'
 }
 
 

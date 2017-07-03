@@ -38,6 +38,7 @@ analysis_grid = {...
 '160916_F1_C1'      '91A02-Gal4/20XUAS-mCD8:GFP'        'Maybe some activity, but nothing to confirm'
 
 '160922_F1_C1'      '22H10-Gal4/20XUAS-mCD8:GFP'        'Stray spikes! where did these come from?'
+'170419_F3_C1'      '22H10-Gal4/20XUAS-mCD8:GFP'        'Wow! beautfiful!'
 
 '161014_F1_C1'      '47F09-Gal4/20XUAS-mCD8:GFP'        'No spikes, no movement' %'Stray spikes! where did these come from?'
 
@@ -56,6 +57,8 @@ analysis_grid = {...
 
 % ltm2 ?
 '161109_F1_C1'      '63A03-Gal4/20XUAS-mCD8:GFP'        'Nothing, no leg movement either'
+'170419_F1_C1'      '63A03-Gal4/20XUAS-mCD8:GFP'        'Not great recording, but is consistent with F2 neuron'
+'170419_F2_C1'      '63A03-Gal4/20XUAS-mCD8:GFP'        'Movement, spontaneous spiking, then '
 
 % Unknown but useful
 '161123_F2_C2'      '16H01-Gal4/20XUAS-mCD8:GFP'        'John was watching, good recording, apparently, but no spiking, no leg movement'

@@ -1,4 +1,4 @@
-function h = responseWithVideo(h,handles,savetag,varargin)
+function h = roi(h,handles,savetag,varargin)
 [protocol,dateID,flynum,cellnum,trialnum,D] = extractRawIdentifiers(h.name);
 figpath = [D 'figs']; 
 if ~exist(figpath,'dir')
@@ -21,9 +21,7 @@ else
 end
 filename = [protocol '_Raw_' dateID '_' flynum '_' cellnum '_' trialnum '.mat'];
 
-switch h.params.mode; case 'VClamp', invec = 'current'; case 'IClamp', invec = 'voltage'; otherwise invec = 'voltage'; end   
 t = makeInTime(h.params);
-
 
 t_win = [t(1) t(end)];
 t_idx_win = [find(t>=t_win(1),1) find(t<=t_win(end),1,'last')];
@@ -85,103 +83,98 @@ t_idx_roi = find(h.exposure);
 % t_idx_roi = t_idx_roi(frame_roi);
 
 % open a movie
-output_video = [figpath '\' filename(1:end-4) '_Combined.avi'];
-
-writerObj = VideoWriter(output_video,'Motion JPEG AVI');
-writerObj.Quality = 100;
-fps = 1/mean(diff(t(h.exposure)));
-writerObj.FrameRate = fps;
-open(writerObj);
+% output_video = [figpath '\' filename(1:end-4) '_Combined.avi'];
+% 
+% writerObj = VideoWriter(output_video,'Motion JPEG AVI');
+% writerObj.Quality = 100;
+% fps = 1/mean(diff(t(h.exposure)));
+% writerObj.FrameRate = fps;
+% open(writerObj);
 
 displayf = figure;           
-set(displayf,'position',[720 40 640 512+100]);
-dispax = axes('parent',displayf,'units','pixels','position',[0 100 640 512]);
+set(displayf,'position',[40 40 1280 1024]);
+dispax = axes('parent',displayf,'units','pixels','position',[0 0 1280 1024]);
 set(dispax,'box','off','xtick',[],'ytick',[],'tag','dispax');
 colormap(dispax,'gray')
 
-% voltage trace vs time
-x = t(t>=t_win(1)&t<=t_win(2));
-% % going to plot this trace over the video in blue
-% x = x-x(1); x = x/x(end)*640;
-v = h.(invec)(t>=t_win(1)&t<=t_win(2));
-y = nan(size(x));
-
-if strcmp('EpiFlash',protocol)
-    epistim = EpiFlashStim(h.params);
-    epistim = epistim(t>=t_win(1)&t<=t_win(2));
-else
-    epistim = x*0;
-end
-traceax = axes('parent',displayf,'units','pixels','position',[0 0 640 100]);
-hold(traceax,'on');
-
-dE = 20;
-dT = abs(t(t_idx_roi(dE))-t(t_idx_roi(1)));
-
 kk = 0;
 frame0 = 1;
+k0 = find(t(t_idx_roi)>0,1,'first');
 while hasFrame(vid)
     kk = kk+1;
-    if kk<frame_roi(1)
+    if kk<k0
         readFrame(vid);
         continue
     elseif kk>frame_roi(end)
         break
     end
     
-    if frame0
-        frame0 = 0;
-        mov3 = readFrame(vid);
-        mov = mov3(:,:,1);
-        scale = [quantile(mov(:),0.025) 2*quantile(mov(:),0.975)];
-        im = imshow(mov,scale,'initialmagnification',50,'parent',dispax);
-        hold(dispax,'on');
-        
-        lastt_idx = 1;
-        currt_idx = t_idx_roi(kk);
-        y(lastt_idx+1:currt_idx) = v(lastt_idx+1:currt_idx);
-
-        voltage = plot(traceax,x,y,'color',[1 0 0]);
-        voltage.YDataSource = 'y';
-        %voltage.XDataSource = 'x';
-        
-        set(traceax,'box','off','xtick',[],'ytick',[],'tag','traceax','ylim',[min(v) max(v)],'xlim',[t_idx_roi(kk)-dT t_idx_roi(kk)],'color',[0 0 0]);
-        epi = plot(dispax,20,20,'o','markerfacecolor',[0 0 1],'markeredgecolor',[0 0 1],'visible','off');
-       
-    else
-        mov3 = readFrame(vid);
-        mov = mov3(:,:,1);
-        scale = [quantile(mov(:),0.025) 1.5*quantile(mov(:),0.975)];
-
-        set(im,'CData',mov);
-        %set(dispax,'Clim',scale)
-
-        if kk<=dE
-            start_idx = 1;
-        else
-            start_idx = t_idx_roi(kk-dE);
-        end
-        currt_idx = t_idx_roi(kk);
-        y(start_idx:currt_idx) = v(start_idx:currt_idx);
-        y(currt_idx:end) = nan;
-        y(1:start_idx-1) = nan;
-        
-        if epistim(currt_idx)>.2
-            set(epi,'visible','on');
-        else
-            set(epi,'visible','off');
-        end
-        refreshdata([voltage],'caller');
-        set(traceax,'xlim',[t(t_idx_roi(kk))-dT t(t_idx_roi(kk))]);
-
-    end
-    frame = getframe(displayf); 
-    writeVideo(writerObj,frame)
+    mov3 = readFrame(vid);
+    mov = mov3(:,:,1);
+    scale = [quantile(mov(:),0.025) 2*quantile(mov(:),0.975)];
+    im = imshow(mov,scale,'parent',dispax);
+    hold(dispax,'on');
     
-    lastt_idx = currt_idx;
+    if isfield(h,'ROI')
+        for roi_ind = 1:length(h.ROI)
+            line(h.ROI{roi_ind}(:,1),h.ROI{roi_ind}(:,2),'parent',roidrawax,'color',[1 0 0]);
+        end
+        button = questdlg('Make new ROI?','ROI','No');
+    else 
+        temp.ROI = getpref('quickshowPrefs','roiScimStackROI');
+        for roi_ind = 1:length(temp.ROI)
+            line(temp.ROI{roi_ind}(:,1),temp.ROI{roi_ind}(:,2),'parent',roidrawax,'color',[1 0 0]);
+        end
+        button = questdlg('Make new ROI?','ROI','No');   
+        if strcmp(button,'No');
+            h.ROI = temp.ROI;
+        end
+    end
+    if strcmp(button,'Yes');
+        h.ROI = {};
+        roihand = imfreehand(roidrawax,'Closed',1);
+        roi_temp = wait(roihand);
+        h.ROI{1} = roi_temp;
+        while ishandle(roifig) && sum(roi_temp(3:end)>2)
+            roihand = imfreehand(roidrawax,'Closed',1);
+            roi_temp = wait(roihand);
+            if size(roi_temp,1)<=2
+                break
+            end
+            h.ROI{end+1} = roi_temp;
+        end
+    end
+
+    break
 end
 
-close(writerObj)
+
+vid = VideoReader(moviename);
+
+kk = 0;
+I_traces = nan(N,length(h.ROI));
+
+while hasFrame(vid)
+    kk = kk+1;
+    
+    mov3 = readFrame(vid);
+    mov = mov3(:,:,1);
+    tic; fprintf('Calculating: ');
+    for roi_ind = 1:length(data.ROI)
+        I_masked = I0;
+        roihand = impoly(roidrawax,data.ROI{roi_ind});
+        mask = createMask(roihand);
+        I_masked(~repmat(mask,[1 1 num_frame num_chan]))=nan;
+        I_trace = squeeze(nanmean(nanmean(I_masked,2),1));
+        I_traces(:,:,roi_ind) = I_trace;
+    end
+    toc, fprintf('Closing');
+    close(roifig);
+    toc
+
+end
+
+
 %% Save stuff in the trial
 
 % It will be interesting to measure leg angles several times to measure

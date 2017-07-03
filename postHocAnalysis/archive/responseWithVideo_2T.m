@@ -1,4 +1,4 @@
-function h = responseWithVideo(h,handles,savetag,varargin)
+function h = responseWithVideo_2T(h,handles,savetag,varargin)
 [protocol,dateID,flynum,cellnum,trialnum,D] = extractRawIdentifiers(h.name);
 figpath = [D 'figs']; 
 if ~exist(figpath,'dir')
@@ -21,9 +21,9 @@ else
 end
 filename = [protocol '_Raw_' dateID '_' flynum '_' cellnum '_' trialnum '.mat'];
 
-switch h.params.mode; case 'VClamp', invec = 'current'; case 'IClamp', invec = 'voltage'; otherwise invec = 'voltage'; end   
+switch h.params.mode_1; case 'VClamp', invec1 = 'current_1'; case 'IClamp', invec1 = 'voltage_1'; otherwise; invec1 = 'voltage_1'; end   
+switch h.params.mode_2; case 'VClamp', invec2 = 'current_2'; case 'IClamp', invec2 = 'voltage_2'; otherwise; invec2 = 'voltage_2'; end   
 t = makeInTime(h.params);
-
 
 t_win = [t(1) t(end)];
 t_idx_win = [find(t>=t_win(1),1) find(t<=t_win(end),1,'last')];
@@ -94,8 +94,8 @@ writerObj.FrameRate = fps;
 open(writerObj);
 
 displayf = figure;           
-set(displayf,'position',[720 40 640 512+100]);
-dispax = axes('parent',displayf,'units','pixels','position',[0 100 640 512]);
+set(displayf,'position',[720 40 640 512+200],'color',[0 0 0]);
+dispax = axes('parent',displayf,'units','pixels','position',[0 200 640 512]);
 set(dispax,'box','off','xtick',[],'ytick',[],'tag','dispax');
 colormap(dispax,'gray')
 
@@ -103,19 +103,23 @@ colormap(dispax,'gray')
 x = t(t>=t_win(1)&t<=t_win(2));
 % % going to plot this trace over the video in blue
 % x = x-x(1); x = x/x(end)*640;
-v = h.(invec)(t>=t_win(1)&t<=t_win(2));
+v = h.(invec1)(t>=t_win(1)&t<=t_win(2));
+v2 = h.(invec2)(t>=t_win(1)&t<=t_win(2));
 y = nan(size(x));
+y2 = nan(size(x));
 
-if strcmp('EpiFlash',protocol)
+if strcmp('EpiFlash2T',protocol)
     epistim = EpiFlashStim(h.params);
     epistim = epistim(t>=t_win(1)&t<=t_win(2));
 else
     epistim = x*0;
 end
-traceax = axes('parent',displayf,'units','pixels','position',[0 0 640 100]);
+traceax = axes('parent',displayf,'units','pixels','position',[0 100 640 100]);
+traceax2 = axes('parent',displayf,'units','pixels','position',[0 0 640 100]);
 hold(traceax,'on');
+hold(traceax2,'on');
 
-dE = 20;
+dE = 40;
 dT = abs(t(t_idx_roi(dE))-t(t_idx_roi(1)));
 
 kk = 0;
@@ -133,19 +137,29 @@ while hasFrame(vid)
         frame0 = 0;
         mov3 = readFrame(vid);
         mov = mov3(:,:,1);
-        scale = [quantile(mov(:),0.025) 2*quantile(mov(:),0.975)];
-        im = imshow(mov,scale,'initialmagnification',50,'parent',dispax);
+%         scale = [quantile(mov(:),0.025) 2*quantile(mov(:),0.975)];
+%         im = imshow(mov,scale,'initialmagnification',50,'parent',dispax);
+        im = imshow(mov,'initialmagnification',50,'parent',dispax);
         hold(dispax,'on');
         
         lastt_idx = 1;
         currt_idx = t_idx_roi(kk);
         y(lastt_idx+1:currt_idx) = v(lastt_idx+1:currt_idx);
+        y2(lastt_idx+1:currt_idx) = v2(lastt_idx+1:currt_idx);
 
         voltage = plot(traceax,x,y,'color',[1 0 0]);
         voltage.YDataSource = 'y';
         %voltage.XDataSource = 'x';
         
-        set(traceax,'box','off','xtick',[],'ytick',[],'tag','traceax','ylim',[min(v) max(v)],'xlim',[t_idx_roi(kk)-dT t_idx_roi(kk)],'color',[0 0 0]);
+        ylim = [min(v)-1 max(v)+1];
+        set(traceax,'box','off','xtick',[],'ytick',[],'tag','traceax','ylim',ylim,'xlim',[t_idx_roi(kk)-dT t_idx_roi(kk)],'color',[0 0 0]);
+
+        voltage2 = plot(traceax2,x,y2,'color',[1 0 0]);
+        voltage2.YDataSource = 'y2';
+        %voltage.XDataSource = 'x';
+        
+        set(traceax2,'box','off','xtick',[],'ytick',[],'tag','traceax','ylim',[min(v2) max(v2)],'xlim',[t_idx_roi(kk)-dT t_idx_roi(kk)],'color',[0 0 0]);
+
         epi = plot(dispax,20,20,'o','markerfacecolor',[0 0 1],'markeredgecolor',[0 0 1],'visible','off');
        
     else
@@ -156,23 +170,29 @@ while hasFrame(vid)
         set(im,'CData',mov);
         %set(dispax,'Clim',scale)
 
-        if kk<=dE
+%         if kk<=dE
             start_idx = 1;
-        else
-            start_idx = t_idx_roi(kk-dE);
-        end
+%         else
+%             start_idx = t_idx_roi(kk-dE);
+%         end
         currt_idx = t_idx_roi(kk);
         y(start_idx:currt_idx) = v(start_idx:currt_idx);
         y(currt_idx:end) = nan;
         y(1:start_idx-1) = nan;
-        
+
+        y2(start_idx:currt_idx) = v2(start_idx:currt_idx);
+        y2(currt_idx:end) = nan;
+        y2(1:start_idx-1) = nan;
+
         if epistim(currt_idx)>.2
             set(epi,'visible','on');
         else
             set(epi,'visible','off');
         end
         refreshdata([voltage],'caller');
+        refreshdata([voltage2],'caller');
         set(traceax,'xlim',[t(t_idx_roi(kk))-dT t(t_idx_roi(kk))]);
+        set(traceax2,'xlim',[t(t_idx_roi(kk))-dT t(t_idx_roi(kk))]);
 
     end
     frame = getframe(displayf); 
