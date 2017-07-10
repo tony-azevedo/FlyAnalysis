@@ -66,14 +66,6 @@ for p = 1:length(protocols)
     trialnums = nan(size(rawfiles));
     savedirmat = ls(D)';
     savedirconts = savedirmat(:)';
-
-    % Find all the matched avis, their trial nums, and their size
-    pattern = [trial.params.protocol,'_Image_(\d+)_' datestr(trial.timestamp,29) '-(\d+)-\d+.avi'];
-    matchedavifiles = regexp(savedirconts,pattern,'match');
-
-    if ~isempty(matchedavifiles)
-        aviFileAssignmentAssessment(trial.name);
-    end
     
     for f = 1:length(rawfiles)
         trial = load([D rawfiles(f).name]);
@@ -105,7 +97,25 @@ for p = 1:length(protocols)
             tags(f).tags = {};
         end
         trialnums(f) = trial.params.trial;
-        
+    end
+    
+    for f = 1:length(rawfiles)
+        data(f).tags = tags(f).tags;
+    end
+    [~,order] = sort(trialnums);
+    data = data(order);
+    dfns{p} = regexprep(dfn,curprotocol,protocols{p});
+    
+    % Find all the matched avis, their trial nums, and their size
+    pattern = [trial.params.protocol,'_Image_(\d+)_' datestr(trial.timestamp,29) '-(\d+)-\d+.avi'];
+    matchedavifiles = regexp(savedirconts,pattern,'match');
+    
+    if ~isempty(matchedavifiles)
+        aviFileAssignmentAssessment(trial.name);
+    end
+
+    for f = 1:length(rawfiles)
+
         if isfield(trial,'exposure') && (~isfield(trial,'imageFile') || exist(regexprep(trial.imageFile,'Acquisition','Raw_Data'),'file')~=2)
             % add an exposure time vector to the trial, and adjust images
             % and exposure vector to include only times associated 
@@ -156,12 +166,7 @@ for p = 1:length(protocols)
             end
         end
     end
-    for f = 1:length(rawfiles)
-        data(f).tags = tags(f).tags;
-    end
-    [~,order] = sort(trialnums);
-    data = data(order);
-    dfns{p} = regexprep(dfn,curprotocol,protocols{p});
+    
     save(dfns{p},'data');
     fprintf('\t%s\n',protocols{p});
 end

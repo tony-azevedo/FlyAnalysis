@@ -43,3 +43,4 @@ trial.exposure = exp.exposure;
 
 save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
 
+close(gcf);

@@ -43,7 +43,8 @@ set(dispax,'box','off','xtick',[],'ytick',[],'tag','dispax');
 colormap(dispax,'gray')
 
 kk = 0;
-k0 = find(t(h2.exposure)>0,1,'first');
+k0 = find(t(h2.exposure)>0,5,'first');
+k0 = k0(end);
 while hasFrame(vid)
     kk = kk+1;
     if kk<k0

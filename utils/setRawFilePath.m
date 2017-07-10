@@ -2,8 +2,22 @@ function t = setRawFilePath(t)
 
 n0 = t.name;
 
-if ~isempty(strfind(t.name,'tony')) && isempty(strfind(t.name,'Anthony'))
+if isempty(strfind(t.name,'tony')) && isempty(strfind(t.name,'Anthony')) && strcmp(t.name(1:12),'B:\Raw_Data\')
     return;
+elseif ~isempty(strfind(t.name,'tony')) && isempty(strfind(t.name,'Anthony'))
+    t.name = regexprep(t.name,{'Acquisition','C:\\Users\\tony\\'},{'Raw_Data','B:\'});
+    if ~strcmp(n0,t.name);
+        fprintf('Saving Raw file - %s...%s...%s; \n',...
+            t.name(1:12),t.params.protocol,t.name(end-7:end))
+        if isfield(t,'imageFile') && ~isempty(t.imageFile)
+            t.imageFile = regexprep(t.imageFile,{'Acquisition','C:\\Users\\tony\\'},{'Raw_Data','B:\'});
+            fprintf('Saving Image file - %s...%s...%s; \n',...
+                t.imageFile(1:12),t.params.protocol,t.imageFile(end-15:end))
+        end
+        trial = t;
+        save(trial.name, '-struct', 'trial');
+    end
+    return
 else
     fprintf('Old naming cnvtn - ');
     keyboard

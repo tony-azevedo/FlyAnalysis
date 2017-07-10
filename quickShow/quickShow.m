@@ -130,11 +130,7 @@ if ~isempty(strfind(pwd,'B:\Raw_Data\'))
     [~, remain] = strtok(fliplr(pwd),'\');
     curdir = fliplr(remain);
 else
-    if ispc
     curdir = 'B:\Raw_Data\';
-    elseif ismac
-    curdir = '/Users/tony/Raw_Data/';
-    end        
 end
 handles.dir = uigetdir(curdir,'Choose cell folder');
 if ~handles.dir
@@ -1038,6 +1034,7 @@ helperfuncs = ...
 {
 'save_data_struct'
 'reload_notes'
+'skootch_exposure'
 'addTagsToSubplots'
 'clicky_on_image'
 'rename_tag'
@@ -1074,6 +1071,11 @@ end
 if ~isempty(hObject)
     guidata(hObject, handles);
 end
+
+function handles = skootch_exposure(hObject, eventdata, handles)
+handles.trial = skootchExposureNFrames(handles.trial);
+guidata(hObject, handles);
+
 
 function add_tags_to_subplots(hObject, eventdata, handles)  
 ax1 = findobj(handles.quickShowPanel,'tag','quickshow_outax');
