@@ -154,7 +154,7 @@ for idx = 1:length(umavitimestamp)
         tidx = [0 1];
     end
     if numel(tidx)~=2
-        keyboard
+        % keyboard
         fprintf('\tUnmatched AVI at %s recorded after raw file %d\n',datestr(umavitimestamp(idx),13),tidx(1));
         fprintf(notesFileID,'\tUnmatched AVI at %s recorded after raw file %d\n',datestr(umavitimestamp(idx),13),tidx(1));
         fprintf('\tArchiving AVI %s\n',unmatchedavifiles{idx});

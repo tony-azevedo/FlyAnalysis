@@ -1,6 +1,6 @@
 function h = EpiFlash2TAviRoi(h,handles,savetag)
 
-if ~isfield(handles.trial,'roitraces')
+if ~isfield(handles.trial,'clustertraces')
     return
 end
     
@@ -51,12 +51,40 @@ box(ax2,'off'); set(ax2,'TickDir','out','tag','quickshow_inax2'); axis(ax2,'tigh
 
 
 ax3 = panl(3).select();
-t2 = postHocExposure(trial,size(trial.roitraces,1));
-line(x,EpiFlashStim(trial.params)*max(max(trial.roitraces)),'parent',ax3,'color',[.9 .9 1],'tag',savetag);
-line(x(t2.exposure),trial.roitraces,'parent',ax3,'tag',savetag);
+t2 = postHocExposure(trial,size(trial.clustertraces,1));
+line(x,EpiFlashStim(trial.params)*max(trial.clustertraces(:)),'parent',ax3,'color',[.9 .9 1],'tag',savetag);
+clrs = parula(size(trial.clustertraces,2)+1);
+clrs = clrs(1:end-1,:);
+
+for cl = 1:size(trial.clustertraces,2)
+    ls = line(x(t2.exposure),trial.clustertraces(:,cl),'parent',ax3,'tag',savetag);
+    ls.Color = clrs(cl,:);
+end    
 
 ylabel(ax3,'F'); %xlim([0 max(t)]);
 box(ax3,'off'); set(ax3,'TickDir','out','tag','quickshow_outax'); axis(ax3,'tight');
 xlabel(ax3,'Time (s)'); %xlim([0 max(t)]);
+
+smooshedImagePath = regexprep(trial.name,{'_Raw_','.mat'},{'_smooshed_', '.mat'});
+iostr = load(smooshedImagePath);
+
+clfig = findobj('type','figure','tag','AVI_Clutsters');
+if isempty(clfig)
+    clfig = figure;
+    set(clfig,'position',[1200 10 640 512],'tag','AVI_Clutsters');
+    dispax = axes('parent',clfig,'units','pixels','position',[0 0 640 512]);
+    set(dispax,'box','off','xtick',[],'ytick',[],'tag','dispax');
+    colormap(dispax,'gray')
+    dispax.Tag = 'dispax';
+end
+dispax = findobj(clfig,'type','axes');
+imshow(iostr.smooshedframe,[0 2*quantile(iostr.smooshedframe(:),0.975)],'parent',dispax);
+for cl = 1:size(trial.clustertraces,2)
+    hold(dispax,'on')
+    alphamask(trial.clmask==cl,clrs(cl,:),.4,dispax);
+end
+hold(dispax,'off')
+figure(clfig);
+
 
 

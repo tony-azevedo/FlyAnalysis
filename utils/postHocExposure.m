@@ -7,7 +7,7 @@ if h.exposure(1) == 1 && ~islogical(h.exposure)
     exposure_1_0 = zeros(size(exposure));
     
     % turn exposure into a vector where the end of the exposure -> 1
-    exposure_1_0(1:end-1) = exposure(1:end-1).*~exposure(2:end); 
+    exposure_1_0(1:end-1) = exposure(1:end-1)&~exposure(2:end); 
     
     
     % Missed some exposures, find the closest samples
@@ -40,7 +40,7 @@ if h.exposure(1) == 1 && ~islogical(h.exposure)
     end
     h.exposure = logical(exposure_1_0);
 elseif isfield(h,'exposure_raw')
-    warning('Exposure vector has been skootched!')
+    fprintf(' * Exposure vector has been skootched!\n')
 else
    error('Exposure vector is not well conditioned for current analysis'); 
 end

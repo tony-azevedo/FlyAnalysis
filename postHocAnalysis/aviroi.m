@@ -56,11 +56,17 @@ while hasFrame(vid)
     
     mov3 = readFrame(vid);
     mov = mov3(:,:,1);
+    mov3 = readFrame(vid);
+    mov = mov+mov3(:,:,1);
+    mov3 = readFrame(vid);
+    mov = mov+mov3(:,:,1);
+    mov = mov/3;
 
     mask = {mov};
 
     scale = [quantile(mov(:),0.025) 2*quantile(mov(:),0.975)];
     im = imshow(mov,scale,'parent',dispax);
+%     im = imshow(mov,[],'parent',dispax);
     hold(dispax,'on');
     
     if isfield(h,'ROI')

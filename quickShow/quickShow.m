@@ -20,7 +20,7 @@ function varargout = quickShow(varargin)
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 
-% Last Modified by GUIDE v2.5 20-Jan-2016 18:03:34
+% Last Modified by GUIDE v2.5 28-Aug-2017 17:18:46
 
 %% Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -429,6 +429,7 @@ else
     end
 end
 add_tags_to_subplots(hObject, eventdata, handles)  
+showAnnotations(hObject)  
     
 function showMenu_Callback(hObject, eventdata, handles)
 showfunctions = get(handles.showMenu,'string');
@@ -995,8 +996,67 @@ handles = guidata(hObject);
 edit(handles.notesfilename);
 
 
-function save_data_struct_button_Callback(hObject, eventdata, handles)
-error('Use the drop down menu for this function');
+function annotate_button_Callback(hObject, eventdata, handles)
+% Bring up a message
+clr0 = get(hObject,'BackgroundColor');
+set(hObject,'String','Slct Pnt','BackgroundColor',[.8 .1 .1])
+
+% pos = hObject.Position;
+% tx = uicontrol('Style','text','position',pos+[0 pos(4) 2*pos(3) 0],'String','Select a point on an axis','parent',hObject.Parent);
+button = waitforbuttonpress;
+switch button
+    case 0
+        set(hObject,'String','Annot8','BackgroundColor',clr0);
+
+        curraxes = hObject.Parent.CurrentAxes;
+        currpoint = curraxes.CurrentPoint;
+        x = currpoint(1,1);
+        y = currpoint(1,2);
+        
+        trial = handles.trial;
+        if isfield(trial,'annotation')
+            annotation = trial.annotation;
+            idx = size(annotation,1)+1;
+        else
+            annotation = cell(1,3);
+            idx = 1;
+        end
+        annotation{idx,1} = curraxes.Tag;
+        annotation{idx,2} = [x,y];
+        answer{1} = inputdlg('Annotation','Annotation',2,{'e.g. leg slips here'});
+        annotation{idx,3} = answer{1}{1};
+        handles.trial.annotation = annotation;
+        trial.annotation = annotation;
+        save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
+        guidata(hObject,handles)
+        showAnnotations(hObject);
+    otherwise
+        set(hObject,'String','Annot8','BackgroundColor',clr0);
+        guidata(hObject,handles)
+        return
+end
+
+guidata(hObject,handles)
+
+
+function showAnnotations(hObject)
+handles = guidata(hObject);
+if ~isfield(handles.trial,'annotation')
+    return
+end
+if handles.showannotations.Value
+    for a = 1:size(handles.trial.annotation,1);
+        ax = findobj(handles.figure1,'type','axes','tag',handles.trial.annotation{a,1});
+        if isempty(ax)
+            continue
+        end
+        xy = handles.trial.annotation{a,2};
+        line(xy(1),xy(2),'marker','d','markerfacecolor',[0 0 0],'markeredgecolor',[0 0 0],'parent',ax,'tag','annotations');
+        text(xy(1),xy(2),handles.trial.annotation{a,3},'parent',ax,'fontsize',7,'tag','annotations','verticalalignment','bottom');
+    end
+end
+guidata(hObject,handles);
+
 
 % --- Executes on button press in raw_folder_location.
 function raw_folder_location_Callback(hObject, eventdata, handles)
@@ -1035,12 +1095,14 @@ helperfuncs = ...
 'save_data_struct'
 'reload_notes'
 'skootch_exposure'
+'bad_movie'
 'addTagsToSubplots'
 'clicky_on_image'
 'rename_tag'
 'cleanuptags'
 'excludeBlock_toggle'
 'removeSpikes'
+'removeKmeansStuff'
 };
 set(hObject,'String',helperfuncs);
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
@@ -1076,6 +1138,32 @@ function handles = skootch_exposure(hObject, eventdata, handles)
 handles.trial = skootchExposureNFrames(handles.trial);
 guidata(hObject, handles);
 
+function handles = bad_movie(hObject, eventdata, handles)
+if isfield(handles.trial,'badmovie')
+    button = questdlg('No longer bad movie?','Good Movie?','Yes');
+    switch button
+        case 'Yes'
+            trial = rmfield(handles.trial,'badmovie');
+            trial = rmfield(trial,'badmoviecomment');
+            save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
+            handles.trial = trial;
+            guidata(hObject, handles);
+            return
+        case 'No'
+            fprintf('Still bad movie: %s\n',handles.trial.badmoviecomment);
+        case 'Cancel'
+            return
+    end
+    
+else
+    reason = inputdlg('Why is this a bad movie?','Bad Movie Comment',2,{'e.g. Bad probe position'});
+    handles.trial.badmovie = 1;
+    handles.trial.badmoviecomment = reason;
+    trial = handles.trial;
+    save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
+    guidata(hObject, handles);
+    return
+end
 
 function add_tags_to_subplots(hObject, eventdata, handles)  
 ax1 = findobj(handles.quickShowPanel,'tag','quickshow_outax');
@@ -1197,6 +1285,33 @@ end
 
 guidata(hObject, handles);
 
+function removeKmeansStuff(hObject,eventdata,handles)
+button = questdlg('Remove Kmeans stuff for entire block?','Remove Kmeans','Yes');
+if strcmp(button,'Cancel'), return, end
+
+handles = guidata(hObject);
+if strcmp(button,'Yes')
+    nums = findLikeTrials_includingExcluded('name',handles.trial.name,'datastruct',handles.prtclData,...
+        'exclude',{'step','amp','displacement','freq'});
+    for n_ind = 1:length(nums);
+        trial = load(fullfile(handles.dir,sprintf(handles.trialStem,nums(n_ind))));
+        trial = rmfield(trial,'kmeans_ROI');
+        trial = rmfield(trial,'kmeans_threshold');
+        trial = rmfield(trial,'clmask');
+        trial = rmfield(trial,'clustertraces');
+        save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
+    end
+else
+    trial = handles.trial;
+    trial = rmfield(trial,'kmeans_ROI');
+    trial = rmfield(trial,'kmeans_threshold');
+    trial = rmfield(trial,'clmask');
+    trial = rmfield(trial,'clustertraces');
+    save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
+    handles.trial = trial;
+end
+
+guidata(hObject, handles);
 
 % --- Executes on key press with focus on figure1 and none of its controls.
 function figure1_KeyPressFcn(hObject, eventdata, handles)
@@ -1209,3 +1324,13 @@ switch key
         fprintf('<-\n')
         leftButton_Callback(hObject, eventdata, handles)
 end
+
+
+% --- Executes on button press in showannotations.
+function showannotations_Callback(hObject, eventdata, handles)
+if hObject.Value
+    showAnnotations(hObject)
+else 
+    delete(findobj('tag','annotations'))
+end
+    
