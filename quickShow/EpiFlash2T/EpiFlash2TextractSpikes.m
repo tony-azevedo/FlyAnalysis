@@ -24,12 +24,12 @@ if isfield(handles.trial,'spikes')
     
     t = makeInTime(trial.params);
     fs = trial.params.sampratein; %% sample rate
-    patch = trial.voltage;
+    patch = trial.voltage_1;
     cutoff = 2000;%%cutoff frequencies for high-pass filtering patch
     [x_lo,y_lo] = butter(2,cutoff/(fs/2),'low');%%2nd order hp filter
     patch_lo = filter(x_lo, y_lo, patch)';
 
-    spike_waveform = trial.voltage;
+    spike_waveform = trial.voltage_1;
     spike_waveform(:) = 0;
     spikelocs = trial.spikes;
     [~,spikelocs] = intersect(t,spikelocs);
@@ -71,7 +71,7 @@ end
 
 
 %%
-ax = subplot(3,1,[1 2],'parent',fig);
+ax = subplot(3,1,[1],'parent',fig);
 cla(ax,'reset')
 title(ax,[handles.currentPrtcl ' - ' num2str(handles.trial.params.stimDurInSec) ' s duration'])
 
@@ -83,14 +83,34 @@ plot(ax,t(spikelocs_),patch_lo(spikelocs_),'.','color',[.7 0 0])
 
 plot(ax,t(1:length(spike_waveform)),10*(spike_waveform-mean(spike_waveform))+mean(patch)-5,'tag',savetag); hold on
 axis(ax,'tight')
-% xlim([-.4 trial.params.stimDurInSec+ min(.8,trial.params.postDurInSec)])
-%xlim([-.1 trial.params.stimDurInSec+ min(.15,trial.params.postDurInSec)])
+spike_waveform_win = spike_waveform(t(1:length(spike_waveform))>0);
+ylim(ax,[10*min(spike_waveform_win)+mean(patch)-5 max(patch)])
 
 box(ax,'off');
 set(ax,'TickDir','out');
 set(ax,'tag','response_ax');
 
 drawnow
+
+%%
+ax = subplot(3,1,[2],'parent',fig);
+cla(ax,'reset')
+title(ax,[handles.currentPrtcl ' - ' num2str(handles.trial.params.stimDurInSec) ' s duration'])
+
+plot(ax,t,trial.current_2,'color',[1 0 0],'tag',savetag); hold on
+
+plot(ax,t(1:length(spike_waveform)),...
+    diff([min(trial.current_2(:)) max(trial.current_2(:))])/2*...
+    (spike_waveform-mean(spike_waveform_win))/diff([min(spike_waveform_win) max(spike_waveform_win)])-5,'tag',savetag,'color',[.2 .4 .9]); hold on
+axis(ax,'tight')
+ylim(ax,[min(trial.current_2(:))  max(trial.current_2(:))])
+
+box(ax,'off');
+set(ax,'TickDir','out');
+set(ax,'tag','response_ax_2');
+
+drawnow
+
 
 %%
 ax = subplot(3,1,3,'parent',fig);

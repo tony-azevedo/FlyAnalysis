@@ -1,4 +1,4 @@
-function h = EpiFlash2TAverage(h,handles,savetag)
+function h = EpiFlash2T_analysis(h,handles,savetag)
 
 trials = findLikeTrials('name',handles.trial.name,'datastruct',handles.prtclData);
 if isempty(h) || ~ishghandle(h)

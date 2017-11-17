@@ -9,7 +9,7 @@ data = load(datastructfile); data = data.data;
 
 D_shortened = [D 'compressed' filesep];
 
-for tr_idx = 11:length(data)
+for tr_idx = 1:length(data)
     trial = load(sprintf(trialStem,data(tr_idx).trial));
     fprintf('%s\n',trial.name);
     

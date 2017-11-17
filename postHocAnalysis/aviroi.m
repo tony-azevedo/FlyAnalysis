@@ -75,6 +75,12 @@ while hasFrame(vid)
         end
         button = questdlg('Make new ROI?','ROI','No');
     else 
+        if ~ispref('quickshowPrefs','roiScimStackROI')
+            setpref('quickshowPrefs','roiScimStackROI',{[    
+                1.1800    0.0260
+                1.1800    0.0980
+                1.2730    0.1010]*1E3});
+        end
         temp.ROI = getpref('quickshowPrefs','roiScimStackROI');
         for roi_ind = 1:length(temp.ROI)
             line(temp.ROI{roi_ind}(:,1),temp.ROI{roi_ind}(:,2),'parent',dispax,'color',[1 0 0]);

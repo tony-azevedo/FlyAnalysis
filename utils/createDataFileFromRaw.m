@@ -110,7 +110,10 @@ for p = 1:length(protocols)
     pattern = [trial.params.protocol,'_Image_(\d+)_' datestr(trial.timestamp,29) '-(\d+)-\d+.avi'];
     matchedavifiles = regexp(savedirconts,pattern,'match');
     
-    if ~isempty(matchedavifiles)
+    unpattern = [trial.params.protocol,'_Image_' datestr(trial.timestamp,29) '-(\d+)-\d+.avi'];
+    unmatchedavifiles = regexp(savedirconts,unpattern,'match');
+
+    if ~isempty(matchedavifiles) || ~isempty(unmatchedavifiles)
         aviFileAssignmentAssessment(trial.name);
     end
 

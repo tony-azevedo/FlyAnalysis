@@ -20,7 +20,7 @@ D_shortened = [D 'compressed' filesep];
 br = waitbar(0,'Batch');
 br.Position =  [1050    251    270    56];
 
-for tr_idx = 1:length(data)
+for tr_idx = trialnumlist %1:length(data)
     h = load(sprintf(trialStem,data(tr_idx).trial));
 
     waitbar(tr_idx/length(data),br);

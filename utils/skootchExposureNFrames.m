@@ -17,7 +17,7 @@ N = size(trial.(tn),1);
 exp=postHocExposure(trial,N);
 t = makeInTime(trial.params);
 frame_times = t(exp.exposure);
-plot(frame_times,trial.(tn));hold on
+plot(frame_times,trial.(tn)(1:length(frame_times),:)); hold on
 l_ = frame_times>=-7*(mean(diff(frame_times))) & frame_times<=3*(mean(diff(frame_times)));
 ylims = [min(min(trial.(tn)(l_,:))) max(max(trial.(tn)(l_,:)))];
 axis('tight')

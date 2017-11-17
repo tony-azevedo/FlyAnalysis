@@ -59,7 +59,7 @@ for bt_ind = 1:length(blocktrials);
 end
 
 axis(ax1,'tight')
-xlim(ax1,[-.1 trial.params.stimDurInSec+ min(.15,trial.params.postDurInSec)])
+xlim(ax1,[-.2 trial.params.stimDurInSec+ min(.2,trial.params.postDurInSec)])
 xlims = get(ax1,'xlim'); ylims = get(ax1,'ylim');
 text(xlims(1)+.05*diff(xlims),ylims(1)+.1*diff(ylims),...
     ['N=' num2str(length(trials))],...
@@ -70,12 +70,12 @@ set(ax1,'tag','quickshow_inax');
 hold(ax1,'off')
 
 axis(ax2,'tight')
-xlim(ax2,[-.1 trial.params.stimDurInSec+ min(.15,trial.params.postDurInSec)])
+xlim(ax2,[-.2 trial.params.stimDurInSec+ min(.2,trial.params.postDurInSec)])
 xlims = get(ax2,'xlim'); ylims = get(ax2,'ylim');
 set(ax2,'tag','quickshow_inax_2');
 hold(ax2,'off')
 
 axis(ax3,'tight')
-xlim(ax3,[-.1 trial.params.stimDurInSec+ min(.15,trial.params.postDurInSec)])
+xlim(ax3,[-.2 trial.params.stimDurInSec+ min(.2,trial.params.postDurInSec)])
 set(ax3,'tag','quickshow_outax');
 hold(ax3,'off')

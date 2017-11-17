@@ -1,43 +1,23 @@
 %% Batch script for downsampling movies
 % for faster kmeans clustering of individual movies
 
-% Assuming I'm in a directory where the movies are to be processed
-if ~isempty(regexp(pwd,'compressed'))
-    error('Not in the right directory')
-end
-    
-% protocol = 'EpiFlash2T';
-
-rawfiles = dir([protocol '_Raw_*']);
-
-h = load(rawfiles(1).name);
-
-[protocol,dateID,flynum,cellnum,trialnum,D,trialStem,datastructfile] = extractRawIdentifiers(h.name);
-data = load(datastructfile); data = data.data;
+[~,~,~,~,~,~,trialStem] = extractRawIdentifiers(trial.name);
 
 D_shortened = [D 'compressed' filesep];
 if ~exist(D_shortened,'dir')
     mkdir(D_shortened)
 end
 
-for tr_idx = 1:length(data)
-    h = load(sprintf(trialStem,data(tr_idx).trial));
+for tr_idx = trialnumlist
     
-    % look for movie file
-    checkdir = dir(fullfile(D,[protocol,'_Image_' num2str(h.params.trial) '_' datestr(h.timestamp,29) '*.avi']));
-    
-    if ~length(checkdir)
-        moviename = [regexprep(h.name, {'Acquisition','_Raw_'},{'Raw_Data','_Images_'}) '.avi'];
-        foldername = regexprep(moviename, '.mat.avi','\');
-        moviename = dir([foldername protocol '_Image_*']);
-        moviename = [foldername moviename(1).name];
-        fprintf(1,'Looking for a folder named %s\n',foldername);
-    else
-        moviename = checkdir(1).name;
+    trial = load(sprintf(trialStem,tr_idx));
+    if isfield(trial,'excluded') && trial.excluded
+        fprintf('\t * Bad Movie\n')
+        continue
     end
-    filename = [protocol '_Raw_' dateID '_' flynum '_' cellnum '_' trialnum '.mat'];
+    moviename = trial.imageFile;
     
-    t = makeInTime(h.params);
+    t = makeInTime(trial.params);
     
     t_win = [t(1) t(end)];
     t_idx_win = [find(t>=t_win(1),1) find(t<=t_win(end),1,'last')];
@@ -45,7 +25,7 @@ for tr_idx = 1:length(data)
     % import movie
     vid = VideoReader(moviename);
     N = vid.Duration*vid.FrameRate;
-    h2 = postHocExposure(h,N);
+    h2 = postHocExposure(trial,N);
     
     %% Reduce the amount of data,
     % collapse the pixels into bins ~100 ms apart, and take only pixels crossing
@@ -53,11 +33,10 @@ for tr_idx = 1:length(data)
     % that I can batch run the data compression step and then quickly load in
     % a compressed file and run the k_means clustering on that.
     
-    downsampledDataPath = regexprep(h.name,regexprep(D,'\\','\\\'),regexprep(D_shortened,'\\','\\\'));
+    downsampledDataPath = regexprep(trial.name,regexprep(D,'\\','\\\'),regexprep(D_shortened,'\\','\\\'));
     if exist(downsampledDataPath ,'file')
         tic
         fprintf('\t ** %s already created\n',downsampledDataPath)
-        trial = load(downsampledDataPath); % ~1 sec
         toc
     else
         
@@ -68,14 +47,15 @@ for tr_idx = 1:length(data)
         k0 = k0(end);
         
         % find the last frame
-        kf = find(t(h2.exposure)<=h.params.stimDurInSec,1,'last');
+        kf = find(t(h2.exposure)<=trial.params.stimDurInSec,1,'last');
         % Delta frames is enough to make 10 ms;
         Dframes = floor(vid.FrameRate/10);
         % Frame_bins is the minimum frames
-        Frame_bins = floor((sum(t(h2.exposure)>0&t(h2.exposure)<=h.params.stimDurInSec)-3)/Dframes);
+        Frame_bins = floor((sum(t(h2.exposure)>0&t(h2.exposure)<=trial.params.stimDurInSec)-3)/Dframes);
         
-        br = waitbar(0,regexprep(sprintf(trialStem,data(tr_idx).trial),'_','\\_'));
+        br = waitbar(0,regexprep(sprintf(trialStem,tr_idx),'_','\\_'));
         br.Name = 'Frames';
+        
         while hasFrame(vid)
             kk = kk+1;
             

@@ -2,8 +2,26 @@ function h = postHocExposure(h,varargin)
 if nargin>1
     N = varargin{1};
 end
-if h.exposure(1) == 1 && ~islogical(h.exposure)
+shift = 0;
+use = 'skootched';
+if nargin>2
+    p = inputParser;
+    p.addOptional('shift',0,@(x) rem(x,1)==0);
+    p.addOptional('use','skootched',...
+        @(x) any(validatestring(x,{'skootched','raw'})));
+    parse(p,varargin{2:end});
+end
+if exist('p','var') && isfield(p.Results,'shift')
+    shift = p.Results.shift;
+end
+if exist('p','var') && isfield(p.Results,'use')
+    use = p.Results.use;
+end
+if (h.exposure(1) == 1 && ~islogical(h.exposure)) || strcmp(use,'raw')
     exposure = h.exposure;
+    if strcmp(use,'raw')
+        exposure = h.exposure_raw;
+    end
     exposure_1_0 = zeros(size(exposure));
     
     % turn exposure into a vector where the end of the exposure -> 1
@@ -36,10 +54,15 @@ if h.exposure(1) == 1 && ~islogical(h.exposure)
             
     if exist('N','var')
         exp_idx = find(exposure_1_0);
-        exposure_1_0(exp_idx(N+1:end)) = 0;
+        if shift, exposure_1_0(exp_idx(1:shift)) = 0; end      
+        exposure_1_0(exp_idx(N+shift+1:end)) = 0;
+        if sum(exposure_1_0)~=N
+            fprintf('\n**%d exposures, but %d frames - likely started triggering early**\n**',sum(exposure_1_0),N)
+            error('Are there enough exposures to skootch this trial and maintain frame number?')
+        end
     end
     h.exposure = logical(exposure_1_0);
-elseif isfield(h,'exposure_raw')
+elseif isfield(h,'exposure_raw') || strcmp(use,'skoootched')
     fprintf(' * Exposure vector has been skootched!\n')
 else
    error('Exposure vector is not well conditioned for current analysis'); 

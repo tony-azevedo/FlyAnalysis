@@ -14,6 +14,9 @@ end
 % First, load in the movie and average frames into bins
 batch_avikmeansDecimate
 
+% Do stuff with the decimated data, like store a mean image
+batch_avikmeansExtract
+
 % Then find the regions of the image to analyze (leg, where the bar is not)
 batch_avikmeansThreshold
 
@@ -23,11 +26,8 @@ batch_avikmeansCalculation
 % Calculate F for each cluster
 batch_avikmeansClusterIntensity
 
-% Do stuff with the decimated data, like store a mean image
-batch_avikmeansExtract
-
 % align the exposure and light step
-batch_skootchExposure
+% batch_skootchExposure
 
 % create movies
-batch_avikmeansMovie
+% batch_avikmeansMovie

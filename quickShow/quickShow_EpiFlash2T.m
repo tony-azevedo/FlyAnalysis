@@ -10,7 +10,7 @@ panl(1).marginbottom = 2;
 panl(2).marginbottom = 2;
 
 % setupStimulus
-x = ((1:obj.trial.params.sampratein*obj.params.durSweep) - obj.trial.params.preDurInSec*obj.trial.params.sampratein)/obj.trial.params.sampratein;
+x = makeInTime(obj.trial.params);
 
 [prot,d,fly,cell,trial] = extractRawIdentifiers(obj.trial.name);
 panl.title(sprintf('%s', [prot '.' d '.' fly '.' cell '.' trial]));

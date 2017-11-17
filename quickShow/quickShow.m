@@ -319,7 +319,9 @@ if isnan(trialnum)
 end
 if ~sum(handles.prtclTrialNums==trialnum)
     if trialnum > max(handles.prtclTrialNums)
-        error('Trial number too large (>%d)',max(handles.prtclTrialNums));
+        warning('Trial number too large (>%d)',max(handles.prtclTrialNums));
+        set(hObject,'string',num2str(max(handles.prtclTrialNums)));
+        trialnum = str2double(get(hObject,'string'));
     elseif trialnum < min(handles.prtclTrialNums)
         error('Trial number too small (<%d)',min(handles.prtclTrialNums));
     else
@@ -350,7 +352,7 @@ set(handles.exclude,'enable','off');
 if ~isfield(handles.trial,'imageFile') || isempty(handles.trial.imageFile)
     set(handles.image_button,'enable','off');
     set(handles.image_info,'String','');
-elseif isfield(handles.trial,'imageFile') && ~isempty(handles.trial.imageFile)
+elseif isfield(handles.trial,'imageFile') && ~isempty(handles.trial.imageFile) && exist(handles.trial.imageFile,'file')
     set(handles.image_button,'enable','on');
     exp = postHocExposure(handles.trial);
     a = dir(regexprep(handles.trial.imageFile,'Acquisition','Raw_Data'));
@@ -443,6 +445,10 @@ if get(handles.savetraces_button,'value')
 else
     savetag = 'delete';
     delete(findobj(handles.quickShowPanel,'tag','delete'));
+end
+legends = findobj(handles.quickShowPanel,'type','legend');
+if ~isempty(legends)
+    delete(legends)
 end
 set(get(handles.quickShowPanel,'children'),'xscale','linear');
 
@@ -710,6 +716,7 @@ function loadstr_button_Callback(hObject, eventdata, handles)
 % An earlier version printed the script for the quickShow function 4/27/15
 handles = guidata(hObject);
 evalin('base', ['trial = load(''' regexprep(handles.trial.name,'Acquisition','Raw_Data') ''')']);
+clipboard('copy',sprintf('trial = load(''%s'');\n',(fullfile(handles.dir, sprintf(handles.trialStem,handles.currentTrialNum)))));
 
 
 function trialImages_Callback(hObject, eventdata, handles,varargin)
@@ -1092,6 +1099,7 @@ feval(hf,hObject,eventdata,handles);
 function helperFunctionMenu_CreateFcn(hObject, eventdata, handles)
 helperfuncs = ...
 {
+'edit_analysis'
 'save_data_struct'
 'reload_notes'
 'skootch_exposure'
@@ -1110,6 +1118,10 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 % ----------- helper functions ---------------
+function edit_analysis(hObject, eventdata, handles)
+handles = guidata(hObject);
+eval(['edit ' handles.showMenu.String{handles.showMenu.Value}])
+
 function save_data_struct(hObject, eventdata, handles)
 handles = guidata(hObject);
 createDataFileFromRaw(handles.prtclDataFileName);

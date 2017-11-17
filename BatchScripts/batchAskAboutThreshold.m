@@ -1,25 +1,69 @@
-function h = batchAskAboutThreshold(trial,h)
+function trial = batchAskAboutThreshold(trial)
 %% Set an ROI that avoids the trace of the probe
 % I think I only need 1 for now, but I'll keep the option for multiple
 
 displayf = figure;
-set(displayf,'position',[40 40 1280 1024]);
+displayf.Position = [40 40 1280 1024];
 dispax = axes('parent',displayf,'units','pixels','position',[0 0 1280 1024]);
-set(dispax,'box','off','xtick',[],'ytick',[],'tag','dispax');
+dispax.Box = 'off';
+dispax.XTick = [];
+dispax.YTick = [];
+dispax.Tag = 'dispax';
+
 colormap(dispax,'gray')
 
-smooshedframe = mean(trial.downsampledImage,3);
-scale = [quantile(smooshedframe(:),0.75) 2*quantile(smooshedframe(:),0.975)];
-% im = imshow(smooshedframe,scale,'parent',dispax);
-im = imshow(smooshedframe,[0 2*quantile(smooshedframe(:),0.975)],'parent',dispax);
+vid = VideoReader(trial.imageFile);
+N = vid.Duration*vid.FrameRate;
+for cnt = 1:5
+    frame = readFrame(vid); 
+end
+frame = squeeze(frame(:,:,1));
+startAt0 = false;
+if sum(frame(:)>10) < numel(frame)/1000
+    startAt0 = true;
+end
 
+h2 = postHocExposure(trial,N);
+t = makeInTime(trial.params);
+t_i = 5*1/vid.FrameRate;
+if ~startAt0
+    t_i = trial.params.preDurInSec+t_i;
+end
+t_f = trial.params.stimDurInSec-5*1/vid.FrameRate;
+frames = find(t(h2.exposure)>t_i & t(h2.exposure)<t_f);
+
+kk = 0;
+while kk<frames(1)
+    kk = kk+1;
+    
+    readFrame(vid);
+    continue
+end
+
+smooshedframe = double(readFrame(vid));
+smooshedframe = squeeze(smooshedframe(:,:,1));
+smooshedframe(:) = 0; 
+readFrame(vid); readFrame(vid);
+
+for jj = 1:4
+    mov3 = double(readFrame(vid));
+    smooshedframe = smooshedframe+mov3(:,:,1);
+end
+for jj = 1:20
+    mov3 = double(readFrame(vid));
+    smooshedframe = smooshedframe+mov3(:,:,1);
+end
+smooshedframe = smooshedframe/24;
+
+im = imshow(smooshedframe,[0 quantile(smooshedframe(:),0.975)],'parent',dispax);
+%%
 hold(dispax,'on');
 
-if isfield(h,'kmeans_ROI')
-    for roi_ind = 1:length(h.kmeans_ROI)
+if isfield(trial,'kmeans_ROI')
+    for roi_ind = 1:length(trial.kmeans_ROI)
         line(...
-            [h.kmeans_ROI{roi_ind}(:,1);h.kmeans_ROI{roi_ind}(1,1)],...
-            [h.kmeans_ROI{roi_ind}(:,2);h.kmeans_ROI{roi_ind}(1,2)],...
+            [trial.kmeans_ROI{roi_ind}(:,1);trial.kmeans_ROI{roi_ind}(1,1)],...
+            [trial.kmeans_ROI{roi_ind}(:,2);trial.kmeans_ROI{roi_ind}(1,2)],...
             'parent',dispax,'color',[1 0 0]);
     end
     button = questdlg('Make new ROI?','ROI','No');
@@ -32,90 +76,92 @@ else
             'parent',dispax,'color',[1 0 0]);
     end
     button = questdlg('Make new ROI?','ROI','No');
-    if strcmp(button,'No');
-        h.kmeans_ROI = temp.ROI;
+    if strcmp(button,'No')
+        trial.kmeans_ROI = temp.ROI;
     end
 end
-if strcmp(button,'Yes');
-    h.kmeans_ROI = {};
+if strcmp(button,'Yes')
+    trial.kmeans_ROI = {};
     roihand = impoly(dispax,'Closed',1);
     roi_temp = wait(roihand);
-    h.kmeans_ROI{1} = roi_temp;
+    trial.kmeans_ROI{1} = roi_temp;
     
     if size(roi_temp,1)<=2
         error('roi is not big enough')
     end
 
 %    Only need 1? Comment out the code below
-    setpref('quickshowPrefs','avi_kmeans_roi',h.kmeans_ROI)
+    setpref('quickshowPrefs','avi_kmeans_roi',trial.kmeans_ROI)
     
-elseif strcmp(button,'No');
-elseif strcmp(button,'Cancel');
+elseif strcmp(button,'No')
+elseif strcmp(button,'Cancel')
     return
 end
 
-for roi_ind = 1:length(h.kmeans_ROI)
-    mask{roi_ind} = poly2mask(h.kmeans_ROI{roi_ind}(:,1),h.kmeans_ROI{roi_ind}(:,2),size(smooshedframe,1),size(smooshedframe,2));
+for roi_ind = 1:length(trial.kmeans_ROI)
+    mask{roi_ind} = poly2mask(trial.kmeans_ROI{roi_ind}(:,1),trial.kmeans_ROI{roi_ind}(:,2),size(smooshedframe,1),size(smooshedframe,2));
 end
 
 
 %% Set a threshold for pixel values for the mean
-if isfield(h,'kmeans_threshold')
+if isfield(trial,'kmeans_threshold')
     % Set based on kmeans_threshold
-    blwthresh = smooshedframe<h.kmeans_threshold & mask{1};
-    hOVM = alphamask(blwthresh, [0 0 1],.1,dispax);
+    blwthresh = smooshedframe<trial.kmeans_threshold & mask{1};
+    blwthresh = smoothThreshold(blwthresh);
+    hOVM = alphamask(blwthresh, [0 0 1],.3,dispax);
 
     button = questdlg('Change threshold?','Threshold','No');
 else
     temp.threshold = getpref('quickshowPrefs','avi_kmeans_thresh');
     % Set scale on the threshold
     blwthresh = smooshedframe<temp.threshold & mask{1};
+    blwthresh = smoothThreshold(blwthresh);
+
     hOVM = alphamask(blwthresh, [0 0 1],.1,dispax);
     
     button = questdlg('Change threshold?','Threshold','No');
-    h.kmeans_threshold = temp.threshold;
+    trial.kmeans_threshold = temp.threshold;
 end
 abvthresh = ~blwthresh;
 
-if strcmp(button,'Yes');
+if strcmp(button,'Yes')
     threshcontrolfigure = figure;
     set(threshcontrolfigure,'position',[1433 564 133 420],'menu','none')
     sldr = uicontrol('Style','slider','parent',threshcontrolfigure);
     edtr = uicontrol('Style','edit','parent',threshcontrolfigure);
     sldr.Position = [20 20 20 380];
     edtr.Position = [60 380 60 20];
-    edtr.Value = h.kmeans_threshold;
+    edtr.Value = trial.kmeans_threshold;
     edtr.String = num2str(edtr.Value);
     
     sldr.Max = 2*quantile(smooshedframe(:),0.975);
     sldr.Min = 0;
-    sldr.Value = h.kmeans_threshold;
+    sldr.Value = trial.kmeans_threshold;
 
     sldr.Callback = @updateThreshold;
     edtr.Callback = @updateThreshold;
     uiwait(threshcontrolfigure)
     
     abvthresh = ~blwthresh;
-    setpref('quickshowPrefs','avi_kmeans_thresh',h.kmeans_threshold)
+    setpref('quickshowPrefs','avi_kmeans_thresh',trial.kmeans_threshold)
 
     hold(dispax,'off');
     im = imshow(smooshedframe.*abvthresh,[0 2*quantile(smooshedframe(:),0.975)],'parent',dispax);
     
-elseif strcmp(button,'No');
-    button = questdlg('Exclude based on imaging?','Exclude?','Yes');
-    if strcmp(button,'Yes');
-        h.excluded = 1;
-        h.badmovie = 1;
+elseif strcmp(button,'No')
+    button = questdlg('Exclude based on imaging?','Exclude?','No');
+    if strcmp(button,'Yes')
+        trial.excluded = 1;
+        trial.badmovie = 1;
         fprintf('Movie is bad');
     end
-elseif strcmp(button,'Cancel');
+elseif strcmp(button,'Cancel')
     error('Cancelled');
 end
 
-trial = h;
 save(trial.name,'-struct','trial')
 
-im.Parent.CLim(1) = h.kmeans_threshold; drawnow
+im.Parent.CLim(1) = trial.kmeans_threshold; drawnow
 
 pause(1)
 close(displayf);
@@ -125,12 +171,12 @@ close(displayf);
         if strcmp(src.Style,'edit')
             src.Value = str2double(src.String);
         end
-        h.kmeans_threshold = src.Value;
+        trial.kmeans_threshold = src.Value;
         sldr.Value = src.Value;
         edtr.Value = src.Value;
         edtr.String = num2str(edtr.Value);
         delete(hOVM);
-        blwthresh = smooshedframe<h.kmeans_threshold & mask{1};
+        blwthresh = smooshedframe<trial.kmeans_threshold & mask{1};
         blwthresh = smoothThreshold(blwthresh);
 
         hold(dispax,'on');

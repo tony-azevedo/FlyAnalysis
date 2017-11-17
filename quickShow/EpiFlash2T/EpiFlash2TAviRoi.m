@@ -57,7 +57,7 @@ clrs = parula(size(trial.clustertraces,2)+1);
 clrs = clrs(1:end-1,:);
 
 for cl = 1:size(trial.clustertraces,2)
-    ls = line(x(t2.exposure),trial.clustertraces(:,cl),'parent',ax3,'tag',savetag);
+    ls = line(x(t2.exposure),trial.clustertraces(1:sum(t2.exposure),cl),'parent',ax3,'tag',savetag);
     ls.Color = clrs(cl,:);
 end    
 
