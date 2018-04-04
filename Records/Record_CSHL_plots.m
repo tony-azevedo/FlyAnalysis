@@ -328,7 +328,13 @@ panl.descendants.margin = [10 10 10 10];
 
 tr_ph_ax = panl(1).select();
 
-set(tr_ph_ax,'color',[0 0 0],'xcolor',[1 1 1],'ycolor',[1 1 1],'tickdir','out','xlim',[-10 140],'ylim',1E3*[-5 7]); hold(tr_ph_ax,'on')
+tr_ph_ax.Color = [0 0 0];
+tr_ph_ax.XColor = [1 1 1];
+tr_ph_ax.YColor = [1 1 1];
+tr_ph_ax.TickDir = 'out';
+tr_ph_ax.XLim = [-10 140];
+tr_ph_ax.YLim = 1E3*[-5 7]; 
+hold(tr_ph_ax,'on')
 
 plot(tr_ph_ax,[0 0],tr_ph_ax.YLim,'color',[.2 .2 .2]);
 plot(tr_ph_ax,tr_ph_ax.YLim,[0 0],'color',[.2 .2 .2]);
@@ -428,7 +434,10 @@ savePDF(trjct1C1Sp_fi,savedir,[],sprintf('trajec_perN_3cells'))
 t_i_f = [-0.02 .13];
 
 trjct1C1Sp_fi = figure;
-set(trjct1C1Sp_fi,'color',[0 0 0],'units','inches','position',[4 2 8 6]);
+trjct1C1Sp_fi.Color = [0 0 0];
+trjct1C1Sp_fi.Units = 'inches';
+trjct1C1Sp_fi.Position = [4 2 8 6];
+
 panl = panel(trjct1C1Sp_fi);
 panl.pack('v',{1/2 1/2})  % phase plot on top
 
@@ -437,14 +446,25 @@ panl.descendants.margin = [10 10 10 10];
 
 tr_ph_ax = panl(1).select();
 
-set(tr_ph_ax,'color',[0 0 0],'xcolor',[1 1 1],'ycolor',[1 1 1],'tickdir','out','xlim',[-10 140],'ylim',1E3*[-5 7]); hold(tr_ph_ax,'on')
+tr_ph_ax.Color = [0 0 0];
+tr_ph_ax.XColor = [1 1 1];
+tr_ph_ax.YColor = [1 1 1];
+tr_ph_ax.TickDir = 'out';
+tr_ph_ax.XLim = [-10 140];
+tr_ph_ax.YLim = 1E3*[-5 7]; 
+hold(tr_ph_ax,'on')
 
 plot(tr_ph_ax,[0 0],tr_ph_ax.YLim,'color',[.2 .2 .2]);
 plot(tr_ph_ax,tr_ph_ax.YLim,[0 0],'color',[.2 .2 .2]);
 
 tr_ax = panl(2).select();
-set(tr_ax,'color',[0 0 0],'xcolor',[1 1 1],'ycolor',[1 1 1],'tickdir','out','xlim',t_i_f,'ylim',[-10 140]); hold(tr_ax,'on')
-
+tr_ax.Color = [0 0 0];
+tr_ax.XColor = [1 1 1];
+tr_ax.YColor = [1 1 1];
+tr_ax.TickDir = 'out';
+tr_ax.XLim = [-10 140];
+tr_ax.YLim = 1E3*[-5 7]; 
+hold(tr_ax,'on')
 
 
 trial = load('B:\Raw_Data\170920\170920_F2_C1\EpiFlash2T_Raw_170920_F2_C1_18.mat');

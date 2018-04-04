@@ -1,11 +1,9 @@
 function h = EpiFlash2TForceProbe(h,handles,savetag)
 
-if ~isfield(handles.trial,'forceProbeStuff');
+if ~isfield(handles.trial,'forceProbeStuff')
     fprintf('No profiles\n');
     beep
     return
-else
-    I_profile = handles.trial.forceProbeStuff.keimograph;
 end
 
 set(h,'tag',mfilename);
@@ -48,7 +46,7 @@ xlim(ax,[-trial.params.preDurInSec  trial.params.stimDurInSec+trial.params.postD
 % % xlim([-.1 trial.params.stimDurInSec+ min(.15,trial.params.postDurInSec)])
 % set(ax,'tag','stimulus_ax');
 
-h2 = postHocExposure(trial,size(I_profile,2));
+h2 = postHocExposure(trial,size(trial.forceProbeStuff.forceProbePosition,2));
 frame_times = x(h2.exposure);
 
 origin = find(handles.trial.forceProbeStuff.EvalPnts(1,:)==0&handles.trial.forceProbeStuff.EvalPnts(2,:)==0);
@@ -57,8 +55,9 @@ CoM = handles.trial.forceProbeStuff.forceProbePosition';
 CoM = CoM*x_hat;
 
 ax = subplot(3,1,3,'parent',h);
+% plot(ax,frame_times,handles.trial.forceProbeStuff.CoM(1:length(frame_times))-origin), hold(ax,'on');
 plot(ax,frame_times,CoM(1:length(frame_times))), hold(ax,'on');
-plot(ax,frame_times,CoM(1:length(frame_times)),'.b'), hold(ax,'off');
+plot(ax,frame_times,CoM(1:length(frame_times)),'.r'), hold(ax,'off');
 axis(ax,'tight')
 xlim(ax,[-trial.params.preDurInSec  trial.params.stimDurInSec+trial.params.postDurInSec])
 xlabel(ax,'s')

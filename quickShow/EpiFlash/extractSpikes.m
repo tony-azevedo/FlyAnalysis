@@ -60,7 +60,7 @@ elseif ~isfield(handles.trial,'spikes')
         d1 = getpref('FlyAnalysis','CurrentFilter');
     end
     if ~ispref('FlyAnalysis','CurrentFilter') || d1.SampleRate ~= trial.params.sampratein
-        d1 = designfilt('lowpassiir','FilterOrder',8,'PassbandFrequency',2e3,'PassbandRipple',0.2,'SampleRate',trial.params.sampratein);
+        d1 = designfilt('lowpassiir','FilterOrder',12,'PassbandFrequency',3e3,'PassbandRipple',0.2,'SampleRate',10e3);
         if ~ispref('FlyAnalysis','CurrentFilter')
             setpref('FlyAnalysis','CurrentFilter',d1);
         end

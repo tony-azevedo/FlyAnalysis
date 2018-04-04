@@ -1,4 +1,4 @@
-function varargout = aviFileAssignmentAssessment(dfn,varargin)
+function varargout = aviFileAssignmentAssessment_1(dfn,varargin)
 
 dfn = regexprep(dfn,'Acquisition','Raw_Data');
 [protocol,~,~,~,~,D,trialStem] = extractRawIdentifiers(dfn);

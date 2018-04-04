@@ -170,3 +170,7 @@ trial.exposure_time = t(trial.exposure);
 %% extract elements from a cell array
 b = [a,{'r'}];
 
+%% decide which input vector to use
+switch trial.params.mode_1; case 'VClamp', invec1 = 'current_1'; case 'IClamp', invec1 = 'voltage_1'; otherwise; invec1 = 'voltage_1'; end   
+switch trial.params.mode_2; case 'VClamp', invec2 = 'current_2'; case 'IClamp', invec2 = 'voltage_2'; otherwise; invec2 = 'voltage_2'; end   
+

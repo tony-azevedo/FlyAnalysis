@@ -92,8 +92,10 @@ while tr_idx <= trialnumlist(end)
         % in - update, This didn't work
         N_cl = 5;
         
+        %% Kmeans calculated
         [idx1,C1]=kmeans(img,N_cl,'Distance','correlation','Replicates',4);
         
+        %%
         clmask0 = zeros(size(smooshedframe));
         clmask = zeros(size(smooshedframe));
         clmask0(abvthresh) = idx1;

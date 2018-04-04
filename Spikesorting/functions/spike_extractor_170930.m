@@ -1,11 +1,11 @@
 %% updated by JCT 05_17_2017
 
-function [detected_spike_locs, spikesBelowThresh, spikeTemplate, spikeDistThreshold, filter_params] = spike_extractor_170930(...
-    unfiltered_data, piezo, spike_params, init)
+% function [detected_spike_locs, spikesBelowThresh, spikeTemplate, spikeDistThreshold, filter_params] = spike_extractor_170930(...
+%     unfiltered_data, piezo, spike_params, init)
 %% Code to match a given spike waveform across a recording (1-D); basic idea is to estimate warping distance via DTW and convert the  estimated warp distance into a probability via a kernel
 
-last_filt_params = [init.spikepath 'last_' spike_params.type '_filt_params.mat'];
-if exist(last_filt_params, 'file');load(last_filt_params); end
+% last_filt_params = [init.spikepath 'last_' spike_params.type '_filt_params.mat'];
+% if exist(last_filt_params, 'file');load(last_filt_params); end
 
 global vars;
 vars.fs = spike_params.fs;
@@ -242,4 +242,4 @@ end
 
 filter_params = vars;
 save(last_filt_params, 'vars');display('spike filter parameters saved');
-end
+% end

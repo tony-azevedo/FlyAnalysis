@@ -1,26 +1,3 @@
-
-% if isfield(trial,'spikes')
-% 
-%     [protocol,dateID,flynum,cellnum,trialnum] = extractRawIdentifiers(trial.name);
-%     fprintf('%s %s trial %s has %d Spikes\n', [dateID '_' flynum '_' cellnum], protocol,trialnum,length(trial.spikes));
-%     
-%     t = makeInTime(trial.params);
-%     fs = trial.params.sampratein; %% sample rate
-%     patch = trial.voltage_1;
-%     cutoff = 2000;%%cutoff frequencies for high-pass filtering patch
-%     [x_lo,y_lo] = butter(2,cutoff/(fs/2),'low');%%2nd order hp filter
-%     patch_lo = filter(x_lo, y_lo, patch)';
-% 
-%     spike_waveform = trial.voltage_1;
-%     spike_waveform(:) = 0;
-%     spikelocs = trial.spikes;
-%     [~,spikelocs] = intersect(t,spikelocs);
-%     spike_waveform(spikelocs) = .2;
-% 
-%     splcs_p = spikelocs;
-%     splcs_m = spikelocs+1;
-% 
-% elseif ~isfield(trial,'spikes')
     
     fs = trial.params.sampratein; %% sample rate
     t = makeInTime(trial.params);
@@ -37,25 +14,13 @@
     filtered_patch = conv(diff(fb_1),hanning(7),'same');
     
     spike_waveform = filtered_patch;
-%     spike_waveform = filtfilt(d1,spike_waveform);
-    
 
-    
-    
-    % A spike is a positive peak, followed by a negative peak. neg window
-    % is 50 points or 5 ms
-    
-    % In other cases, a spike is a negative peak followed by a positive
-    % peak!
     if polarity==-1
         spike_waveform = spike_waveform*-1;
     end
     
     [splcs_p,pks_p] = peakfinder(double(spike_waveform),[],max(spike_waveform)/6,1,false);
     [splcs_m,pks_m] = peakfinder(double(spike_waveform),[],min(spike_waveform)/6,-1,false);
-%     [splcs_p,pks_p] = peakfinder(double(spike_waveform),[],.2,1,false);
-%     [splcs_m,pks_m] = peakfinder(double(spike_waveform),[],-1,-1,false);
-
     
     sp_window = 50;
     
@@ -153,9 +118,9 @@ axis(ax,'tight')
 % xlim([-.4 trial.params.stimDurInSec+ min(.8,trial.params.postDurInSec)])
 xlim(trial.params.sampratein*[trial.params.preDurInSec-.05 trial.params.preDurInSec+trial.params.stimDurInSec+ min(.1,trial.params.postDurInSec)])
 
-box(ax,'off');
-set(ax,'TickDir','out');
-set(ax,'tag','response_ax');
+ax.Box = 'off';
+ax.TickDir = 'out';
+ax.Tag = 'response_ax';
 
 drawnow
 

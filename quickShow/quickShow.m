@@ -20,7 +20,7 @@ function varargout = quickShow(varargin)
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 
-% Last Modified by GUIDE v2.5 28-Aug-2017 17:18:46
+% Last Modified by GUIDE v2.5 05-Dec-2017 16:42:25
 
 %% Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -411,7 +411,7 @@ else
         end
         
         if isempty(findobj('String','avi+ephz','Style','pushbutton'))
-            obj = copyobj(handles.epsButton,get(handles.epsButton,'parent'));
+            obj = copyobj(handles.Spikes,get(handles.Spikes,'parent'));
             pos = get(obj,'position');
             set(obj,'position',get(obj,'position')+([0 pos(4) 0 0]))
             set(obj,'callback',@(hObject,eventdata)quickShow('aviMoviesAndData_Callback',hObject,eventdata,handles))
@@ -429,6 +429,15 @@ else
     if get(handles.analyses_chckbox,'value')
         analysis_popup_Callback(hObject, eventdata, handles)
     end
+    if isfield(handles.trial,'spikes') && isfield(handles.trial,'spikes')
+        handles.Spikes.FontWeight = 'bold';
+    else
+        handles.Spikes.FontWeight = 'normal';
+    end
+    if get(handles.Spikes,'value')
+        Spikes_Callback(handles.Spikes, [], handles)
+    end
+    
 end
 add_tags_to_subplots(hObject, eventdata, handles)  
 showAnnotations(hObject)  
@@ -569,54 +578,100 @@ orient(fig,'tall');
 trialnum_Callback(handles.trialnum,[],handles)
 
 
-function epsButton_Callback(hObject, eventdata, handles)
-fig = figure('color',[1 1 1]);
-set(fig,'Units',get(handles.quickShowPanel,'Units'));
-set(fig,'Position',get(handles.quickShowPanel,'position'));
+function Spikes_Callback(spikebutt, eventdata, h)
 
-childs = get(handles.quickShowPanel,'children');
-copyobj(childs,fig);
-findobj(fig,'ButtonDownFcn',@showClickedImage);
-
-% cp = uipanel('Title',handles.currentPrtcl,'FontSize',12,...
-%                 'BackgroundColor',[1 1 1],...
-%                 'Position',[0 0 .75 1],'parent',fig,'bordertype','none');
-% copyobj(childs,repmat(cp,size(childs)));
-linax = findobj(fig,'xscale','linear','-not','tag','unlink');
-if length(linax)>1
-    linkaxes(linax,'x');
+if ~spikebutt.Value
+    s = findobj(h.quickShowPanel,'type','line','tag','Spikes');
+    if ~isempty(s)
+        delete(s);
+    end
+    return
+end
+s = findobj(h.quickShowPanel,'type','line','tag','Spikes');
+if ~isempty(s)
+    delete(s);
 end
 
-for chi = length(childs):-1:1
-    if ~isempty(get(get(childs(1),'title'),'string'))
-        set(fig,'fileName',regexprep(get(get(childs(1),'title'),'string'),'\.','_'))
+% Check if this trial has spikes
+if isfield(h.trial,'spikes') && isfield(h.trial,'spikeDetectionParams')
+    ax = findobj(h.quickShowPanel,'type','axes','tag','quickshow_inax');
+    if isempty(ax)
+        error('Clear panel, go to quickShow visualization\n')
+    end
+    if isempty(h.trial.spikes)
+        text(ax,ax.XLim(1)+0.05*diff(ax.XLim), ax.YLim(1)+0.05*diff(ax.YLim),sprintf('Spike detection has run: 0 spikes'))
+        return
+    end
+    y = ax.YLim(2);
+    t = makeInTime(h.trial.params);
+    if ~any(isnan(h.trial.spikes))
+        ticks = raster(ax,t(h.trial.spikes),y);
+        set(ticks,'Tag','Spikes');
+    else
+        raster(ax,t(h.trial.spikes(~isnan(h.trial.spikes))),y);
+        ticks = raster(ax,t(h.trial.spikes_uncorrected(isnan(h.trial.spikes))),y);
+        ticks.Color = [0    0.4470    0.7410];
+    end
+    
+    % enable for other trials
+% If not, find out if the spike detection has been run for the cell
+else 
+    % Go through other trials, first check nearby ones in this protocol
+    nums = h.trial.params.trial+[-1 1 -2 2 -3 3 -4 4];
+    nums = nums(nums>0&nums<h.prtclData(end).trial);
+    gotone = 0;
+    for t = nums
+        mtfl = matfile(sprintf(h.trialStem,t));
+        if ~isempty(whos(mtfl,'spikeDetectionParams'))
+            gotone = 1;
+            break
+        end
+    end
+    % The go through all protocol files
+    if ~gotone
+        for t = 1:length(h.prtclData)
+            mtfl = matfile(sprintf(h.trialStem,h.prtclData(t).trial));
+            if ~isempty(whos(mtfl,'spikeDetectionParams'))
+                gotone = 1;
+                break
+            end
+        end
+    end
+    if ~gotone
+        % warn if no other protocol trials have been run
+        warning('No other protocol trials have spikes')
+    else
+        spikevars = mtfl.spikeDetectionParams;
+    end
+    % optional: then check other protocols
+    
+    % If no spike detection has been run, get vars from
+    % prefs('FlyAnalysis')
+        % vars_skeleton = rmfield(vars,'unfiltered_data'); vars_skeleton =
+        % rmfield(vars_skeleton,'filtered_data'); vars_skeleton =
+        % rmfield(vars_skeleton,'piezo');
+        % setpref('FlyAnalysis','Spike_params',vars_skeleton);
+    if ~exist('spikevars','var')
+        fstag = ['fs' num2str(h.trial.params.sampratein)];
+        spikevars = getacqpref('FlyAnalysis',['Spike_params_' fstag]);
+    end 
+    % run the spike filter GUI with these prefs., select example spikes.
+    
+    switch h.trial.params.mode_1; case 'VClamp', invec1 = 'current_1'; case 'IClamp', invec1 = 'voltage_1'; otherwise; invec1 = 'voltage_1'; end
+    %     switch trial.params.mode_2; case 'VClamp', invec2 = 'current_2'; case 'IClamp', invec2 = 'voltage_2'; otherwise; invec2 = 'voltage_2'; end
+
+    % may need to allow for different versions of spike analysis
+    [h.trial,spikevars] = spikeDetection(h.trial,invec1,spikevars);
+    if ~isempty(spikevars)
+        fstag = ['fs' num2str(h.trial.params.sampratein)];
+        setacqpref('FlyAnalysis',['Spike_params_' fstag],spikevars);
+    else
+        warning('Spike detection is canceled');
     end
 end
+guidata(spikebutt,h)
+%quickShow_Protocol(h.trialnum, eventdata, h)
 
-infoStr = get(handles.infoPanel,'string');
-fprintf('%s\n',infoStr{:});
-
-% [protocol,dateID,flynum,cellnum,trialnum] = extractRawIdentifiers(handles.trial.name);
-% set(newfig,'name',[dateID '_' flynum '_' cellnum '_' protocol '_Block' num2str(b) '_' mfilename sprintf('_%s',tags{:})])
-
-try nameguess = regexprep(handles.trialStem,...
-        {handles.currentPrtcl,'_Raw_','%d','.mat'},...
-        {'','',[handles.quickShowFunction '_' num2str(handles.currentTrialNum)  regexprep(sprintf('_%s',handles.trial.tags{:}),{'-',';'},{'m',''})],'.pdf'});
-catch
-    nameguess = regexprep(handles.trialStem,...
-        {handles.currentPrtcl,'_Raw_','%d','.mat'},...
-        {'','',[handles.quickShowFunction '_' num2str(handles.currentTrialNum)],'.pdf'});
-end
-
-nameguess = regexprep(nameguess,' ','_');
-set(fig,'name')
-
-[FileName,PathName,FilterIndex] = uiputfile('*.*','File Path',['C:\Users\Anthony Azevedo\Dropbox\Weekly_Record\' nameguess]);
-set(fig,'name',FileName)
-figure(fig);
-if ~FileName, return, end
-eval(['export_fig ' regexprep(fullfile(PathName,FileName),'\sAzevedo',''' Azevedo''')]);
-%panl.export(fn, '-rp');
 
 function savetraces_button_Callback(hObject, eventdata, handles)
 if get(handles.savetraces_button,'value')
@@ -1110,7 +1165,11 @@ helperfuncs = ...
 'cleanuptags'
 'excludeBlock_toggle'
 'removeSpikes'
+'reDetectSpikes'
 'removeKmeansStuff'
+'removeProbeTrackStuff'
+'removeProbeLine'
+'removeAnnotations'
 };
 set(hObject,'String',helperfuncs);
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
@@ -1276,26 +1335,67 @@ end
 guidata(hObject, handles);
 
 function removeSpikes(hObject,eventdata,handles)
-button = questdlg('RemoveSpikes for entire block?','Remove Spikes','Yes');
+button = questdlg('RemoveSpikes for entire block?','Remove Spikes','No');
 if strcmp(button,'Cancel'), return, end
 
 handles = guidata(hObject);
 if strcmp(button,'Yes')
     nums = findLikeTrials_includingExcluded('name',handles.trial.name,'datastruct',handles.prtclData,...
         'exclude',{'step','amp','displacement','freq'});
-    for n_ind = 1:length(nums);
+    for n_ind = 1:length(nums)
         trial = load(fullfile(handles.dir,sprintf(handles.trialStem,nums(n_ind))));
-        trial = rmfield(trial,'spikes');
+        if isfield(trial,'spikes')
+            trial = rmfield(trial,'spikes');
+        end
+        if isfield(trial,'spikeDetectionParams')
+            trial = rmfield(trial,'spikeDetectionParams');
+        end
         save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
+        fprintf('Spikes removed\n');
+        
     end
 else
     trial = handles.trial;
-    trial = rmfield(trial,'spikes');
+    if isfield(trial,'spikes')
+        trial = rmfield(trial,'spikes');
+        fprintf('Spikes removed\n');
+    end
+    if isfield(trial,'spike_uncorrected')
+        trial = rmfield(trial,'spikes_uncorrected');
+        fprintf('Uncorrected spikes removed\n');
+    end
+    if isfield(trial,'spikeDetectionParams')
+        trial = rmfield(trial,'spikeDetectionParams');
+        fprintf('Spike params removed\n');
+    end
     save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
     handles.trial = trial;
+    fprintf('Spikes removal complete\n');
+        
 end
 
 guidata(hObject, handles);
+
+
+function reDetectSpikes(hObject,eventdata,handles)
+
+handles = guidata(hObject);
+trial = handles.trial;
+switch handles.trial.params.mode_1; case 'VClamp', invec1 = 'current_1'; case 'IClamp', invec1 = 'voltage_1'; otherwise; invec1 = 'voltage_1'; end
+
+button = questdlg('Use params from preferences?','Preferences','No');
+if strcmp(button,'No')
+    spikeDetection(trial,invec1,trial.spikeDetectionParams);
+elseif strcmp(button,'Yes')
+    fstag = ['fs' num2str(h.trial.params.sampratein)];
+    spikevars = getacqpref('FlyAnalysis',['Spike_params_' fstag]);
+    [~,spikevars] = spikeDetection(trial,invec1,spikevars);
+    setacqpref('FlyAnalysis',['Spike_params_' fstag],spikevars);
+end
+
+figure(gcbf);
+guidata(hObject, handles);
+
 
 function removeKmeansStuff(hObject,eventdata,handles)
 button = questdlg('Remove Kmeans stuff for entire block?','Remove Kmeans','Yes');
@@ -1319,6 +1419,70 @@ else
     trial = rmfield(trial,'kmeans_threshold');
     trial = rmfield(trial,'clmask');
     trial = rmfield(trial,'clustertraces');
+    save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
+    handles.trial = trial;
+end
+
+guidata(hObject, handles);
+
+function removeProbeLine(hObject,eventdata,handles)
+button = questdlg('Remove Probe Line for entire block?','Remove Probe','Yes');
+if strcmp(button,'Cancel'), return, end
+
+handles = guidata(hObject);
+if strcmp(button,'Yes')
+    nums = findLikeTrials_includingExcluded('name',handles.trial.name,'datastruct',handles.prtclData,...
+        'exclude',{'step','amp','displacement','freq','speed'});
+    for n_ind = 1:length(nums)
+        trial = load(fullfile(handles.dir,sprintf(handles.trialStem,nums(n_ind))));
+        try trial = rmfield(trial,'forceProbe_line'); 
+        catch e, fprintf('%s\n',e.message); 
+        end
+        try trial = rmfield(trial,'forceProbe_tangent'); catch e, fprintf('%s\n',e.message); end
+        save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
+    end
+else
+    trial = handles.trial;
+        try trial = rmfield(trial,'forceProbe_line'); catch e, fprintf('%s\n',e.message); end
+        try trial = rmfield(trial,'forceProbe_tangent'); catch e, fprintf('%s\n',e.message); end
+    save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
+    handles.trial = trial;
+end
+
+guidata(hObject, handles);
+
+
+function removeProbeTrackStuff(hObject,eventdata,handles)
+button = questdlg('Remove Probe profile stuff for entire block?','Remove Probe','Yes');
+if strcmp(button,'Cancel'), return, end
+
+handles = guidata(hObject);
+if strcmp(button,'Yes')
+    nums = findLikeTrials_includingExcluded('name',handles.trial.name,'datastruct',handles.prtclData,...
+        'exclude',{'step','amp','displacement','freq'});
+    for n_ind = 1:length(nums)
+        trial = load(fullfile(handles.dir,sprintf(handles.trialStem,nums(n_ind))));
+        trial = rmfield(trial,'forceProbeStuff');
+        save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
+    end
+else
+    trial = handles.trial;
+        trial = rmfield(trial,'forceProbeStuff');
+    save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
+    handles.trial = trial;
+end
+
+guidata(hObject, handles);
+
+
+function removeAnnotations(hObject,eventdata,handles)
+button = questdlg('Remove all annotations?','Remove Annotations','Yes');
+if strcmp(button,'Cancel'), return, end
+
+handles = guidata(hObject);
+if strcmp(button,'Yes')
+    trial = handles.trial;
+    trial = rmfield(trial,'annotation');
     save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
     handles.trial = trial;
 end

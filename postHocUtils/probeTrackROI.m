@@ -1,27 +1,51 @@
-function trial = probeTrackROI(trial)
+%function trial = probeTrackROI_startAt0(trial)
 %% Set an ROI that avoids the leg, just gets the probe
 % I think I only need 1 for now, but I'll keep the option for multiple
 % (storing in cell vs matrix)
 
 vid = VideoReader(trial.imageFile);
 N = vid.Duration*vid.FrameRate;
-% h2 = postHocExposure(trial,N);
+h2 = postHocExposure(trial,N);
+t = makeInTime(trial.params);
+t_f = trial.params.stimDurInSec-5*1/vid.FrameRate;
+
+for cnt = 1:5
+    frame = readFrame(vid);
+end
+frame = squeeze(frame(:,:,1));
+if sum(frame(:)>10) < numel(frame)/1000
+    startAt0 = true;
+    t_i = 5*1/vid.FrameRate;
+else
+    startAt0 = false;
+    t_i = 5*1/vid.FrameRate -trial.params.preDurInSec;
+end 
+frames = find(t(h2.exposure)>t_i & t(h2.exposure)<t_f);
+N = length(frames);
+
+kk = 0;
+while kk<frames(1)
+    kk = kk+1;
+    
+    readFrame(vid);
+    continue
+end
 
 smooshedframe = double(readFrame(vid));
 smooshedframe = squeeze(smooshedframe(:,:,1));
 smooshedframe(:) = 0; 
 readFrame(vid); readFrame(vid);
 
-for jj = 1:10
+for jj = 1:4
     mov3 = double(readFrame(vid));
     smooshedframe = smooshedframe+mov3(:,:,1);
 end
-frame = smooshedframe/10;
+frame = smooshedframe/4;
 for jj = 1:20
     mov3 = double(readFrame(vid));
     smooshedframe = smooshedframe+mov3(:,:,1);
 end
-smooshedframe = smooshedframe/30;
+smooshedframe = smooshedframe/24;
 
 
 %% Some knowledge
@@ -193,35 +217,18 @@ bar_idx_i = locs(loc);
 zro = evalpnts_x(bar_idx_i);
 pk = pks(loc);
 
-% --- No longer using the variation in the pixel intensity to extract the
-% ---- bar
-% filtered_sigma_mu = sigma./mu_bg;
-% filtered_sigma_mu = smooth(filtered_sigma_mu,100);
-% % taper both ends
-% mb = polyfit((50:100)',filtered_sigma_mu(50:100),1);
-% filtered_sigma_mu(1:49) = mb(2)+mb(1)*(1:49);
-% mb = polyfit((length(evalpnts_x)-100:length(evalpnts_x)-50)',filtered_sigma_mu(length(evalpnts_x)-100:length(evalpnts_x)-50),1);
-% filtered_sigma_mu(end-49+1:end) = mb(2)+mb(1)*(length(evalpnts_x)-(49:-1:1));
-% 
-% [dark,trough] = max(filtered_sigma_mu(evalpnts_x>zro));
-% % If the bath LED is in the frame, there can be multiple peaks
-% [dark,trough] = findpeaks(filtered_sigma_mu(evalpnts_x>zro),'MinPeakWidth',length(-filtered_mu)/50);
-% trough = trough(1)+sum(evalpnts_x<=zro);
-% dark = mean(mu(filtered_sigma_mu>=.925*dark(1)));
-
-% Find a place to fit a gaussian to the left side of the bar
-% Makes more sense to subtract the actual background, and assume that
-% somewhere in the left part of the mean is the dark point
-dark = mean(mu(mu<1.25*min(mu)));
+% now dark is the mean of the bottom 12% of points
+dark = mean(mu(mu<quantile(mu(:),0.12)));
 % where the bar dips below dark
 left_trough = find(flipud(filtered_mu(1:bar_idx_i))<dark,1,'first');
+trough = bar_idx_i-left_trough;
 % where the bar comes back over dark on the far side (in case there is
 % a bright spot in the corner
-trough = bar_idx_i-left_trough;
 left_trough = find(flipud(filtered_mu(1:trough))>dark*1.1,1,'first');
 if ~isempty(left_trough)
     trough = trough-left_trough;
 end
+trough = max([trough 1]);
 
 % look for the width of the bar over the trough;
 barsig_win = trough:bar_idx_i;
@@ -229,34 +236,52 @@ barsig_win = trough:bar_idx_i;
 % 3) fit a gaussian to this part of the curve. 
 bar_sigma = abs(evalpnts_x(find(mu(barsig_win)>.7*pk,1,'first')+trough)-zro);
 % Use the left hand side, and a bit of the right hand side.
-threesigma = 1:length(evalpnts)>trough & evalpnts_x-zro<=2*bar_sigma;
+threesigma = 1:length(evalpnts)>trough & evalpnts_x-zro<=1*bar_sigma;
 
 coef = nlinfit(evalpnts_x(threesigma),mu(threesigma)-dark,@gaussian_1at0,[pk,zro,bar_sigma]);
 
+% recenter the bar
+zro = coef(2);
+
 % 4) find where the gaussian is near 0 to the right
-lefthash = find(gaussian_1at0(coef,evalpnts_x(evalpnts_x>zro))< 1E-4*coef(1) ,1,'first')+sum(evalpnts_x<=zro);
-lefthashadjust = min([lefthash,trough]);
+lefthash = find(gaussian_1at0(coef,evalpnts_x(evalpnts_x>zro))< 1E-2*coef(1) ,1,'first')+sum(evalpnts_x<=zro);
+% compare that hash to the location of the minimum between the peak and the
+% right hand side
 lefthashadjust = lefthash;
 
 % 5) delineate that region as empty space
 % 6) find where the intensity picks up again to the right
 [~,righthash] = max(filtered_mu(lefthashadjust+1:end));
 righthash = find((filtered_mu(lefthashadjust+1:end)-dark)>1*dark,1,'first');
-righthash = righthash+lefthashadjust;
 % This might be very close to "darkness" if there is no body, so if it is
 % at "left hash", make it a little to the right of left hash.
 % at most it should be about 80% of the full line, bar will definitely not
 % be over there
+
+righthash = righthash+lefthashadjust;
 righthashadjust = max([righthash round(0.80*size(evalpnts_x,2))]);
+
+
+%%
+figure; hold on; 
+plot(filtered_mu); 
+plot(locs,pks,'ro'); 
+plot(locs(loc),pks(loc),'b+'); 
+plot([trough trough],[0 pk],'color',[.8 .8 .8])
+plot(find(threesigma),gaussian_1at0(coef,evalpnts_x(threesigma))+dark,'color',[1 .5 .5])
+plot([lefthashadjust lefthashadjust],[0 pk],'color',[1 .5 .5],'linewidth',3)
+plot([righthashadjust righthashadjust],[0 pk],'color',[.5 .5 1])
 
 figure; hold on; 
 plot(filtered_mu); 
 plot(locs,pks,'ro'); 
-plot(loc,pks(loc),'b+'); 
+plot(locs(loc),pks(loc),'b+'); 
 plot([trough trough],[0 pk],'color',[.8 .8 .8])
-plot([lefthashadjust lefthashadjust],[0 pk],'color',[1 .5 .5])
-plot([righthashadjust righthashadjust],[0 pk],'color',[.5 .5 1])
 plot(find(threesigma),gaussian_1at0(coef,evalpnts_x(threesigma))+dark,'color',[1 .5 .5])
+plot([lefthashadjust lefthashadjust],[0 pk],'color',[1 .5 .5],'linewidth',3)
+plot([righthashadjust righthashadjust],[0 pk],'color',[.5 .5 1])
+
+%% 
 
 % 7) this is the region where the background is
 
@@ -294,6 +319,9 @@ right = find(filtered_frame_mu(loc:end)-dark<pk*2/3,1,'first')+loc;
 
 % another issue is when the bar is just slightly out of focus, then the
 % variation is pretty hi and those points are the dark and trough.
+
+% another issue is if the intensity does not come down enough between the
+% bar and the body
 
 r_idx = left+1:right-1;
 com = round(sum(r_idx'.*filtered_frame_mu(r_idx))./sum(filtered_frame_mu(r_idx)));
@@ -362,12 +390,11 @@ dispax3 = axes('parent',displayf2,'units','pixels','position',[0 0*size(ProfileM
 % set(dispax2,'box','off','xtick',[],'ytick',[],'tag','dispax');
 colormap(dispax2,'gray')
 
-im = imshow(BackgroundProfiles,[0 2*quantile(BackgroundProfiles(:),0.975)],'parent',dispax1);
-im = imshow(Background,[0 2*quantile(Background(:),0.975)],'parent',dispax2);
-
 pm = imshow(ProfileMat,[0 2*quantile(Background(:),0.975)],'parent',dispax1);
 bk = imshow(Background,[0 2*quantile(Background(:),0.975)],'parent',dispax2);
+lr = line([lefthashadjust,lefthashadjust],[1 size(Background,1)],'parent',dispax2,'color',[1 .5 .5]);
 pm_bs = imshow(ProfileMat_BS,[0 2*quantile(ProfileMat_BS(:),0.975)],'parent',dispax3);
+rr = line([righthashadjust,righthashadjust],[1 size(ProfileMat_BS,1)],'parent',dispax3,'color',[.5 .5 1]);
 bar = line([loc,loc],[1 size(ProfileMat_BS,1)],'parent',dispax3,'color',[1 0 1]);
 
 trial.forceProbeStuff.line = trial.forceProbe_line;
@@ -456,31 +483,36 @@ while hasFrame(vid)
     
     % find the dark values
     dark = mean(filtered_frame_mu(filtered_frame_mu<=1.15*min(filtered_frame_mu)));
+    dark = mean(filtered_frame_mu(filtered_frame_mu<quantile(filtered_frame_mu(:),0.12)));
 
     [pk,loc] = max(filtered_frame_mu(1:righthashadjust)-dark);
-    
+
+    profmu.YData = filtered_frame_mu;
     left = find(filtered_frame_mu(1:loc)-dark<pk*2/3,1,'last');
     right = find(filtered_frame_mu(loc:end)-dark<pk*2/3,1,'first')+loc;
     if isempty(left) || isempty(right)
         continue
     end
         
+    
     r_idx = left+1:right-1;
-    com = round(sum(r_idx'.*filtered_frame_mu(r_idx))./sum(filtered_frame_mu(r_idx)));
-    
-    bar_loc = evalpnts(:,com);
-    
-    forceProbePosition(:,kk) = bar_loc;
-    I_profile(:,kk) = filtered_frame_mu;
+    com = sum(r_idx'.*filtered_frame_mu(r_idx))./sum(filtered_frame_mu(r_idx));
+        
+    origin = find(evalpnts(1,:)==0&evalpnts(2,:)==0);
+    x_hat = evalpnts(:,origin+1);
+    forceProbePosition(:,kk) = x_hat.*(com-origin);
 
+    I_profile(:,kk) = filtered_frame_mu;
+    CoM(kk) = com;
+        
 %     im.CData = frame;
 %     bar.XData = [loc loc];
 %     pm_bs.CData = ProfileMat_BS;
 %     bar_spot.XData = moveEvalPntsAlong(1,1)+bar_loc(1);
 %     bar_spot.YData = moveEvalPntsAlong(2,1)+bar_loc(2);
 
-    profmu.YData = filtered_frame_mu;
-    bar_ontangent.XData = [evalpnts_x(com) evalpnts_x(com)];
+    bar_ontangent.XData = [com+evalpnts_x(1) com+evalpnts_x(1)];
+    
     
     drawnow
 
@@ -489,6 +521,7 @@ delete(br);
     
 trial.forceProbeStuff.forceProbePosition = forceProbePosition;
 trial.forceProbeStuff.keimograph = I_profile;
+trial.forceProbeStuff.CoM = CoM;
 fprintf('Saving bar position\n')
 save(trial.name,'-struct','trial')
 
@@ -496,4 +529,3 @@ save(trial.name,'-struct','trial')
 % close(displayf2)
 close(profileFigure)
 
-end

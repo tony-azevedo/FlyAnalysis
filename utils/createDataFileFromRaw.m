@@ -24,6 +24,8 @@ dfn = regexprep(dfn,'_Raw','');
 dfn = regexprep(dfn,'_\d*.mat','.mat');
 curprotocol = strtok(filename,'_');
 
+cellID = regexp(filename,'(\d+)_F(\d+)_C(\d+)','match'); cellID = cellID{1};
+
 fprintf('Creating data files for %s\n',D);
 rawfiles = dir([D '*_Raw_*.mat']);
 
@@ -67,6 +69,7 @@ for p = 1:length(protocols)
     savedirmat = ls(D)';
     savedirconts = savedirmat(:)';
     
+    imaged = zeros(size(rawfiles));
     for f = 1:length(rawfiles)
         trial = load([D rawfiles(f).name]);
         trial = setRawFilePath(trial);
@@ -75,7 +78,8 @@ for p = 1:length(protocols)
             trial.params.mode = trial.params.recmode;
             save(trial.name, '-struct', 'trial');
         end
-
+        imaged(f) = isfield(trial,'imageFile')&&~isempty(trial.imageFile);
+        
         try data(f) = trial.params;
         catch e
             if ~strcmp(e.identifier,'MATLAB:heterogeneousStrucAssignment');
@@ -107,13 +111,47 @@ for p = 1:length(protocols)
     dfns{p} = regexprep(dfn,curprotocol,protocols{p});
     
     % Find all the matched avis, their trial nums, and their size
-    pattern = [trial.params.protocol,'_Image_(\d+)_' datestr(trial.timestamp,29) '-(\d+)-\d+.avi'];
-    matchedavifiles = regexp(savedirconts,pattern,'match');
+    pattern_old = [trial.params.protocol,'_Image_(\d+)_' datestr(trial.timestamp,29) '-(\d+)-\d+.avi'];
+    matchedavifiles = regexp(savedirconts,pattern_old,'match');
     
-    unpattern = [trial.params.protocol,'_Image_' datestr(trial.timestamp,29) '-(\d+)-\d+.avi'];
-    unmatchedavifiles = regexp(savedirconts,unpattern,'match');
+    pattern_new = [trial.params.protocol,'_Image_' cellID '_(\d+)_' datestr(trial.timestamp,'yyyymmdd') 'T(\d+).avi'];
+    baslermatchedavifiles = regexp(savedirconts,pattern_new,'match');
 
-    if ~isempty(matchedavifiles) || ~isempty(unmatchedavifiles)
+    unpattern_old = [trial.params.protocol,'_Image_' datestr(trial.timestamp,29) '-(\d+)-\d+.avi'];
+    unmatchedavifiles = regexp(savedirconts,unpattern_old,'match');
+
+    if ~isempty(baslermatchedavifiles)
+        if length(baslermatchedavifiles)~= sum(imaged)
+            % Basler camera created X files, but X-sum raw files have imageFiles
+            % Most likely, the trial timed out before the video was saved
+            % then a second video was taken just making sure the trials
+            % with more videos are referencing the newest
+            fprintf('Basler camera created %d files, but %d raw files have imageFiles\nMost likely, the trial timed out before the video was saved\nthen a second video was taken. Just making sure the trials \nwith more videos are referencing the newest\n',length(baslermatchedavifiles),sum(imaged));
+            raw_imaged = rawfiles(logical(imaged));
+            for f = 1:length(raw_imaged)
+                imgf = load([D raw_imaged(f).name],'imageFile'); imgf = imgf.imageFile;
+                trnm = load([D raw_imaged(f).name],'params'); trnm = trnm.params.trial;
+                pattern_new = [trial.params.protocol,'_Image_' cellID '_' num2str(trnm) '_' datestr(trial.timestamp,'yyyymmdd') 'T'];
+                times = regexp(savedirconts,pattern_new,'end');
+                if length(times)>1
+                    for tms = 1:length(times)
+                        times(tms) = str2double(savedirconts(times(tms)+(1:6)));
+                    end
+                    imgftm = regexp(imgf,pattern_new,'end');
+                    imgftm = str2double(imgf(imgftm+(1:6)));
+                    if imgftm == max(times)
+                        fprintf('\nSeveral images for %s, \nnewest (T%g) is correct referenced in file name\n',...
+                            [trial.params.protocol,'_Raw_' cellID '_' num2str(trnm)],...
+                            imgftm);
+                    else
+                        keyboard
+                    end
+                end
+            end
+
+            
+        end
+    elseif ~isempty(matchedavifiles) || ~isempty(unmatchedavifiles)
         aviFileAssignmentAssessment(trial.name);
     end
 

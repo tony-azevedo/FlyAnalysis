@@ -1,6 +1,6 @@
 function h = postHocExposure(h,varargin)
 if nargin>1
-    N = varargin{1};
+    N = round(varargin{1});
 end
 shift = 0;
 use = 'skootched';
@@ -17,9 +17,9 @@ end
 if exist('p','var') && isfield(p.Results,'use')
     use = p.Results.use;
 end
-if (h.exposure(1) == 1 && ~islogical(h.exposure)) || strcmp(use,'raw')
+if ((h.exposure(1) == 1 || h.exposure(2) == 1) && ~islogical(h.exposure)) || strcmp(use,'raw')
     exposure = h.exposure;
-    if strcmp(use,'raw')
+    if strcmp(use,'raw') && isfield(h,'exposure_raw')
         exposure = h.exposure_raw;
     end
     exposure_1_0 = zeros(size(exposure));

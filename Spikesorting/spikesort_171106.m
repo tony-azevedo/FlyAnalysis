@@ -12,11 +12,13 @@
 % addpath(init.funcpath);
 
 trial = load('B:\Raw_Data\171101\171101_F1_C1\EpiFlash2T_Raw_171101_F1_C1_205.mat');
+trial = load('B:\Raw_Data\171122\171122_F1_C1\EpiFlash2T_Raw_171122_F1_C1_9.mat');
 
 %% init analysis params
 init.manual = 1;%% if spike sorting is to be done manually
 init.other_piezo = 0; %% if 2nd piezo is the primary one, == 1; currently just one piezo
 init.firing_bin_ms = 100;%% window in which to calculate firing rate (in samples)
+
 
 %% load data
 % [data,si,h]=abfload([init.datapath '/' init.filename]);
@@ -27,20 +29,25 @@ patch_1 = trial.voltage_1(:,1); %%patch primary signal
 patch_2 = trial.current_2(:,1); %%patch primary signal
 
 %% initialize spike ID params
-spikes.fs = fs;%% sampling rate
+spike_params.fs = fs;%% sampling rate
 % firing_bin = init.firing_bin_ms*(spikes.fs/1000); 
-spikes.approval = 1; %%approval (== 0) to run without asking for the spike distance threshold
-spikes.approval_time = 10;
-spikes.Distance_threshold = 10;
-spikes.spikeTemplateWidth = 50; %%number of samples for the spike template
-spikes.spikes2avg = 3;
-spikes.spiketemplate = [];
-spikes.spike_count_range = 1:length(patch_1); %%range from which to extract spikes
-spikes.type = '';%% for naming spike files
+spike_params.approval = 1; %%approval (== 0) to run without asking for the spike distance threshold
+spike_params.approval_time = 10;
+spike_params.Distance_threshold = 10;
+spike_params.spikeTemplateWidth = 50; %%number of samples for the spike template
+spike_params.spikes2avg = 3;
+spike_params.spiketemplate = [];
+spike_params.spike_count_range = 1:length(patch_1); %%range from which to extract spikes
+spike_params.type = '';%% for naming spike files
 
 %% run spike ID
-[spike_inds, spikesBelowThresh, spiketemplate, spikeDist_threshold, vars] = spike_extractor_170930(patch_1(spikes.spike_count_range),patch_2(spikes.spike_count_range), spikes, init);
-spike_extractor_171106
+unfiltered_data = patch_1(spike_params.spike_count_range);
+piezo = patch_2(spike_params.spike_count_range);
+% [spike_inds, spikesBelowThresh, spiketemplate, spikeDist_threshold, vars] = ...
+%     spike_extractor_170930(patch_1(spike_params.spike_count_range),patch_2(spike_params.spike_count_range), spike_params, init);
+
+
+% spike_extractor_171106
 
 %% plot the results
 figure(1); plot(patch_1, 'b');hold on;

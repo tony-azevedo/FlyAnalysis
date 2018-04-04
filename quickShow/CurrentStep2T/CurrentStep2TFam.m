@@ -1,35 +1,40 @@
-function newfig = CurrentStepFam(fig,handles,savetag)
+function newfig = CurrentStep2TFam(fig,handles,savetag)
 % see also CurrentStepAverage
 
 if isempty(fig) || ~ishghandle(fig)
     fig = figure(100+trials(1)); clf
 else
 end
+trial = handles.trial;
 
 [protocol,dateID,flynum,cellnum,trialnum,D,trialStem] = extractRawIdentifiers(handles.trial.name);
 
 blocktrials = findBlockTrials(handles.trial,handles.prtclData);
 
+switch trial.params.mode_2; case 'VClamp', invec2 = 'current_2'; case 'IClamp', invec2 = 'voltage_2'; otherwise; invec2 = 'voltage_2'; end   
+
 x = makeInTime(handles.trial.params);
 voltage = zeros(length(x),length(blocktrials));
 current = zeros(length(x),length(blocktrials));
-for bt_ind = 1:length(blocktrials);
+EMG = zeros(length(x),length(blocktrials));
+for bt_ind = 1:length(blocktrials)
     handles.trial = load(fullfile(handles.dir,sprintf(handles.trialStem,blocktrials(bt_ind))));
     trials = findLikeTrials('name',handles.trial.name,'datastruct',handles.prtclData);
-    for t_ind = 1:length(trials);
+    for t_ind = 1:length(trials)
         trial = load(fullfile(handles.dir,sprintf(handles.trialStem,trials(t_ind))));
-        voltage(:,bt_ind) = voltage(:,bt_ind)+trial.voltage;
-        current(:,bt_ind) = current(:,bt_ind)+trial.current;
+        voltage(:,bt_ind) = voltage(:,bt_ind)+trial.voltage_1;
+        EMG(:,bt_ind) = EMG(:,bt_ind)+trial.(invec2);
     end 
     voltage(:,bt_ind) = voltage(:,bt_ind)/length(trials);
     current(:,bt_ind) = current(:,bt_ind)/length(trials);
+    EMG(:,bt_ind) = EMG(:,bt_ind)/length(trials);
 end
 
 ax1 = subplot(3,1,[1 2],'parent',fig); cla(ax1), hold(ax1,'on')
 ax2 = subplot(3,1,3,'parent',fig); cla(ax2), hold(ax2,'on')
-for bt_ind = 1:length(blocktrials);
-    plot(ax1,x,voltage(:,bt_ind),'color',[0 1 0] + [ 0 -1 1]*(bt_ind-1)/(length(blocktrials)-1),'tag',savetag);
-    plot(ax2,x,current(:,bt_ind),'color',[0 1 0] + [ 0 -1 1]*(bt_ind-1)/(length(blocktrials)-1),'tag',savetag);
+for bt_ind = 1:length(blocktrials)
+    plot(ax1,x,voltage(:,bt_ind),'color',[0 1 0] + [ 0 -1 1]*(bt_ind-1)/max([(length(blocktrials)-1) 1]),'tag',savetag);
+    plot(ax2,x,current(:,bt_ind),'color',[0 1 0] + [ 0 -1 1]*(bt_ind-1)/max([(length(blocktrials)-1) 1]),'tag',savetag);
 end
 axis(ax1,'tight')
 xlim(ax1,[-.1 trial.params.stimDurInSec+ min(.15,trial.params.postDurInSec)])

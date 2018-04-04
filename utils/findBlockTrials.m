@@ -5,7 +5,7 @@ paramn = fieldnames(trial.params);
 cnt = 1;
 for p_ind = 1:length(paramn)
     pname = paramn{p_ind};
-    if strcmp(pname(end),'s');
+    if strcmp(pname(end),'s')
         excludes{cnt} = pname(1:end-1);
         cnt = cnt+1;
     end

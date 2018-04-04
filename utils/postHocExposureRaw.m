@@ -5,7 +5,7 @@ end
 if isfield(h,'exposure_raw')
     exposure = h.exposure_raw;
     fprintf(' * Exposure skootched, using original exposure!\n')
-elseif h.exposure(1) == 1 && ~islogical(h.exposure)
+elseif ((h.exposure(1) == 1 || h.exposure(2) == 1) && ~islogical(h.exposure)) 
     exposure = h.exposure;
 else
    error('Exposure vector is not well conditioned for current analysis'); 

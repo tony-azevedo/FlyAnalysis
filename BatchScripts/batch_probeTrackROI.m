@@ -12,7 +12,7 @@ for tr_idx = trialnumlist
 
     if isfield(trial ,'forceProbe_line') && isfield(trial,'forceProbe_tangent') && (~isfield(trial,'excluded') || ~trial.excluded) && ~isfield(trial,'forceProbeStuff')
         fprintf('%s\n',trial.name);
-        trial = probeTrackROI(trial);        
+        probeTrackROI;        
     elseif isfield(trial,'forceProbeStuff')
         fprintf('%s\n',trial.name);
         fprintf('\t*Has profile: passing over trial for now\n')

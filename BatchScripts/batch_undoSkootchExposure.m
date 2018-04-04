@@ -2,7 +2,7 @@
 
 [protocol,dateID,flynum,cellnum,trialnum,D,trialStem,datastructfile] = extractRawIdentifiers(trial.name);
 
-skootchedFrames = nan(size(1:length(data)));
+% skootchedFrames = nan(size(1:length(data)));
 
 for tr_idx = trialnumlist
     

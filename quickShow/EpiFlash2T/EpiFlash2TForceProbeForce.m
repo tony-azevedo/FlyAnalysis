@@ -4,8 +4,6 @@ if ~isfield(handles.trial,'forceProbeStuff');
     fprintf('No profiles\n');
     beep
     return
-else
-    I_profile = handles.trial.forceProbeStuff.keimograph;
 end
 
 set(h,'tag',mfilename);
@@ -48,7 +46,7 @@ xlim(ax,[-trial.params.preDurInSec  trial.params.stimDurInSec+trial.params.postD
 % % xlim([-.1 trial.params.stimDurInSec+ min(.15,trial.params.postDurInSec)])
 % set(ax,'tag','stimulus_ax');
 
-h2 = postHocExposure(trial,size(I_profile,2));
+h2 = postHocExposure(trial,size(trial.forceProbeStuff.forceProbePosition,2));
 frame_times = x(h2.exposure);
 
 origin = find(handles.trial.forceProbeStuff.EvalPnts(1,:)==0&handles.trial.forceProbeStuff.EvalPnts(2,:)==0);

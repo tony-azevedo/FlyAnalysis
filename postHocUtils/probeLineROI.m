@@ -37,18 +37,18 @@ hold(dispax,'on');
 
 %%
 if ~isfield(trial,'forceProbe_line')
-    if ~ispref('quickshowPrefs','forceProbeLine')
-        setpref('quickshowPrefs','forceProbeLine',[601 626;64 36]);
+    if ~isacqpref('quickshowPrefs','forceProbeLine')
+        setacqpref('quickshowPrefs','forceProbeLine',[601 626;64 36]);
     end
-    temp.forceProbe_line = getpref('quickshowPrefs','forceProbeLine');
+    temp.forceProbe_line = getacqpref('quickshowPrefs','forceProbeLine');
     trial.forceProbe_line = temp.forceProbe_line;
 end
 
 if ~isfield(trial,'forceProbe_tangent')
-    if ~ispref('quickshowPrefs','forceProbeTangent')
-        setpref('quickshowPrefs','forceProbeTangent',[236 508]);
+    if ~isacqpref('quickshowPrefs','forceProbeTangent')
+        setacqpref('quickshowPrefs','forceProbeTangent',[236 508]);
     end
-    temp.forceProbe_tangent = getpref('quickshowPrefs','forceProbeTangent');
+    temp.forceProbe_tangent = getacqpref('quickshowPrefs','forceProbeTangent');
     line(temp.forceProbe_tangent(:,1),temp.forceProbe_tangent(:,2),'parent',dispax,'marker','o','markeredgecolor',[0 1 0],'tag','oldbar');
     trial.forceProbe_tangent = temp.forceProbe_tangent;
 end
@@ -94,7 +94,7 @@ if strcmp(newbutton,'Yes')
         roi_temp = wait(roihand);
         delete(findobj(dispax,'type','line','tag','oldbar'))
         trial.forceProbe_line = roi_temp;
-        setpref('quickshowPrefs','forceProbeLine',trial.forceProbe_line)
+        setacqpref('quickshowPrefs','forceProbeLine',trial.forceProbe_line)
     elseif strcmp(button,'No')
     elseif strcmp(button,'Cancel')
         fprintf('Not setting tangent in trial\n')
@@ -110,7 +110,7 @@ if strcmp(newbutton,'Yes')
         roi_temp = wait(roihand);
         delete(findobj(dispax,'type','line','tag','oldpoint'))
         trial.forceProbe_tangent = roi_temp;
-        setpref('quickshowPrefs','forceProbeTangent',trial.forceProbe_tangent)
+        setacqpref('quickshowPrefs','forceProbeTangent',trial.forceProbe_tangent)
     elseif strcmp(button,'No')
     elseif strcmp(button,'Cancel')
         fprintf('Not setting tangent in trial\n')
@@ -119,8 +119,8 @@ if strcmp(newbutton,'Yes')
         return
     end
     
-    setpref('quickshowPrefs','forceProbeTangent',trial.forceProbe_tangent)
-    setpref('quickshowPrefs','forceProbeLine',trial.forceProbe_line)
+    setacqpref('quickshowPrefs','forceProbeTangent',trial.forceProbe_tangent)
+    setacqpref('quickshowPrefs','forceProbeLine',trial.forceProbe_line)
     
     % Draw the stuff
     l = trial.forceProbe_line;

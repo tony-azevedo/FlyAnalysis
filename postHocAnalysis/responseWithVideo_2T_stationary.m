@@ -8,9 +8,12 @@ set(0, 'DefaultAxesFontName', 'Arial');
 
 % make movie and pdf of each data file
 
-checkdir = dir(fullfile(D,[protocol,'_Image_' num2str(h.params.trial) '_' datestr(h.timestamp,29) '*.avi']));
+checkdir = dir(h.imageFile);
+if isempty(checkdir)
+    checkdir = dir(fullfile(D,[protocol,'_Image_' num2str(h.params.trial) '_' datestr(h.timestamp,29) '*.avi']));
+end
 
-if ~length(checkdir)
+if isempty(checkdir)
     moviename = [regexprep(h.name, {'Acquisition','_Raw_'},{'Raw_Data','_Images_'}) '.avi'];
     foldername = regexprep(moviename, '.mat.avi','\');
     moviename = dir([foldername protocol '_Image_*']);
@@ -30,7 +33,7 @@ t_idx_win = [find(t>=t_win(1),1) find(t<=t_win(end),1,'last')];
 
 % import movie
 vid = VideoReader(moviename);
-N = vid.Duration*vid.FrameRate;
+N = round(vid.Duration*vid.FrameRate);
 h2 = postHocExposure(h,N);
 
 frame_times = t(h2.exposure);
