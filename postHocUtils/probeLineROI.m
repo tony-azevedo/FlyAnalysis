@@ -6,9 +6,9 @@ function trial = probeLineROI(trial)
 displayf = findobj('type','figure','tag','big_fig');
 if isempty(displayf)
     displayf = figure;
-    displayf.Position = [600 2 1280 1024];
+    displayf.Position = [600 2 1280 1048];
     displayf.Tag = 'big_fig';
-    
+    displayf.MenuBar = 'none';
 end
 dispax = findobj('type','axes','tag','dispax');
 if isempty(dispax)
@@ -59,7 +59,6 @@ line(trial.forceProbe_tangent(:,1),trial.forceProbe_tangent(:,2),'parent',dispax
 l = trial.forceProbe_line;
 p = trial.forceProbe_tangent;
 
-% probe_eval_points = turnLineIntoEvalPnts(l,p);
 % recenter
 l_0 = l - repmat(mean(l,1),2,1);
 p_0 = p - mean(l,1);
@@ -67,10 +66,10 @@ p_0 = p - mean(l,1);
 % find y vector
 y = l_0(2,:)/norm(l_0(2,:));
 
-% project tangent point
+% project tangent point - how far along line is tangent from center?
 p_scalar = y*p_0';
 
-% find intercept, recenter
+% find intercept, recenter - add projection to center point.
 p_ = p_scalar*y+mean(l,1);
 
 % rotate coordinates
@@ -82,6 +81,23 @@ l_r = l_r + repmat(p_,2,1);
 line(p_(1),p_(2),'parent',dispax,'marker','o','markeredgecolor',[0 1 1]);
 line(l_r(:,1),l_r(:,2),'parent',dispax,'color',[1 .3 .3]);
 
+%% Check that the end of the line doesn't cut off the corner.
+
+% find the corner projection onto y
+p_crn = [1280 0];
+line(p_crn(1),p_crn(2),'parent',dispax,'marker','o','markeredgecolor',[.3 .6 1]);
+
+p_crn_0 = p_crn - mean(l,1);
+
+p_crn_scalar = y*p_crn_0';
+
+p_crn_ = p_crn_scalar*y+mean(l,1);
+
+l_r_crn = [p_crn_; p_crn];
+
+line(p_crn_(1),p_crn_(2),'parent',dispax,'marker','o','markeredgecolor',[.3 .3 .3]);
+line(l_r_crn(:,1),l_r_crn(:,2),'parent',dispax,'color',[.3 .3 .3]);
+    
 %%
 figure(displayf)
 newbutton = questdlg('Make new probe bar and tangent?','Probe ROI','No');
@@ -118,10 +134,7 @@ if strcmp(newbutton,'Yes')
         
         return
     end
-    
-    setacqpref('quickshowPrefs','forceProbeTangent',trial.forceProbe_tangent)
-    setacqpref('quickshowPrefs','forceProbeLine',trial.forceProbe_line)
-    
+        
     % Draw the stuff
     l = trial.forceProbe_line;
     p = trial.forceProbe_tangent;
@@ -149,6 +162,33 @@ if strcmp(newbutton,'Yes')
     line(p_(1),p_(2),'parent',dispax,'marker','o','markeredgecolor',[0 1 1]);
     line(l_r(:,1),l_r(:,2),'parent',dispax,'color',[1 .3 .3]);
     
+    
+    %% Check that the end of the line doesn't cut off the corner.
+    
+    % find the corner projection onto y
+    p_crn = [1280 0];
+    line(p_crn(1),p_crn(2),'parent',dispax,'marker','o','markeredgecolor',[.3 .6 1]);
+    
+    p_crn_0 = p_crn - mean(l,1);
+    
+    p_crn_scalar = y*p_crn_0';
+    
+    
+    if p_crn_scalar<p_scalar
+        trial.forceProbe_tangent = p_crn_scalar*.95*y+mean(l,1);
+        p_crn_ = p_crn_scalar*.95*y+mean(l,1);
+        
+        l_r_crn = (R*l_0')'/4 + repmat(p_crn_,2,1);
+        
+        line(p_crn_(1),p_crn_(2),'parent',dispax,'marker','o','markeredgecolor',[.3 .6 1]);
+        line(l_r_crn(:,1),l_r_crn(:,2),'parent',dispax,'color',[.3 .6 1]);
+
+    end
+
+    setacqpref('quickshowPrefs','forceProbeTangent',trial.forceProbe_tangent)
+    setacqpref('quickshowPrefs','forceProbeLine',trial.forceProbe_line)
+
+%%
     
     % one more check,
     % go through the other frames of the image and ask if they look good too

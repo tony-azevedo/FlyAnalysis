@@ -65,5 +65,5 @@ if ((h.exposure(1) == 1 || h.exposure(2) == 1) && ~islogical(h.exposure)) || str
 elseif isfield(h,'exposure_raw') || strcmp(use,'skoootched')
     fprintf(' * Exposure vector has been skootched!\n')
 else
-   error('Exposure vector is not well conditioned for current analysis'); 
+   error('Exposure vector is not well conditioned for current analysis\n1st true index (exp starts) = %d',find(h.exposure,1,'first')); 
 end

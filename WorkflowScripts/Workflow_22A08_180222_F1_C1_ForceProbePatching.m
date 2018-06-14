@@ -146,8 +146,8 @@ for set = 1:Nsets
             fprintf('%s\n',trial.name);
             eval(routine{set}); %probeTrackROI_IR;
         elseif isfield(trial,'forceProbeStuff')
-            fprintf('%s\n',trial.name);
-            fprintf('\t*Has profile: passing over trial for now\n')
+%             fprintf('%s\n',trial.name);
+%             fprintf('\t*Has profile: passing over trial for now\n')
             
             %OR...
 %             fprintf('\t*Has profile: redoing\n')
@@ -157,11 +157,14 @@ for set = 1:Nsets
             if isfield(trial.forceProbeStuff,'keimograph')
                 fprintf('\t*Moving keimograph to alt file: redoing\n')
                 keimograph = trial.forceProbeStuff.keimograph;
-                save(regexprep(trial.name,'.mat','_barkeimograph.mat'),'keimograph');
+                save(regexprep(trial.name,'_Raw_','_keimograph_'),'keimograph');
                 trial.forceProbeStuff = rmfield(trial.forceProbeStuff,'keimograph');
                 save(trial.name,'-struct','trial')
             end
-
+            if exist(regexprep(trial.name,'.mat','_barkeimograph.mat'),'file')
+                fprintf('\t*Moving keimograph to alt file: movefile\n')
+                movefile(regexprep(trial.name,'.mat','_barkeimograph.mat'),regexprep(trial.name,'_Raw_','_keimograph_'));
+            end
         else
             fprintf('\t* Bad movie: No line or tangent: %s\n',trial.name);
             continue
@@ -183,18 +186,22 @@ end
 trial = load('B:\Raw_Data\180222\180222_F1_C1\CurrentStep2T_Raw_180222_F1_C1_98.mat');
 [protocol,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
 
-clear trials
+clear trials    
+clear spike_trajects alt_trajects ctr_trajects bar_trajects bar_t_trajects bar_ctr_trajects
+
 trialnumlist = 98:126; 
 
 cnt = 0;
+
 for tr_idx = trialnumlist
     trial = load(sprintf(trialStem,tr_idx));
-    if ~isfield(trial,'forceProbeStuff') || ~isfield(trial,'spikes') || length(trial.spikes)~=1
+    if ~isfield(trial,'forceProbeStuff') || ~isfield(trial,'spikes') || length(trial.spikes)~=1 || trial.params.step~=200
         continue
     end
+    
     cnt = cnt+1;
     spikes = trial.spikes;
-
+tn(cnt) = trial.params.trial;
     t = makeInTime(trial.params);
     spikes = t(spikes);
     

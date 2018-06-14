@@ -4,10 +4,9 @@ function [trial,vars_skeleton] = spikeDetection(trial,inputToAnalyze,vars_initia
 % I start looking at pairs of neurons. Alternatively the wrapper function
 % could just cal this function on the two sets of spikes.
 
-unfiltered_data = trial.(inputToAnalyze); 
-d1 = getacqpref('FlyAnalysis',['VoltageFilter_fs' num2str(trial.params.sampratein)]);
-
-unfiltered_data = filter(d1,unfiltered_data);
+unfiltered_data = filterMembraneVoltage(trial.(inputToAnalyze),trial.params.sampratein); 
+% d1 = getacqpref('FlyAnalysis',['VoltageFilter_fs' num2str(trial.params.sampratein)]);
+% unfiltered_data = filter(d1,unfiltered_data);
 
 %% initialize spike ID params
 spike_params.approval = 1; %%approval (== 0) to run without asking for the spike distance threshold

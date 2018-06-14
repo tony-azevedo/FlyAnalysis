@@ -35,7 +35,8 @@ for bt_ind = 1:length(blocktrials)
         current(:,bt_ind) = current(:,bt_ind)+trial.current_1;
         EMG(:,bt_ind) = EMG(:,bt_ind)+trial.(invec2);
         fprobe(:,bt_ind) = fprobe(:,bt_ind)+trial.forceProbeStuff.CoM(:);
-        plot(ax3,ft,trial.forceProbeStuff.CoM(:)-nanmean(trial.forceProbeStuff.CoM(1:40)),'color',[0 1 0] + [ 0 -1 1]*(bt_ind-1)/max([(length(blocktrials)-1) 1]),'tag',savetag);
+        %plot(ax3,ft,trial.forceProbeStuff.CoM(:)-nanmean(trial.forceProbeStuff.CoM(1:40)),'color',[0 1 0] + [ 0 -1 1]*(bt_ind-1)/max([(length(blocktrials)-1) 1]),'tag',savetag);
+        plot(ax3,ft,trial.forceProbeStuff.CoM(:),'color',[0 1 0] + [ 0 -1 1]*(bt_ind-1)/max([(length(blocktrials)-1) 1]),'tag',savetag);
     end 
     voltage(:,bt_ind) = voltage(:,bt_ind)/length(trials);
     current(:,bt_ind) = current(:,bt_ind)/length(trials);

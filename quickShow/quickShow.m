@@ -354,7 +354,12 @@ if ~isfield(handles.trial,'imageFile') || isempty(handles.trial.imageFile)
     set(handles.image_info,'String','');
 elseif isfield(handles.trial,'imageFile') && ~isempty(handles.trial.imageFile) && exist(handles.trial.imageFile,'file')
     set(handles.image_button,'enable','on');
-    exp = postHocExposure(handles.trial);
+    try exp = postHocExposure(handles.trial);
+    catch e
+        guidata(hObject,handles)
+        quickShow_Protocol(hObject, eventdata, handles)
+        error(e.message)
+    end
     a = dir(regexprep(handles.trial.imageFile,'Acquisition','Raw_Data'));
     samprate = handles.trial.params.sampratein;
     imstr = sprintf('Exp: %d - rate: %.2f - size: %dMB',...

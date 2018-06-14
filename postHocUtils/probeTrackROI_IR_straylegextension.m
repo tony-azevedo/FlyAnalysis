@@ -536,6 +536,10 @@ while hasFrame(vid)
     % find the dark values
     dark = mean(filtered_frame_mu(filtered_frame_mu<quantile(filtered_frame_mu(:),0.12)));
     
+    loc_old = loc;
+    left_old = left;
+    right_old = right;
+    
     if filtered_frame_mu(righthash) < filtered_frame_mu(trough)
         [pk,loc] = max(filtered_frame_mu(trough:righthash)-dark);
         loc = loc+trough;
@@ -550,6 +554,17 @@ while hasFrame(vid)
     left = find(filtered_frame_mu(1:loc)-dark<pk*bar_threshold_left,1,'last');
     right = find(filtered_frame_mu(loc:end)-dark<pk*bar_threshold_right,1,'first')+loc;
     
+    if (~isempty(left) && ~isempty(left_old) && left<.6*left_old)...
+        || (~isempty(right) && ~isempty(right_old) && right<.6*right_old)...
+        || loc<.6*loc_old
+        [pk,loc] = max(filtered_frame_mu(round(.6*loc_old):righthash)-dark);
+        loc = loc+round(.6*loc_old);
+        
+        left = find(filtered_frame_mu(round(.6*loc_old):loc)-dark<pk*bar_threshold_left,1,'last'); 
+        left = left+round(.6*loc_old);
+        right = find(filtered_frame_mu(loc:end)-dark<pk*bar_threshold_right,1,'first')+loc;
+       
+    end
     profmu.YData = filtered_frame_mu;
 
     if isempty(left) || isempty(right)

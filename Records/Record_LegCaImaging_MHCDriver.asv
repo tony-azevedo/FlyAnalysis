@@ -1,22 +1,39 @@
 %% Record - Muscle imaging
 % Preliminary results
-% Workflow_MHCGal4_GCaMP6f_170703_F1_C1_CaImControl
-% Workflow_MHCGal4_GCaMP6f_170705_F1_C1_CaImControl
-% Workflow_MHCGal4_GCaMP6f_170707_F2_C1_CaImControl
-% Workflow_MHCGal4_GCaMP6f_170707_F3_C1_CaImControl
-
+Workflow_MHCGal4_GCaMP6f_170703_F1_C1_CaImControl
+Workflow_MHCGal4_GCaMP6f_170703_F1_C1_CaImControl
+Workflow_MHCGal4_GCaMP6f_170703_F1_C1_CaImControl
+Workflow_MHCGal4_GCaMP6f_170703_F1_C1_CaImControl
+170703_F1_C1
+170705_F1_C1
+170707_F2_C1
+170707_F3_C1
 % Preliminary controls
 Workflow_MHCGal4_pJFRC7_171107_F2_C1_CaImControl
 Workflow_MHCGal4_pJFRC7_171109_F1_C1_CaImControl
+
+% Good recordings to look at first.
+% This is the example recording I showed in my lab meeting talk
+trial = load('B:\Raw_Data\170705\170705_F1_C1\EpiFlash2T_Raw_170705_F1_C1_25.mat');
+
+% a trial is a mat structure that has infomation about the recording and
+% any analysis done on the data. Unfortunately, most of the lines that have
+% a file path associated with it are hard coded.
+
+trial.imageFile % is the path to the video taken at the same time.
+
+
+% Other good examples- Clear segmentation, interesting dynamics
+'B:\Raw_Data\170705\170705_F1_C1\EpiFlash2T_Raw_170705_F1_C1_27.mat';
+
+'B:\Raw_Data\170707\170707_F3_C1\EpiFlash2T_Raw_170707_F3_C1_17.mat';
+
+'B:\Raw_Data\170703\170703_F1_C1\EpiFlash2T_Raw_170703_F1_C1_15.mat';
 
 avi_scaled
 caImavi_nobar
 caImavi_scaled_noEMG
 caImavi
-
-%% Run the deepLabCut on the data
-% see http://www.mousemotorlab.org/deeplabcut/
-% 
 
 %% calculate cluster intensity with the entire set from 170705
 trial = load('B:\Raw_Data\170705\170705_F1_C1\EpiFlash2T_Raw_170705_F1_C1_25.mat');

@@ -30,7 +30,7 @@ fs = trial.params.sampratein; %% sample rate
 switch trial.params.mode_1; case 'VClamp', invec1 = 'current_1'; case 'IClamp', invec1 = 'voltage_1'; otherwise; invec1 = 'voltage_1'; end   
 switch trial.params.mode_2; case 'VClamp', invec2 = 'current_2'; case 'IClamp', invec2 = 'voltage_2'; otherwise; invec2 = 'voltage_2'; end   
 
-patch = trial.(invec1);
+patch = trial.(invec1); if strcmp(trial.params.mode_1,'IClamp'), patch = filterMembraneVoltage(patch,trial.params.sampratein);end
 altin = trial.(invec2);
 
 DT = 0.02; % 20 ms window
@@ -61,6 +61,7 @@ end
 t_win = ((1:DT_pre*trial.params.sampratein+DT_post*trial.params.sampratein)-DT_pre*trial.params.sampratein)/trial.params.sampratein;
 
 %%
+delete(findobj(fig,'type','axes'));
 ax = subplot(3,1,[1],'parent',fig);
 cla(ax,'reset')
 title(ax,[handles.currentPrtcl ' - ' num2str(handles.trial.params.stimDurInSec) ' s duration'])

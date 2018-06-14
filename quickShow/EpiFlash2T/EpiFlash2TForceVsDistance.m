@@ -45,7 +45,7 @@ plot(ax,y(frame_times>0&frame_times<.08),F(frame_times>0&frame_times<.08),'+')
 xlabel(ax,'s')
 ylabel(ax,'F (N)')
 
-A = polyarea(y,F);
+A = polyarea(y(~isnan(F)),F(~isnan(F)));
 text(0, 0, sprintf('Area = %g J',A),'tag',savetag);
 % ax = subplot(2,1,1,'parent',h);
 % plot(ax,frame_times,F,'linewidth',1)
