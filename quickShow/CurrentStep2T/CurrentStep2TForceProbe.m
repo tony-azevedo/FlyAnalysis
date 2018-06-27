@@ -51,8 +51,7 @@ frame_times = x(h2.exposure);
 
 origin = find(handles.trial.forceProbeStuff.EvalPnts(1,:)==0&handles.trial.forceProbeStuff.EvalPnts(2,:)==0);
 x_hat = handles.trial.forceProbeStuff.EvalPnts(:,origin+1);
-CoM = handles.trial.forceProbeStuff.forceProbePosition';
-CoM = CoM*x_hat;
+CoM = handles.trial.forceProbeStuff.CoM;
 
 ax = subplot(3,1,3,'parent',h);
 plot(ax,frame_times,CoM(1:length(frame_times))), hold(ax,'on');

@@ -1392,7 +1392,7 @@ button = questdlg('Use params from preferences?','Preferences','No');
 if strcmp(button,'No')
     spikeDetection(trial,invec1,trial.spikeDetectionParams);
 elseif strcmp(button,'Yes')
-    fstag = ['fs' num2str(h.trial.params.sampratein)];
+    fstag = ['fs' num2str(trial.params.sampratein)];
     spikevars = getacqpref('FlyAnalysis',['Spike_params_' fstag]);
     [~,spikevars] = spikeDetection(trial,invec1,spikevars);
     setacqpref('FlyAnalysis',['Spike_params_' fstag],spikevars);

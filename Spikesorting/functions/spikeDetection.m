@@ -19,7 +19,7 @@ spike_params.type = ''; %% for naming spike files
 global vars;
 vars = vars_initial;
 
-max_len = 200000;
+max_len = 400000;
 if length(unfiltered_data) < max_len
     vars.len = length(unfiltered_data)-round(.01*trial.params.sampratein);
 else
@@ -108,7 +108,7 @@ end
         vars.spikeTemplateWidth = length(vars.spikeTemplate);
         filts1 = vars.hp_cutoff/(vars.fs/2);
         [x,y] = butter(3,filts1,'high');%%bandpass filter between 50 and 200 Hz
-        filtered_data_high = filter(x, y, vars.unfiltered_data);
+        filtered_data_high = filter(x, y, vars.unfiltered_data-vars.unfiltered_data(1));
         
         filts2 = vars.lp_cutoff/(vars.fs/2);
         [x2,y2] = butter(3,filts2,'low');%%bandpass filter between 50 and 200 Hz
@@ -161,7 +161,7 @@ end
                 detectedSpikeCandidates(:,i) = curSpikeTarget; % all_filtered_data(max(spike_locs(i)-floor(spike_params.spikeTemplateWidth/2),0): min(spike_locs(i)+floor(spike_params.spikeTemplateWidth/2),length(all_filtered_data)));
                 norm_curSpikeTarget = (curSpikeTarget-min(curSpikeTarget))/(max(curSpikeTarget)-min(curSpikeTarget));
                 norm_detectedSpikeCandidates(:,i) = norm_curSpikeTarget;
-%                 [targetSpikeDist(i), ~,~] = dtw_WarpingDistance(norm_curSpikeTarget, norm_spikeTemplate);
+                [targetSpikeDist(i), ~,~] = dtw_WarpingDistance(norm_curSpikeTarget, norm_spikeTemplate);
             end
         end
         if any(isnan(detectedUFSpikeCandidates(:)))
@@ -225,10 +225,13 @@ end
             spikeWaveform = smooth(mean(spikeWaveforms(:,suspect),2),vars.fs/2000);
             spikeWaveform_ = smooth(diff(spikeWaveform),vars.fs/2000);
             spikeWaveform_ = smooth(diff(spikeWaveform_),vars.fs/2000);
+            
             hold(ax_detect_patch,'on');
+            
+            smthwnd = (vars.fs/2000+1:length(spikewindow)-vars.fs/2000);
             suspectUF_ls = plot(ax_detect_patch,spikewindow,spikeWaveforms,'tag','spikes');
             suspectUF_avel = plot(ax_detect_patch,spikewindow,spikeWaveform,'color',[0 .7 1],'linewidth',2);
-            suspectUF_ddT2l = plot(ax_detect_patch,spikewindow(2:end-1),spikeWaveform_/max(spikeWaveform_)*max(spikeWaveform),'color',[0 .8 .4],'linewidth',2);
+            suspectUF_ddT2l = plot(ax_detect_patch,spikewindow(smthwnd(2:end-1)),spikeWaveform_(smthwnd(2:end-1))/max(spikeWaveform_(smthwnd(2:end-1)))*max(spikeWaveform),'color',[0 .8 .4],'linewidth',2);
             
             if any(suspect)
                 spikeTime = spikewindow(spikeWaveform_==max(spikeWaveform_));
@@ -365,7 +368,7 @@ end
                         warning('Using artificial point closest to 25');
                         plot(spikewindow(inflPntPeak_ave),spikeWaveform_(inflPntPeak_ave),'ro');
                         spikes(i) = spikes(i)+spikewindow(inflPntPeak_ave);
-                        pause;
+                        %pause;
                     elseif isempty(inflPntPeak) && isempty(inflPntPeak_ave)
                         % use spike time closest to ~25 ms
                         warning('Using artificial point closest to 25');
@@ -382,7 +385,7 @@ end
                         end
                         plot(spikewindow(inflPntPeak),spikeWaveform_(inflPntPeak),'ro');
                         spikes(i) = spikes(i)+spikewindow(inflPntPeak);
-                        pause;
+                        %pause;
                         
                     else
                         warning('Only one spike, no average 2nd derivative to fall back on');

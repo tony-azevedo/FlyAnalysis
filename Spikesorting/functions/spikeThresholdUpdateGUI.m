@@ -87,11 +87,13 @@ if any(~suspect)
 end
 ax_unfltrd_notsuspect.YLim = ax_detect_patch.YLim;
 
+
 meanspike.YData = smooth(mean(spikes(:,suspect),2));
-spikeWaveform_ = smooth(diff(meanspike.YData));
-spikeWaveform_ = smooth(diff(spikeWaveform_));
+spikeWaveform_ = smooth(diff(meanspike.YData),vars.fs/2000);
+spikeWaveform_ = smooth(diff(spikeWaveform_),vars.fs/2000);
 spikediffdiff = findobj(ax_detect_patch,'color',[0 .8 .4]);
-spikediffdiff.YData = spikeWaveform_/max(spikeWaveform_)*max(meanspike.YData);
+smthwnd = (vars.fs/2000+1:length(meanspike.YData)-vars.fs/2000);
+spikediffdiff.YData = spikeWaveform_(smthwnd(2:end-1))/max(spikeWaveform_(smthwnd(2:end-1)))*max(meanspike.YData);
 
 meansquiggle = findobj(ax_detect,'tag','potential_template');
 if any(suspect)

@@ -78,8 +78,8 @@ R = [cos(pi/2) -sin(pi/2);
 l_r = (R*l_0')'/4;
 l_r = l_r + repmat(p_,2,1);
 
-line(p_(1),p_(2),'parent',dispax,'marker','o','markeredgecolor',[0 1 1]);
-line(l_r(:,1),l_r(:,2),'parent',dispax,'color',[1 .3 .3]);
+line(p_(1),p_(2),'parent',dispax,'marker','o','markeredgecolor',[0 1 1],'tag','intercept');
+line(l_r(:,1),l_r(:,2),'parent',dispax,'color',[1 .3 .3],'tag','intercept');
 
 %% Check that the end of the line doesn't cut off the corner.
 
@@ -135,6 +135,11 @@ if strcmp(newbutton,'Yes')
         return
     end
         
+    % Do a little transform so I can draw the line either way
+    if trial.forceProbe_line(1,1)>trial.forceProbe_line(2,1)
+        trial.forceProbe_line = flipud(trial.forceProbe_line);
+    end
+    
     % Draw the stuff
     l = trial.forceProbe_line;
     p = trial.forceProbe_tangent;
@@ -159,11 +164,13 @@ if strcmp(newbutton,'Yes')
     l_r = (R*l_0')'/4;
     l_r = l_r + repmat(p_,2,1);
     
+    delete(findobj(dispax,'tag','intercept'));
+    
     line(p_(1),p_(2),'parent',dispax,'marker','o','markeredgecolor',[0 1 1]);
     line(l_r(:,1),l_r(:,2),'parent',dispax,'color',[1 .3 .3]);
     
     
-    %% Check that the end of the line doesn't cut off the corner.
+    % Check that the end of the line doesn't cut off the corner.
     
     % find the corner projection onto y
     p_crn = [1280 0];
@@ -215,7 +222,10 @@ if strcmp(newbutton,'Yes')
     end
 elseif strcmp(newbutton,'No')
     fprintf('Saving bar and tangent in trial\n')
-    trial = trial;
+        % Do a little transform so I can draw the line either way
+    if trial.forceProbe_line(1,1)>trial.forceProbe_line(2,1)
+        trial.forceProbe_line = flipud(trial.forceProbe_line);
+    end
     save(trial.name,'-struct','trial')
 elseif strcmp(newbutton,'Cancel')
     fprintf('Not setting tangent in trial\n')

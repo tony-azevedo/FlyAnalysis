@@ -28,8 +28,8 @@ trial = load('B:\Raw_Data\180328\180328_F1_C1\EpiFlash2T_Raw_180328_F1_C1_19.mat
 [~,~,~,~,~,D,trialStem,~] = extractRawIdentifiers(trial.name); cd (D)
 
 clear trials
-trials{1} = 16:66; % Low !! This isn't working! May have to come up with alternate
-trials{2} = 67:114; % High
+% trials{1} = 16:66; % Low !! This isn't working! May have to come up with alternate
+trials{1} = 67:114; % High
 Nsets = length(trials);
     
 trial = load(sprintf(trialStem,68));

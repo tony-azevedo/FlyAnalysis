@@ -12,6 +12,7 @@ Workflow_iavChR_81A06_180306_F2_C1_ForceProbePatching
 %% 81A07
 % decent recording, not great, no sensory responses
 Workflow_iavChR_81A07_180404_F1_C1_ForceProbePatching
+Workflow_iavChR_81A07_180410_F1_C1_ForceProbePatching
 
 
 %% 22A08
