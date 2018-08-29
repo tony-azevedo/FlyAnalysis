@@ -121,10 +121,10 @@ end
 xlim(clustax,[400 1200])
 axis(clustax,'equal');
 
-savedir = 'E:\tony\Projects\FlySensorimotor\Talks\CSHL_DmelNeuro\clusters';
-savePDF(displayf,savedir,[],sprintf('ClusterMasks_%s',[dateID '_' flynum '_' cellnum '_' trialnum]))
-saveas(displayf,[savedir,filesep,sprintf('ClusterMasks_%s',[dateID '_' flynum '_' cellnum '_' trialnum])],'png')
-savePDF(clustf,savedir,[],sprintf('ClusterMasks_only_%s',[dateID '_' flynum '_' cellnum '_' trialnum]))
+% savedir = 'E:\tony\Projects\FlySensorimotor\Talks\CSHL_DmelNeuro\clusters';
+% savePDF(displayf,savedir,[],sprintf('ClusterMasks_%s',[dateID '_' flynum '_' cellnum '_' trialnum]))
+% saveas(displayf,[savedir,filesep,sprintf('ClusterMasks_%s',[dateID '_' flynum '_' cellnum '_' trialnum])],'png')
+% savePDF(clustf,savedir,[],sprintf('ClusterMasks_only_%s',[dateID '_' flynum '_' cellnum '_' trialnum]))
 
 
 

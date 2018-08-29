@@ -1,21 +1,18 @@
-%% ForceProbe patcing workflow 180404_F1_C1
-trial = load('B:\Raw_Data\180404\180404_F1_C1\EpiFlash2T_Raw_180404_F1_C1_13.mat');
+%% ForceProbe patcing workflow 180703_F3_C1
+trial = load('B:\Raw_Data\180703\180703_F3_C1\EpiFlash2T_Raw_180703_F3_C1_21.mat');
 [protocol,dateID,flynum,cellnum,trialnum,D,trialStem,datastructfile] = extractRawIdentifiers(trial.name);
 
 cd (D)
 clear trials
 
-%% epi flash random movements
+%% epi flash ChR stimulation with Red LED
 
-trial = load('B:\Raw_Data\180404\180404_F1_C1\EpiFlash2T_Raw_180404_F1_C1_13.mat');
+trial = load('B:\Raw_Data\180703\180703_F3_C1\EpiFlash2T_Raw_180703_F3_C1_21.mat');
 [~,~,~,~,~,D,trialStem,~] = extractRawIdentifiers(trial.name); cd(D);
 
 clear trials
-trials{1} = 13:44; % Low
-trials{2} = 45:68; % High
-trials{3} = 69:88; % more High caffeine
-trials{4} = 89:108; % more High
-trials{5} = 116:150; % more low 
+trials{1} = 1:72; % short
+trials{2} = 73:108; % longer
 Nsets = length(trials);
     
 trial = load(sprintf(trialStem,33));
@@ -24,12 +21,7 @@ trial = load(sprintf(trialStem,33));
 routine = {
     'probeTrackROI_IR' 
     'probeTrackROI_IR' 
-    'probeTrackROI_IR' 
-    'probeTrackROI_IR' 
-    'probeTrackROI_IR' 
     };
-
-
 
 %% Run scripts one at a time
 
@@ -59,6 +51,4 @@ Script_FindTheMinimumCoM
 
 % Extract spikes
 Script_ExtractSpikesFromInterestingTrials
-
-
 

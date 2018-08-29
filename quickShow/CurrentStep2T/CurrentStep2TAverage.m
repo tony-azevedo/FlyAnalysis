@@ -1,4 +1,4 @@
-function h = CurrentStepAverage(h,handles,savetag,varargin)
+function h = CurrentStep2TAverage(h,handles,savetag,varargin)
 % see also CurrentSineAverage
 p = inputParser;
 p.PartialMatching = 0;

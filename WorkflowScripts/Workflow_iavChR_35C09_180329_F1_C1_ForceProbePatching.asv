@@ -13,8 +13,7 @@ clear trials
 % trials{1} = 11:15; Not worth analysing
 % trials{1} = (33:75); % the probe is not in focus
 trials{1} = 34:75; % before this (33:75) the probe is not in focus
-trials{2} = 76:91; % MLA, no spikes, except when current injected
-trials{3} = 92:103; % MLA, longer current injection, no spikes during baseline
+trials{2} = 76:103; % MLA, no spikes, except when current injected
 
 Nsets = length(trials);
 
@@ -87,15 +86,5 @@ Script_ExtractSpikesFromInterestingTrials
 % without input to the motor neuron spiking. 
 
 % MLA is an important manipulation
-trialStem = 'CurrentStep2T_Raw_180329_F1_C1_%d.mat';
-showProbeImage(load(sprintf(trialStem,75)))
-showProbeImage(load(sprintf(trialStem,76)))
 
-% Trials before and after MLA are in the same position, so it is possible
-% to compare probe positions
-
-
-
-
-
-
+showProbeImage(trial)

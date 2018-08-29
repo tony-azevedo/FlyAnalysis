@@ -1,40 +1,21 @@
-%% ForceProbe patcing workflow 180621_F1_C1
-trial = load('B:\Raw_Data\180621\180621_F1_C1\CurrentStep2T_Raw_180621_F1_C1_1.mat');
+%% ForceProbe patcing workflow 180821_F2_C1
+trial = load('B:\Raw_Data\180821\180821_F2_C1\EpiFlash2T_Raw_180821_F2_C1_8.mat');
 [protocol,dateID,flynum,cellnum,trialnum,D,trialStem,datastructfile] = extractRawIdentifiers(trial.name);
 
 cd (D)
 clear trials
 
-%% Current step to get force
-trial = load('B:\Raw_Data\180621\180621_F1_C1\EpiFlash2T_Raw_180621_F1_C1_1.mat');
-[~,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
+%% epi flash claw driven movements
+
+trial = load('B:\Raw_Data\180821\180821_F2_C1\EpiFlash2T_Raw_180821_F2_C1_8.mat');
+[~,~,~,~,~,D,trialStem,~] = extractRawIdentifiers(trial.name); cd(D);
 
 clear trials
-trials{1} = 1:50;
-
-Nsets = length(trials);
-
-% check the location
-trial = load(sprintf(trialStem,35));
-showProbeImage(trial)
-
-routine = {
-    'probeTrackROI_IR' 
-    };
-
-%% epi flash random movements
-
-trial = load('B:\Raw_Data\180621\180621_F1_C1\EpiFlash2T_Raw_180621_F1_C1_1.mat');
-[~,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
-
-clear trials
-trials{1} = 1:10;
-trials{2} = 11:22;
-% trials{3} = 23:46; % no bar
-trials{3} = 37:46;
+trials{1} = 1:181; % Low
+trials{2} = 182:191; % random epi flash driven movements
 Nsets = length(trials);
     
-trial = load(sprintf(trialStem,3));
+trial = load(sprintf(trialStem,33));
 showProbeImage(trial)
 
 routine = {
@@ -42,22 +23,6 @@ routine = {
     'probeTrackROI_IR' 
     'probeTrackROI_IR' 
     };
-
-%% epi flash train random movements
-
-% trial = load('B:\Raw_Data\180313\180313_F1_C1\EpiFlash2TTrain_Raw_180313_F1_C1_1.mat');
-% [~,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
-% 
-% clear trials
-% trials{1} = 1:5;
-% Nsets = length(trials);
-%     
-% trial = load(sprintf(trialStem,3));
-% showProbeImage(trial)
-% 
-% routine = {
-%     'probeTrackROI_IR' 
-%     };
 
 
 %% Set probe line 
@@ -100,7 +65,7 @@ for set = 1:Nsets
     delete(br);
 end
 %% double check some trials
-trial = load(sprintf(trialStem,6));
+trial = load(sprintf(trialStem,66));
 showProbeLocation(trial)
 
 % trial = probeLineROI(trial);
@@ -126,7 +91,7 @@ for set = 1:Nsets
     end
     
     % just set the line for the rest of the trials
-    temp.ROI = getpref('quickshowPrefs','brightSpots2Smooth');
+    temp.ROI = getacqpref('quickshowPrefs','brightSpots2Smooth');
 
     for tr_idx = trialnumlist(4:end)
         trial = load(sprintf(trialStem,tr_idx));

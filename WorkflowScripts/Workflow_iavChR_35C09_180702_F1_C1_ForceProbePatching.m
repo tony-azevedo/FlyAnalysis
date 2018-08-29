@@ -1,25 +1,44 @@
-%% ForceProbe patcing workflow 180404_F1_C1
-trial = load('B:\Raw_Data\180404\180404_F1_C1\EpiFlash2T_Raw_180404_F1_C1_13.mat');
+%% ForceProbe patcing workflow 180702_F1_C1
+trial = load('B:\Raw_Data\180702\180702_F1_C1\CurrentStep2T_Raw_180702_F1_C1_14.mat');
 [protocol,dateID,flynum,cellnum,trialnum,D,trialStem,datastructfile] = extractRawIdentifiers(trial.name);
 
 cd (D)
 clear trials
 
-%% epi flash random movements
-
-trial = load('B:\Raw_Data\180404\180404_F1_C1\EpiFlash2T_Raw_180404_F1_C1_13.mat');
-[~,~,~,~,~,D,trialStem,~] = extractRawIdentifiers(trial.name); cd(D);
+%% Current step to get force
+trial = load('B:\Raw_Data\180702\180702_F1_C1\CurrentStep2T_Raw_180702_F1_C1_14.mat');
+[~,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
 
 clear trials
-trials{1} = 13:44; % Low
-trials{2} = 45:68; % High
-trials{3} = 69:88; % more High caffeine
-trials{4} = 89:108; % more High
-trials{5} = 116:150; % more low 
+trials{1} = 14:55;
+trials{2} = 56:98;
+% trials{3} = 76:103; % MLA, no spikes, except when current injected
+
+Nsets = length(trials);
+
+% check the location
+trial = load(sprintf(trialStem,35));
+% showProbeImage(trial)
+
+routine = {
+    'probeTrackROI_IR' 
+    'probeTrackROI_IR' 
+    };
+
+%% epi flash random movements
+
+trial = load('B:\Raw_Data\180702\180702_F1_C1\EpiFlash2T_Raw_180702_F1_C1_7.mat');
+[~,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
+
+clear trials
+trials{1} = 11:100; % 
+% trials{2} = 101:175; % Long pulse
+% trials{3} = 176:211; % MLA entering
+% trials{4} = 212:283; % MLA washout no spikes
 Nsets = length(trials);
     
-trial = load(sprintf(trialStem,33));
-% showProbeImage(trial)
+trial = load(sprintf(trialStem,101));
+showProbeImage(trial)
 
 routine = {
     'probeTrackROI_IR' 
@@ -29,15 +48,13 @@ routine = {
     'probeTrackROI_IR' 
     };
 
-
-
 %% Run scripts one at a time
 
 % Set probe line 
 Script_SetProbeLine 
 
 % double check some trials
-trial = load(sprintf(trialStem,66));
+trial = load(sprintf(trialStem,67));
 showProbeLocation(trial)
 
 % trial = probeLineROI(trial);
@@ -59,6 +76,3 @@ Script_FindTheMinimumCoM
 
 % Extract spikes
 Script_ExtractSpikesFromInterestingTrials
-
-
-

@@ -53,6 +53,23 @@ routine = {
     'probeTrackROI_IR'
     };
 
+%% Ramp stimuli
+
+trial = load('B:\Raw_Data\180320\180320_F1_C1\PiezoRamp2T_Raw_180320_F1_C1_57.mat');
+[protocol,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
+
+clear trials
+trials{1} = 1:58; % beautiful vidoes of the leg with no bar, but not analyable yet
+Nsets = length(trials);
+    
+trial = load(sprintf(trialStem,30));
+showProbeImage(trial)
+
+routine = {
+    'probeTrackROI_IR'
+    };
+
+
 %% Set probe line 
 
 close all

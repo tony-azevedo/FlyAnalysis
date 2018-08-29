@@ -27,8 +27,6 @@ CoM = CoM*x_hat;
 
 % forceProbeStuff.Origin is actually a useless number. A more useful number
 % is the position of the handdrawn prob line
-Origin = handles.trial.forceProbeStuff.Origin;
-Origin = handles.trial.forceProbeStuff.EvalPnts_x(origin);
 
 plot([1 size(I_profile,2)],[origin origin],'color',[1    0.6    0.3]);
 

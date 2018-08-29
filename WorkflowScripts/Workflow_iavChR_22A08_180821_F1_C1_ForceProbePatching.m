@@ -1,21 +1,18 @@
-%% ForceProbe patcing workflow 180404_F1_C1
-trial = load('B:\Raw_Data\180404\180404_F1_C1\EpiFlash2T_Raw_180404_F1_C1_13.mat');
+%% ForceProbe patcing workflow 180821_F1_C1
+trial = load('B:\Raw_Data\180821\180821_F1_C1\EpiFlash2T_Raw_180821_F1_C1_4.mat');
 [protocol,dateID,flynum,cellnum,trialnum,D,trialStem,datastructfile] = extractRawIdentifiers(trial.name);
 
 cd (D)
 clear trials
 
-%% epi flash random movements
+%% epi flash iav driven movements
 
-trial = load('B:\Raw_Data\180404\180404_F1_C1\EpiFlash2T_Raw_180404_F1_C1_13.mat');
+trial = load('B:\Raw_Data\180821\180821_F1_C1\EpiFlash2T_Raw_180821_F1_C1_4.mat');
 [~,~,~,~,~,D,trialStem,~] = extractRawIdentifiers(trial.name); cd(D);
 
 clear trials
-trials{1} = 13:44; % Low
-trials{2} = 45:68; % High
-trials{3} = 69:88; % more High caffeine
-trials{4} = 89:108; % more High
-trials{5} = 116:150; % more low 
+trials{1} = 1:181; % Low
+trials{2} = 182:191; % random epi flash driven movements
 Nsets = length(trials);
     
 trial = load(sprintf(trialStem,33));
@@ -25,11 +22,7 @@ routine = {
     'probeTrackROI_IR' 
     'probeTrackROI_IR' 
     'probeTrackROI_IR' 
-    'probeTrackROI_IR' 
-    'probeTrackROI_IR' 
     };
-
-
 
 %% Run scripts one at a time
 
@@ -49,16 +42,17 @@ Script_FindAreaToSmoothOutPixels
 Script_TrackTheBarAcrossTrialsInSet
 
 % Find the trials with Red LED transients and mark them down
-% Script_FindTheTrialsWithRedLEDTransients % Using UV Led
+Script_FindTheTrialsWithRedLEDTransients
 
 % Fix the trials with Red LED transients and mark them down
-% Script_FixTheTrialsWithRedLEDTransients % Using UV Led
+Script_FixTheTrialsWithRedLEDTransients
 
 % Find the minimum CoM, plot a few examples from each trial block and check.
 Script_FindTheMinimumCoM
 
-% Extract spikes
-Script_ExtractSpikesFromInterestingTrials
 
+%% Epi flash trials
+
+%% Extract spikes
 
 

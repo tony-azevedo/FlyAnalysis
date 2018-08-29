@@ -353,8 +353,10 @@ set(handles.exclude,'enable','off');
 % imdir = regexprep(handles.trial.name,{'_Raw_','.mat'},{'_Images_',''});
 
 if ~isfield(handles.trial,'imageFile') || isempty(handles.trial.imageFile)
+    %set(handles.spike_spot_check_button,'enable','off');
     set(handles.image_info,'String','','Enable','off');
 elseif isfield(handles.trial,'imageFile') && ~isempty(handles.trial.imageFile) && exist(handles.trial.imageFile,'file')
+    % set(handles.spike_spot_check_button,'enable','on');
     try exp = postHocExposure(handles.trial);
     catch e
         guidata(hObject,handles)
@@ -1068,9 +1070,9 @@ imstr = sprintf('Spike Vars, trial %d:\nHighpass: %.2f - Lowpass: %.2f - Diff: %
     handles.trial.spikeDetectionParams.lastfilename(end-18:end-4));
 msgbox(imstr,'Spike Vars')
 
-switch handles.trial.params.mode_1; case 'VClamp', invec1 = 'current_1'; case 'IClamp', invec1 = 'voltage_1'; otherwise; invec1 = 'voltage_1'; end
+switch h.trial.params.mode_1; case 'VClamp', invec1 = 'current_1'; case 'IClamp', invec1 = 'voltage_1'; otherwise; invec1 = 'voltage_1'; end
 
-spikeSpotCheck(handles.trial,invec1,handles.trial.spikeDetectionParams)
+spikeSpotCheck(handles.trial,inputToAnalyze,handles.trial.spikeDetectionParams)
 
 
 % --- Executes on button press in tag_button.
@@ -1478,9 +1480,6 @@ handles = guidata(hObject);
 handles.trial.spikeSpotChecked = 0;
 trial = handles.trial;
 save(trial.name, '-struct', 'trial');
-
-handles.spike_spot_check_button.Enable = 'on';
-
 guidata(hObject, handles);
 
 

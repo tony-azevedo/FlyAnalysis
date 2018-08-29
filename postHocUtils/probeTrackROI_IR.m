@@ -244,13 +244,13 @@ plot(ax2,evalpnts_x(locs(loc)),pks(loc),'b+');
 
 
 % 3) Find the location of the darkest spot to the left of the bar
-dark = mean(mu(mu<quantile(mu(:),0.12)));
+dark = mean(filtered_mu(filtered_mu<quantile(filtered_mu(:),0.12)));
 % where the bar dips below dark
-left_trough = find(flipud(filtered_mu(1:bar_idx_i))<dark,1,'first');
+left_trough = find(flipud(filtered_mu(1:bar_idx_i))<dark*1.05,1,'first');
 trough = bar_idx_i-left_trough;
 % where the bar comes back over dark on the far side (in case there is
 % a bright spot in the corner
-left_trough = find(flipud(filtered_mu(1:trough))>dark*1.1,1,'first');
+left_trough = find(flipud(filtered_mu(1:trough))>dark*2,1,'first');
 if ~isempty(left_trough)
     trough = trough-left_trough;
 end
@@ -258,8 +258,8 @@ trough = max([trough 1]);
 
 % look for the width of the bar over the trough;
 barsig_win = trough:bar_idx_i;
-bar_sigma = abs(evalpnts_x(find(filtered_mu(barsig_win)>.7*pk,1,'first')+trough)-zro);
-threesigma = 1:length(evalpnts)>trough & evalpnts_x-zro<=1*bar_sigma;
+bar_sigma = abs(evalpnts_x(find(filtered_mu(barsig_win)-dark>.7*(pk-dark),1,'first')+trough)-zro);
+threesigma = 1:length(evalpnts)>trough & evalpnts_x-zro<=1.5*bar_sigma;
 
 plot(ax1,[trough trough],[0 pk],'color',[.8 .8 .8])
 plot(ax2,evalpnts_x(trough)*[1 1],[0 pk],'color',[.8 .8 .8])
@@ -269,18 +269,47 @@ plot(ax2,evalpnts_x(trough)*[1 1],[0 pk],'color',[.8 .8 .8])
 x = evalpnts_x(threesigma);
 
 % coef = nlinfit(evalpnts_x(threesigma)',filtered_mu(threesigma)-dark,@doubleGaussian_bar_1at0,coef);
-coef = nlinfit(evalpnts_x(threesigma),mu(threesigma)-dark,@gaussian_1at0,[pk,zro,bar_sigma]);
+coef = nlinfit(evalpnts_x(threesigma),mu(threesigma)-dark,@gaussian_1at0,[pk-dark,zro,bar_sigma/2]);
+zro_fit = coef(2); 
+if abs(zro_fit)>100
+    fprintf('Gaussian fit is wrong, reseting zro_fit\n');
+    twosigma = evalpnts_x-zro>-3*bar_sigma & evalpnts_x-zro<=1.5*bar_sigma;
+    coef_ = nlinfit(evalpnts_x(twosigma),mu(twosigma)-dark,@gaussian_1at0,[pk-dark,zro,bar_sigma/2]);
+    if coef_(3)<.5*coef(3)
+        coef = coef_;
+        zro_fit = coef(2);
+        fprintf('Gaussian of small patch is better, using new bar model\n');
+    else
+        fprintf('Using estimates bar model from peak finding\n');
+        coef = [pk-dark,zro,bar_sigma];
+        zro_fit = coef(2);
+    end
+end
 y = gaussian_1at0(coef,x);
-x_right = evalpnts_x(evalpnts_x>coef(2));
+x_right = evalpnts_x(evalpnts_x>zro_fit);
 y_right = gaussian_1at0(coef,x_right);
 
 plot(ax1,find(threesigma),y,'color',[0 .8 0])
-plot(ax1,find(evalpnts_x>coef(2)),y_right,'color',[0.8500    0.3250    0.0980])
+plot(ax1,find(evalpnts_x>zro_fit),y_right,'color',[0.8500    0.3250    0.0980])
 plot(ax2,x,y,'color',[0 .8 0])
 plot(ax2,x_right,y_right,'color',[0.8500    0.3250    0.0980])
 
+% --------------------- Troubleshoot: ------------------
+% probeLineROI_IR(trial);
+% --------------------- Troubleshoot: ------------------
+
+
 % 4) find where the gaussian is near 0 to the right
-lefthash = find(y_right < 1E-2*coef(1) ,1,'first')+sum(evalpnts_x<=coef(2));
+lefthash = find(y_right < 1E-2*coef(1) ,1,'first')+sum(evalpnts_x<=zro_fit);
+% in cases where the bar is not that bright (IR filter), don't use the fit
+right_side = filtered_mu(evalpnts_x>zro_fit);
+dark_right = mean(right_side(right_side < quantile(right_side,0.12)));
+if isempty(lefthash)
+    dark_right = mean(right_side(right_side < quantile(right_side,0.12)));
+    lefthash = find(right_side-dark_right<.01*(pk-dark_right),1,'first');
+    lefthash = lefthash+sum(evalpnts_x<=zro_fit);
+end
+
 % compare that hash to the location of the minimum between the peak and the
 % right hand side
 if filtered_mu(lefthash)>coef(1)+dark  % right side of the bar comes up too much
@@ -288,11 +317,11 @@ if filtered_mu(lefthash)>coef(1)+dark  % right side of the bar comes up too much
     [~,righttrough] = min(filtered_mu(bar_idx_i+1:lefthash));
     lefthash = righttrough+bar_idx_i;
     bar_threshold_right = 4/5;%
-    bar_threshold_left = 1/2;%
+    bar_threshold_left = 3/4;%
     fprintf('\t\tWeight the left side of bar\n');
 else
-    bar_threshold_right = 3/5;%
-    bar_threshold_left = 3/5;%
+    bar_threshold_right = 3/4;%
+    bar_threshold_left = 3/4;%
     fprintf('\t\tWeight the left and right of bar equally\n');
 end
 
@@ -313,8 +342,8 @@ righthash = max([righthash round(0.80*size(evalpnts_x,2))]);
 
 plot(ax1,[righthash righthash],[0 pk],'color',[.5 .5 1],'linewidth',3)
 plot(ax2,evalpnts_x(righthash)*[1 1],[0 pk],'color',[.5 .5 1],'linewidth',3)
-ylim(ax1,[-filtered_mu(righthash)/8 filtered_mu(righthash)])
-ylim(ax2,[-filtered_mu(righthash)/8 filtered_mu(righthash)])
+ylim(ax1,[-filtered_mu(righthash)/8 filtered_mu(righthash)*3])
+ylim(ax2,[-filtered_mu(righthash)/8 filtered_mu(righthash)*3])
 
 % 7) this is the region where the background is
 
@@ -334,13 +363,13 @@ filtered_frame_mu(1:49) = mb(2)+mb(1)*(1:49);
 mb = polyfit((length(evalpnts_x)-100:length(evalpnts_x)-50)',filtered_frame_mu(length(evalpnts_x)-100:length(evalpnts_x)-50),1);
 filtered_frame_mu(end-49+1:end) = mb(2)+mb(1)*(length(evalpnts_x)-(49:-1:1));
 
-[pk,loc] = max(filtered_frame_mu(trough:righthash)-dark);
+[pk,loc] = max(filtered_frame_mu(trough:righthash)-dark_right);
 loc = loc+trough;
 % 9) Assume the shape of the bar doesn't change and get the CoM of the
 % fullwidth @ 67% max, hopefully this will eliminate the weird jumping of
 % the bar
-left = find(filtered_frame_mu(1:loc)-dark<pk*bar_threshold_left,1,'last');
-right = find(filtered_frame_mu(loc:end)-dark<pk*bar_threshold_right,1,'first')+loc;
+left = find(filtered_frame_mu(1:loc)-dark_right<pk*bar_threshold_left,1,'last');
+right = find(filtered_frame_mu(loc:end)-dark_right<pk*bar_threshold_right,1,'first')+loc;
 % if abs(evalpnts_x(loc)-coef(2))>200 || isempty(left)
 %     fprintf('Bar profile average is high on the left\n')
 %     newone = find(filtered_frame_mu(1:righthash)-dark<coef(1)*bar_threshold_left*.95,1,'first');

@@ -1,63 +1,26 @@
-%% ForceProbe patcing workflow 180621_F1_C1
-trial = load('B:\Raw_Data\180621\180621_F1_C1\CurrentStep2T_Raw_180621_F1_C1_1.mat');
+%% ForceProbe patcing workflow 180703_F3_C1
+trial = load('B:\Raw_Data\180819\180819_F1_C1\EpiFlash2T_Raw_180819_F1_C1_65.mat');
 [protocol,dateID,flynum,cellnum,trialnum,D,trialStem,datastructfile] = extractRawIdentifiers(trial.name);
 
 cd (D)
 clear trials
 
-%% Current step to get force
-trial = load('B:\Raw_Data\180621\180621_F1_C1\EpiFlash2T_Raw_180621_F1_C1_1.mat');
-[~,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
+%% epi flash ChR stimulation with Red LED
+
+trial = load('B:\Raw_Data\180819\180819_F1_C1\EpiFlash2T_Raw_180819_F1_C1_65.mat');
+[~,~,~,~,~,D,trialStem,~] = extractRawIdentifiers(trial.name); cd(D);
 
 clear trials
-trials{1} = 1:50;
-
-Nsets = length(trials);
-
-% check the location
-trial = load(sprintf(trialStem,35));
-showProbeImage(trial)
-
-routine = {
-    'probeTrackROI_IR' 
-    };
-
-%% epi flash random movements
-
-trial = load('B:\Raw_Data\180621\180621_F1_C1\EpiFlash2T_Raw_180621_F1_C1_1.mat');
-[~,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
-
-clear trials
-trials{1} = 1:10;
-trials{2} = 11:22;
-% trials{3} = 23:46; % no bar
-trials{3} = 37:46;
+trials{1} = 19:65; % short
 Nsets = length(trials);
     
-trial = load(sprintf(trialStem,3));
+trial = load(sprintf(trialStem,33));
 showProbeImage(trial)
 
 routine = {
     'probeTrackROI_IR' 
     'probeTrackROI_IR' 
-    'probeTrackROI_IR' 
     };
-
-%% epi flash train random movements
-
-% trial = load('B:\Raw_Data\180313\180313_F1_C1\EpiFlash2TTrain_Raw_180313_F1_C1_1.mat');
-% [~,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
-% 
-% clear trials
-% trials{1} = 1:5;
-% Nsets = length(trials);
-%     
-% trial = load(sprintf(trialStem,3));
-% showProbeImage(trial)
-% 
-% routine = {
-%     'probeTrackROI_IR' 
-%     };
 
 
 %% Set probe line 
@@ -100,7 +63,7 @@ for set = 1:Nsets
     delete(br);
 end
 %% double check some trials
-trial = load(sprintf(trialStem,6));
+trial = load(sprintf(trialStem,95));
 showProbeLocation(trial)
 
 % trial = probeLineROI(trial);

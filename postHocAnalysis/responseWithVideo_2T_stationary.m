@@ -180,12 +180,13 @@ while hasFrame(vid)
         mov3 = readFrame(vid);
         mov = mov3(:,:,1);
         scale = [quantile(mov(:),0.025) 1.5*quantile(mov(:),0.975)];
+        set(dispax,'Clim',scale)
 
         set(im,'CData',mov);
         if frame_times(kk)>scaletime && notscaled && any(scale>50)
             notscaled = 0;
 
-            scale = [quantile(mov(:),0.025) 1.5*quantile(mov(:),0.975)];
+            scale = [quantile(mov(:),0.025) 1*quantile(mov(:),0.975)];
             set(dispax,'Clim',scale)
         end
 

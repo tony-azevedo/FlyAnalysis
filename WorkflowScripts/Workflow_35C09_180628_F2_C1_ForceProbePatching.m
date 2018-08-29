@@ -1,16 +1,17 @@
-%% ForceProbe patcing workflow 180621_F1_C1
-trial = load('B:\Raw_Data\180621\180621_F1_C1\CurrentStep2T_Raw_180621_F1_C1_1.mat');
+%% ForceProbe patcing workflow 180628_F2_C1
+trial = load('B:\Raw_Data\180628\180628_F2_C1\CurrentStep2T_Raw_180628_F2_C1_29.mat');
 [protocol,dateID,flynum,cellnum,trialnum,D,trialStem,datastructfile] = extractRawIdentifiers(trial.name);
 
 cd (D)
 clear trials
 
 %% Current step to get force
-trial = load('B:\Raw_Data\180621\180621_F1_C1\EpiFlash2T_Raw_180621_F1_C1_1.mat');
+trial = load('B:\Raw_Data\180628\180628_F2_C1\CurrentStep2T_Raw_180628_F2_C1_29.mat');
 [~,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
 
 clear trials
-trials{1} = 1:50;
+trials{1} = 17:58;
+trials{2} = 59:64;
 
 Nsets = length(trials);
 
@@ -20,18 +21,18 @@ showProbeImage(trial)
 
 routine = {
     'probeTrackROI_IR' 
+    'probeTrackROI_IR' 
     };
 
 %% epi flash random movements
 
-trial = load('B:\Raw_Data\180621\180621_F1_C1\EpiFlash2T_Raw_180621_F1_C1_1.mat');
+trial = load('B:\Raw_Data\180628\180628_F2_C1\EpiFlash2T_Raw_180628_F2_C1_1.mat');
 [~,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
 
 clear trials
-trials{1} = 1:10;
-trials{2} = 11:22;
-% trials{3} = 23:46; % no bar
-trials{3} = 37:46;
+trials{1} = 1:6;
+trials{2} = 7:14; % no bar
+trials{3} = 15:24; % MLA
 Nsets = length(trials);
     
 trial = load(sprintf(trialStem,3));

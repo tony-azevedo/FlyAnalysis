@@ -44,7 +44,7 @@ ax3 = subplot(6,1,[5 6],'parent',fig); cla(ax3), hold(ax3,'on'), ylabel(ax3,'CoM
 for bt_ind = 1:length(blocktrials)
     plot(ax2,x,voltage(:,bt_ind),'color',[0 1 0] + [ 0 -1 1]*(bt_ind-1)/max([(length(blocktrials)-1) 1]),'tag',savetag);
     plot(ax1_2,x,current(:,bt_ind),'color',[0 1 0] + [ 0 -1 1]*(bt_ind-1)/max([(length(blocktrials)-1) 1]),'tag',savetag);
-    plot(ax3,ft,fprobe(:,bt_ind) - nanmean(fprobe(1:40,bt_ind)),'color',[0 1 0] + [ 0 -1 1]*(bt_ind-1)/max([(length(blocktrials)-1) 1]),'tag',savetag);
+    plot(ax3,ft,fprobe(:,bt_ind) - handles.trial.forceProbeStuff.ZeroForce,'color',[0 1 0] + [ 0 -1 1]*(bt_ind-1)/max([(length(blocktrials)-1) 1]),'tag',savetag);
     plot(ax1_1,x,EMG(:,bt_ind),'color',[0 1 0] + [ 0 -1 1]*(bt_ind-1)/max([(length(blocktrials)-1) 1]),'tag',savetag);
 end
 axis(ax1_1,'tight')

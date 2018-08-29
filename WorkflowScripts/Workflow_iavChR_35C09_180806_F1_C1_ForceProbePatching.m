@@ -1,16 +1,17 @@
-%% ForceProbe patcing workflow 180328_F1_C1
-trial = load('B:\Raw_Data\180328\180328_F1_C1\CurrentStep2T_Raw_180328_F1_C1_1.mat');
+%% ForceProbe patcing workflow 180806_F2_C1
+trial = load('B:\Raw_Data\180806\180806_F2_C1\EpiFlash2T_Raw_180806_F2_C1_23.mat');
 [protocol,dateID,flynum,cellnum,trialnum,D,trialStem,datastructfile] = extractRawIdentifiers(trial.name);
 
 cd (D)
 clear trials
 
 %% Current step to get force
-trial = load('B:\Raw_Data\180328\180328_F1_C1\CurrentStep2T_Raw_180328_F1_C1_1.mat');
+trial = load('B:\Raw_Data\180806\180806_F2_C1\CurrentStep2T_Raw_180806_F2_C1_5.mat');
 [~,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
 
 clear trials
-trials{1} = 1:50;
+trials{1} = 5:32;
+trials{2} = 33:60; % MLA, no spikes, except when current injected
 
 Nsets = length(trials);
 
@@ -24,22 +25,23 @@ routine = {
 
 %% epi flash random movements
 
-trial = load('B:\Raw_Data\180328\180328_F1_C1\EpiFlash2T_Raw_180328_F1_C1_19.mat');
-[~,~,~,~,~,D,trialStem,~] = extractRawIdentifiers(trial.name); cd (D)
+trial = load('B:\Raw_Data\180806\180806_F2_C1\EpiFlash2T_Raw_180806_F2_C1_23.mat');
+[~,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
 
 clear trials
-% trials{1} = 16:66; % Low !! Bar is in focus need to fix double gaussian
-% routine
-trials{1} = 67:114; % High
+trials{1} = 1:72; % 
+% trials{2} = 101:175; % Long pulse
+% trials{3} = 176:211; % MLA entering
+% trials{4} = 212:283; % MLA washout no spikes
 Nsets = length(trials);
     
-trial = load(sprintf(trialStem,68));
-% showProbeImage(trial)
+trial = load(sprintf(trialStem,36));
+showProbeImage(trial)
 
 routine = {
-    'probeTrackROI_IR'
     'probeTrackROI_IR' 
     };
+
 
 %% Run scripts one at a time
 
@@ -67,8 +69,5 @@ Script_TrackTheBarAcrossTrialsInSet
 % Find the minimum CoM, plot a few examples from each trial block and check.
 Script_FindTheMinimumCoM
 
-%% Epi flash trials
-
-%% Extract spikes
-
-
+% Extract spikes
+Script_ExtractSpikesFromInterestingTrials

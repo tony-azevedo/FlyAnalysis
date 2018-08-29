@@ -6,32 +6,11 @@ global patchax
 global filtax
 
 vars.unfiltered_data = unfiltered_data;
-vars.thresh_pos = 840;
-vars.lp_pos = 420;
-vars.hp_pos = 20;
+thresh_pos = 840;
+lp_pos = 420;
+hp_pos = 20;
 
-if ~isfield(vars,'hp_cutoff');vars.hp_cutoff = 100;end%%cutoff frequencies for filtering bristle recording data
-filts1 = vars.hp_cutoff/(vars.fs/2);
-[x,y] = butter(3,filts1,'high');%%bandpass filter between 50 and 200 Hz
-filtered_data_high = filter(x, y, vars.unfiltered_data);
-
-if ~isfield(vars,'lp_cutoff');vars.lp_cutoff = 1000;end %%cutoff frequencies for filtering bristle recording data
-filts2 = vars.lp_cutoff/(vars.fs/2);
-[x2,y2] = butter(3,filts2,'low');%%bandpass filter between 50 and 200 Hz
-filtered_data = filter(x2, y2, filtered_data_high);
-
-if ~isfield(vars,'diff');vars.diff= 1;end
-if vars.diff == 0
-diff_filt = filtered_data';
-elseif vars.diff == 1
-diff_filt = [0 diff(filtered_data)'];
-diff_filt(1:100) = 0;
-elseif vars.diff == 2
-diff_filt = [0 0 diff(diff(filtered_data))'];
-diff_filt(1:100) = 0;
-end
-
-vars.filtered_data = diff_filt;
+vars.filtered_data = filterDataWithSpikes(vars);
 
 if ~isfield(vars,'peak_threshold');vars.peak_threshold = 5;end %%initial threshold for finding peaks
 [locks, ~] = peakfinder(vars.filtered_data,mean(vars.filtered_data)+vars.peak_threshold *std(vars.filtered_data));%% slightly different algorithm;  [peakLoc] = peakfinder(x0,sel,thresh) returns the indicies of local maxima that are at least sel above surrounding vars.filtered_data and larger (smaller) than thresh if you are finding maxima (minima).
@@ -51,10 +30,10 @@ filtax = axes(fig,'units','normalized','position',[0.1300 0.1100 0.7750 0.7150])
 set(fig,'toolbar','figure');
 % Just some descriptive text.
 
-uicontrol('Parent', fig,'Style', 'text', 'String', {'hp cutoff','(hz)'}, 'Position', [vars.hp_pos 20 90 30]);
-uicontrol('Parent', fig,'Style', 'text', 'String', {'lp cutoff','(hz)'}, 'Position', [vars.lp_pos 20 90 30]);
-uicontrol('Parent', fig,'Style', 'text', 'String', {'peakthreshold','(au)'}, 'Position', [vars.thresh_pos 20 90 30]);
-uicontrol('Parent', fig,'Style', 'text', 'String', {'derivative (0-2)'}, 'Position', [vars.hp_pos 140 90 20]);
+uicontrol('Parent', fig,'Style', 'text', 'String', {'hp cutoff','(hz)'}, 'Position', [hp_pos 20 90 30]);
+uicontrol('Parent', fig,'Style', 'text', 'String', {'lp cutoff','(hz)'}, 'Position', [lp_pos 20 90 30]);
+uicontrol('Parent', fig,'Style', 'text', 'String', {'peakthreshold','(au)'}, 'Position', [thresh_pos 20 90 30]);
+uicontrol('Parent', fig,'Style', 'text', 'String', {'derivative (0-2)'}, 'Position', [hp_pos 140 90 20]);
 
 % plot_unfilt = 2+2*(vars.unfiltered_data(1:vars.len)'-mean(vars.unfiltered_data(1:vars.len)))/max(abs(vars.unfiltered_data(1:vars.len)));
 plot_filt = (vars.filtered_data(1:vars.len)-mean(vars.filtered_data))/max(vars.filtered_data);
@@ -71,36 +50,36 @@ plot(filtax,[1 vars.len],max(plot_filt)-[plot_thresh plot_thresh],'--','color',[
 
 hp_filter_Slider = uicontrol('Parent', fig,'Style','slider','Min',0.5,'Max',1000,...
                 'SliderStep',[0.001 0.1],'Value',vars.hp_cutoff,...
-                'Position',[vars.hp_pos+100 20 200 30], 'Callback', @filter_GUI);
+                'Position',[hp_pos+100 20 200 30], 'Callback', @filter_GUI);
                 vars.hp_cutoff = get(hp_filter_Slider,'Value');
                 
 lp_filter_Slider = uicontrol('Parent', fig,'Style','slider','Min',0.11,'Max',1000,...
                 'SliderStep',[0.001 0.1],'Value',vars.lp_cutoff,...
-                'Position',[vars.lp_pos+100 20 200 30], 'Callback', @filter_GUI);
+                'Position',[lp_pos+100 20 200 30], 'Callback', @filter_GUI);
                  vars.lp_cutoff = get(lp_filter_Slider,'Value');
    
 threshold_Slider = uicontrol('Parent', fig,'Style','slider','Min',1,'Max',20,...
                 'SliderStep',[0.002 0.2],'Value',vars.peak_threshold,...
-                'Position',[vars.thresh_pos+100 20 200 30], 'Callback', @filter_GUI);
+                'Position',[thresh_pos+100 20 200 30], 'Callback', @filter_GUI);
                  vars.peak_threshold = get(threshold_Slider,'Value');
         
                  %% a slider to select first or second derivative
 diff_Slider = uicontrol('Parent', fig,'Style','slider','Min',0,'Max',2,...
                 'SliderStep',[0.5 0.5],'Value',round(vars.diff),...
-                'Position',[vars.hp_pos+20 100 50 30], 'Callback', @filter_GUI);
+                'Position',[hp_pos+20 100 50 30], 'Callback', @filter_GUI);
                  vars.diff = round(get(diff_Slider,'Value'));
                     
                  
  % Puts the value of the peak_thresholdeter on the GUI.
-uicontrol('Parent', fig,'Tag','HP_cutoff','Style', 'text', 'String', num2str(vars.hp_cutoff),'Position', [vars.hp_pos+300 20 60 20]);
-uicontrol('Parent', fig,'Tag','LP_cutoff','Style', 'text', 'String', num2str(vars.lp_cutoff),'Position', [vars.lp_pos+300 20 60 20]);
-uicontrol('Parent', fig,'Tag','PEAK_threshold','Style', 'text', 'String', num2str(vars.peak_threshold),'Position', [vars.thresh_pos+300 20 60 20]);
-uicontrol('Parent', fig,'Tag','DIFF','Style', 'text', 'String', num2str(vars.diff),'Position', [vars.hp_pos+15 75 60 20]);
+uicontrol('Parent', fig,'Tag','HP_cutoff','Style', 'text', 'String', num2str(vars.hp_cutoff),'Position', [hp_pos+300 20 60 20]);
+uicontrol('Parent', fig,'Tag','LP_cutoff','Style', 'text', 'String', num2str(vars.lp_cutoff),'Position', [lp_pos+300 20 60 20]);
+uicontrol('Parent', fig,'Tag','PEAK_threshold','Style', 'text', 'String', num2str(vars.peak_threshold),'Position', [thresh_pos+300 20 60 20]);
+uicontrol('Parent', fig,'Tag','DIFF','Style', 'text', 'String', num2str(vars.diff),'Position', [hp_pos+15 75 60 20]);
 
 % A button to reset the view
 global Button;
 Button = uicontrol('Style', 'pushbutton', 'String', 'Reset Axes',...
-'Position', [vars.hp_pos 250 100 30],'Callback', @filter_GUI);
+'Position', [hp_pos 250 100 30],'Callback', @filter_GUI);
 
 filter_GUI
 end
@@ -123,28 +102,7 @@ vars.lp_cutoff = get(lp_filter_Slider,'Value');
 vars.peak_threshold = get(threshold_Slider,'Value');
 vars.diff = round(get(diff_Slider,'Value'));
 
-if ~isfield(vars,'hp_cutoff');vars.hp_cutoff = 100;end%%cutoff frequencies for filtering bristle recording data
-filts1 = vars.hp_cutoff/(vars.fs/2);
-[x,y] = butter(3,filts1,'high');%%bandpass filter between 50 and 200 Hz
-filtered_data_high = filter(x, y, vars.unfiltered_data);
-
-if ~isfield(vars,'lp_cutoff');vars.lp_cutoff = 1000;end %%cutoff frequencies for filtering bristle recording data
-filts2 = vars.lp_cutoff/(vars.fs/2);
-[x2,y2] = butter(3,filts2,'low');%%bandpass filter between 50 and 200 Hz
-filtered_data = filter(x2, y2, filtered_data_high);
-
-if ~isfield(vars,'diff');vars.diff= 1;end
-if vars.diff == 0
-diff_filt = filtered_data';
-elseif vars.diff == 1
-diff_filt = [0 diff(filtered_data)'];
-diff_filt(1:100) = 0;
-elseif vars.diff == 2
-diff_filt = [0 0 diff(diff(filtered_data))'];
-diff_filt(1:100) = 0;
-end
-
-vars.filtered_data = diff_filt;
+vars.filtered_data = filterDataWithSpikes(vars);
 
 [locks, ~] = peakfinder(double(vars.filtered_data),mean(vars.filtered_data)+vars.peak_threshold*std(vars.filtered_data));%% slightly different algorithm;  [peakLoc] = peakfinder(x0,sel,thresh) returns the indicies of local maxima that are at least sel above surrounding vars.filtered_data and larger (smaller) than thresh if you are finding maxima (minima).
 loccs = locks((locks> vars.spikeTemplateWidth)); %%to prevent strange happenings, make sure that spikes do not occur right at the edges
