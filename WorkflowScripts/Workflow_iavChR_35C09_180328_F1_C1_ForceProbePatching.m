@@ -47,7 +47,7 @@ routine = {
 Script_SetProbeLine 
 
 % double check some trials
-trial = load(sprintf(trialStem,66));
+trial = load(sprintf(trialStem,10));
 showProbeLocation(trial)
 
 % trial = probeLineROI(trial);

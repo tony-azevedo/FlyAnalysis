@@ -51,6 +51,9 @@ for f = 1:length(rawfiles)
         if exist(regexprep(trial.imageFile,'Acquisition','Raw_Data'),'file')==2
             rawim{f} = regexprep(trial.imageFile,'Acquisition','Raw_Data');
             rawim_unmatched(f) = ~isempty(regexp(rawim{f},unpattern,'once'));
+        elseif exist(regexprep(trial.imageFile,{'C:\\Users\\tony\\Acquisition'},{'B:\\Raw_data'}),'file')==2
+            rawim{f} = regexprep(trial.imageFile,{'C:\\Users\\tony\\Acquisition'},{'B:\\Raw_data'});
+            rawim_unmatched(f) = ~isempty(regexp(rawim{f},unpattern,'once'));
         end
     end
 end
@@ -70,6 +73,7 @@ rawim_unmatched =  rawim_unmatched(raw_o);
 if sum(~isnan(rawim_unmatched))~=length(rawim_unmatched)
     warning('Check for empty/unmatched image files')
     keyboard
+    return
 end
 
 %% it's possible that the images are matched

@@ -23,9 +23,9 @@ Workflow_iavChR_22A08_180822_F1_C1_ForceProbePatching
 
 % 35C09
 Workflow_iavChR_35C09_180328_F1_C1_ForceProbePatching % Still need to analyse a low intensity stim epiFlash set that was focused on the probe, will need to create a new probe tracking routine
-Workflow_iavChR_35C09_180329_F1_C1_ForceProbePatching % This is an amazing cell!
-Workflow_iavChR_35C09_180702_F1_C1_ForceProbePatching
-Workflow_iavChR_35C09_180806_F1_C1_ForceProbePatching
+Workflow_iavChR_35C09_180329_F1_C1_ForceProbePatching % This is an amazing cell! Alas, no EMG
+Workflow_iavChR_35C09_180702_F1_C1_ForceProbePatching % Need current steps
+Workflow_iavChR_35C09_180806_F1_C1_ForceProbePatching % need current steps
 
 
 % Controls 

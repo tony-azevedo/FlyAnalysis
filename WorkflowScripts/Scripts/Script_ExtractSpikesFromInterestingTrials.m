@@ -3,14 +3,14 @@
 % for now, use trials in the sets
 close all
 % Go through all the sets of trials
-for set = Nsets
+for set = 1%:Nsets
     fprintf('\n\t***** Batch %d of %d\n',set,Nsets);
     trialnumlist = trials{set};
         
     % Do a little investigation of filter properties on a couple of trials
     % first
     spikevars_cell = cell(3,1); cnt = 0;
-    for tr_idx = trialnumlist(1:5) 
+    for tr_idx = trialnumlist(1:7) 
         trial = load(sprintf(trialStem,tr_idx)); 
                 
         fprintf('%s\n',trial.name);

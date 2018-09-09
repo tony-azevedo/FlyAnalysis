@@ -1,6 +1,5 @@
 close all
-N_spikes_fi = figure;
-set(N_spikes_fi,'color',[0 0 0],'units','inches','position',[4 2 8 6]);
+N_spikes_fi = figure('color',[1 1 1],'units','inches','position',[4 2 8 6]);
 
 panl = panel(N_spikes_fi);
 panl.pack('h',{1/2 1/2})  % phase plot on top
@@ -30,11 +29,21 @@ plot(tr_ph_ax,tr_ph_ax.YLim,[0 0],'color',[.2 .2 .2]);
 
 for n = 1:2
     N = N_sp(n);
-    n_sp_ax = panl(1,n,1).select();
+    n_emg_ax = panl(1,n,1).select();
     n_emg_ax = panl(1,n,2).select();
     
-    set(n_sp_ax,'color',[0 0 0],'xcolor',[1 1 1],'ycolor',[1 1 1],'tickdir','out','xlim',t_i_f,'ylim',[-15 8],'xtick',[]); hold(n_sp_ax,'on')
-    set(n_emg_ax,'color',[0 0 0],'xcolor',[1 1 1],'ycolor',[1 1 1],'tickdir','out','xlim',t_i_f,'ylim',[-120 40],'xtick',[]); hold(n_emg_ax,'on')
+    n_emg_ax.TickDir = 'out';
+    n_emg_ax.XLim = t_i_f;
+%     n_emg_ax.YLim = [-15 8];
+    n_emg_ax.XTick = [];
+    hold(n_emg_ax,'on')
+
+    n_emg_ax.TickDir = 'out';
+    n_emg_ax.XLim = t_i_f;
+    n_emg_ax.YLim = [-120 40];
+    n_emg_ax.XTick = [];
+    hold(n_emg_ax,'on')
+   
     
     
     for tr = trialnumlist
@@ -79,7 +88,7 @@ for n = 1:2
         trjct_twin = t>=trjct_t(1)&t<=trjct_t(2);
         
         spike_i_idx = find(t==trial.spikes(1),1,'first')-4;
-        sptrjct = plot(n_sp_ax, t(trjct_twin)-trial.spikes(1),trial.voltage_1(trjct_twin)-trial.voltage_1(spike_i_idx),'color',clrs(n,:));
+        sptrjct = plot(n_emg_ax, t(trjct_twin)-trial.spikes(1),trial.voltage_1(trjct_twin)-trial.voltage_1(spike_i_idx),'color',clrs(n,:));
         emgtrjct = plot(n_emg_ax, t(trjct_twin)-trial.spikes(1),trial.current_2(trjct_twin),'color',[.8 0 0],'tag',num2str(tr));
         
         brtrjct = plot(n_bar_ax, ft(trjct_win)-trial.spikes(1),CoM(trjct_win),'color',clrs(n,:));

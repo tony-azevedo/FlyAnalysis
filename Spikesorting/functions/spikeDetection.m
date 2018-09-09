@@ -54,10 +54,17 @@ newbutton = questdlg('Save spikes?','Spike detection','Yes');
 while strcmp(newbutton,'No')
     % if it needs work, change the filters
     
-    filter_sliderGUI(vars.unfiltered_data,spike_params.spikeTemplateWidth);
+    fprintf('** Spike filtering running with params:\n')
+    disp(vars);
+
+    filter_sliderGUI(vars.unfiltered_data);
     uiwait
     selected_spikes = [];
     spikeTemplate = [];
+    
+    fprintf('** Spike filtering running with params:\n')
+    disp(vars);
+
     % select suspect spikes to create a seedTemplate
     while isempty(selected_spikes)          % Wait while the user does this.
         getSeedTemplate
@@ -83,6 +90,8 @@ if strcmp(newbutton,'Yes')
         trial.spikes = spikes_detected;
         trial.spikes_uncorrected = uncorrectedSpikes;
         trial.spikeDetectionParams = vars;
+        trial.spikeSpotChecked = 0;
+
         save(trial.name, '-struct', 'trial');
         fprintf('Saved Spikes (0) and filter parameters saved: %s\n',numel(trial.spikes),trial.name);
         return
@@ -90,11 +99,15 @@ if strcmp(newbutton,'Yes')
     trial.spikes = spikes_detected + start_point;
     trial.spikes_uncorrected = uncorrectedSpikes + start_point;
     trial.spikeDetectionParams = vars;
+    trial.spikeSpotChecked = 0;
     save(trial.name, '-struct', 'trial');
+    fstag = ['fs' num2str(vars.fs)];
+    setacqpref('FlyAnalysis',['Spike_params_' fstag],vars);
+
     fprintf('Saved Spikes (%d) and filter parameters saved: %s\n',numel(trial.spikes),trial.name);
 
     fprintf('** Spike Detection was run with params:\n')
-    disp(vars_initial);
+    disp(vars);
     fprintf('**----------------------**\n')
     
     return
@@ -116,17 +129,11 @@ end
         % than the target spikes. I'm now using 3 poles as a happy medium               
         
         all_filtered_data = filterDataWithSpikes(vars);
-        
-        [locks, ~] = peakfinder(all_filtered_data,mean(all_filtered_data)+vars.peak_threshold*std(all_filtered_data));%% slightly different algorithm;  [peakLoc] = peakfinder(x0,sel,thresh) returns the indicies of local maxima that are at least sel above surrounding all_filtered_data and larger (smaller) than thresh if you are finding maxima (minima).
-        
-        % to prevent strange happenings, make sure that spikes do not occur right at the edges
-        loccs = locks(locks> spike_params.spikeTemplateWidth);
-        spike_locs = loccs(loccs < (length(all_filtered_data)-spike_params.spikeTemplateWidth));
-        
-        % eliminate spikes that are way bigger than they're supposed to be
-        spike_locs(all_filtered_data(spike_locs)> mean(all_filtered_data(spike_locs))+ 5*std(all_filtered_data(spike_locs))) = [];
-        
-        clear locks loccs
+        spike_locs = findSpikeLocations(vars,all_filtered_data);
+                
+        if any(spike_locs~=unique(spike_locs))
+            error('Why are there multiple peak at the same time?')
+        end
         
         %% pool the detected spike candidates and do spike_params.spiketemplate matching
         targetSpikeDist = zeros(size(spike_locs));
@@ -285,123 +292,42 @@ end
             
             suspect = targetSpikeDist<vars.Distance_threshold;
             spikes = spikes(suspect);
-            
-            % spikePI = find(spikewindow==spikePT); % spikePI is the peak
-            % of the average spike. For 81A07 initial spikes, this is often
-            % before the actual spike. With the peak finder function below,
-            % this is obsolete
-            % peak time of average spike, then look for inflection point in
-            % front of that.
-            %             IP_offset = 6; % empirically determined to give enough space for the inflection point in 81A07
-            
-            tmp_f = figure;
-            spikes_uncorrected = spikes;
-            
+                                    
             % This loop gets a corrected spike time for each spike. 
             % If the peak of the second derivative isn't useful, use the
             % average of all spikes you found to get a peak
-            spikeWaveforms = nan(size(window(:),1),size(spikes(:),1));
 
-            for i = 1:length(spikes)
-                spikeWaveforms(:,i) = vars.unfiltered_data(spike_locs(i)+spikewindow);
+            if length(spikes)>=1
+                
+                vars.locs = spikes;
+                vars = estimateSpikeTimeFromInflectionPoint(vars,spikeWaveforms(:,suspect),targetSpikeDist(suspect));
+
+                varargout = {vars.locs,vars.locs_uncorrected};
+                
+                return
+                
+            else % If there were no spikes at all
+                
+                spikes = [];
+                spikes_uncorrected = spikes;
+                varargout = {spikes,spikes_uncorrected};
+                
+                return
             end
-            if length(spikes)>1
-                spikesWaveform = mean(spikeWaveforms,2);
-                spikesWaveform = smooth(spikesWaveform-spikesWaveform(1),vars.fs/2000);
-                spikesWaveform_ = smoothAndDifferentiate(spikesWaveform,vars.fs/2000);
-                
-                % normalize
-                idx_i = round(vars.spikeTemplateWidth/6);
-                idx_m = round(vars.spikeTemplateWidth/2);
-                spikesWaveform_ = (spikesWaveform_-min(spikesWaveform_(idx_i:end-idx_i)))/diff([min(spikesWaveform_(idx_i:end-idx_i)) max(spikesWaveform_(idx_i:end-idx_i))]);
-                [~,inflPntPeak_ave] = findpeaks(spikesWaveform_(idx_i+1:end-idx_i),'MinPeakProminence',0.014);
-                inflPntPeak_ave = inflPntPeak_ave+idx_i;
-                inflPntPeak_ave = inflPntPeak_ave(abs(inflPntPeak_ave-idx_m)==min(abs(inflPntPeak_ave-idx_m)));
-            else
-                spikesWaveform = [];
-                spikesWaveform_ = [];
-                inflPntPeak_ave = [];
-            end
-            
-            ipps = nan(size(spikes));
-            if ~isfield(vars,'likelyiflpntpeak') || isnan(vars.likelyiflpntpeak)
-                vars.likelyiflpntpeak = round(length(vars.spikeTemplate)/2);
-            end
-            for i = 1:length(spikes)
-            
-                spikeWaveform = vars.unfiltered_data(spikes(i)+spikewindow);
-                
-                spikeWaveform = smooth(spikeWaveform-spikeWaveform(1),vars.fs/2000);
-                spikeWaveform_ = smoothAndDifferentiate(spikeWaveform,vars.fs/2000);
-                
-                % normalize
-                spikeWaveform_ = (spikeWaveform_-min(spikeWaveform_))/diff([min(spikeWaveform_) max(spikeWaveform_)]);
-                
-                %% see how this works:
-                %pks = peakfinder(spikeWaveform_);
-                % really narrow the interest range
-                start_idx = vars.fs/10000*10; % 50 for fs - 50k, 10 for fs - 10k
-                end_idx = vars.fs/10000*10;
-                
-                idx_i = round(vars.spikeTemplateWidth/4);
-                idx_m = round(vars.spikeTemplateWidth/2);
-                
-                [~,inflPntPeak] = findpeaks(spikeWaveform_(start_idx+1:end-end_idx),'MinPeakProminence',0.02);
-                inflPntPeak = inflPntPeak+start_idx;
-                if numel(inflPntPeak)>1
-                    inflPntPeak = inflPntPeak(abs(inflPntPeak-vars.likelyiflpntpeak)==min(abs(inflPntPeak-vars.likelyiflpntpeak)));
-                end
-                if length(inflPntPeak)~=1
-                    warning('Peak of 2nd derivative is still undefined');
-                    %             plot(spikewindow,spikeWaveform_); hold on;
-                    if ~isempty(spikesWaveform_) && ~isempty(inflPntPeak_ave)
-                        % use spike time closest to middle of template
-                        warning('Using artificial point closest to middle');
-                        %plot(spikewindow(inflPntPeak_ave),spikeWaveform_(inflPntPeak_ave),'ro');
-                        spikes(i) = spikes(i)+spikewindow(inflPntPeak_ave);
-                        %pause;
-                    elseif isempty(inflPntPeak) && isempty(inflPntPeak_ave)
-                        % use spike time closest to middle of template
-                        warning('Using artificial point closest to 25');
-                        [~,inflPntPeak] = findpeaks(spikeWaveform_(idx_i+1:end-10),'MinPeakProminence',0.001);
-                        inflPntPeak = inflPntPeak+idx_i;
-                        if isempty(inflPntPeak)
-                            inflPntPeak = idx_m;
-                            % title('Using indx 28 as inflection point')
-                        else
-                            if numel(inflPntPeak)>1
-                                inflPntPeak = inflPntPeak(abs(inflPntPeak-vars.likelyiflpntpeak)==min(abs(inflPntPeak-vars.likelyiflpntpeak)));
-                            end
-                            %                     title('Found a small peak of d/dt^2')
-                        end
-                        spikes(i) = spikes(i)+spikewindow(inflPntPeak);
-                    else
-                        warning('Only one spike, no average 2nd derivative to fall back on');
-                        spikes(i) = NaN;
-                    end
-                    hold off;
-                else
-                    ipps(i) = inflPntPeak;
-                    spikes(i) = spikes(i)+spikewindow(inflPntPeak);
-                end
-            end
-            
-            vars.likelyiflpntpeak = nanmean(ipps);
-            varargout = {spikes,spikes_uncorrected};
-            pause(.4); %hold off;
-            close(tmp_f);
-            return
-        else % If there were no spikes at all
+        else
             uiwait();
             spikes = [];
             spikes_uncorrected = spikes;
             varargout = {spikes,spikes_uncorrected};
-
-            return
         end
+            
     end
 
     function getSeedTemplate()
+        
+        fprintf('** Seed template running with params:\n')
+        disp(vars);
+        
         fig = figure('position',[100 100 1200 900], 'NumberTitle', 'off', 'color', 'w');
         
         patchax = axes(fig,'units','normalized','position',[0.1300 0.8500 0.7750 0.1]);

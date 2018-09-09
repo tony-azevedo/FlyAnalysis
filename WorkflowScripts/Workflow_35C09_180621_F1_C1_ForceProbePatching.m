@@ -6,7 +6,7 @@ cd (D)
 clear trials
 
 %% Current step to get force
-trial = load('B:\Raw_Data\180621\180621_F1_C1\EpiFlash2T_Raw_180621_F1_C1_1.mat');
+trial = load('B:\Raw_Data\180621\180621_F1_C1\CurrentStep2T_Raw_180621_F1_C1_1.mat');
 [~,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
 
 clear trials

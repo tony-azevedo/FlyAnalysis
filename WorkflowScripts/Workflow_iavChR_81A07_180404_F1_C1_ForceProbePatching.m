@@ -15,6 +15,7 @@ trials{1} = 13:44; % Low
 trials{2} = 45:68; % High
 trials{3} = 69:88; % more High caffeine
 trials{4} = 89:108; % more High
+trials{4} = 109:115; % longer caffeine
 trials{5} = 116:150; % more low 
 Nsets = length(trials);
     

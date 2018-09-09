@@ -16,7 +16,7 @@ if isempty(fig);
     end
     proplist =  getpref('AnalysisFigures',mfilename);
     fig = figure(proplist{:});
-
+    
     %     p = uicontrol('parent',fig,'style','pushbutton',...
     %         'units','normalized','position',[.01 .92 .1 .08],...
     %         'string','Clear',...
@@ -27,7 +27,7 @@ else
 end
 
 % Load in the first file
-%[protocol,dateID,flynum,cellnum,trialnum,D,trialStem,datastructfile] = 
+%[protocol,dateID,flynum,cellnum,trialnum,D,trialStem,datastructfile] =
 [~,dateID,flynum,cellnum,~,Dir,~,dfile] = ...
     extractRawIdentifiers(intrial.name);
 
@@ -37,8 +37,8 @@ l = false(1,length(rawfiles));
 for r_ind = 1:length(rawfiles)
     l(r_ind) = isempty(strfind(rawfiles(r_ind).name,'SealAndLeak'));
 end
-rawfiles = rawfiles(l); 
- 
+rawfiles = rawfiles(l);
+
 % Find all the protocols run in this file
 % protocols = cell(length(rawfiles),1);
 % for f = 1:length(rawfiles)
@@ -78,7 +78,7 @@ for r_ind = 1:length(rawfiles)
     if sum(strcmp(trial.tags,'Total Crap')) && isfield(trial,'excluded') && trial.excluded
         continue
     end
-
+    
     % get the creation date
     if isfield(trial,'timestamp')
         trialtime(r_ind) = trial.timestamp;
@@ -93,17 +93,30 @@ for r_ind = 1:length(rawfiles)
     if ~isempty(trial.tags), drgs{r_ind} = trial.tags{end}; else drgs{r_ind} = ' '; end
     
     % get the mode
-    mode{r_ind} = trial.params.mode;
-        
+    try mode{r_ind} = trial.params.mode_1;
+    catch
+        mode{r_ind} = trial.params.mode;
+    end
+    
     if strcmp(mode{r_ind},'IClamp')
-        out = 'current';
-        in = 'voltage';
+        if isfield(trial,'current_1')
+            out = 'current_1';
+            in = 'voltage_1';
+        elseif isfield(trial,'current')
+            out = 'current';
+            in = 'voltage';
+        end
     elseif strcmp(mode{r_ind},'VClamp')
-        out = 'voltage';
-        in = 'current';
+        if isfield(trial,'current_1')
+            out = 'voltage_1';
+            in = 'current_1';
+        elseif isfield(trial,'current')
+            out = 'voltage';
+            in = 'current';
+        end
     else
         error
-    end        
+    end
     t = makeInTime(trial.params);
     
     if strcmp('Sweep',prot)
@@ -126,18 +139,18 @@ for r_ind = 1:length(rawfiles)
     resp_f = mean(trial.(in)(step_start+step_dur-step_start+1:step_start+step_dur));
     resp_min = min(trial.(in)(step_start:step_start+round(step_dur/4)));
     resp_max = max(trial.(in)(step_start+step_dur:step_start+step_dur+round(step_dur/4)));
-
+    
     if strcmp(mode{r_ind},'IClamp')
         Ri(r_ind) = (resp_f-resp_i)/step_amp;
         V_mh(r_ind) = resp_i;
         colr = [1 0 1];
     elseif strcmp(mode{r_ind},'VClamp')
         Ri(r_ind) = step_amp/(resp_f-resp_i);
-        V_mh(r_ind) = outmu; 
+        V_mh(r_ind) = outmu;
         colr = [0 1 1];
         if ~isnan(step_amp), access(r_ind) = step_amp/mean([(resp_min-resp_i) -abs(resp_max-resp_i)]); end
     end
-               
+    
 end
 trialtime = trialtime(~isnan(trialorder));
 Ri = Ri(~isnan(trialorder));
@@ -197,7 +210,7 @@ for r_ind = 1:length(tro)
     if strcmp(drgs{r_ind},'break-in')
         text(trialtime(r_ind),.2,[sprintf('%.0f',(Ri(r_ind))) ' G\Omega'],'verticalalignment','top','horizontalalignment','left');
     end
-   
+    
     Ri_struct(r_ind).time = trialtime(r_ind);
     Ri_struct(r_ind).mode = mode{r_ind};
     Ri_struct(r_ind).Ri = Ri(r_ind);
@@ -217,7 +230,7 @@ line(xlims,[0 0],'parent',ax,'linestyle','-','color',[.8 .8 .8],'tag','baseline'
 % Is there a relationship between Ri vs holding Potential?
 % ax = subplot(3,1,3,'parent',fig);
 % plot(ax,Ri(Ri>0),V_mh(Ri>0),'.k');
-% 
+%
 % axis(ax,'tight')
 % xlim(ax,[0,2])
 % xlabel(ax,'R_i (G\Omega)');

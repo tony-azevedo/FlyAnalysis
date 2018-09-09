@@ -293,7 +293,7 @@ if filtered_mu(lefthash)>coef_right(1)+dark  % right side of the bar comes up to
     fprintf('\t\tWeight the left side of bar\n');
 else
     bar_threshold_right = 3/4;%
-    bar_threshold_left = 1/2;%
+    bar_threshold_left = 3/4;%
     fprintf('\t\tWeight the left and right of bar equally\n');
 end
 

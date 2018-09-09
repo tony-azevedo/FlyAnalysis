@@ -1,4 +1,4 @@
-function trial = probeLineROI(trial)
+function [trial,response] = probeLineROI(trial)
 %% Set an ROI that avoids the leg, just gets the probe
 % I think I only need 1 for now, but I'll keep the option for multiple
 % (storing in cell vs matrix)
@@ -128,10 +128,11 @@ if strcmp(newbutton,'Yes')
         trial.forceProbe_tangent = roi_temp;
         setacqpref('quickshowPrefs','forceProbeTangent',trial.forceProbe_tangent)
     elseif strcmp(button,'No')
+        response = 'No';
     elseif strcmp(button,'Cancel')
         fprintf('Not setting tangent in trial\n')
         close(displayf)
-        
+        response = 'Cancel';
         return
     end
         
@@ -220,15 +221,18 @@ if strcmp(newbutton,'Yes')
             fprintf('Not setting tangent in trial\n')
             return
     end
+    response = 'Yes';
 elseif strcmp(newbutton,'No')
     fprintf('Saving bar and tangent in trial\n')
         % Do a little transform so I can draw the line either way
     if trial.forceProbe_line(1,1)>trial.forceProbe_line(2,1)
         trial.forceProbe_line = flipud(trial.forceProbe_line);
     end
+    response = 'No';
     save(trial.name,'-struct','trial')
 elseif strcmp(newbutton,'Cancel')
     fprintf('Not setting tangent in trial\n')
+    response = 'Cancel';
     return
 end
 

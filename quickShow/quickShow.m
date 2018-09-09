@@ -354,14 +354,15 @@ set(handles.exclude,'enable','off');
 
 if ~isfield(handles.trial,'imageFile') || isempty(handles.trial.imageFile)
     set(handles.image_info,'String','','Enable','off');
-elseif isfield(handles.trial,'imageFile') && ~isempty(handles.trial.imageFile) && exist(handles.trial.imageFile,'file')
+elseif isfield(handles.trial,'imageFile') && ~isempty(handles.trial.imageFile) && imageFileExist(handles.trial)
     try exp = postHocExposure(handles.trial);
     catch e
         guidata(hObject,handles)
         quickShow_Protocol(hObject, eventdata, handles)
         error(e.message)
     end
-    a = dir(regexprep(handles.trial.imageFile,'Acquisition','Raw_Data'));
+    [~,imfdir] = imageFileExist(handles.trial);
+    a = dir(imfdir);
     samprate = handles.trial.params.sampratein;
     imstr = sprintf('Exp: %d - rate: %.2f - size: %dMB (R click for more)',...
         sum(exp.exposure),...
@@ -613,7 +614,10 @@ if ~isempty(s)
 end
 
 % Check if this trial has spikes
-if isfield(h.trial,'spikes') && isfield(h.trial,'spikeDetectionParams')
+if isfield(h.trial,'excluded') && h.trial.excluded
+    fprintf('Trial is excluded, not interested in spikes\n')
+    beep
+elseif isfield(h.trial,'spikes') && isfield(h.trial,'spikeDetectionParams')
     ax = findobj(h.quickShowPanel,'type','axes','tag','quickshow_inax');
     if isempty(ax)
         error('Clear panel, go to quickShow visualization\n')
@@ -633,8 +637,10 @@ if isfield(h.trial,'spikes') && isfield(h.trial,'spikeDetectionParams')
         ticks.Color = [0    0.4470    0.7410];
     end
     
+    guidata(spikebutt,h)
+
     % enable for other trials
-% If not, find out if the spike detection has been run for the cell
+    % If not, find out if the spike detection has been run for the cell
 else 
     % Go through other trials, first check nearby ones in this protocol
     nums = h.trial.params.trial+[-1 1 -2 2 -3 3 -4 4];
@@ -682,15 +688,10 @@ else
 
     % may need to allow for different versions of spike analysis
     [h.trial,spikevars] = spikeDetection(h.trial,invec1,spikevars);
-    if ~isempty(spikevars)
-        fstag = ['fs' num2str(h.trial.params.sampratein)];
-        setacqpref('FlyAnalysis',['Spike_params_' fstag],spikevars);
-    else
-        warning('Spike detection is canceled');
-    end
+    guidata(spikebutt,h)
+    trialnum_Callback(h.trialnum, eventdata, h)
 end
-guidata(spikebutt,h)
-%quickShow_Protocol(h.trialnum, eventdata, h)
+
 
 % --- Executes on button press in probetrace_button.
 function probetrace_button_Callback(probebutt, eventdata, h)
@@ -706,7 +707,7 @@ if ~isempty(s)
     delete(s);
 end
 
-% Check if this trial has spikes
+% Check if this trial has a probe vector
 if isfield(h.trial,'forceProbeStuff')
     ax = findobj(h.quickShowPanel,'type','axes','tag','quickshow_outax');
     if isempty(ax)
@@ -718,7 +719,7 @@ if isfield(h.trial,'forceProbeStuff')
     frame_times = t(h2.exposure);
     
     if isfield(h.trial.forceProbeStuff,'ZeroForce')
-        plot(ax.XLim,[1 1]*h.trial.forceProbeStuff.ZeroForce,'color',.9 *[1 1 1]); hold(ax,'on');
+        plot(ax.XLim,[1 1]*h.trial.forceProbeStuff.ZeroForce,'color',.9 *[1 1 1],'tag','ProbeTrace'); hold(ax,'on');
     end
     plot(ax,frame_times,h.trial.forceProbeStuff.CoM(1:length(frame_times)),'color',[0 .2 0],'tag','ProbeTrace'), hold(ax,'on');
 
@@ -726,29 +727,35 @@ if isfield(h.trial,'forceProbeStuff')
     ax.XLim = inax.XLim;
     
     % enable for other trials
-% If not, find out if the spike detection has been run for the cell
 else 
-    % Go through other trials, first check nearby ones in this protocol
     beep
     if isfield(h.trial,'excluded') && h.trial.excluded
         fprintf(' * Bad movie: %s\n',h.trial.name)
     else
-        h.trial = probeLineROI(h.trial);
+        [h.trial,response] = probeLineROI(h.trial);
+        if strcmp(response,'Cancel')
+            return
+        end
         h.trial = smoothOutBrightPixels(h.trial);
     end
    
     if isfield(h.trial ,'forceProbe_line') && isfield(h.trial,'forceProbe_tangent') && (~isfield(h.trial,'excluded') || ~h.trial.excluded) && ~isfield(h.trial,'forceProbeStuff')
         fprintf('%s\n',h.trial.name);
-        fprintf('%s\n','Need to figure out if this is a 2X or 5X objective');
+        %fprintf('%s\n','Need to figure out if this is a 2X or 5X objective');
         trial = h.trial;
         probeTrackROI_IR;
         h.trial = trial;
+        guidata(probebutt,h)
+        trialnum_Callback(h.trialnum, eventdata, h)
+
     elseif isfield(h.trial,'forceProbeStuff')
         fprintf('\t* Already detected the probe (delete probe stuff from quickshow window): %s\n',h.trial.name);
     else
         fprintf('\t* Bad movie: No line or tangent: %s\n',h.trial.name);
     end
+
 end
+
 guidata(probebutt,h)
 %quickShow_Protocol(h.trialnum, eventdata, h)
 
@@ -1066,11 +1073,14 @@ imstr = sprintf('Spike Vars, trial %d:\nHighpass: %.2f - Lowpass: %.2f - Diff: %
     handles.trial.spikeDetectionParams.peak_threshold,...
     handles.trial.spikeDetectionParams.Distance_threshold,...
     handles.trial.spikeDetectionParams.lastfilename(end-18:end-4));
-msgbox(imstr,'Spike Vars')
+% msgbox(imstr,'Spike Vars')
 
 switch handles.trial.params.mode_1; case 'VClamp', invec1 = 'current_1'; case 'IClamp', invec1 = 'voltage_1'; otherwise; invec1 = 'voltage_1'; end
 
 spikeSpotCheck(handles.trial,invec1,handles.trial.spikeDetectionParams)
+
+guidata(hObject,handles)
+trialnum_Callback(handles.trialnum, eventdata, handles)
 
 
 % --- Executes on button press in tag_button.
@@ -1324,7 +1334,7 @@ if ~isempty(xlims)
     text(xlims(1)+.05*diff(xlims),ylims(1)+.05*diff(ylims),...
         sprintf('%s', [prot '.' d '.' fly '.' cell '.' trialnum]),...
         'parent',ax1,'fontsize',7,'tag','delete');
-    if isfield(handles.trial,'tags') && ~isempty(handles.trial.tags);
+    if isfield(handles.trial,'tags') && ~isempty(handles.trial.tags)
         tags = handles.trial.tags;
         tagstr = tags{1};
         for i = 2:length(tags)
@@ -1420,14 +1430,23 @@ if strcmp(button,'Yes')
         'exclude',{'step','amp','displacement','freq'});
     for n_ind = 1:length(nums)
         trial = load(fullfile(handles.dir,sprintf(handles.trialStem,nums(n_ind))));
+        d = 0;
         if isfield(trial,'spikes')
+            d = length(trial.spikes);
             trial = rmfield(trial,'spikes');
+        end
+        if isfield(trial,'spikes_uncorrected')
+            trial = rmfield(trial,'spikes_uncorrected');
         end
         if isfield(trial,'spikeDetectionParams')
             trial = rmfield(trial,'spikeDetectionParams');
         end
+        if isfield(trial,'spikeSpotChecked')
+            trial = rmfield(trial,'spikeSpotChecked');
+        end
+
         save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
-        fprintf('Spikes removed\n');
+        fprintf('%d spikes removed from trial %d\n',d,trial.params.trial);
         
     end
 else
@@ -1448,6 +1467,9 @@ else
     handles.trial = trial;
     fprintf('Spikes removal complete\n');
         
+    set(handles.Spikes,'Value',0);
+    guidata(spikebutt,h)
+    trialnum_Callback(h.trialnum, eventdata, h)
 end
 
 guidata(hObject, handles);
@@ -1466,11 +1488,11 @@ elseif strcmp(button,'Yes')
     fstag = ['fs' num2str(trial.params.sampratein)];
     spikevars = getacqpref('FlyAnalysis',['Spike_params_' fstag]);
     [~,spikevars] = spikeDetection(trial,invec1,spikevars);
-    setacqpref('FlyAnalysis',['Spike_params_' fstag],spikevars);
 end
-
 figure(gcbf);
 guidata(hObject, handles);
+trialnum_Callback(handles.trialnum, eventdata, handles)
+
 
 function reCheckSpikes(hObject,eventdata,handles)
 

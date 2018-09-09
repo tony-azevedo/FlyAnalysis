@@ -20,3 +20,7 @@ elseif vars.diff == 2
 end
 
 all_filtered_data = diff_filt;
+
+all_filtered_data = vars.polarity*all_filtered_data;
+
+

@@ -15,6 +15,7 @@ clear trials
 trials{1} = 1:32; % Low
 trials{2} = 33:48; % High
 trials{3} = 49:64; % High long
+trials{3} = 65:100; % High short
 Nsets = length(trials);
     
 trial = load(sprintf(trialStem,33));

@@ -6,6 +6,8 @@ function varargout = spikeDetectionBatch(trialStem,trialnumlist,inputToAnalyze,v
 
 global vars;
 
+vars_initial = cleanUpSpikeVarsStruct(vars_initial);
+
 % Create a figure that you can then click on to analyze spikes
 disttreshfig = figure; clf; set(disttreshfig, 'Position', [140          80        1600         900],'color', 'w');
 panl = panel(disttreshfig);
@@ -38,6 +40,7 @@ ax_unfltrd_notsuspect = panl(2,4).select(); ax_unfltrd_notsuspect.Tag = 'unfltrd
 window = -floor(vars_initial.spikeTemplateWidth/2): floor(vars_initial.spikeTemplateWidth/2);
 spikewindow = window-floor(vars_initial.spikeTemplateWidth/2);
 start_point = round(.01*vars_initial.fs);
+smthwnd = (vars.fs/2000+1:length(spikewindow)-vars.fs/2000);
 
 detectedUFSpikeCandidates = [];
 detectedUFSpikeCandidates_acrossCells = [];
@@ -66,7 +69,7 @@ for tr_idx = trialnumlist
     if isfield(trial,'spikeSpotChecked') && trial.spikeSpotChecked
         fprintf(' * Trial spot checked for spikes already: %s\n',trial.name)
     end
-
+    
     % Get out all the potential spikes
     spikeDetectSingleTrial(trial,inputToAnalyze,vars_initial);
     
@@ -129,7 +132,6 @@ for tr_idx = trialnumlist
 
         
     if ~isempty(goodspikes)
-        smthwnd = (vars.fs/2000+1:length(spikewindow)-vars.fs/2000);
         suspectUF_ls = plot(ax_detect_patch,spikewindow,spikeWaveforms(:,goodspikes),'tag','spikes');
         set(suspectUF_ls,'color',[0 0 0])
         hold(ax_detect_patch,'on');
@@ -139,11 +141,10 @@ for tr_idx = trialnumlist
         suspectUF_ls = plot(ax_detect_patch,spikewindow,spikeWaveforms(:,weirdspikes),'tag','spikes');
         set(suspectUF_ls,'color',[0 1 .7])
     end
-    
-    suspectUF_avel = plot(ax_detect_patch,spikewindow,spikeWaveform,'color',[0 .7 1],'linewidth',2);
-    suspectUF_ddT2l = plot(ax_detect_patch,spikewindow(smthwnd(2:end-1)),spikeWaveform_(smthwnd(2:end-1))/max(spikeWaveform_(smthwnd(2:end-1)))*max(spikeWaveform),'color',[0 .8 .4],'linewidth',2);
-    
     if any(suspect)
+        suspectUF_avel = plot(ax_detect_patch,spikewindow,spikeWaveform,'color',[0 .7 1],'linewidth',2);
+        suspectUF_ddT2l = plot(ax_detect_patch,spikewindow(smthwnd(2:end-1)),spikeWaveform_(smthwnd(2:end-1))/max(spikeWaveform_(smthwnd(2:end-1)))*max(spikeWaveform),'color',[0 .8 .4],'linewidth',2);
+        
         spikeTime = spikewindow(spikeWaveform_==max(spikeWaveform_));
         spikePT = spikewindow(spikeWaveform==max(spikeWaveform));
         spikePT = spikePT(1);
@@ -151,8 +152,8 @@ for tr_idx = trialnumlist
         spikeTime = 0;
         spikePT = 0;
     end
-        
-    % Divide detected events into spike suspects and non spike suspects    
+    
+    % Divide detected events into spike suspects and non spike suspects
     if any(goodspikes)
         plot(ax_fltrd_suspect,window,norm_detectedSpikeCandidates(:,suspect_idx(goodspikes)),'tag','squiggles_suspect','color',[0 0 0]);
     end
@@ -188,113 +189,13 @@ if ~isempty(targetSpikeDist_acrossCells)
     % pull out spikes, but keep a record of indices 
     suspect = targetSpikeDist_acrossCells<vars.Distance_threshold;
 
-    % This loop gets a corrected spike time for each spike.
-    % If the peak of the second derivative isn't useful, use the
-    % average of all GOOD spikes you found to get a peak (below)
-    
-    if sum(suspect)>1
-        spikesWaveform = mean(detectedUFSpikeCandidates_acrossCells(:,suspect),2);
-        spikesWaveform = smooth(spikesWaveform-spikesWaveform(1),vars.fs/2000);
-        spikesWaveform_ = smoothAndDifferentiate(spikesWaveform,vars.fs/2000);
-        
-        % normalize
-        idx_i = round(vars.spikeTemplateWidth/6);
-        idx_m = round(vars.spikeTemplateWidth/2);
-        spikesWaveform_ = (spikesWaveform_-min(spikesWaveform_(idx_i:end-idx_i)))/diff([min(spikesWaveform_(idx_i:end-idx_i)) max(spikesWaveform_(idx_i:end-idx_i))]);
-        [~,inflPntPeak_ave] = findpeaks(spikesWaveform_(idx_i+1:end-idx_i),'MinPeakProminence',0.014);
-        inflPntPeak_ave = inflPntPeak_ave+idx_i;
-        inflPntPeak_ave = inflPntPeak_ave(abs(inflPntPeak_ave-idx_m)==min(abs(inflPntPeak_ave-idx_m)));
-    else
-        spikesWaveform = [];
-        spikesWaveform_ = [];
-        inflPntPeak_ave = [];
-    end
-    
-    % Find the inflection points for all detectedUFSpike candidtates. This
-    % way, the spot check algorithm doesn't include moving them around. The
-    % only caveat is that there may be an actual spike in the vicinity. If
-    % there is, don't calculate this.
-    spikes = spikes_acrossCells;
-    spikes_uncorrected = spikes;
-    
-    % Now that we have an inflectionpoint peak ave from the good spikes, we
-    % can do this for all spikes
-    ipps = nan(size(spikes));
-    if ~isfield(vars,'likelyiflpntpeak') || isnan(vars.likelyiflpntpeak)
-        error('need a likely inflection point peak, get from spike detection routine')
-        vars.likelyiflpntpeak = round(length(vars.spikeTemplate)/2);
-    end
+    vars.locs = spikes_acrossCells;
+    vars = estimateSpikeTimeFromInflectionPoint(vars,detectedUFSpikeCandidates_acrossCells,targetSpikeDist_acrossCells);
 
-    for i = 1:length(spikes)
-        if targetSpikeDist_acrossCells(i)>vars.Distance_threshold
-            % Don't correct the spike if there it is above the distance
-            % threshold and there is another spike nearby
-            spikelocation_comparison = spikes(trialnumids==trialnumids(i));
-            spikelocation_comparison = abs(spikelocation_comparison-spikes(i));
-            if sum(spikelocation_comparison<vars.spikeTemplateWidth) >1
-                continue
-            end
-        end
-
-        spikeWaveform = detectedUFSpikeCandidates_acrossCells(:,i);
-        spikeWaveform = smooth(spikeWaveform-spikeWaveform(1),vars.fs/2000);
-        spikeWaveform_ = smoothAndDifferentiate(spikeWaveform,vars.fs/2000);
-        
-        % normalize
-        spikeWaveform_ = (spikeWaveform_-min(spikeWaveform_))/diff([min(spikeWaveform_) max(spikeWaveform_)]);
-        
-        %% see how this works:
-        %pks = peakfinder(spikeWaveform_);
-        % really narrow the interest range
-        start_idx = vars.fs/10000*10; % 50 for fs - 50k, 10 for fs - 10k
-        end_idx = vars.fs/10000*10;
-
-        idx_i = round(vars.spikeTemplateWidth/4);
-        idx_m = round(vars.spikeTemplateWidth/2);
-
-        [~,inflPntPeak] = findpeaks(spikeWaveform_(start_idx+1:end-end_idx),'MinPeakProminence',0.02);
-        inflPntPeak = inflPntPeak+start_idx;
-        if numel(inflPntPeak)>1
-            inflPntPeak = inflPntPeak(abs(inflPntPeak-vars.likelyiflpntpeak)==min(abs(inflPntPeak-vars.likelyiflpntpeak)));
-        end
-        if length(inflPntPeak)~=1
-            % Peak of 2nd derivative is still undefined
-            if ~isempty(spikesWaveform_) && ~isempty(inflPntPeak_ave)
-                % use spike time closest to middle of template
-                spikes(i) = spikes(i)+spikewindow(inflPntPeak_ave);
-            elseif isempty(inflPntPeak) && isempty(inflPntPeak_ave)
-                % use spike time closest to middle of template
-                [~,inflPntPeak] = findpeaks(spikeWaveform_(idx_i+1:end-10),'MinPeakProminence',0.001);
-                inflPntPeak = inflPntPeak+idx_i;
-                if isempty(inflPntPeak)
-                    inflPntPeak = idx_m;
-                else
-                    if numel(inflPntPeak)>1
-                        inflPntPeak = inflPntPeak(abs(inflPntPeak-vars.likelyiflpntpeak)==min(abs(inflPntPeak-vars.likelyiflpntpeak)));
-                    end
-                end
-                spikes(i) = spikes(i)+spikewindow(inflPntPeak);                
-            else
-                % Only one spike, no average 2nd derivative to fall back on
-                spikes(i) = NaN;
-            end
-        else
-            ipps(i) = inflPntPeak;
-            spikes(i) = spikes(i)+spikewindow(inflPntPeak); 
-        end
-    end
-    
-    vars.likelyiflpntpeak = nanmean(ipps(suspect));
-        
-    if isfield(vars,'locs'),vars = rmfield(vars,{'locs'}); end
-    if isfield(vars,'spike_locs'),vars = rmfield(vars,{'spike_locs'}); end
-    if isfield(vars,'filtered_data'),vars = rmfield(vars,{'filtered_data'}); end
-    if isfield(vars,'unfiltered_data'), vars = rmfield(vars,{'unfiltered_data'}); end
-    if isfield(vars,'lastfile'),vars = rmfield(vars,{'lastfile'}); end
-
-    % There are a few points that are not looked at for this analysis
+    spikes = vars.locs;
     spikes = spikes+start_point;
-    spikes_uncorrected = spikes_uncorrected+start_point;
+    spikes_acrossCells = spikes;
+    spikes_uncorrected = vars.locs_uncorrected+start_point;
 
     for tr_idx = trialnumlist
         vars.lastfilename = trial.name;
@@ -359,17 +260,8 @@ varargout = {acrossCellSpikeData};
         
         vars.unfiltered_data = unfiltered_data;
         
-        
         all_filtered_data = filterDataWithSpikes(vars);
-        
-        [locks, ~] = peakfinder(all_filtered_data,mean(all_filtered_data)+vars.peak_threshold*std(all_filtered_data));%% slightly different algorithm;  [peakLoc] = peakfinder(x0,sel,thresh) returns the indicies of local maxima that are at least sel above surrounding all_filtered_data and larger (smaller) than thresh if you are finding maxima (minima).
-        
-        % to prevent strange happenings, make sure that spikes do not occur right at the edges
-        loccs = locks(locks> vars.spikeTemplateWidth);
-        spike_locs = loccs(loccs < (length(all_filtered_data)-vars.spikeTemplateWidth));
-        
-        % eliminate spikes that are way bigger than they're supposed to be
-        spike_locs(all_filtered_data(spike_locs)> mean(all_filtered_data(spike_locs))+ 5*std(all_filtered_data(spike_locs))) = [];
+        spike_locs = findSpikeLocations(vars,all_filtered_data);
         
         clear locks loccs
         
