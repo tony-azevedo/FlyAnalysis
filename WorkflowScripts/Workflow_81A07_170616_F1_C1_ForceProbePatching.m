@@ -1,5 +1,5 @@
-%% ForceProbe patcing workflow 170921_F1_C1 for a single probe vector
-trial = load('B:\Raw_Data\170921\170921_F1_C1\EpiFlash2T_Raw_170921_F1_C1_22.mat');
+%% ForceProbe patcing workflow 170616_F1_C1 for a single probe vector
+trial = load('B:\Raw_Data\170616\170616_F1_C1\EpiFlash2T_Raw_170616_F1_C1_41.mat');
 [protocol,dateID,flynum,cellnum,trialnum,D,trialStem,datastructfile] = extractRawIdentifiers(trial.name);
 
 cd (D)
@@ -7,13 +7,10 @@ clear trials
 
 %% epi flash Twitch movements
 
-trial = load('B:\Raw_Data\170921\170921_F1_C1\EpiFlash2T_Raw_170921_F1_C1_22.mat');
-[~,~,~,~,~,D,trialStem,~] = extractRawIdentifiers(trial.name); cd (D)    
-cd (D)
-
-% EpiFlash Sets - cause spikes and video movement
-trials{1} = 22:151;
-
+trial = load('B:\Raw_Data\170616\170616_F1_C1\EpiFlash2T_Raw_170616_F1_C1_41.mat');
+[~,~,~,~,~,D,trialStem,~] = extractRawIdentifiers(trial.name); cd (D)
+probeTrackROI_IR_doubleGaussian
+    
 routine = {
     'probeTrackROI_IR' 
     };

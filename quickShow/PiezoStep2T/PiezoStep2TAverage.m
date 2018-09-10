@@ -37,14 +37,14 @@ end
 
 y = zeros(length(x),length(trials));
 y_2 = zeros(length(x),length(trials));
+ax = panl(1).select();
 for t = 1:length(trials)
     trial = load(fullfile(handles.dir,sprintf(handles.trialStem,trials(t))));
     y(:,t) = trial.(y_name);
     y_2(:,t) = trial.(y_name_2);
+    plot(ax,x,y(:,t),'color',[1, .7 .7],'tag',num2str(trials(t))); hold on
 end
 
-ax = panl(1).select();
-plot(ax,x,y,'color',[1, .7 .7],'tag',savetag); hold on
 plot(ax,x,mean(y,2),'color',[.7 0 0],'tag',savetag);
 % xlim([-.1 trial.params.stimDurInSec+ min(.15,trial.params.postDurInSec)])
 xlim([-trial.params.preDurInSec  trial.params.stimDurInSec+trial.params.postDurInSec])

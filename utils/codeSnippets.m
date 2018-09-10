@@ -1,5 +1,5 @@
 % Useful code snippets and scratch
-
+error('Code not meant to be run')
 %%
 fig = figure(1);
 ax(1) = axes('position',[0.04,0.04,0.66,0.92],'parent',fig);

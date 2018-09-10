@@ -149,3 +149,87 @@ ax.YTickLabel = {'0', '0.2','0.4','0.6','0.8','1'};
 
 
 %T.R_best = nanmean([cell2mat(T.R_pulse) cell2mat(T.R_S_L)],2)
+
+%% Spontaneous spike rates for different cells
+
+sz = [25 7];
+varNames = {'CellID','Genotype','Cell_label','R_S_L','R_pulse','Protocol','Trialnums'};
+varTypes = {'string','string','string','double','double','string','double'};
+
+% rownames = {'170921_F1_C1', '171101_F1_C1','171102_F1_C1','171102_F2_C1','171103_F1_C1', '180308_F3_C1', '180404_F1_C1','180410_F1_C1', '180703_F3_C1'}
+
+data = cell(sz);
+T = cell2table(data);
+T.Properties.VariableNames = varNames;
+% T = table('VariableTypes',varTypes,'VariableNames',varNames,'RowNames',rownames)
+
+T{1,:} = {'170921_F1_C1', '81A07',            'fast', [],     [],  [],              []      };
+T{2,:} = {'171101_F1_C1', '81A07',            'fast', 73E6,   [],  [],              []      };
+T{3,:} = {'171102_F1_C1', '81A07',            'fast', 61e6,   [],  [],              []      };
+T{4,:} = {'171102_F2_C1', '81A07',            'fast', 75e6,   [],  [],              []      };
+T{5,:} = {'171103_F1_C1', '81A07',            'fast', 52e6,   [],  [],              []      };
+T{6,:} = {'180308_F3_C1', '81A07',            'fast', 170E6,  [],  [],              []      };
+T{7,:} = {'180404_F1_C1', '81A07/iav-LexA',   'fast', [],     [],  'EpiFlash2T',    30:68   };
+T{8,:} = {'180410_F1_C1', '81A07/iav-LexA',   'fast', [],     [],  'EpiFlash2T',    2:121   };
+T{9,:} = {'180703_F3_C1', '81A07/iav-LexA',   'fast', [],     [],  'EpiFlash2T',    1:108   };
+
+T{10,:} = {'180222_F1_C1', '22A08',     'intermediate', [150E6],     [],  'CurrentStep2T',   98:126   };
+T{11,:} = {'180223_F1_C1', '22A08',     'intermediate', [198E6],     [],  'EpiFlash2T',   1:7   };
+T{12,:} = {'180320_F1_C1', '22A08',     'intermediate', [454E6],     [],  'EpiFlash2T',   1:8   };
+T{13,:} = {'180405_F3_C1', '22A08',     'intermediate', [249E6],     [],  'EpiFlash2T',   42:85   };
+T{14,:} = {'180807_F1_C1', '22A08',     'intermediate', [],     [],  'EpiFlash2T',   25:258   }; % seel and leak done at the wrong voltage
+T{15,:} = {'180328_F4_C1', '22A08',     'intermediate', [400E6],     [],  'EpiFlash2T',   33:100   };
+T{16,:} = {'180821_F1_C1', '22A08',     'intermediate', [],     [],  'EpiFlash2T',   1:181   };
+T{17,:} = {'180822_F1_C1', '22A08',     'intermediate', [153E6],     [],  'EpiFlash2T',  1:118 };
+
+
+T{18,:} = {'180111_F2_C1', '22A08',     'slow', [],         [],  'CurrentStep2T',    4:45    };
+T{19,:} = {'180307_F2_C1', '22A08',     'slow', [],         [],  'CurrentStep2T',   7:33     };
+T{20,:} = {'180313_F1_C1', '22A08',     'slow', [1690E6],   [],  'CurrentStep2T',    1:61     };
+T{21,:} = {'180621_F1_C1', '22A08',     'slow', [],         [],  'CurrentStep2T',   1:50     };
+T{22,:} = {'180628_F2_C1', '22A08',     'slow', [833E6],    [],  'CurrentStep2T',   17:64 }; % seel and leak done at the wrong voltage
+T{23,:} = {'180328_F1_C1', '22A08',     'slow', [],         [],  'EpiFlash2T',      67:114    };
+T{24,:} = {'180329_F1_C1', '22A08',     'slow', [],         [],  'EpiFlash2T',      102:165   };% MLA. Contol 9:101
+T{25,:} = {'180702_F1_C1', '22A08',     'slow', [452E6],    [],  'EpiFlash2T',      11:100   };
+% T{26,:} = {'180806_F1_C1', '22A08',     'slow', [],         [],  'EpiFlash2T',      1:72  };
+
+% T = sortrows(T,'Cell_label');
+
+Script_estimateInputResistanceFromCurrentPulses
+
+R_S_L = T.R_S_L;
+R_pulse= T.R_pulse;
+indices = ones(size(R_pulse));
+for i = 1:length(R_pulse)
+    if isempty(R_pulse{i})
+        R_pulse{i} = R_S_L{i};
+        if isempty(R_S_L{i})
+            indices(i) = 0;
+        end
+    end
+end
+
+x_ax_pos = ones(size(R_pulse));
+cl = T.Cell_label
+cl0 = unique(cl)
+for i = 1:length(cl0)
+    x_ax_pos(strcmp(cl,cl0{i})) = i;
+end
+
+x_ax_pos = x_ax_pos(logical(indices));
+R_pulse = cell2mat(R_pulse);
+x_ax_pos_sig = x_ax_pos+normrnd(0,.02,size(x_ax_pos));
+
+figure
+title('R_{in} across cell cells');
+plot(x_ax_pos_sig ,R_pulse,'.k');
+ax = gca;
+ax.XTick = unique(x_ax_pos);
+ax.XTickLabel = cl0;
+
+ax.YTick = [0 2 4 6 8 10]*1E8;
+ax.YTickLabel = {'0', '0.2','0.4','0.6','0.8','1'};
+
+
+%T.R_best = nanmean([cell2mat(T.R_pulse) cell2mat(T.R_S_L)],2)
+

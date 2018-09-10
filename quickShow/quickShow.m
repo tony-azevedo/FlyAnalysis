@@ -1113,7 +1113,7 @@ handles.trial.tags = s;
 
 if strcmp(button,'Yes')
     nums = findLikeTrials_includingExcluded('name',handles.trial.name,'datastruct',handles.prtclData,...
-        'exclude',{'step','amp','displacement','freq'});
+        'exclude',{'step','amp','displacement','freq','speed'});
     for n_ind = 1:length(nums);
         trial = load(fullfile(handles.dir,sprintf(handles.trialStem,nums(n_ind))));
         trial.tags = s;

@@ -4,8 +4,8 @@ mn_fig = figure('color',[1 1 1],'units','inches','position',[4 2 8 6]);
 
 panl = panel(mn_fig);
 panl.pack('h',{1/2 1/2})  % MN, EMG, Bar
-panl(1).pack('v',{1/6 1/6 1/6})  % MN, EMG, Bar
-panl(2).pack('v',{1/6 1/6 1/6})  % MN, EMG, Bar
+panl(1).pack('v',{1/4 1/4 1/2})  % MN, EMG, Bar
+panl(2).pack('v',{1/4 1/4 1/2})  % MN, EMG, Bar
 panl.margin = [18 16 10 10];
 panl.descendants.margin = [8 8 8 8];
 
@@ -34,7 +34,7 @@ ft = frame_times;
 
 t_i_f = [-.05 .2];
 t_win = t>-.05&t<.2;
-frame_win = frame_times>t_i_f(1)&frame_times<t_i_f(2);
+frame_win = ft>t_i_f(1) & ft <t_i_f(2) & (ft<=0 | ft>(ft(find(ft>trial.params.stimDurInSec,1))));
 
 CoM = trials(tr).forceProbeStuff.CoM;
 
@@ -46,6 +46,7 @@ mnylim = mean([min(trials(tr).voltage_1(:)) max(trials(tr).voltage_1(:))])+diff(
 mn_ax.TickDir = 'out';
 mn_ax.XLim = t_i_f;
 mn_ax.YLim = mnylim;
+mn_ax.YLim = [-50 -15];
 mn_ax.XTick = []; 
 hold(mn_ax,'on')
 
@@ -57,14 +58,17 @@ hold(emg_ax,'on')
 
 bar_ax.TickDir = 'out';
 bar_ax.XLim = t_i_f;
-% bar_ax.YLim = [-10 120];
+% bar_ax.YLim = [min(trials(tr).forceProbeStuff.CoM(frame_win)) max(trials(tr).forceProbeStuff.CoM(frame_win))];
+bar_ax.YLim = [-5 100];
+% [min(trials(tr).forceProbeStuff.CoM(frame_win)) max(trials(tr).forceProbeStuff.CoM(frame_win))]
 bar_ax.XTick = [0 t_i_f(2)]; 
 hold(bar_ax,'on')
 
 plot(mn_ax, t(t_win),trials(tr).voltage_1(t_win),'color',[.7 0 0])
+raster(mn_ax, t(trials(tr).spikes),[0 4]+ -20)
 
 plot(emg_ax, t(t_win),trials(tr).current_2(t_win),'color',[.7 0 0])
 
-plot(bar_ax, frame_times(frame_win),CoM(frame_win),'color',[0 0 0])
+plot(bar_ax, frame_times(frame_win),CoM(frame_win) - CoM(find(ft<0,1,'last')),'color',[0 0 0])
 ylabel(bar_ax,'\mum')
 end

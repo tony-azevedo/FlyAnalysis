@@ -72,7 +72,7 @@ rawim_unmatched =  rawim_unmatched(raw_o);
 
 if sum(~isnan(rawim_unmatched))~=length(rawim_unmatched)
     warning('Check for empty/unmatched image files')
-    keyboard
+    %keyboard
     return
 end
 

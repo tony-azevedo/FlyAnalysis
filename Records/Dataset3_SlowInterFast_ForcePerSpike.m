@@ -1,3 +1,8 @@
+
+%% Other work flows
+
+Workflow_35C09_180621_F3_C1_ForceProbePatching % non green, reductor non spiking
+
 %% Slow Workflows
 Workflow_35C09_180111_F2_C1_ForceProbePatching
 Workflow_35C09_180307_F2_C1_ForceProbePatching
@@ -7,14 +12,6 @@ Workflow_35C09_180628_F2_C1_ForceProbePatching
 
 % Example spike injection in MLA
 Workflow_iavChR_35C09_180329_F1_C1_ForceProbePatching
-
-%% Intermediate workflows
-Workflow_22A08_180222_F1_C1_ForceProbePatching
-% Workflow_22A08_180223_F1_C1_ForceProbePatching % no twitches but this cell spiked upon entry!
-Workflow_22A08_180320_F1_C1_ForceProbePatching
-Workflow_22A08_180405_F3_C1_ChRStimulation_ForceProbePatching
-Workflow_22A08_180807_F1_C1_ChRStimulation_ForceProbePatching % Red LED artifact
-
 
 %% Fast work flows
 
@@ -26,18 +23,50 @@ Workflow_81A07_171102_F2_C1_ForceProbePatching
 Workflow_81A07_171103_F1_C1_ForceProbePatching
 Workflow_81A07_180308_F3_C1_ForceProbePatching
 
-
-%% Other work flows
-
-Workflow_35C09_180621_F3_C1_ForceProbePatching % non green, reductor non spiking
-
-
+%% Intermediate workflows
+Workflow_22A08_180222_F1_C1_ForceProbePatching
+Workflow_22A08_180405_F3_C1_ChRStimulation_ForceProbePatching
+Workflow_22A08_180807_F1_C1_ChRStimulation_ForceProbePatching % Red LED artifact
 
 %% Miscelaneous
 
 % VT26027 - Extensor! Hard to see som bar movement in all but decent, kind
 % of a reductor type recording. This is a (the?) slow extensor
 
+%% Table of force production experiments
+
+varNames = {'CellID','Genotype','Cell_label','Protocol','TableFile','Positions','Position','Trialnums','NumSpikes','Peak','TimeToPeak','Decay'};
+varTypes = {'string','string','string','double','double','string','double'};
+
+sz = [2 length(varNames)];
+data = cell(sz);
+T = cell2table(data);
+T.Properties.VariableNames = varNames;
+
+T{1,:} = {'170921_F1_C1', '81A07',            'fast', 'EpiFlash2T','empty',[0                 ],  [],[22:151],[],[],[],[]};% just 0 position
+T{2,:} = {'171101_F1_C1', '81A07',            'fast', 'EpiFlash2T','empty',[-200 -100 0 100 200], [],[16:330],[],[],[],[]};% just 0 position
+T{3,:} = {'171102_F1_C1', '81A07',            'fast', 'EpiFlash2T','empty',[ 0 100 200],          [],[23:121],[],[],[],[]};
+T{4,:} = {'171102_F2_C1', '81A07',            'fast', 'EpiFlash2T','empty',[-200 -100 0 100 200], [],[47:173],[],[],[],[]}; 
+T{5,:} = {'171103_F1_C1', '81A07',            'fast', 'EpiFlash2T','empty',[-200 -100 0 100 200], [],[72:223],[],[],[],[]}; 
+T{6,:} = {'180308_F3_C1', '81A07',            'fast', 'EpiFlash2T','empty',[-150 -75 0 75 150],   [],[ 2:242],[],[],[],[]};
+
+T{7,:} = {'180222_F1_C1', '22A08',    'intermediate', 'CurrentStep2T','empty',[0               ], [],[98:126],[],[],[],[]};
+T{8,:} = {'180405_F3_C1', '22A08',    'intermediate', 'EpiFlash2T','empty',[0                  ], [],[42:125],[],[],[],[]};
+T{9,:} = {'180807_F1_C1', '22A08',    'intermediate', 'EpiFlash2T','empty',[0                  ], [],[25:258],[],[],[],[]};
+
+% Script_estimateForcePerSpikeCurves
+
+%% Table of force production in slow neurons
+T{16,:} = {'180111_F2_C1', '35C09',     'slow', 'CurrentStep2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[]};
+% T{17,:} = {'180307_F2_C1', '35C09',     'slow', 'PiezoStep2T','empty',[-150 -75  0 75 120], [],[1 2 3],[],[],[],[],[]};
+T{17,:} = {'180313_F1_C1', '35C09',     'slow', 'CurrentStep2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]};
+T{18,:} = {'180621_F1_C1', '35C09',     'slow', 'CurrentStep2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]};
+T{19,:} = {'180628_F2_C1', '35C09',     'slow', 'CurrentStep2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]}; % MLA
+T{20,:} = {'180328_F1_C1', '35C09/iav-LexA',     'slow',  'CurrentStep2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]};
+T{21,:} = {'180329_F1_C1', '35C09/iav-LexA',     'slow',  'CurrentStep2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[]};
+T{22,:} = {'180702_F1_C1', '35C09/iav-LexA',     'slow', 'CurrentStep2T','empty',[0                  ], [],[1 2 3],[],[],[],[],[]};
+
+Script_estimateForcePerSpikeCurves
 
 
 %% Example trials of motor neuron activity, emg, and bar
