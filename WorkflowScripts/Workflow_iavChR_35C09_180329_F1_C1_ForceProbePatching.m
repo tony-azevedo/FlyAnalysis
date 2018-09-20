@@ -13,8 +13,8 @@ clear trials
 % trials{1} = 11:15; Not worth analysing
 % trials{1} = (33:75); % the probe is not in focus
 trials{1} = 34:75; % before this (33:75) the probe is not in focus
-trials{2} = 76:91; % MLA, no spikes, except when current injected
-trials{3} = 92:103; % MLA, longer current injection, no spikes during baseline
+% trials{2} = 76:91; % MLA, no spikes, except when current injected
+% trials{3} = 92:103; % MLA, longer current injection, no spikes during baseline
 
 Nsets = length(trials);
 

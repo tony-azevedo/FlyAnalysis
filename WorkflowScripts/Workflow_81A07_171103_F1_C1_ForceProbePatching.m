@@ -21,98 +21,49 @@ Nsets = length(trials);
 
 dists = [200 100 0 -100 -200 0];
 
+Nsets = length(trials);
 
-%% Set probe line 
-trial = load('B:\Raw_Data\171103\171103_F1_C1\EpiFlash2T_Raw_171103_F1_C1_72.mat');
-[protocol,dateID,flynum,cellnum,trialnum,D,trialStem,datastructfile] = extractRawIdentifiers(trial.name);
+routine = {
+    'probeTrackROI_IR' 
+    'probeTrackROI_IR' 
+    'probeTrackROI_IR' 
+    'probeTrackROI_IR' 
+    'probeTrackROI_IR' 
+    'probeTrackROI_IR' 
+    };
 
-close all
-% Go through all the sets of trials
-for set = 1:Nsets
-    fprintf('\n\t***** Batch %d of %d\n',set,Nsets);
-    trialnumlist = trials{set};
-    
-    br = waitbar(0,sprintf('Batch %d of %d',set,Nsets));
-    br.Position =  [1050    251    270    56];
-    
-    % set probeline for a few test movies
-    for tr_idx = trialnumlist(1:4) 
-        trial = load(sprintf(trialStem,tr_idx));
-        
-        waitbar((tr_idx-trialnumlist(1)+1)/6,br,regexprep(trial.name,{regexprep(D,'\\','\\\'),'_'},{'','\\_'}));
-        
-        fprintf('%s\n',trial.name);
-        if isfield(h,'excluded') && h.excluded
-            fprintf(' * Bad movie: %s\n',trial.name)
-            continue
-        end
-        trial = probeLineROI(trial);
-    end
-    
-    % just set the line for the rest of the trials
-    temp.forceProbe_line = getpref('quickshowPrefs','forceProbeLine');
-    temp.forceProbe_tangent = getpref('quickshowPrefs','forceProbeTangent');
+%% Run scripts one at a time
 
-    for tr_idx = trialnumlist(5:end)
-        trial = load(sprintf(trialStem,tr_idx));
-        trial.forceProbe_line = temp.forceProbe_line;
-        trial.forceProbe_tangent = temp.forceProbe_tangent;
-        fprintf('Saving bar and tangent in trial %s\n',num2str(tr_idx))
-        save(trial.name,'-struct','trial')
-    end
-    
-    delete(br);
-end
+% Set probe line 
+Script_SetProbeLine 
 
-%% double check some trials
-trial = load(sprintf(trialStem,166));
+% double check some trials
+trial = load(sprintf(trialStem,66));
 showProbeLocation(trial)
 
 % trial = probeLineROI(trial);
 
+% Find an area to smooth out the pixels
+Script_FindAreaToSmoothOutPixels
 
-%% Track the bar
-routine = {
-    'probeTrackROI_IR'
-    'probeTrackROI_IR'
-    'probeTrackROI_IR'
-    'probeTrackROI_IR'
-    'probeTrackROI_IR_doubleGaussian'
-    'probeTrackROI_IR_doubleGaussian'
-    }
-for set = 5:Nsets
-    fprintf('\n\t***** Batch %d of %d\n',set,Nsets);
-    trialnumlist = trials{set};
-    
-    close all
-    
-    br = waitbar(0,'Batch');
-    br.Position =  [1050    251    270    56];
-    
-    for tr_idx = trialnumlist
-        trial = load(sprintf(trialStem,tr_idx));
-        
-        waitbar((tr_idx-trialnumlist(1))/length(trialnumlist),br,regexprep(trial.name,{regexprep(D,'\\','\\\'),'_'},{'','\\_'}));
-        
-        if isfield(trial ,'forceProbe_line') && isfield(trial,'forceProbe_tangent') && (~isfield(trial,'excluded') || ~trial.excluded) && ~isfield(trial,'forceProbeStuff')
-            fprintf('%s\n',trial.name);
-            probeTrackROI_IR;
-        elseif isfield(trial,'forceProbeStuff')
-            fprintf('%s\n',trial.name);
-            fprintf('\t*Has profile: passing over trial for now\n')
-            
-            %OR...
-            fprintf('\t*Has profile: redoing\n')
-            eval(routine{set}); %probeTrackROI_IR;
-        else
-            fprintf('\t* Bad movie: No line or tangent: %s\n',trial.name);
-            continue
-        end
-    end
-    
-    delete(br);
-    
-end
+% Track the bar
+Script_TrackTheBarAcrossTrialsInSet
+
+% Find the trials with Red LED transients and mark them down
+% Script_FindTheTrialsWithRedLEDTransients % Using UV Led
+
+% Fix the trials with Red LED transients and mark them down
+% Script_FixTheTrialsWithRedLEDTransients % Using UV Led
+
+% Find the minimum CoM, plot a few examples from each trial block and check.
+% Script_FindTheMinimumCoM %% can run this any time, but probably best after all the probe positions have been calculated
+Script_LookAtTrialsWithMinimumCoM %% can run this any time, but probably best after all the probe positions have been calculated
+
+ZeroForce = 700-(setpoint-700);
+Script_SetTheMinimumCoM_byHand
+
+% Extract spikes
+Script_ExtractSpikesFromInterestingTrials
 
 %% skootch the exposures
 for set = 1:Nsets

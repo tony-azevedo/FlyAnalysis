@@ -10,16 +10,16 @@ trial = load('B:\Raw_Data\180307\180307_F2_C1\CurrentStep2T_Raw_180307_F2_C1_24.
 [~,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
 
 clear trials
-trials{1} = 7:12;
-trials{2} = 13:17;
-trials{3} = 18:22;
-trials{4} = 24:73;
+% trials{1} = 7:12;
+% trials{2} = 13:17;
+% trials{3} = 18:22;
+trials{1} = 24:73;
 
 Nsets = length(trials);
 
 % check the location
 trial = load(sprintf(trialStem,35));
-showProbeImage(trial)
+% showProbeImage(trial)
 
 routine = {
     'probeTrackROI_IR' 

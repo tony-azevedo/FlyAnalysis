@@ -10,8 +10,14 @@ trial = load('B:\Raw_Data\180702\180702_F1_C1\CurrentStep2T_Raw_180702_F1_C1_14.
 [~,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
 
 clear trials
-trials{1} = 14:55;
-trials{2} = 56:98;
+trials{1} = 14:7:55;
+trials{2} = 15:7:55;
+trials{3} = 16:7:55;
+trials{4} = 17:7:55;
+trials{5} = 18:7:55;
+trials{6} = 19:7:55;
+trials{7} = 20:7:55;
+%trials{2} = 56:98;
 % trials{3} = 76:103; % MLA, no spikes, except when current injected
 
 Nsets = length(trials);
@@ -21,6 +27,12 @@ trial = load(sprintf(trialStem,35));
 % showProbeImage(trial)
 
 routine = {
+    'probeTrackROI_IR' 
+    'probeTrackROI_IR' 
+    'probeTrackROI_IR' 
+    'probeTrackROI_IR' 
+    'probeTrackROI_IR' 
+    'probeTrackROI_IR' 
     'probeTrackROI_IR' 
     'probeTrackROI_IR' 
     };

@@ -10,7 +10,12 @@ trial = load('B:\Raw_Data\180328\180328_F1_C1\CurrentStep2T_Raw_180328_F1_C1_1.m
 [~,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
 
 clear trials
-trials{1} = 1:50;
+% trials have similar shapes and spikes sizes
+trials{1} = 1:5:50;
+trials{2} = 2:5:50;
+trials{3} = 3:5:50;
+trials{4} = 4:5:50;
+trials{5} = 5:5:50;
 
 Nsets = length(trials);
 
@@ -19,6 +24,10 @@ trial = load(sprintf(trialStem,35));
 % showProbeImage(trial)
 
 routine = {
+    'probeTrackROI_IR' 
+    'probeTrackROI_IR' 
+    'probeTrackROI_IR' 
+    'probeTrackROI_IR' 
     'probeTrackROI_IR' 
     };
 
@@ -40,14 +49,13 @@ routine = {
     'probeTrackROI_IR'
     'probeTrackROI_IR' 
     };
-
 %% Run scripts one at a time
 
 % Set probe line 
 Script_SetProbeLine 
 
 % double check some trials
-trial = load(sprintf(trialStem,10));
+trial = load(sprintf(trialStem,66));
 showProbeLocation(trial)
 
 % trial = probeLineROI(trial);
@@ -65,7 +73,16 @@ Script_TrackTheBarAcrossTrialsInSet
 % Script_FixTheTrialsWithRedLEDTransients % Using UV Led
 
 % Find the minimum CoM, plot a few examples from each trial block and check.
-Script_FindTheMinimumCoM
+% Script_FindTheMinimumCoM %% can run this any time, but probably best after all the probe positions have been calculated
+Script_LookAtTrialsWithMinimumCoM %% can run this any time, but probably best after all the probe positions have been calculated
+
+trialnumlist_specific = 226:258;
+ZeroForce = 700-(setpoint-700);
+Script_SetTheMinimumCoM_byHand
+
+
+% Extract spikes
+Script_ExtractSpikesFromInterestingTrials
 
 %% Epi flash trials
 

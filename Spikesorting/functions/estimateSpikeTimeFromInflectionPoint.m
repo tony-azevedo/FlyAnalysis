@@ -3,7 +3,7 @@ function vars = estimateSpikeTimeFromInflectionPoint(vars,spikeWaveforms,targetS
 % normalize and find a peak of the second derivative
 idx_i = round(vars.spikeTemplateWidth/6);
 idx_f = round(vars.spikeTemplateWidth/24);
-idx_m = round(vars.spikeTemplateWidth/2);
+idx_m = round(vars.spikeTemplateWidth*2/3);
 
 window = -floor(vars.spikeTemplateWidth/2): floor(vars.spikeTemplateWidth/2);
 spikewindow = window-floor(vars.spikeTemplateWidth/2);
@@ -39,7 +39,7 @@ ipps = nan(size(spikes));
 
 
 %% Debug figure
-debug = 1;
+debug = 0;
 if debug
 tempf = figure;
 select = randperm(size(spikeWaveforms,2),min([200 size(spikeWaveforms,2)]));

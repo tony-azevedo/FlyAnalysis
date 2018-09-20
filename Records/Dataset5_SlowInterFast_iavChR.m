@@ -39,6 +39,30 @@ Workflow_clubChR_JR185_180819_F1_C1_ForceProbePatching
 Workflow_clawChR_JR204_180821_F2_C1_ForceProbePatching
 Workflow_clawChR_JR204_180821_F2_C1_ForceProbePatching
 
+%% Table of data for calculating EPSP response to ChR Activation
+
+varNames = {'CellID','Genotype','Cell_label','Protocol','TableFile','Trialnums','FlashStrength','Peak','SizeOfInhibition'};
+
+sz = [2 length(varNames)];
+data = cell(sz);
+T = cell2table(data);
+T.Properties.VariableNames = varNames;
+
+T{1,:} = {'180404_F1_C1', '81A07/iav-LexA',            'fast', 'EpiFlash2T','empty',[13:150],[],[],[]};% just 0 position
+T{2,:} = {'180410_F1_C1', '81A07/iav-LexA',            'fast', 'EpiFlash2T','empty',[2:201],[],[],[]};% just 0 position
+T{3,:} = {'180703_F3_C1', '81A07/iav-LexA',            'fast', 'EpiFlash2T','empty',[1:108],[],[],[]};
+
+T{4,:} = {'180328_F4_C1', '22A08/iav-LexA',    'intermediate', 'EpiFlash2T','empty',[1:100],[],[],[]}; 
+T{5,:} = {'180821_F1_C1', '22A08/iav-LexA',    'intermediate', 'EpiFlash2T','empty',[1:191],[],[],[]}; 
+T{6,:} = {'180822_F1_C1', '22A08/iav-LexA',    'intermediate', 'EpiFlash2T','empty',[1:118],[],[],[]};
+
+T{7,:} = {'180328_F1_C1', '22A08/iav-LexA',    'slow', 'EpiFlash2T','empty',[67:114],[],[],[]};
+T{8,:} = {'180329_F1_C1', '22A08/iav-LexA',    'slow', 'EpiFlash2T','empty',[9:101],[],[],[]};
+T{9,:} = {'180702_F1_C1', '22A08/iav-LexA',    'slow', 'EpiFlash2T','empty',[14:98],[],[],[]};
+T{9,:} = {'180806_F1_C1', '22A08/iav-LexA',    'slow', 'EpiFlash2T','empty',[1:144],[],[],[]};
+
+% Script_estimateEPSPsFollowingfCOchRActivation
+
 %% Light intensity relationship 
 RedLEDPowerVsExternalVoltage
 

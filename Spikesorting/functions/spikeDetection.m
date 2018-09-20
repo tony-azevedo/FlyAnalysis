@@ -273,6 +273,12 @@ end
             
             uiwait();
             
+            warning('Add an amplitude threshold in spikeDetection: Line 276')
+            
+%             eventAmplitudeUpdateGUI(disttreshfig,norm_detectedSpikeCandidates,spikeWaveforms);
+%             
+%             uiwait();
+            
             % The threshold is finally set, get rid of spikes that are over
             % the threshold
             spikes = vars.locs;

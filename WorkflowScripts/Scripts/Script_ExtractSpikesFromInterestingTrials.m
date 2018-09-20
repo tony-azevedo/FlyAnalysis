@@ -3,14 +3,14 @@
 % for now, use trials in the sets
 close all
 % Go through all the sets of trials
-for set = 1%:Nsets
+for set = 1:Nsets 
     fprintf('\n\t***** Batch %d of %d\n',set,Nsets);
     trialnumlist = trials{set};
         
     % Do a little investigation of filter properties on a couple of trials
     % first
     spikevars_cell = cell(3,1); cnt = 0;
-    for tr_idx = trialnumlist(1:7) 
+    for tr_idx = trialnumlist([ 1 4 5])%(1:6) % ([ 1 4 5])%
         trial = load(sprintf(trialStem,tr_idx)); 
                 
         fprintf('%s\n',trial.name);
@@ -20,17 +20,17 @@ for set = 1%:Nsets
         end
         cnt = cnt+1;
         fstag = ['fs' num2str(trial.params.sampratein)];
-        if ~isfield(trial,'spikeDetectionParams')
+%         if ~isfield(trial,'spikeDetectionParams')
             spikevars = getacqpref('FlyAnalysis',['Spike_params_' fstag]);
             
             switch trial.params.mode_1; case 'VClamp', invec1 = 'current_1'; case 'IClamp', invec1 = 'voltage_1'; otherwise; invec1 = 'voltage_1'; end
             [h.trial,spikevars_cell{cnt}] = spikeDetection(trial,invec1,spikevars);
-        else
-            fprintf('Got some spike vars already\n');
-            spikevars_cell{cnt} = trial.spikeDetectionParams;
-            spikevars = trial.spikeDetectionParams;
-            switch trial.params.mode_1; case 'VClamp', invec1 = 'current_1'; case 'IClamp', invec1 = 'voltage_1'; otherwise; invec1 = 'voltage_1'; end
-        end
+%         else
+%             fprintf('Got some spike vars already\n');
+%             spikevars_cell{cnt} = trial.spikeDetectionParams;
+%             spikevars = trial.spikeDetectionParams;
+%             switch trial.params.mode_1; case 'VClamp', invec1 = 'current_1'; case 'IClamp', invec1 = 'voltage_1'; otherwise; invec1 = 'voltage_1'; end
+%         end
         
         if cnt>=3
             break
@@ -50,6 +50,7 @@ for set = 1%:Nsets
     spikevars.peak_threshold = peak;
     
     [distancestructure] = spikeDetectionBatch(trialStem,trialnumlist,invec1,spikevars);
+    if ~isempty(distancestructure.trialnumids)
     close all; spikeSpotCheckBatch(trialStem,trialnumlist,invec1,'spikes',distancestructure);
-    
+    end
 end

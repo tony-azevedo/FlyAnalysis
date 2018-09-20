@@ -10,8 +10,11 @@ trial = load('B:\Raw_Data\180806\180806_F2_C1\CurrentStep2T_Raw_180806_F2_C1_5.m
 [~,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
 
 clear trials
-trials{1} = 5:32;
-trials{2} = 33:60; % MLA, no spikes, except when current injected
+trials{1} = 5:4:32;
+trials{2} = 6:4:32;
+trials{3} = 7:4:32;
+trials{4} = 8:4:32;
+% trials{2} = 33:60; % MLA, no spikes, except when current injected
 
 Nsets = length(trials);
 
@@ -20,6 +23,11 @@ trial = load(sprintf(trialStem,35));
 % showProbeImage(trial)
 
 routine = {
+    'probeTrackROI_IR' 
+    'probeTrackROI_IR' 
+    'probeTrackROI_IR' 
+    'probeTrackROI_IR' 
+    'probeTrackROI_IR' 
     'probeTrackROI_IR' 
     };
 
@@ -30,9 +38,9 @@ trial = load('B:\Raw_Data\180806\180806_F2_C1\EpiFlash2T_Raw_180806_F2_C1_23.mat
 
 clear trials
 trials{1} = 1:72; % 
-% trials{2} = 101:175; % Long pulse
-% trials{3} = 176:211; % MLA entering
-% trials{4} = 212:283; % MLA washout no spikes
+trials{2} = 73:144; 
+% trials{3} = 176:211; 
+% trials{4} = 212:283; 
 Nsets = length(trials);
     
 trial = load(sprintf(trialStem,36));

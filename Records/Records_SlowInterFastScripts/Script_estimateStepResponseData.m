@@ -5,8 +5,8 @@
 DEBUG =1;
 
 CellID = T.CellID;
-T_new = T(1,:);
-T_new.CellID = 'placeholder';
+T_Step = T(1,:);
+T_Step.CellID = 'placeholder';
 Row_cnt = 0;
 
 if (DEBUG)
@@ -63,8 +63,10 @@ for cidx = 1:length(CellID)
             v_(cnt,:) = trial.voltage_1;
         end
         v = nanmean(v_,1);
-        base = mean(v(t<0 &t>-trial.params.preDurInSec+.1));
-        v = v-mean(v(t<0 &t>-trial.params.preDurInSec+.1));
+        % base = mean(v(t<0 &t>-trial.params.preDurInSec+.1));
+        base = mean(v(t<0 &t>-.02));
+        % v = v-mean(v(t<0 &t>-trial.params.preDurInSec+.1));
+        v = v-mean(v(t<0 &t>-.02));
         
         area = trapz(t(t>0&t<trial.params.stimDurInSec),v(t>0&t<trial.params.stimDurInSec));
 
@@ -80,18 +82,21 @@ for cidx = 1:length(CellID)
         coef = polyfit(t1070,v1070,1);
         delay = -coef(2)/coef(1);
         
-        if DEBUG && -10==displacement(D) && (strcmp(cid,'180404_F1_C1') || strcmp(cid,'180703_F3_C1')) 
+        if DEBUG && -10==displacement(D) %&& strcmp(T.Cell_label{cidx},'intermediate') % && strcmp(cid,'180821_F1_C1')
             cla(ax)
             groupid = [cid ': [' sprintf('%d,',group)]; groupid = [groupid(1:end-1) ']'];
             title(ax,groupid); hold(ax,'on')
             plot(ax,t(t>-.03&t<0.2),v_(:,t>-.03&t<0.2),'color',[1 .7 .7]); hold(ax,'on')
             plot(ax,t(t>-.03&t<.1),v(t>-.03&t<.1)+base,'color',[.7 0 0]); hold(ax,'on')
             plot(ax,t1070,(coef(1)*t1070+coef(2))+base,'color',[0 0 0],'LineWidth',2)
+            plot(ax,[.001 0.012],(coef(1)*([.001 0.012])+coef(2))+base,'color',[1 1 1]*.5)
+            plot(ax,[-.01 0.02],[1 1]*base,'color',[1 1 1]*.5)
             plot(ax,ttpk,v(t==ttpk)+base,'bo');
-            ax.YLim = base+[-10 10];
-            ax.XLim = [-.03 0.2];
+            plot(ax,delay,base,'ko');
+            ax.YLim = base+[-1 3];
+            ax.XLim = [-.01 0.02];
             drawnow
-            % pause();
+            pause();
         end
 
         T_row.Position = pos;
@@ -106,14 +111,11 @@ for cidx = 1:length(CellID)
         
         % Add these numbers to a new line in a new T
         Row_cnt = Row_cnt+1;
-        T_new = [T_new;T_row];
+        T_Step = [T_Step;T_row];
     end 
 end
-T_new = T_new(~strcmp(T_new.CellID,'placeholder'),:);
+T_Step = T_Step(~strcmp(T_Step.CellID,'placeholder'),:);
 
-
-
-
-
-
-e = R_pulse;
+if DEBUG 
+    close(ax.Parent)
+end

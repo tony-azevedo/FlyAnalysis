@@ -55,12 +55,13 @@ for cidx = 1:length(CellID)
     TP_spikes_position = TP_spikes(TP_spikes.ProbePosition==0,:);
     
     spikenums = zeros(size(TP_spikes_position.trial));
+    fr = nan(size(TP_spikes_position.trial));
     peak = nan(size(TP_spikes_position.trial));
     ttpk = nan(size(TP_spikes_position.trial));
     if DEBUG
         cla(ax)
         title(ax,cid); hold(ax,'on')
-        ax.XLim = [0 .3];
+        ax.XLim = [0 1];
         drawnow
     end
 
@@ -69,67 +70,54 @@ for cidx = 1:length(CellID)
         if isfield(trial,'excluded') && trial.excluded
             continue
         end
-        % fprintf(1,'%d\n',length(trial.spikes));
-        spikenums(tr) = length(trial.spikes);
+        
+        t = makeInTime(trial.params);
+        spikenums(tr) = length(t(t(trial.spikes)>0 & t(trial.spikes)<trial.params.stimDurInSec));
 
-        if length(trial.spikes)==0
+        % get baseline firing rate while you're at it
+        fr(tr) = length(t(t(trial.spikes)<0))/(trial.params.preDurInSec-.06);
+
+        if spikenums(tr)==0
             continue
         end
 
-        t = makeInTime(trial.params);
         ft = makeFrameTime(trial);
-        ft_spike = ft-t(trial.spikes(1));
         
-        twitch = trial.forceProbeStuff.CoM;
-        twitch = twitch - twitch(find(ft_spike<0,1,'last'));
-        if strcmp(cid,'180807_F1_C1') 
-            twitch = trial.forceProbeStuff.CoM;
-            twitch = twitch - twitch(find(ft<0,1,'last'));
-        end
-        [peak(tr),ttpk_i] = max(twitch(ft_spike>0 & ft_spike<.3));
-        ttpk_i = ttpk_i+sum(ft_spike<=0);
-        ttpk(tr) = ft_spike(ttpk_i);
-        if peak(tr)<10 && strcmp(T.Cell_label{cidx},'fast')
-            fprintf(1,'%d\n',trial.params.trial)
-            ttpk(tr) = nan;
-            peak(tr) = nan;
-        end
-        if peak(tr)>10 && strcmp(cid,'180807_F1_C1') && length(trial.spikes)==1
-            fprintf(1,'%d\n',trial.params.trial)
-            ttpk(tr) = nan;
-            peak(tr) = nan;
-        end
+        twitch = smooth(trial.forceProbeStuff.CoM,10);
+        twitch = twitch - twitch(find(ft<0,1,'last'));
+        % if strcmp(cid,'180807_F1_C1') 
+        
+        [peak(tr),ttpk_i] = max(twitch(ft>trial.params.stimDurInSec/2 & ft<trial.params.stimDurInSec+.1));
+        ttpk_i = ttpk_i+sum(ft<=trial.params.stimDurInSec/2);
+        ttpk(tr) = ft(ttpk_i);
+
         if DEBUG
-            plot(ax,ft_spike(ft_spike>0),twitch(ft_spike>0));
+            plot(ax,ft(ft>0 & ft<trial.params.stimDurInSec+.1),twitch(ft>0 & ft<trial.params.stimDurInSec+.1));
             plot(ax,ttpk(tr),twitch(ttpk_i),'ok');
             drawnow
         end
 
-    end
-    
-    spks = unique(spikenums);
-    spks = spks(spks~=0);
-    for spike = spks(:)'
-        peak_ave = nanmean(peak(spikenums==spike));
-        num = std(peak(spikenums==spike));
-        den = sqrt(size(peak(spikenums==spike),1));
-        peak_sem = num./den;
-
-        ttpk_ave = nanmean(ttpk(spikenums==spike));
-        num = std(ttpk(spikenums==spike));
-        den = sqrt(size(ttpk(spikenums==spike),1));
-        ttpk_sem = num./den;
         
-        T_row.NumSpikes = spike;
-        T_row.Peak = peak_ave;
-        T_row.PeakErr = peak_sem;
-        T_row.TimeToPeak = ttpk_ave;
-        T_row.TimeToPeakErr = ttpk_sem;
-        
-        T_new = [T_new;T_row];
-
     end
-    
+
+    if DEBUG
+        cla(ax)
+        plot(ax,spikenums(spikenums>=20),peak(spikenums>=20),'k.')
+        ax.YLim = [0 20];
+        ax.XLim = [0 100];
+        drawnow
+    end
+
+    T_row.NumSpikes = {spikenums};
+    T_row.Peak = {peak};
+    T_row.TimeToPeak = {ttpk};
+    T_row.SpontFiringRate = nanmean(fr);
+    num = nanstd(fr);
+    den = sqrt(sum(~isnan(fr)));
+    T_row.SpontFiringRateErr = num./den;
+
+    T_new = [T_new;T_row];
+
 end
 T_new = T_new(~strcmp(T_new.CellID,'placeholder'),:);
 

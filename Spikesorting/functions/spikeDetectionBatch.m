@@ -68,6 +68,7 @@ for tr_idx = trialnumlist
     end
     if isfield(trial,'spikeSpotChecked') && trial.spikeSpotChecked
         fprintf(' * Trial spot checked for spikes already: %s\n',trial.name)
+        %continue
     end
     
     % Get out all the potential spikes
@@ -207,7 +208,7 @@ if ~isempty(targetSpikeDist_acrossCells)
         end
         if isfield(trial,'spikeSpotChecked') && trial.spikeSpotChecked
             fprintf(' * Trial spot checked for spikes already, not saving: %s\n',trial.name)
-            continue
+            %continue
         end
 
         tr_spikes = spikes(trialnumids==tr_idx & suspect);

@@ -49,7 +49,12 @@ title(ax_detect,'Is this a spike? In the right place?');
 ax_hist.ButtonDownFcn = @spotCheck;
 spotCheckFig.KeyPressFcn = @spotCheck;
 
-trial = load(sprintf(trialStem,trialnumlist(1)));
+cnt = 1;
+trial = load(sprintf(trialStem,trialnumlist(cnt)));
+while isfield(trial,'excluded') && trial.excluded
+trial = load(sprintf(trialStem,trialnumlist(cnt)));
+cnt = cnt+1;
+end
 vars = trial.spikeDetectionParams;
 
 window = -floor(vars.spikeTemplateWidth/2): floor(vars.spikeTemplateWidth/2);

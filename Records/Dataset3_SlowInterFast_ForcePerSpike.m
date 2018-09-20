@@ -11,7 +11,10 @@ Workflow_35C09_180621_F1_C1_ForceProbePatching
 Workflow_35C09_180628_F2_C1_ForceProbePatching
 
 % Example spike injection in MLA
-Workflow_iavChR_35C09_180329_F1_C1_ForceProbePatching
+Workflow_iavChR_35C09_180328_F1_C1_ForceProbePatching % Still need to analyse a low intensity stim epiFlash set that was focused on the probe, will need to create a new probe tracking routine
+Workflow_iavChR_35C09_180329_F1_C1_ForceProbePatching % This is an amazing cell! Alas, no EMG
+Workflow_iavChR_35C09_180702_F1_C1_ForceProbePatching % Need current steps
+Workflow_iavChR_35C09_180806_F1_C1_ForceProbePatching % need current steps
 
 %% Fast work flows
 
@@ -35,7 +38,7 @@ Workflow_22A08_180807_F1_C1_ChRStimulation_ForceProbePatching % Red LED artifact
 
 %% Table of force production experiments
 
-varNames = {'CellID','Genotype','Cell_label','Protocol','TableFile','Positions','Position','Trialnums','NumSpikes','Peak','TimeToPeak','Decay'};
+varNames = {'CellID','Genotype','Cell_label','Protocol','TableFile','Positions','Position','Trialnums','NumSpikes','Peak','PeakErr','TimeToPeak','TimeToPeakErr'};
 varTypes = {'string','string','string','double','double','string','double'};
 
 sz = [2 length(varNames)];
@@ -43,30 +46,131 @@ data = cell(sz);
 T = cell2table(data);
 T.Properties.VariableNames = varNames;
 
-T{1,:} = {'170921_F1_C1', '81A07',            'fast', 'EpiFlash2T','empty',[0                 ],  [],[22:151],[],[],[],[]};% just 0 position
-T{2,:} = {'171101_F1_C1', '81A07',            'fast', 'EpiFlash2T','empty',[-200 -100 0 100 200], [],[16:330],[],[],[],[]};% just 0 position
-T{3,:} = {'171102_F1_C1', '81A07',            'fast', 'EpiFlash2T','empty',[ 0 100 200],          [],[23:121],[],[],[],[]};
-T{4,:} = {'171102_F2_C1', '81A07',            'fast', 'EpiFlash2T','empty',[-200 -100 0 100 200], [],[47:173],[],[],[],[]}; 
-T{5,:} = {'171103_F1_C1', '81A07',            'fast', 'EpiFlash2T','empty',[-200 -100 0 100 200], [],[72:223],[],[],[],[]}; 
-T{6,:} = {'180308_F3_C1', '81A07',            'fast', 'EpiFlash2T','empty',[-150 -75 0 75 150],   [],[ 2:242],[],[],[],[]};
+T{1,:} = {'170921_F1_C1', '81A07',            'fast', 'EpiFlash2T','empty',[0                 ],  [],[22:151],0,0,0,0,0};% just 0 position
+T{2,:} = {'171101_F1_C1', '81A07',            'fast', 'EpiFlash2T','empty',[-200 -100 0 100 200], [],[16:330],0,0,0,0,0};% just 0 position
+T{3,:} = {'171102_F1_C1', '81A07',            'fast', 'EpiFlash2T','empty',[ 0 100 200],          [],[23:81],0,0,0,0,0};
+T{4,:} = {'171102_F2_C1', '81A07',            'fast', 'EpiFlash2T','empty',[-200 -100 0 100 200], [],[47:173],0,0,0,0,0}; 
+T{5,:} = {'171103_F1_C1', '81A07',            'fast', 'EpiFlash2T','empty',[-200 -100 0 100 200], [],[72:223],0,0,0,0,0}; 
+T{6,:} = {'180308_F3_C1', '81A07',            'fast', 'EpiFlash2T','empty',[-150 -75 0 75 150],   [],[ 4:99],0,0,0,0,0};
 
-T{7,:} = {'180222_F1_C1', '22A08',    'intermediate', 'CurrentStep2T','empty',[0               ], [],[98:126],[],[],[],[]};
-T{8,:} = {'180405_F3_C1', '22A08',    'intermediate', 'EpiFlash2T','empty',[0                  ], [],[42:125],[],[],[],[]};
-T{9,:} = {'180807_F1_C1', '22A08',    'intermediate', 'EpiFlash2T','empty',[0                  ], [],[25:258],[],[],[],[]};
-
-% Script_estimateForcePerSpikeCurves
-
-%% Table of force production in slow neurons
-T{16,:} = {'180111_F2_C1', '35C09',     'slow', 'CurrentStep2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[]};
-% T{17,:} = {'180307_F2_C1', '35C09',     'slow', 'PiezoStep2T','empty',[-150 -75  0 75 120], [],[1 2 3],[],[],[],[],[]};
-T{17,:} = {'180313_F1_C1', '35C09',     'slow', 'CurrentStep2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]};
-T{18,:} = {'180621_F1_C1', '35C09',     'slow', 'CurrentStep2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]};
-T{19,:} = {'180628_F2_C1', '35C09',     'slow', 'CurrentStep2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]}; % MLA
-T{20,:} = {'180328_F1_C1', '35C09/iav-LexA',     'slow',  'CurrentStep2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]};
-T{21,:} = {'180329_F1_C1', '35C09/iav-LexA',     'slow',  'CurrentStep2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[]};
-T{22,:} = {'180702_F1_C1', '35C09/iav-LexA',     'slow', 'CurrentStep2T','empty',[0                  ], [],[1 2 3],[],[],[],[],[]};
+T{7,:} = {'180222_F1_C1', '22A08',    'intermediate', 'CurrentStep2T','empty',[0               ], [],[98:126],0,0,0,0,0};
+T{8,:} = {'180405_F3_C1', '22A08',    'intermediate', 'EpiFlash2T','empty',[0                  ], [],[42:125],0,0,0,0,0};
+T{9,:} = {'180807_F1_C1', '22A08',    'intermediate', 'EpiFlash2T','empty',[0                  ], [],[25:258],0,0,0,0,0};
 
 Script_estimateForcePerSpikeCurves
+T_new_fastinter = T_new;
+
+%% Peak Force per spike
+numspikes = cell2mat(T_new_fastinter.NumSpikes);
+spike_1_idx = numspikes==1;
+
+T_1 = T_new_fastinter(spike_1_idx,:);
+T_1 = T_1(:,[3 10 11 12 13])
+
+%% time to Peak Force per spike
+
+numspikes = cell2mat(T_new_fastinter.NumSpikes);
+spike_1_idx = numspikes==1;
+
+T_1 = T_new_fastinter(spike_1_idx,:);
+T_1 = T_1(:,[3 10 11 12 13])
+
+%% Peak Force per spike over 3 spikes
+numspikes = cell2mat(T_new_fastinter.NumSpikes);
+% spike_1_idx = numspikes==1|numspikes==2 | numspikes == 3;
+peakerr = cell2mat(T_new_fastinter.PeakErr);
+spike_1_idx = numspikes<=50 & peakerr>0;
+
+T_123 = T_new_fastinter(spike_1_idx,:);
+T_123 = T_123(:,[1 3 9 10 11 12 13]);
+
+figure
+ax = subplot(1,1,1); hold(ax,'on')
+cids = unique(T_123.CellID);
+for i = 1:length(cids)
+    cid = cids{i};
+    T_cid = T_123(strcmp(T_123.CellID,cid),:);
+    l(i) = errorbar(ax,cell2mat(T_cid.NumSpikes),cell2mat(T_cid.Peak),cell2mat(T_cid.PeakErr));
+end
+ax.XLim = [.5 60];
+ 
+ylabel(ax,'pixels'); 
+
+ForcePerSpikeFig = gcf;
+ForcePerSpikeAx = gca;
+
+%% Table of force production in slow neurons
+
+varNames = {'CellID','Genotype','Cell_label','Protocol','TableFile','Positions','Position','Trialnums','NumSpikes','Peak','TimeToPeak','SpontFiringRate','SpontFiringRateErr'};
+
+sz = [2 length(varNames)];
+data = cell(sz);
+T = cell2table(data);
+T.Properties.VariableNames = varNames;
+
+
+T{1,:} = {'180111_F2_C1', '35C09',  'slow',     'CurrentStep2T','empty',[0                 ], [],[5:54],0,0,0,0,0};
+% T{2,:} = {'180307_F2_C1', '35C09',     'slow', 'CurrentStep2T','empty',[-150 -75  0 75 120], [],[24:73],[],[],[],[],[]}; % spikes are small
+%T{2,:} = {'180313_F1_C1', '35C09',  'slow',     'CurrentStep2T','empty',[-150 -75  0 75 150], [],[12:61],[],[],[],0,0}; % questionable
+T{2,:} = {'180621_F1_C1', '35C09',  'slow',     'CurrentStep2T','empty',[-150 -75  0 75 150], [],[1:50],[],[],[],0,0};
+T{3,:} = {'180628_F2_C1', '35C09',  'slow',     'CurrentStep2T','empty',[-150 -75  0 75 150], [],[17:58],[],[],[],0,0}; % MLA
+T{4,:} = {'180328_F1_C1', '35C09/iav-LexA',     'slow',  'CurrentStep2T','empty',[-150 -75  0 75 150], [],[1:50],[],[],[],[],[]};
+T{5,:} = {'180329_F1_C1', '35C09/iav-LexA',     'slow',  'CurrentStep2T','empty',[0                 ], [],[34:75],[],[],[],[],[]};
+T{6,:} = {'180702_F1_C1', '35C09/iav-LexA',     'slow', 'CurrentStep2T','empty',[0                  ], [],[14:55],[],[],[],[],[]};
+
+Script_estimateForcePerNSpikesCurve
+
+T_new_slow = T_new
+
+%% add slow neurons to F per Spike axis
+
+ax = ForcePerSpikeAx;
+maxspikenum = 0;
+for cidx = 1:length(T_new_slow.CellID)
+    numspikes = T_new_slow.NumSpikes{cidx};
+    peak = T_new_slow.Peak{cidx};
+    
+    % fit line through 0 to peak vs numspikes
+    m(cidx) = nlinfit(numspikes,peak,@linethrough0,.1);
+    
+    plot(ax,numspikes(numspikes>=20),peak(numspikes>=20),'.','tag',T_new_slow.CellID{cidx});
+    maxspikenum = max([maxspikenum max(numspikes)]);
+end
+ax.XLim = [0, 60+1];
+
+ForcePerSpikeAx.YScale = 'log';
+ForcePerSpikeAx.XScale = 'log';
+
+ForcePerSpikeAx.XLim = [.85 61]';
+
+
+%% Plot firing rate
+
+figure
+ax = subplot(1,1,1); hold(ax,'on')
+
+% dumb script showing no spikes for fast and intermediate
+
+fastintercells = unique(T_123.CellID);
+fastinterlabel = unique(T_123.Cell_label);
+
+for f = 1:length(fastintercells)
+    cidx = find(strcmp(T_123.CellID,fastintercells{f}),1)
+    label = find(strcmp(fastinterlabel,T_123.Cell_label{cidx}))
+    plot(ax,label+normrnd(0,.02,1),0,'o','tag',fastintercells{f})
+end
+
+for s = 1:length(T_new_slow.CellID)
+    errorbar(ax,3+normrnd(0,.02,1),T_new_slow.SpontFiringRate{s},T_new_slow.SpontFiringRateErr{s},'o','tag',fastintercells{f})
+end
+
+ax.XTick = [1 2 3];
+ax.XTickLabel = {'fast','intermediate','slow'};
+ 
+ax.YLim = [-2 60];
+ax.YTick = [0 10 20 30 40];
+ax.YTickLabel = {'0','10', '20','30','40'};
+ylabel(ax,'Firing Rate (Hz)'); 
 
 
 %% Example trials of motor neuron activity, emg, and bar
