@@ -113,7 +113,7 @@ for cidx = 1:length(CellID)
             T_row.Area = area;
             T_row.Delay = delay;
             T_row.Step = displacement(D);
-            T_row.Speed = speed;
+            T_row.Speed = sp;
             T_row.TableFile = TP.Properties.Description;
             
             

@@ -57,40 +57,38 @@ Workflow_81A06_180112_F1_C1_ForceProbePatching
 
 %% Steps 
 varNames = {'CellID','Genotype','Cell_label','Protocol','TableFile','Positions','Position','Trialnums', 'Step',  'Peak',    'TimeToPeak','Area','Delay','Speed'};
-varTypes = {'string','string',  'string',   'string',   'string',   'double',   'double',   'string',   'double','double',  'double',   'double','double','double'};
+varTypes = {'string','string',  'string',   'string',   'string',   'double',   'double',  'double',   'double','double',  'double',   'double','double','double'};
 
 sz = [1 length(varNames)];
-data = cell(sz);
-T = cell2table(data);
-T.Properties.VariableNames = varNames;
+T = table('Size',sz,'VariableNames',varNames,'VariableTypes',varTypes);
 
-%T{1,:} = {'170921_F1_C1', '81A07',            'fast', 'PiezoStep2T','empty',[                  ], [],[1 2 3],[],[],[],[],[],[]}; % no steps
-T{1,:} = {'171101_F1_C1', '81A07',            'fast', 'PiezoStep2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[],[]};% just 0 position
-%T{end+1,:} = {'171102_F1_C1', '81A07',            'fast', 'PiezoStep2T','empty',[                  ], [],[1 2 3],[],[],[],[],[],[]}; % no steps
-T{end+1,:} = {'171102_F2_C1', '81A07',            'fast', 'PiezoStep2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[],[]}; % said -200 in the notes, but suspect this was from the previous EpiFlash set
-T{end+1,:} = {'171103_F1_C1', '81A07',            'fast', 'PiezoStep2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[],[]};
-    T{end+1,:} = {'180308_F3_C1', '81A07',            'fast', 'PiezoStep2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[],[]};
-T{end+1,:} = {'180404_F1_C1', '81A07/iav-LexA',   'fast', 'PiezoStep2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[],[]};
-T{end+1,:} = {'180410_F1_C1', '81A07/iav-LexA',   'fast',  'PiezoStep2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[],[]};
-T{end+1,:} = {'180703_F3_C1', '81A07/iav-LexA',   'fast',  'PiezoStep2T','empty',[0                  ], [],[1 2 3],[],[],[],[],[],[]};
+%T{1,:} = {'170921_F1_C1', '81A07',            'fast', 'PiezoStep2T','empty',[                  ], [],[1 2 3],0,0,0,0,0}; % no steps
+T{1,:} = {'171101_F1_C1', '81A07',            'fast', 'PiezoStep2T','empty',[0                 ], 0,[1 2 3],0,0,0,0,0,0};% just 0 position
+%T{end+1,:} = {'171102_F1_C1', '81A07',            'fast', 'PiezoStep2T','empty',[                  ], 0,[1 2 3],0,0,0,0,0}; % no steps
+T{end+1,:} = {'171102_F2_C1', '81A07',            'fast', 'PiezoStep2T','empty',[0                 ],0,[1 2 3],0,0,0,0,0}; % said -200 in the notes, but suspect this was from the previous EpiFlash set
+T{end+1,:} = {'171103_F1_C1', '81A07',            'fast', 'PiezoStep2T','empty',[0                 ],0,[1 2 3],0,0,0,0,0};
+    T{end+1,:} = {'180308_F3_C1', '81A07',            'fast', 'PiezoStep2T','empty',[-150 -75  0 75 150],0,[1 2 3],0,0,0,0,0};
+T{end+1,:} = {'180404_F1_C1', '81A07/iav-LexA',   'fast', 'PiezoStep2T','empty',[-150 -75  0 75 150], [],[1 2 3],0,0,0,0,0};
+T{end+1,:} = {'180410_F1_C1', '81A07/iav-LexA',   'fast',  'PiezoStep2T','empty',[-150 -75  0 75 150], [],[1 2 3],0,0,0,0,0};
+T{end+1,:} = {'180703_F3_C1', '81A07/iav-LexA',   'fast',  'PiezoStep2T','empty',[0                  ], [],[1 2 3],0,0,0,0,0};
 
-T{end+1,:} = {'180222_F1_C1', '22A08',            'intermediate', 'PiezoStep2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[],[]};
-T{end+1,:} = {'180223_F1_C1', '22A08',            'intermediate', 'PiezoStep2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[],[]}; % Weird one! 1st set of trials ok.
-T{end+1,:} = {'180320_F1_C1', '22A08',            'intermediate', 'PiezoStep2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[],[]};
-T{end+1,:} = {'180405_F3_C1', '22A08',            'intermediate', 'PiezoStep2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[],[]};
-T{end+1,:} = {'180807_F1_C1', '22A08',            'intermediate', 'PiezoStep2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[],[]};
-T{end+1,:} = {'180328_F4_C1', '22A08/iav-LexA',     'intermediate', 'PiezoStep2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[],[]};
-T{end+1,:} = {'180821_F1_C1', '22A08/iav-LexA',     'intermediate', 'PiezoStep2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[],[]};
-T{end+1,:} = {'180822_F1_C1', '22A08/iav-LexA',     'intermediate',  'PiezoStep2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[],[]};
+T{end+1,:} = {'180222_F1_C1', '22A08',            'intermediate', 'PiezoStep2T','empty',[0                 ], [],[1 2 3],0,0,0,0,0};
+T{end+1,:} = {'180223_F1_C1', '22A08',            'intermediate', 'PiezoStep2T','empty',[0                 ], [],[1 2 3],0,0,0,0,0}; % Weird one! 1st set of trials ok.
+T{end+1,:} = {'180320_F1_C1', '22A08',            'intermediate', 'PiezoStep2T','empty',[-150 -75  0 75 150], [],[1 2 3],0,0,0,0,0};
+T{end+1,:} = {'180405_F3_C1', '22A08',            'intermediate', 'PiezoStep2T','empty',[0                 ], [],[1 2 3],0,0,0,0,0};
+T{end+1,:} = {'180807_F1_C1', '22A08',            'intermediate', 'PiezoStep2T','empty',[0                 ], [],[1 2 3],0,0,0,0,0};
+T{end+1,:} = {'180328_F4_C1', '22A08/iav-LexA',     'intermediate', 'PiezoStep2T','empty',[0                 ], [],[1 2 3],0,0,0,0,0};
+T{end+1,:} = {'180821_F1_C1', '22A08/iav-LexA',     'intermediate', 'PiezoStep2T','empty',[-150 -75  0 75 150], [],[1 2 3],0,0,0,0,0};
+T{end+1,:} = {'180822_F1_C1', '22A08/iav-LexA',     'intermediate',  'PiezoStep2T','empty',[-150 -75  0 75 150], [],[1 2 3],0,0,0,0,0};
 
-T{end+1,:} = {'180111_F2_C1', '35C09',     'slow', 'PiezoStep2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[],[]};
-% T{end+1,:} = {'180307_F2_C1', '35C09',     'slow', 'PiezoStep2T','empty',[-150 -75  0 75 120], [],[1 2 3],[],[],[],[],[],[]};
-T{end+1,:} = {'180313_F1_C1', '35C09',     'slow', 'PiezoStep2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[],[]};
-T{end+1,:} = {'180621_F1_C1', '35C09',     'slow', 'PiezoStep2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[],[]};
-T{end+1,:} = {'180628_F2_C1', '35C09',     'slow', 'PiezoStep2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[],[]}; % MLA
-T{end+1,:} = {'180328_F1_C1', '35C09/iav-LexA',     'slow',  'PiezoStep2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[],[]};
-T{end+1,:} = {'180329_F1_C1', '35C09/iav-LexA',     'slow',  'PiezoStep2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[],[]};
-T{end+1,:} = {'180702_F1_C1', '35C09/iav-LexA',     'slow', 'PiezoStep2T','empty',[0                  ], [],[1 2 3],[],[],[],[],[],[]};
+T{end+1,:} = {'180111_F2_C1', '35C09',     'slow', 'PiezoStep2T','empty',[0                 ], [],[1 2 3],0,0,0,0,0};
+% T{end+1,:} = {'180307_F2_C1', '35C09',     'slow', 'PiezoStep2T','empty',[-150 -75  0 75 120], [],[1 2 3],0,0,0,0,0};
+T{end+1,:} = {'180313_F1_C1', '35C09',     'slow', 'PiezoStep2T','empty',[-150 -75  0 75 150], [],[1 2 3],0,0,0,0,0};
+T{end+1,:} = {'180621_F1_C1', '35C09',     'slow', 'PiezoStep2T','empty',[-150 -75  0 75 150], [],[1 2 3],0,0,0,0,0};
+T{end+1,:} = {'180628_F2_C1', '35C09',     'slow', 'PiezoStep2T','empty',[-150 -75  0 75 150], [],[1 2 3],0,0,0,0,0}; % MLA
+T{end+1,:} = {'180328_F1_C1', '35C09/iav-LexA',     'slow',  'PiezoStep2T','empty',[-150 -75  0 75 150], [],[1 2 3],0,0,0,0,0};
+T{end+1,:} = {'180329_F1_C1', '35C09/iav-LexA',     'slow',  'PiezoStep2T','empty',[0                 ], [],[1 2 3],0,0,0,0,0};
+T{end+1,:} = {'180702_F1_C1', '35C09/iav-LexA',     'slow', 'PiezoStep2T','empty',[0                  ], [],[1 2 3],0,0,0,0,0};
 
 
 Script_estimateStepResponseData

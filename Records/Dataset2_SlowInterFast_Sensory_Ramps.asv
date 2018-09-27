@@ -176,7 +176,7 @@ ax.YTick = [0 2 4 6 8 10];
 ax.YTickLabel = {'0', '2','4','6','8','10'};
 ylabel(ax,'mV'); 
 
-%% Plot the peaks vs speed for each category at each displacement, no steps
+%% Plot the peaks vs speed for each category at each displacement
 
 clrs = [0 0 0
     1 0 1
@@ -188,88 +188,7 @@ cids = unique(T_Ramp.CellID);
 clbls = unique(T.Cell_label);
 
 rampVsPosF = figure;
-rampVsPosF.Position = [680 80 1177 898];
-panl = panel(rampVsPosF);
-panl.pack('v',{1/5 1/5 1/5 2/5});
-panl.margin = [18 10 2 10];
-panl.fontname = 'Arial';
-
-positions = [-150 -75 0 75 150];
-dps = [
-  -61.3904
-  -40.9269
-  -20.4635
-   20.4635
-   40.9269
-   61.3904];
-
-ratio = 2.4;
-xtick = repmat(dps,1,5)/ratio+repmat(positions,length(dps),1);
-xticklabels = num2str(repmat(round(dps*10)/10,6,1));
-
-for a = 1:3
-    ax = panl(a).select(); hold(ax,'on');
-    plot(ax,[-180 180],[0 0],'color',[1 1 1]*.8)
-    ax.XTick = xtick(:);
-    ax.XTickLabel = xticklabels;
-    ax.XTickLabelRotation = 45;
-end
-panl(2).ylabel('PSP peak (mV)');
-panl(3).xlabel('Angular velocity (degree/s)');
-
-% ax = panl(4).select(); hold(ax,'on');
-
-L = 419.9858; %um
-
-for cidx = 1:length(cids)    
-   
-    idx = strcmp(T_Ramp.CellID,cids{cidx});
-    typ = find(strcmp(clbls,T_Ramp.Cell_label{find(idx,1)}));
-    ax = panl(typ).select(); hold(ax,'on'); %#ok<FNDSB>
-    
-    positions = (T_Ramp.Positions{find(idx,1)});
-    if length(positions)==1
-        continue
-    end
-    cell_y = nan(size(positions));
-    cell_x = positions;
-    for pos = positions
-        posidx = idx & cell2mat(T_Ramp.Position) == pos;
-        if ~sum(posidx)
-            fprintf('%s is missing data for position %d\n',cids{cidx},pos);
-            continue
-        end
-        x = cell2mat(T_Ramp.Speed(posidx)) .* sign(cell2mat(T_Ramp.Displacement(posidx))) *3; % 3um/V, speed in V/sec, 
-        y = cell2mat(T_Ramp.Peak(posidx));
-        y = y.*-sign(x);
-        
-        [x,o] = sort(x);
-        y = y(o);
-
-        w = x/L;
-        dps = w/(2*pi)*360;
-
-        clr = clrs(strcmp(clbls,T_Ramp.Cell_label{find(posidx,1)}),:);
-        ltclr = lightclrs(strcmp(clbls,T_Ramp.Cell_label{find(posidx,1)}),:);
-        plot(ax,dps/ratio+pos,y,'color',clr,'marker','.');
-
-    end
-end
-
-
-%% Plot the peaks vs speed for each category at each displacement, including steps
-
-clrs = [0 0 0
-    1 0 1
-    0 .5 0];
-lightclrs = [.8 .8 .8
-    1 .7 1
-    .7 1 .7];
-cids = unique(T_Ramp.CellID);
-clbls = unique(T.Cell_label);
-
-rampVsPosF = figure;
-rampVsPosF.Position = [680 80 1177 898];
+rampVsPosF.Position = [680 405 1177 573];
 panl = panel(rampVsPosF);
 panl.pack('v',{1/5 1/5 1/5 2/5});
 panl.margin = [18 10 2 10];
@@ -277,22 +196,22 @@ panl.fontname = 'Arial';
 
 positions = [-150 -75 0 75 150];
 dps = [-272.8463
+  -61.3904
   -40.9269
+  -20.4635
+   20.4635
    40.9269
+   61.3904
   272.8463];
-ratio = 10;
-xtick = repmat(dps,1,5)/ratio+repmat(positions,length(dps),1);
-xticklabels = num2str(repmat(round(dps*10)/10,6,1));
-
+xtick = repmat(dps,1,5)+repmat(positions(6,1));
 for a = 1:3
     ax = panl(a).select(); hold(ax,'on');
     plot(ax,[-180 180],[0 0],'color',[1 1 1]*.8)
-    ax.XTick = xtick(:);
-    ax.XTickLabel = xticklabels;
-    ax.XTickLabelRotation = 45;
+    ax.XTick = [-150 -75 0 75 150];
+
 end
 panl(2).ylabel('PSP peak (mV)');
-panl(3).xlabel('Angular velocity (degree/s)');
+panl(3).xlabel('Leg position (\mum)');
 
 % ax = panl(4).select(); hold(ax,'on');
 
@@ -344,7 +263,7 @@ for cidx = 1:length(cids)
 
         clr = clrs(strcmp(clbls,T_Ramp.Cell_label{find(posidx,1)}),:);
         ltclr = lightclrs(strcmp(clbls,T_Ramp.Cell_label{find(posidx,1)}),:);
-        plot(ax,dps/ratio+pos,y,'color',clr,'marker','.');
+        plot(ax,dps/10+pos,y,'color',clr,'marker','.');
 
         
 %         step10atposidx = posidx & cell2mat(T_Ramp.Step)==-10;
