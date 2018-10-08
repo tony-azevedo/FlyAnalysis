@@ -18,6 +18,11 @@ caImavi
 % see http://www.mousemotorlab.org/deeplabcut/
 % 
 
+Workflow_MHCLexA_GCaMP6f_181007_F1_C1_MuscleImaging
+Workflow_MHCLexA_GCaMP6f_181007_F2_C1_MuscleImaging
+
+
+
 %% calculate cluster intensity with the entire set from 170705
 trial = load('B:\Raw_Data\170705\170705_F1_C1\EpiFlash2T_Raw_170705_F1_C1_25.mat');
 trialnumlist = (26:41); % 1700705 example set for probe extraction

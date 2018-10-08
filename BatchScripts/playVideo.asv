@@ -1,4 +1,4 @@
-function trial = batchAskAboutThreshold(trial)
+function trial = playVideo(trial)
 %% Set an ROI that avoids the trace of the probe
 % I think I only need 1 for now, but I'll keep the option for multiple
 
@@ -25,22 +25,19 @@ frames = find(t(h2.exposure)>t_i & t(h2.exposure)<t_f);
 kk = 0;
 while kk<frames(1)
     kk = kk+1;
-    
     readFrame(vid);
-    continue
 end
 
-smooshedframe = double(readFrame(vid));
-smooshedframe = squeeze(smooshedframe(:,:,1));
-smooshedframe(:) = 0; 
+frame = double(readFrame(vid));
+frame = squeeze(frame(:,:,1));
+im = imshow(frame,'parent',dispax);
 
-for jj = 1:20
+while vid.hasFrame
     mov3 = double(readFrame(vid));
-    smooshedframe = smooshedframe+mov3(:,:,1);
+    frame = frame+mov3(:,:,1);
+    im.CData = imshow(frame,[0 quantile(smooshedframe(:),0.975)],'parent',dispax);
 end
-smooshedframe = smooshedframe/24;
 
-im = imshow(smooshedframe,[0 quantile(smooshedframe(:),0.975)],'parent',dispax);
 % im = imshow(frame,[0 quantile(frame(:),0.975)],'parent',dispax);
 %%
 hold(dispax,'on');

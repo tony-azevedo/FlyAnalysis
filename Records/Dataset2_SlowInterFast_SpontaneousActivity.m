@@ -1,9 +1,9 @@
 %% Workflows for spontaneous activity and sensory feedback
 
 
-Workflow_35C09_180111_F2_C1_ForceProbePatching
+Workflow_35C09_180111_F2_C1_ForceProbePatching 
 Workflow_35C09_180307_F2_C1_ForceProbePatching % Decent, but the head is visible. come back to this
-Workflow_35C09_180313_F1_C1_ForceProbePatching % Decent, but no EMG
+Workflow_35C09_180313_F1_C1_ForceProbePatching % Decent, but no EMG, no spontaneous movement
 Workflow_35C09_180621_F1_C1_ForceProbePatching % Ah! No movement
 Workflow_35C09_180628_F2_C1_ForceProbePatching % Brilliant! 22A08, probably
 
@@ -178,19 +178,19 @@ T{11,:} = {'180223_F1_C1', '22A08',     'intermediate', [198E6],     [],  'EpiFl
 T{12,:} = {'180320_F1_C1', '22A08',     'intermediate', [454E6],     [],  'EpiFlash2T',   1:8   };
 T{13,:} = {'180405_F3_C1', '22A08',     'intermediate', [249E6],     [],  'EpiFlash2T',   42:85   };
 T{14,:} = {'180807_F1_C1', '22A08',     'intermediate', [],     [],  'EpiFlash2T',   25:258   }; % seel and leak done at the wrong voltage
-T{15,:} = {'180328_F4_C1', '22A08',     'intermediate', [400E6],     [],  'EpiFlash2T',   33:100   };
-T{16,:} = {'180821_F1_C1', '22A08',     'intermediate', [],     [],  'EpiFlash2T',   1:181   };
-T{17,:} = {'180822_F1_C1', '22A08',     'intermediate', [153E6],     [],  'EpiFlash2T',  1:118 };
+T{15,:} = {'180328_F4_C1', '22A08/iav-LexA',     'intermediate', [400E6],     [],  'EpiFlash2T',   33:100   };
+T{16,:} = {'180821_F1_C1', '22A08/iav-LexA',     'intermediate', [],     [],  'EpiFlash2T',   1:181   };
+T{17,:} = {'180822_F1_C1', '22A08/iav-LexA',     'intermediate', [153E6],     [],  'EpiFlash2T',  1:118 };
 
 
-T{18,:} = {'180111_F2_C1', '22A08',     'slow', [],         [],  'CurrentStep2T',    4:45    };
-T{19,:} = {'180307_F2_C1', '22A08',     'slow', [],         [],  'CurrentStep2T',   7:33     };
-T{20,:} = {'180313_F1_C1', '22A08',     'slow', [1690E6],   [],  'CurrentStep2T',    1:61     };
-T{21,:} = {'180621_F1_C1', '22A08',     'slow', [],         [],  'CurrentStep2T',   1:50     };
-T{22,:} = {'180628_F2_C1', '22A08',     'slow', [833E6],    [],  'CurrentStep2T',   17:64 }; % seel and leak done at the wrong voltage
-T{23,:} = {'180328_F1_C1', '22A08',     'slow', [],         [],  'EpiFlash2T',      67:114    };
-T{24,:} = {'180329_F1_C1', '22A08',     'slow', [],         [],  'EpiFlash2T',      102:165   };% MLA. Contol 9:101
-T{25,:} = {'180702_F1_C1', '22A08',     'slow', [452E6],    [],  'EpiFlash2T',      11:100   };
+T{18,:} = {'180111_F2_C1', '35C09',     'slow', [],         [],  'CurrentStep2T',    4:45    };
+T{19,:} = {'180307_F2_C1', '35C09',     'slow', [],         [],  'CurrentStep2T',   7:33     };
+T{20,:} = {'180313_F1_C1', '35C09',     'slow', [1690E6],   [],  'CurrentStep2T',    1:61     };
+T{21,:} = {'180621_F1_C1', '35C09',     'slow', [],         [],  'CurrentStep2T',   1:50     };
+T{22,:} = {'180628_F2_C1', '35C09',     'slow', [833E6],    [],  'CurrentStep2T',   17:64 }; % seel and leak done at the wrong voltage
+T{23,:} = {'180328_F1_C1', '35C09/iav-LexA',     'slow', [],         [],  'EpiFlash2T',      67:114    };
+T{24,:} = {'180329_F1_C1', '35C09/iav-LexA',     'slow', [],         [],  'EpiFlash2T',      102:165   };% MLA. Contol 9:101
+T{25,:} = {'180702_F1_C1', '35C09/iav-LexA',     'slow', [452E6],    [],  'EpiFlash2T',      11:100   };
 % T{26,:} = {'180806_F1_C1', '22A08',     'slow', [],         [],  'EpiFlash2T',      1:72  };
 
 % T = sortrows(T,'Cell_label');
@@ -231,5 +231,24 @@ ax.YTick = [0 2 4 6 8 10]*1E8;
 ax.YTickLabel = {'0', '0.2','0.4','0.6','0.8','1'};
 
 
-%T.R_best = nanmean([cell2mat(T.R_pulse) cell2mat(T.R_S_L)],2)
+%% Table of flies with spontaneous movement trials with bar and no bar:
+sz = [25 7];
+varNames = {'CellID','Genotype','Cell_label','Protocol','bar_trialnums','no_bar_trialnums'};
+varTypes = {'string','string','string','double','double','string','double'};
+
+% rownames = {'170921_F1_C1', '171101_F1_C1','171102_F1_C1','171102_F2_C1','171103_F1_C1', '180308_F3_C1', '180404_F1_C1','180410_F1_C1', '180703_F3_C1'}
+
+data = cell(sz);
+T = cell2table(data);
+T.Properties.VariableNames = varNames;
+% T = table('VariableTypes',varTypes,'VariableNames',varNames,'RowNames',rownames)
+
+T{1,:} =    {'180111_F2_C1', '35C09',     'slow',   'EpiFlash2T',   [1:9],          [10:19]};
+T{end+1,:}= {'180621_F1_C1', '35C09',     'slow',   'EpiFlash2T',   [1:23,35:46],   [24:34]};
+T{end+1,:}= {'180621_F3_C1', '35C09',     'slow',   'EpiFlash2T',   [1:4],          [5:14]}; % interesting non green cell! Start with this one to get protocol working
+T{end+1,:}= {'180628_F2_C1', '35C09',     'slow',   'EpiFlash2T',   [1:6],          [7:14]}; % trials 15-29 are MLA trials. Interesting, or not.
+
+T{end+1,:}= {'180223_F1_C1',  '22A08',     'intermediate',     'EpiFlashTrain2T',   [1:14],     []};
+T{end+1,:}= {'180320_F1_C1',  '22A08',     'intermediate',     'EpiFlashTrain2T',   [1:91],     []};
+
 

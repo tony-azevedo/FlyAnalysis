@@ -230,12 +230,19 @@ plot(filtered_mu);
 ax2 = subplot(2,1,2); hold on; 
 plot(evalpnts_x,filtered_mu); 
 
-% 2) Find the best guess for the bar location: peak of the mean near
-% evalpnts_x = 0, a prominence of at least 2. See if this helps
-%[pks,locs] = findpeaks(filtered_mu,'MinPeakWidth',length(-filtered_mu)/50); %/30);
+% 2) Find the best guess for the bar location: peak of the mean near evalpnts_x = 0;
 [pks,locs] = findpeaks(filtered_mu,'MinPeakWidth',length(-filtered_mu)/50,'MinPeakProminence',2); %/30);
 
+% here we assume the peak closest to 0. But for the probe line adustment,
+% start with that one and move outward.
 [~,loc] = min(abs(evalpnts_x(locs)));
+
+[uslocs,order] = sort(abs(evalpnts_x(locs)));
+locs_o = locs(order);
+cur_peak
+if loc
+
+
 bar_idx_i = locs(loc);
 zro = evalpnts_x(bar_idx_i);
 pk = pks(loc);

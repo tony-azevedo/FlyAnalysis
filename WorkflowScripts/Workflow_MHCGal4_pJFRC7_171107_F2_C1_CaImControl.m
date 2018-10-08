@@ -1,4 +1,4 @@
-%% ForceProbe CaImaging workflow *** Written as 171107_F1_F1, have to juggle the other 81A06 cell
+%% ForceProbe CaImaging workflow 
 
 %% EpiFlash2T Bar detection
 trial = load('B:\Raw_Data\171107\171107_F1_C1\EpiFlash2T_Raw_171107_F1_C1_6.mat');

@@ -31,6 +31,7 @@ for set = 1:Nsets
         trial = load(sprintf(trialStem,tr_idx));
         trial.forceProbe_line = temp.forceProbe_line;
         trial.forceProbe_tangent = temp.forceProbe_tangent;
+%         adjustProbeLineROI(trial);
         fprintf('Saving bar and tangent in trial %s\n',num2str(tr_idx))
         save(trial.name,'-struct','trial')
     end

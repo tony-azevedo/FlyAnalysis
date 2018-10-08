@@ -12,13 +12,23 @@ dispax.Tag = 'dispax';
 
 colormap(dispax,'gray')
 
-vid = VideoReader(trial.imageFile2);
+vid = VideoReader(trial.imageFile);
 N = vid.Duration*vid.FrameRate;
-startAt0 = true;
+for cnt = 1:5
+    frame = readFrame(vid); 
+end
+frame = squeeze(frame(:,:,1));
+startAt0 = false;
+if sum(frame(:)>10) < numel(frame)/1000
+    startAt0 = true;
+end
 
 h2 = postHocExposure(trial,N);
 t = makeInTime(trial.params);
 t_i = 5*1/vid.FrameRate;
+if ~startAt0
+    t_i = trial.params.preDurInSec+t_i;
+end
 t_f = trial.params.stimDurInSec-5*1/vid.FrameRate;
 frames = find(t(h2.exposure)>t_i & t(h2.exposure)<t_f);
 
@@ -33,7 +43,12 @@ end
 smooshedframe = double(readFrame(vid));
 smooshedframe = squeeze(smooshedframe(:,:,1));
 smooshedframe(:) = 0; 
+readFrame(vid); readFrame(vid);
 
+for jj = 1:4
+    mov3 = double(readFrame(vid));
+    smooshedframe = smooshedframe+mov3(:,:,1);
+end
 for jj = 1:20
     mov3 = double(readFrame(vid));
     smooshedframe = smooshedframe+mov3(:,:,1);
@@ -41,7 +56,6 @@ end
 smooshedframe = smooshedframe/24;
 
 im = imshow(smooshedframe,[0 quantile(smooshedframe(:),0.975)],'parent',dispax);
-% im = imshow(frame,[0 quantile(frame(:),0.975)],'parent',dispax);
 %%
 hold(dispax,'on');
 

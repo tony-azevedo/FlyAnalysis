@@ -8,7 +8,7 @@ end
 [remain,D] = strtok(fliplr(name),filesep);
 
 D = fliplr(D);
-D = regexprep(D,'Acquisition','Raw_Data');
+% D = regexprep(D,'Acquisition','Raw_Data');
 remain = fliplr(remain);
 
 [prot,remain] = strtok(remain,'_');
@@ -25,10 +25,10 @@ ind_ = regexp(name,'_');
 indDot = regexp(name,'\.');
 dfile = name(~(1:length(name) >= ind_(end) & 1:length(name) < indDot(1)));
 dfile = regexprep(dfile,'_Raw','');
-dfile = regexprep(dfile,'Acquisition','Raw_Data');
+% dfile = regexprep(dfile,'Acquisition','Raw_Data');
 
 notesfile = fullfile(D,['notes_' d '_' fly '_' cell '.txt']);
-notesfile = regexprep(notesfile,'Acquisition','Raw_Data');
+% notesfile = regexprep(notesfile,'Acquisition','Raw_Data');
 
 varargout = {prot,d,fly,cell,trial,D,trialStem,dfile,notesfile};
 

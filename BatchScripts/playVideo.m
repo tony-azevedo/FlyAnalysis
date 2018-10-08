@@ -1,4 +1,4 @@
-function trial = batchAskAboutThreshold(trial)
+function trial = playVideo(trial)
 %% Set an ROI that avoids the trace of the probe
 % I think I only need 1 for now, but I'll keep the option for multiple
 
@@ -18,29 +18,24 @@ startAt0 = true;
 
 h2 = postHocExposure(trial,N);
 t = makeInTime(trial.params);
-t_i = 5*1/vid.FrameRate;
+t_i = 10*1/vid.FrameRate + trial.params.preDurInSec;
 t_f = trial.params.stimDurInSec-5*1/vid.FrameRate;
 frames = find(t(h2.exposure)>t_i & t(h2.exposure)<t_f);
 
-kk = 0;
-while kk<frames(1)
-    kk = kk+1;
-    
-    readFrame(vid);
-    continue
+vid.CurrentTime = t_i;
+
+frame = double(readFrame(vid));
+frame = squeeze(frame(:,:,1));
+im = imshow(frame,[0 2*quantile(frame(:),0.99)],'parent',dispax);
+
+while vid.hasFrame
+    frame = double(readFrame(vid));
+    im.CData = frame;
+    dispax.CLim = [quantile(frame(:),0.01) 2*quantile(frame(:),0.99)];
+    drawnow
+    pause(.02);
 end
 
-smooshedframe = double(readFrame(vid));
-smooshedframe = squeeze(smooshedframe(:,:,1));
-smooshedframe(:) = 0; 
-
-for jj = 1:20
-    mov3 = double(readFrame(vid));
-    smooshedframe = smooshedframe+mov3(:,:,1);
-end
-smooshedframe = smooshedframe/24;
-
-im = imshow(smooshedframe,[0 quantile(smooshedframe(:),0.975)],'parent',dispax);
 % im = imshow(frame,[0 quantile(frame(:),0.975)],'parent',dispax);
 %%
 hold(dispax,'on');

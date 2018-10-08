@@ -18,7 +18,7 @@ for tr_idx = trialnumlist
 
     trial = load(sprintf(trialStem,tr_idx));
     
-    moviename = trial.imageFile;    
+    moviename = trial.imageFile2;    
             
     downsampledDataPath = regexprep(trial.name,regexprep(D,'\\','\\\'),regexprep(D_shortened,'\\','\\\'));
     smooshedImagePath = regexprep(trial.name,{'_Raw_','.mat'},{'_smooshed_', '.png'});
