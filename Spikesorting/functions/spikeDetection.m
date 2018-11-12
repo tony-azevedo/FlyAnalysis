@@ -11,13 +11,6 @@ else
 end% d1 = getacqpref('FlyAnalysis',['VoltageFilter_fs' num2str(trial.params.sampratein)]);
 % unfiltered_data = filter(d1,unfiltered_data);
 
-%% initialize spike ID params
-spike_params.approval = 1; %%approval (== 0) to run without asking for the spike distance threshold
-spike_params.approval_time = 10;
-spike_params.spikeTemplateWidth = round(0.005*trial.params.sampratein); %%number of samples for the spike template
-spike_params.type = ''; %% for naming spike files
-
-%% run spike ID
 
 % clean up vars_initial
 vars_initial = cleanUpSpikeVarsStruct(vars_initial);
@@ -58,7 +51,9 @@ while strcmp(newbutton,'No')
     disp(vars);
 
     filter_sliderGUI(vars.unfiltered_data);
-    uiwait
+    while ~waitforbuttonpress;end
+    close(gcf)
+
     selected_spikes = [];
     spikeTemplate = [];
     
@@ -74,7 +69,7 @@ while strcmp(newbutton,'No')
         detected_spike_locs = [];
         spikesBelowThresh = [];
         return;
-    end;
+    end
     vars.spikeTemplate = spikeTemplate;
     
     [spikes_detected,uncorrectedSpikes] = detectSpikes;
@@ -135,36 +130,17 @@ end
             error('Why are there multiple peak at the same time?')
         end
         
-        %% pool the detected spike candidates and do spike_params.spiketemplate matching
-        targetSpikeDist = zeros(size(spike_locs));
         norm_spikeTemplate = (spikeTemplate-min(spikeTemplate))/(max(spikeTemplate)-min(spikeTemplate));
+
+        [detectedUFSpikeCandidates,...
+            detectedSpikeCandidates,...
+            norm_detectedSpikeCandidates,...
+            targetSpikeDist,...
+            spikeAmplitude,...
+            window,...
+            spikewindow] = ...
+            getSquiggleDistanceFromTemplate(spike_locs,spikeTemplate,all_filtered_data,vars.unfiltered_data,vars.spikeTemplateWidth,vars.fs);
         
-        %window = (max(spike_locs(i)-floor(spike_params.spikeTemplateWidth/2),0)+1: min(spike_locs(i)+floor(spike_params.spikeTemplateWidth/2),length(all_filtered_data)))
-        % Should have gotten rid of spikes near the beginning or end of the data
-        window = -floor(spike_params.spikeTemplateWidth/2): floor(spike_params.spikeTemplateWidth/2);
-        spikewindow = window-floor(spike_params.spikeTemplateWidth/2);
-        
-        detectedUFSpikeCandidates = nan(size(window(:),1),size(spike_locs(:),1));
-        detectedSpikeCandidates = detectedUFSpikeCandidates;
-        norm_detectedSpikeCandidates = detectedUFSpikeCandidates;
-        
-        for i=1:length(spike_locs)
-            % in the case of a single location, the template doesn't match
-            % the one coming out of seed template matching
-            if min(spike_locs(i)+spike_params.spikeTemplateWidth/2,length(all_filtered_data)) - max(spike_locs(i)-spike_params.spikeTemplateWidth/2,0)< spike_params.spikeTemplateWidth
-                continue
-            else
-                curSpikeTarget = all_filtered_data(spike_locs(i)+window);
-                detectedUFSpikeCandidates(:,i) = vars.unfiltered_data(spike_locs(i)+spikewindow); % all_filtered_data(max(spike_locs(i)-floor(spike_params.spikeTemplateWidth/2),0): min(spike_locs(i)+floor(spike_params.spikeTemplateWidth/2),length(all_filtered_data)));
-                detectedSpikeCandidates(:,i) = curSpikeTarget; % all_filtered_data(max(spike_locs(i)-floor(spike_params.spikeTemplateWidth/2),0): min(spike_locs(i)+floor(spike_params.spikeTemplateWidth/2),length(all_filtered_data)));
-                norm_curSpikeTarget = (curSpikeTarget-min(curSpikeTarget))/(max(curSpikeTarget)-min(curSpikeTarget));
-                norm_detectedSpikeCandidates(:,i) = norm_curSpikeTarget;
-                [targetSpikeDist(i), ~,~] = dtw_WarpingDistance(norm_curSpikeTarget, norm_spikeTemplate);
-            end
-        end
-        if any(isnan(detectedUFSpikeCandidates(:)))
-            error('some of the spikes are at the edge of the data');
-        end
         vars.locs = spike_locs;
         
         %% Create a figure that you can then click on to analyze spikes
@@ -194,12 +170,22 @@ end
         panl(3).pack('h',{1/3 1/3 1/3})
         
         % Plot cumulative histogram of targetSpikeDist
+        %         ax_hist = panl(3,1).select(); ax_hist.Tag = 'hist';
+        %         title(ax_hist,'Click to change threshold'); xlabel(ax_hist,'DTW Distance');
+        %         [dist, order] = sort(targetSpikeDist);
+        %         cumy = (1:length(dist))/length(dist);
+        %         plot(ax_hist,dist,cumy,'o','markeredgecolor',[0 0.45 0.74],'tag','distance_hist','userdata',targetSpikeDist); hold(ax_hist,'on');
+        %         plot(ax_hist,vars.Distance_threshold*[1 1],[0 1],'color',[1 0 0],'tag','threshold');
+        
+        % Plot targetSpikeDist vs spikeAmplitude
         ax_hist = panl(3,1).select(); ax_hist.Tag = 'hist';
         title(ax_hist,'Click to change threshold'); xlabel(ax_hist,'DTW Distance');
-        [dist, order] = sort(targetSpikeDist);
-        cumy = (1:length(dist))/length(dist);
-        plot(ax_hist,dist,cumy,'o','markeredgecolor',[0 0.45 0.74],'tag','distance_hist','userdata',targetSpikeDist); hold(ax_hist,'on');
-        plot(ax_hist,vars.Distance_threshold*[1 1],[0 1],'color',[1 0 0],'tag','threshold');
+        %[dist, order] = sort(targetSpikeDist);
+        % cumy = (1:length(dist))/length(dist);
+        plot(ax_hist,targetSpikeDist,spikeAmplitude,'.','markerfacecolor',[0 0.45 0.74],'tag','distance_hist','userdata',[targetSpikeDist(:) spikeAmplitude(:) spike_locs(:)]); hold(ax_hist,'on');
+        plot(ax_hist,vars.Distance_threshold*[1 1],[min(spikeAmplitude) max(spikeAmplitude)],'color',[1 0 0],'tag','dist_threshold');
+        plot(ax_hist,[min(targetSpikeDist) max(targetSpikeDist)],vars.Amplitude_threshold*[1 1],'color',[1 0 0],'tag','amp_threshold');
+        
         
         % This is useful feedback to see what has been detected thus far,
         % but if there are no spikes, stop here.
@@ -213,7 +199,8 @@ end
             plot(ax_detect,window,norm_spikeTemplate,'color',[.85 .85 .85], 'linewidth', 2,'tag','initial_template')
             plot(ax_detect,window,mean(norm_detectedSpikeCandidates,2),'color',[0 .7 1], 'linewidth', 2,'tag','potential_template')
             
-            suspect = targetSpikeDist<vars.Distance_threshold;
+            goodspikeAmp = mean(spikeAmplitude(targetSpikeDist<quantile(targetSpikeDist,.25)));
+            suspect = targetSpikeDist<vars.Distance_threshold & spikeAmplitude > goodspikeAmp*vars.Amplitude_threshold;
             
             set(suspect_ls(suspect),'color',[0 0 0])
             
@@ -227,7 +214,7 @@ end
             
             smthwnd = (vars.fs/2000+1:length(spikewindow)-vars.fs/2000);
             suspectUF_ls = plot(ax_detect_patch,spikewindow,spikeWaveforms,'tag','spikes');
-            suspectUF_avel = plot(ax_detect_patch,spikewindow,spikeWaveform,'color',[0 .7 1],'linewidth',2);
+            suspectUF_avel = plot(ax_detect_patch,spikewindow,spikeWaveform,'color',[0 .7 1],'linewidth',2,'userdata',goodspikeAmp);
             suspectUF_ddT2l = plot(ax_detect_patch,spikewindow(smthwnd(2:end-1)),spikeWaveform_(smthwnd(2:end-1))/max(spikeWaveform_(smthwnd(2:end-1)))*max(spikeWaveform),'color',[0 .8 .4],'linewidth',2);
             
             if any(suspect)
@@ -243,8 +230,8 @@ end
             
             % Plot spikes
             suspect_dots = raster(ax_main,spike_locs+spikePT,max(vars.unfiltered_data-mean(vars.unfiltered_data))+.02*diff([min(vars.unfiltered_data) max(vars.unfiltered_data)]));
-            set(suspect_dots,'color',[0 0 0],'tag','dots','userdata',spikePT);
-            set(suspect_dots(~suspect),'color',[1 0 0],'linewidth',2)
+            set(suspect_dots,'color',[0 0 0],'linewidth',1,'tag','dots','userdata',spikePT);
+            set(suspect_dots(~suspect),'color',[1 0 0],'linewidth',.5)
             
             % Divide detected events into spike suspects and non spike suspects
             panl(4).pack('h',{1/4 1/4 1/4 1/4});
@@ -269,16 +256,15 @@ end
                 plot(ax_unfltrd_notsuspect,spikewindow,spikeWaveforms(:,~suspect),'tag','spikes_notsuspect','color',[0 0 0]);
             end
             
+            %% Now update the threshold for the squiggles
+            vars_0 = vars;
+            
             spikeThresholdUpdateGUI(disttreshfig,norm_detectedSpikeCandidates,spikeWaveforms);
             
-            uiwait();
-            
-            warning('Add an amplitude threshold in spikeDetection: Line 276')
-            
-%             eventAmplitudeUpdateGUI(disttreshfig,norm_detectedSpikeCandidates,spikeWaveforms);
-%             
-%             uiwait();
-            
+            close(disttreshfig)
+            % while ~waitforbuttonpress;end 
+            % uiwait();
+                                    
             % The threshold is finally set, get rid of spikes that are over
             % the threshold
             spikes = vars.locs;
@@ -296,7 +282,7 @@ end
                 end
             end
             
-            suspect = targetSpikeDist<vars.Distance_threshold;
+            suspect = targetSpikeDist<vars.Distance_threshold & spikeAmplitude > goodspikeAmp*vars.Amplitude_threshold;
             spikes = spikes(suspect);
                                     
             % This loop gets a corrected spike time for each spike. 
@@ -371,7 +357,7 @@ end
         if ~isempty(mypoints)
             for hh = 1:length(mypoints)
                 template_center = mypoints(hh).Position(1);
-                spikeTemplateSeed(hh,:) = vars.filtered_data(template_center+(-spike_params.spikeTemplateWidth:spike_params.spikeTemplateWidth));
+                spikeTemplateSeed(hh,:) = vars.filtered_data(template_center+(-vars.spikeTemplateWidth:vars.spikeTemplateWidth));
             end
             
             selected_spikes = 0;
@@ -389,14 +375,14 @@ end
                     end
                 end
                 spikeTemplate = mean(skootchedTemplate,1);
-                middle = find(spikeTemplate(spike_params.spikeTemplateWidth+ (-floor(spike_params.spikeTemplateWidth/2):floor(spike_params.spikeTemplateWidth/2)))==max(spikeTemplate(spike_params.spikeTemplateWidth+ (-floor(spike_params.spikeTemplateWidth/2):floor(spike_params.spikeTemplateWidth/2)))));
-                middle = middle+floor(spike_params.spikeTemplateWidth/2)-1;
-                spikeTemplate = spikeTemplate(middle+1+(-floor(spike_params.spikeTemplateWidth/2):floor(spike_params.spikeTemplateWidth/2)));
+                middle = find(spikeTemplate(vars.spikeTemplateWidth+ (-floor(vars.spikeTemplateWidth/2):floor(vars.spikeTemplateWidth/2)))==max(spikeTemplate(vars.spikeTemplateWidth+ (-floor(vars.spikeTemplateWidth/2):floor(vars.spikeTemplateWidth/2)))));
+                middle = middle+floor(vars.spikeTemplateWidth/2)-1;
+                spikeTemplate = spikeTemplate(middle+1+(-floor(vars.spikeTemplateWidth/2):floor(vars.spikeTemplateWidth/2)));
             else
                 spikeTemplate = spikeTemplateSeed;
-                middle = find(spikeTemplate(spike_params.spikeTemplateWidth+ (-floor(spike_params.spikeTemplateWidth/2):floor(spike_params.spikeTemplateWidth/2)))==max(spikeTemplate(spike_params.spikeTemplateWidth+ (-floor(spike_params.spikeTemplateWidth/2):floor(spike_params.spikeTemplateWidth/2)))));
-                middle = middle+floor(spike_params.spikeTemplateWidth/2)-1;
-                spikeTemplate = spikeTemplate(middle+1+(-floor(spike_params.spikeTemplateWidth/2):floor(spike_params.spikeTemplateWidth/2)));
+                middle = find(spikeTemplate(vars.spikeTemplateWidth+ (-floor(vars.spikeTemplateWidth/2):floor(vars.spikeTemplateWidth/2)))==max(spikeTemplate(vars.spikeTemplateWidth+ (-floor(vars.spikeTemplateWidth/2):floor(vars.spikeTemplateWidth/2)))));
+                middle = middle+floor(vars.spikeTemplateWidth/2)-1;
+                spikeTemplate = spikeTemplate(middle+1+(-floor(vars.spikeTemplateWidth/2):floor(vars.spikeTemplateWidth/2)));
             end
         else
             disp('no spikes selected');

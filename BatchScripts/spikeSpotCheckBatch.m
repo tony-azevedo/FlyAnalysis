@@ -46,8 +46,9 @@ title(ax_hist,'Histogram'); xlabel(ax_hist,'DTW Distance');
 ax_detect = panl(3,2).select(); ax_detect.Tag = 'detect';
 title(ax_detect,'Is this a spike? In the right place?');
 
-ax_hist.ButtonDownFcn = @spotCheck;
-spotCheckFig.KeyPressFcn = @spotCheck;
+ax_main.ButtonDownFcn = @spotCheck_XY;
+ax_hist.ButtonDownFcn = @spotCheck_XY;
+spotCheckFig.KeyPressFcn = @spotCheck_XY;
 
 cnt = 1;
 trial = load(sprintf(trialStem,trialnumlist(cnt)));
@@ -136,23 +137,24 @@ for tr_idx = trialnumlist
     % Get out all the potential spikes from the input structure
     cla(ax_hist)
     sDs = spikes.targetSpikeDist_acrossCells(spikes.trialnumids == tr_idx);
+    amps = spikes.spikeAmplitude_acrossCells(spikes.trialnumids == tr_idx);
     spikes_byPeak = spikes.spikes_acrossCells(spikes.trialnumids == tr_idx);
-    [dist, order] = sort(sDs);
-    cumy = (1:length(dist))/length(dist);
-    distcumhist = plot(ax_hist,dist,cumy,'o','markeredgecolor',[0 0.45 0.74],'tag','distance_hist'); hold(ax_hist,'on');
-    plot(ax_hist,vars.Distance_threshold*[1 1],[0 1],'color',[1 0 0],'tag','threshold');
-    
+
+    distcumhist = plot(ax_hist,sDs,amps,'.','color',[0 0.45 0.74],'markersize',10,'tag','distance_hist'); hold(ax_hist,'on');
+    plot(ax_hist,vars.Distance_threshold*[1 1],[min(amps) max(amps)],'color',[1 0 0],'tag','dist_threshold');
+    plot(ax_hist,[min(sDs) max(sDs)],vars.Amplitude_threshold*[1 1],'color',[1 0 0],'tag','amp_threshold');
+
     % assumption: spikes in the trial have a match in the input structure,
     % even if they actually have been moved. Create a map
     spikes_map = nan(size(spikes_byPeak));
-    for s = trial.spikes
+    for s = trial.spikes(:)'
         % find the closest spike in the according to peak
         idxdiff = abs(spikes_byPeak-s);
         spikes_map(idxdiff==min(idxdiff)) = s;
     end
-    spikes_map = cat(1,spikes_map,spikes_byPeak);
+    spikes_map = cat(2,spikes_map(:),spikes_byPeak(:));
     
-    set(distcumhist,'Userdata',spikes_map(:,order));
+    set(distcumhist,'Userdata',spikes_map);
     
     % plot the spikes as they've been selected thus far
     if isempty(findobj(ax_main,'tag','raster_ticks'))
@@ -165,7 +167,7 @@ for tr_idx = trialnumlist
         set(suspect_ticks,'tag','raster_ticks');
     end
 
-    spotCheck(ax_hist,[]);
+    spotCheck_XY(ax_hist,[]);
     
     uiwait();
         

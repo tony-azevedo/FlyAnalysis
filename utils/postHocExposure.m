@@ -67,3 +67,12 @@ elseif isfield(h,'exposure_raw') || strcmp(use,'skoootched')
 else
    error('Exposure vector is not well conditioned for current analysis\n1st true index (exp starts) = %d',find(h.exposure,1,'first')); 
 end
+
+if isfield(h,'exposure2') && ((h.exposure2(1) == 1 || h.exposure2(2) == 1) && ~islogical(h.exposure2))
+    exposure2 = h.exposure2;
+    exposure_1_0 = zeros(size(exposure2));
+    
+    % turn exposure into a vector where the end of the exposure -> 1
+    exposure_1_0(1:end-1) = exposure2(1:end-1)&~exposure2(2:end); 
+    h.exposure2 = logical(exposure_1_0);
+end

@@ -1,7 +1,7 @@
 %% Muscle Imaging Leg Tracking and ForceProbe Workflow 
 
 %% EpiFlash2T Bar detection
-trial = load('F:\Acquisition\181007\181007_F2_C1\EpiFlash2CB2T_Raw_181007_F2_C1_1.mat');
+trial = load('F:\Acquisition\181007\181007_F2_C1\EpiFlash2CB2T_Raw_181007_F2_C1_121.mat');
 [~,~,~,~,~,D,trialStem] = extractRawIdentifiers(trial.name);
 cd(D);
 

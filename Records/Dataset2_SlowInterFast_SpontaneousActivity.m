@@ -251,4 +251,15 @@ T{end+1,:}= {'180628_F2_C1', '35C09',     'slow',   'EpiFlash2T',   [1:6],      
 T{end+1,:}= {'180223_F1_C1',  '22A08',     'intermediate',     'EpiFlashTrain2T',   [1:14],     []};
 T{end+1,:}= {'180320_F1_C1',  '22A08',     'intermediate',     'EpiFlashTrain2T',   [1:91],     []};
 
+%% Other interesting notes
+% 35C09 spikes without bar are a bit lower and slower. Compare here:
+
+% Before I put the bar in
+trial = load('F:\Acquisition\181021\181021_F1_C1\Sweep_Raw_181021_F1_C1_1.mat');
+
+% vs.
+
+% After
+trial = load('F:\Acquisition\181021\181021_F1_C1\CurrentStep2T_Raw_181021_F1_C1_1.mat');
+
 

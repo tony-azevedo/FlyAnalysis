@@ -41,13 +41,13 @@ ipps = nan(size(spikes));
 %% Debug figure
 debug = 0;
 if debug
-tempf = figure;
-select = randperm(size(spikeWaveforms,2),min([200 size(spikeWaveforms,2)]));
-plot(spikeWaveforms(:,select),'color',[1 1 1]*.8); 
-hold on
-aveD = plot(idx_i:length(spikeWaveform_)-idx_i,spikeWaveform_(idx_i:end-idx_i),'color',[1 .7 .7],'linewidth',2);
-ippave = plot(inflPntPeak_ave,spikeWaveform_(inflPntPeak_ave),'ko');
-set(gca,'YLim',[-.1 1.1]);
+    tempf = figure;
+    select = randperm(size(spikeWaveforms,2),min([200 size(spikeWaveforms,2)]));
+    plot(spikeWaveforms(:,select),'color',[1 1 1]*.8);
+    hold on
+    aveD = plot(idx_i:length(spikeWaveform_)-idx_i,spikeWaveform_(idx_i:end-idx_i),'color',[1 .7 .7],'linewidth',2);
+    ippave = plot(inflPntPeak_ave,spikeWaveform_(inflPntPeak_ave),'ko');
+    set(gca,'YLim',[-.1 1.1]);
 end
 %%
 
@@ -82,7 +82,7 @@ for i = 1:length(spikes)
     if numel(inflPntPeak)>1
         inflPntPeak = inflPntPeak(abs(inflPntPeak-vars.likelyiflpntpeak)==min(abs(inflPntPeak-vars.likelyiflpntpeak)));
     end
-        
+    
     if length(inflPntPeak)==1
         ipps(i) = inflPntPeak;
         spikes(i) = spikes(i)+spikewindow(inflPntPeak);
@@ -91,7 +91,7 @@ for i = 1:length(spikes)
         spikes(i) = spikes(i)+spikewindow(inflPntPeak_ave);
         
         % if ~isempty(spikeWaveform_) && ~isempty(inflPntPeak_ave)
-            % use spike time closest to middle of template
+        % use spike time closest to middle of template
         if isempty(inflPntPeak)
             % use spike time closest to middle of template
             % much shallower peak
@@ -119,15 +119,15 @@ for i = 1:length(spikes)
     
     %% debug fig
     if debug
-    ave = plot(spikeWaveforms(:,i),'color',[.7 0 0]);
-    dave = plot(detectedSpikeWaveform_,'color',[ 0 0 .7]);
-    peaks = plot(inflPntPeak,detectedSpikeWaveform_(inflPntPeak),'bo');
-    drawnow
-    pause(.01)
-
-    delete(ave)
-    delete(dave)
-    delete(peaks)
+        ave = plot(spikeWaveforms(:,i),'color',[.7 0 0]);
+        dave = plot(detectedSpikeWaveform_,'color',[ 0 0 .7]);
+        peaks = plot(inflPntPeak,detectedSpikeWaveform_(inflPntPeak),'bo');
+        drawnow
+        pause(.01)
+        
+        delete(ave)
+        delete(dave)
+        delete(peaks)
     end
     %%
     

@@ -1,16 +1,20 @@
 %% Muscle Imaging Leg Tracking and ForceProbe Workflow 
 
-%% EpiFlash2T Bar detection
-trial = load('F:\Acquisition\181007\181007_F1_C1\EpiFlash2CB2T_Raw_181007_F1_C1_1.mat');
+%% EpiFlash2CB2T Bar detection
+trial = load('F:\Acquisition\181011\181011_F4_C1\EpiFlash2CB2T_Raw_181011_F4_C1_1.mat');
 [~,~,~,~,~,D,trialStem] = extractRawIdentifiers(trial.name);
 cd(D);
 
 clear trials
 
 % if the position of the prep changes, make a new set
-trials{1} = 133:252;
+trials{1} = 10:39;
+trials{2} = 40:69; % EMG in, MLA,
+trials{3} = 70:84; % MLA flowing in
+trials{3} = 85:99; % MLA flowing in
 
 routine = {
+    'probeTrackROI_IR' 
     'probeTrackROI_IR' 
     };
 
@@ -55,12 +59,6 @@ for set = 1:Nsets
     % batch_undoSkootchExposure
     batch_skootchExposure_KnownSkootch
 end
-
-%% Testing whether the DLC model works for this cell or not
-
-modelh5output = 'EpiFlash2CB2T_Image_181007_F1_C1_1_20181007T133956DeepCut_resnet50_femurTibiaJoint_IRJune04shuffle1_500000.h5'
-trial = load('F:\Acquisition\181007\181007_F1_C1\EpiFlash2CB2T_Raw_181007_F1_C1_1.mat');
-
 
 %% 
 for set = 1:Nsets

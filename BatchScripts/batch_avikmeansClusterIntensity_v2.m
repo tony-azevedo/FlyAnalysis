@@ -2,21 +2,29 @@
 % for faster kmeans clustering of individual movies
 
 % Assuming I'm in a directory where the movies are to be processed
+trial = load(sprintf(trialStem,trialnumlist(1)));
+        
+vid = VideoReader(trial.imageFile2);
+wh = [vid.Width vid.Height];
 
-close all;
+%%
 displayf = figure;
-displayf.Position = [40 40 1280 1024];
-dispax = axes('parent',displayf,'units','pixels','position',[0 0 1280 1024]);
+displayf.Position = [40 40 wh];
+displayf.ToolBar = 'none';
+dispax = axes('parent',displayf,'units','pixels','position',[0 0 wh]);
 dispax.Box = 'off';
 dispax.XTick = [];
 dispax.YTick = [];
-dispax.Tag = 'dispax';    
+dispax.Tag = 'dispax';
 
-for tr_idx = trialnumlist %1:length(data)
+colormap(dispax,'gray')
+
+
+for tr_idx = trialnumlist
     
-%     waitbar(tr_idx/length(data),br);
     trial = load(sprintf(trialStem,tr_idx));
     fprintf('%s\n',trial.name);
+
     if isfield(trial,'excluded') && trial.excluded
         fprintf('Trial excluded\n')
         continue
@@ -39,7 +47,7 @@ for tr_idx = trialnumlist %1:length(data)
     br2 = waitbar(0,regexprep(sprintf(trialStem,trial.params.trial),'_','\\_'));
     br2.Name = 'Frames';
         
-    vid = VideoReader(trial.imageFile);
+    vid = VideoReader(trial.imageFile2);
     N = vid.Duration*vid.FrameRate;
     for cnt = 1:5
         frame = readFrame(vid);

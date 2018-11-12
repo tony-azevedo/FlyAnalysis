@@ -1,14 +1,14 @@
 %% Muscle Imaging Leg Tracking and ForceProbe Workflow 
 
-%% EpiFlash2T Bar detection
-trial = load('F:\Acquisition\181007\181007_F1_C1\EpiFlash2CB2T_Raw_181007_F1_C1_1.mat');
+%% EpiFlash2CB2T Bar detection
+trial = load('F:\Acquisition\181017\181017_F1_C1\EpiFlash2CB2T_Raw_181017_F1_C1_1.mat');
 [~,~,~,~,~,D,trialStem] = extractRawIdentifiers(trial.name);
 cd(D);
 
 clear trials
 
 % if the position of the prep changes, make a new set
-trials{1} = 133:252;
+trials{1} = 61:105;
 
 routine = {
     'probeTrackROI_IR' 
@@ -46,78 +46,57 @@ Script_LookAtTrialsWithMinimumCoM %% can run this any time, but probably best af
 ZeroForce = 700-(setpoint-700);
 Script_SetTheMinimumCoM_byHand
 
-% Extract spikes
-Script_ExtractSpikesFromInterestingTrials%% skootch the exposures
-
-for setidx = 1:Nsets
-    knownSkootch = 3;
-    trialnumlist = trials{setidx};
-    % batch_undoSkootchExposure
-    batch_skootchExposure_KnownSkootch
-end
-
 %% EpiFlash2T Calcium clusters calculation with bar
-trial = load('F:\Acquisition\181007\181007_F1_C1\EpiFlash2CB2T_Raw_181007_F1_C1_1.mat');
+trial = load('F:\Acquisition\181011\181011_F2_C1\EpiFlash2CB2T_Raw_181011_F2_C1_1.mat');
 [~,~,~,~,~,D,trialStem] = extractRawIdentifiers(trial.name);
 cd(D);
 
 clear trials
 
-% if the position of the prep changes, make a new set
-trials{1} = 1:132;
-trials{2} = 133:252;
+% 50 Hz, kmeans clustering
+trials{1} = 1:15;
 
 Nsets = length(trials);
 
-
-%% 
 for setidx = 1:Nsets
     trialnumlist = trials{setidx};
-%     fprintf('\t Decimate\n');    
-%     batch_avikmeansDecimate
-%     fprintf('\t- Extract\n');
-%     batch_avikmeansExtract
     fprintf('\t- Threshold\n');
     batch_avikmeansThreshold 
-end
-
-for setidx = 1:Nsets
     trialnumlist = trials{setidx};
     fprintf('\t- Cluster\n');
     batch_avikmeansCalculation_v2
-    fprintf('\t- Intensity\n');
-    batch_avikmeansClusterIntensity_v2
 end
 
-
-%% EpiFlash2T Calcium clusters calculation without bar
-trial = load('F:\Acquisition\181007\181007_F1_C1\EpiFlash2CB2T_Raw_181007_F1_C1_1.mat');
-[~,~,~,~,~,D,trialStem] = extractRawIdentifiers(trial.name);
-cd(D);
+%% The previous routine set the clusters for the 50 Hz data. Now add cluster intensit to 100 Hz data
+trial = load('F:\Acquisition\181011\181011_F3_C1\EpiFlash2CB2T_Raw_181011_F3_C1_1.mat');
+setacqpref('quickshowPrefs','clmask',trial.clmask);
 
 clear trials
-
-% if the position of the prep changes, make a new set
-trials{1} = 133:252;
-
-routine = {
-    'probeTrackROI_IR' 
-    };
-
+trials{1} = 1:15;
+trials{2} = 16:75;
 Nsets = length(trials);
 
-
-%% 
+%% Save the clusters found for the 50Hz trials to all the other trials
 for setidx = 1:Nsets
     trialnumlist = trials{setidx};
-%     fprintf('\t Decimate\n');    
-%     batch_avikmeansDecimate
-    fprintf('\t- Extract\n');
-    batch_avikmeansExtract
-    fprintf('\t- Threshold\n');
-    batch_avikmeansThreshold
-    fprintf('\t- Cluster\n');
-    batch_avikmeansCalculation_v2
-    fprintf('\t- Intensity\n');
-    batch_avikmeansClusterIntensity_v2
+    for tr_idx = trialnumlist %1:length(data)
+        
+        trial = load(sprintf(trialStem,tr_idx));
+        fprintf('%s: ',trial.name);
+        if ~isfield(trial,'clmask')
+            fprintf('No mask',trial.name);
+        end
+        trial.clmask = getacqpref('quickshowPrefs','clmask');
+        save(trial.name, '-struct', 'trial')
+        fprintf('\n');
+    end
 end
+
+%% Now calculate all the cluster intensities
+
+for setidx = 1:Nsets
+    trialnumlist = trials{setidx};
+    fprintf('\t- Intensity\n');
+    batch_avikmeansClusterIntensity_nobar
+end
+

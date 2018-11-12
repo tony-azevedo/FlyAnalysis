@@ -1,4 +1,5 @@
 function varargout = quickShow(varargin)
+
 % QUICKSHOW MATLAB code for quickShow.fig
 %      QUICKSHOW, by itself, creates a new QUICKSHOW or raises the existing
 %      singleton*.
@@ -20,7 +21,7 @@ function varargout = quickShow(varargin)
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 
-% Last Modified by GUIDE v2.5 23-Aug-2018 16:30:49
+% Last Modified by GUIDE v2.5 16-Oct-2018 13:02:24
 
 %% Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -39,8 +40,8 @@ if nargin
 end
                
 if nargin && ischar(varargin{1}) &&...
-        isempty(strfind(str2test,getpref('USERDIRECTORY','MAC'))) &&...
-        isempty(strfind(str2test,getpref('USERDIRECTORY','PC')))
+        ~contains(str2test,getacqpref('USERDIRECTORY','MAC')) &&...
+        ~contains(str2test,getacqpref('USERDIRECTORY','PC'))
     gui_State.gui_Callback = str2func(varargin{1});
 end
 
@@ -68,6 +69,7 @@ handles.dir = pwd;
 if nargin>3
     linkvariable = varargin{1};
     if ischar(linkvariable)
+        error('This code needs updating');
         if ~isempty(strfind(linkvariable,'C:\Users\Anthony Azevedo\')) || ~isempty(strfind(linkvariable,'/Users/tony/'))
             dir = linkvariable;
         end
@@ -76,18 +78,20 @@ if nargin>3
             isfield(linkvariable,'flynumber') && ...
             isfield(linkvariable,'cellnumber') && ...
             isfield(linkvariable,'date')
+        error('This code needs updating');
+
         dir = ['C:\Users\Anthony Azevedo\Acquisition\',linkvariable(1).date,'\',...
             linkvariable(1).date,...
             '_F',linkvariable(1).flynumber,...
             '_C',linkvariable(1).cellnumber];
 
     end
-    handles.dir = regexprep(dir,'Acquisition','Raw_Data');
+    handles.dir = dir;
 end
 guidata(hObject,handles);
 handles.dir;
-[~, handles] = isInCellDir;
-if ~isInCellDir;
+[l, handles] = isInCellDir;
+if ~l
     folderButton_Callback(handles.folderButton, eventdata, handles)
 else
     loadCellFromDir(handles);
@@ -176,10 +180,10 @@ else
     protocols = {};
     for i = 1:length(a)
         ind = regexpi(a(i).name,'_');
-        if ~isempty(strfind(char(65:90),a(i).name(1))) && ...
+        if contains(char(65:90),a(i).name(1)) && ...
             ~isempty(ind) && ...
             ~sum(strcmp(protocols,a(i).name(1:ind(1)-1)))
-            protocols{end+1} = a(i).name(1:ind(1)-1);
+            protocols{end+1} = a(i).name(1:ind(1)-1); %#ok<AGROW>
         end
     end
     handles = reload_notes([],'loadCellFromDir',handles);
@@ -187,17 +191,86 @@ else
     a = dir([handles.dir filesep '*_ContRaw*']);
     for i = 1:length(a)
         ind = regexpi(a(i).name,'_');
-        if ~isempty(strfind(char(65:90),a(i).name(1))) && ...
+        if contains(char(65:90),a(i).name(1)) && ...
                 ~isempty(ind) && ...
                 ~sum(strcmp(protocols,a(i).name(1:ind(1)-1)))
-            protocols{end+1} = a(i).name(1:ind(1)-1);
+            protocols{end+1} = a(i).name(1:ind(1)-1); %#ok<AGROW>
         end
     end
     set(handles.protocolMenu, 'String', protocols,'value',1);
     guidata(handles.protocolMenu,handles)
+    
+    % Update 181016: 
+    % Previously, quickshow would assume that the files are in RawData, in some specified folder. Now
+    % I'm making it more general, the files can be anywhere as long as it
+    % is a cell folder (has Acquisition file, has raw data files, has notes
+    
+    % But now I will test the correctness of the directory explicitly,
+    % before going into the protocol menu callback
+    
+    rawfiles = dir(fullfile(handles.dir,[protocols{1} '_Raw*']));
+    % test that the rawfiles have the correct directory name:
+    cnt = 0;
+    while cnt < length(rawfiles) && cnt < 10
+        cnt = cnt+1;
+        trialname = load(fullfile(handles.dir,rawfiles(cnt).name),'name');
+        if ~contains(trialname.name,handles.dir)
+            butt = questdlg(sprintf('Trial.name (%s) does not point to the raw file.\nChange file paths to %s?',trialname.name,handles.dir),'Change paths','Yes');
+            switch butt
+                case 'No'
+                    error('Rawfiles have the wrong path, not proceeding')
+                case 'Cancel'
+                    error('Rawfiles have the wrong path, not proceeding')
+                case 'Yes'
+                    CorrectFileNames(handles)
+            end
+        end
+    end
+    
+    ind_ = regexp(rawfiles(1).name,'_');
+    indDot = regexp(rawfiles(1).name,'\.');
+    handles.trialStem = [rawfiles(1).name((1:length(rawfiles(1).name)) <= ind_(end)) '%d' rawfiles(1).name(1:length(rawfiles(1).name) >= indDot(1))];
+    dfile = rawfiles(1).name(~(1:length(rawfiles(1).name) >= ind_(end) & 1:length(rawfiles(1).name) < indDot(1)));
+    dfile = regexprep(dfile,'_Raw_','_');
+    handles.prtclDataFileName = fullfile(handles.dir,dfile);
+    
+    if exist(handles.prtclDataFileName,'file')
+        d = load(handles.prtclDataFileName);
+    end
+    
+    trial = load(fullfile(handles.dir,rawfiles(1).name));
+    changeFileNames = isempty(strfind(trial.name,filesep)); %|| ~isfield(trial,'name_mac');
+    if changeFileNames
+        error('On the wrong system');
+    end
+    % once all cells have been examined, next line can be commented out.
+    % changeFileNames = true;
+    
+    % Creating the data file and testing what platform I'm on and what the name should be
+    if ~exist(handles.prtclDataFileName,'file') || length(d.data) ~= length(rawfiles) || changeFileNames
+        createDataFileFromRaw(handles.prtclDataFileName);
+        %FlySoundDataStruct2csv(handles.prtclDataFileName);
+    end    
     protocolMenu_Callback(handles.protocolMenu, [], handles);
 end
 
+function CorrectFileNames(handles)
+
+rawfiles = dir(fullfile(handles.dir,'*_Raw*.mat'));
+
+for f = 1:length(rawfiles)
+    trial = load(fullfile(handles.dir,rawfiles(f).name));
+    trial.name = fullfile(handles.dir,rawfiles(f).name);
+    % trial = setRawFilePath(trial);
+    save(trial.name,'-struct','trial');
+    
+    if mod(f,20)==0
+        fprintf('%d: Saving %s\n',f,trial.name);
+    end
+end
+
+
+    
 
 function protocolMenu_Callback(hObject, eventdata, handles)
 protocols = get(hObject,'String');
@@ -208,7 +281,7 @@ set(handles.probetrace_button,'Value',0);
 
 % give handles the information on the Trials involved
 rawfiles = dir(fullfile(handles.dir,[handles.currentPrtcl '_Raw*']));
-if length(rawfiles)==0
+if isempty(rawfiles)
     
     contProtocolMenu_callback(hObject,eventdata,handles);
     return
@@ -221,23 +294,11 @@ dfile = regexprep(dfile,'_Raw','');
 handles.prtclDataFileName = fullfile(handles.dir,dfile);
 
 dataFileExist = dir(handles.prtclDataFileName);
-if length(dataFileExist)
+if ~isempty(dataFileExist)
     d = load(handles.prtclDataFileName);
-end
-
-trial = load(fullfile(handles.dir,rawfiles(1).name));
-changeFileNames = isempty(strfind(trial.name,filesep)); %|| ~isfield(trial,'name_mac');
-if changeFileNames
-    error('On the wrong system');
-end
-% once all cells have been examined, next line can be commented out.
-% changeFileNames = true;
-
-% Creating the data file and testing what platform I'm on and what the name should be
-if ~length(dataFileExist) || length(d.data) ~= length(rawfiles) || changeFileNames
-    createDataFileFromRaw(handles.prtclDataFileName);
-    %FlySoundDataStruct2csv(handles.prtclDataFileName);
-    d = load(handles.prtclDataFileName);
+else
+    createDataFileFromRaw(handles.prtclDataFileName,'one');
+    error('Should have created a Data File in loadCellFromDir function above')
 end
 
 handles.prtclData = d.data;
@@ -337,7 +398,7 @@ handles.params = handles.prtclData(handles.prtclTrialNums==handles.currentTrialN
 if ~isfield(handles.trial,'excluded')
     handles.trial.excluded = 0;
     trial = handles.trial;
-    save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
+    save(trial.name, '-struct', 'trial');
 end
 set(handles.exclude,'value',handles.trial.excluded);
 if ismac
@@ -403,7 +464,7 @@ if get(handles.showmenu_chkbx,'value')
     showMenu_Callback(hObject, eventdata, handles)
 else
     feval(str2func(handles.quickShowFunction),handles.quickShowPanel,handles,savetag);
-    if isfield(handles.trial,'exposure') && (isfield(handles.trial,'imageNum') || 7 == exist(regexprep(regexprep(handles.trial.name(1:end-4),'Raw','Images'),'Acquisition','Raw_Data')))
+    if isfield(handles.trial,'exposure') && (isfield(handles.trial,'imageNum') || 7 == exist(regexprep(handles.trial.name(1:end-4),'Raw','Images')))
         if isempty(findobj('String','Image','Style','pushbutton'))
             obj = copyobj(handles.loadstr_button,get(handles.loadstr_button,'parent'));
             pos = get(obj,'position');
@@ -732,11 +793,23 @@ else
     if isfield(h.trial,'excluded') && h.trial.excluded
         fprintf(' * Bad movie: %s\n',h.trial.name)
     else
-        [h.trial,response] = probeLineROI(h.trial);
-        if strcmp(response,'Cancel')
-            return
+        butt = questdlg('Track Probe?','Track probe', 'Cancel');
+        switch butt
+            case 'Yes'            
+                [h.trial,response] = probeLineROI(h.trial);
+                h.trial = smoothOutBrightPixels(h.trial);
+                if strcmp(response,'Cancel')
+                    return
+                end
+            case 'No'
+                h.probetrace_button.Value = 0;
+                guidata(probebutt,h)
+                return
+            case 'Cancel'
+                h.probetrace_button.Value = 0;
+                guidata(probebutt,h)
+                return
         end
-        h.trial = smoothOutBrightPixels(h.trial);
     end
    
     if isfield(h.trial ,'forceProbe_line') && isfield(h.trial,'forceProbe_tangent') && (~isfield(h.trial,'excluded') || ~h.trial.excluded) && ~isfield(h.trial,'forceProbeStuff')
@@ -757,6 +830,63 @@ else
 end
 
 guidata(probebutt,h)
+%quickShow_Protocol(h.trialnum, eventdata, h)
+
+
+% --- Executes on button press in showroitraces.
+function showroitraces_Callback(roibutt, eventdata, h) %#ok<*INUSL>
+s = findobj(h.quickShowPanel,'type','line','tag','roiTrace');
+if ~isempty(s)
+    delete(s);
+end
+if ~roibutt.Value
+    return
+end
+
+% Check if this trial has a probe vector
+if isfield(h.trial,'clustertraces')
+    ax = findobj(h.quickShowPanel,'type','axes','tag','quickshow_outax');
+    if isempty(ax)
+        error('Clear panel, go to quickShow visualization\n')
+    end
+    delete(ax.Children)
+    t = makeInTime(h.trial.params);
+    h2 = postHocExposure(h.trial,length(h.trial.forceProbeStuff.CoM));
+    frame_times = t(h2.exposure);
+    
+    if isfield(h.trial.forceProbeStuff,'ZeroForce')
+        plot(ax.XLim,[1 1]*h.trial.forceProbeStuff.ZeroForce,'color',.9 *[1 1 1],'tag','ProbeTrace'); hold(ax,'on');
+    end
+    plot(ax,frame_times,h.trial.forceProbeStuff.CoM(1:length(frame_times)),'color',[0 .2 0],'tag','ProbeTrace'), hold(ax,'on');
+
+    inax = findobj(h.quickShowPanel,'type','axes','tag','quickshow_inax');
+    ax.XLim = inax.XLim;
+    
+    % enable for other trials
+else 
+    beep
+    if isfield(h.trial,'excluded') && h.trial.excluded
+        fprintf(' * Bad movie: %s\n',h.trial.name)
+    end
+   
+    if isfield(h.trial ,'forceProbe_line') && isfield(h.trial,'forceProbe_tangent') && (~isfield(h.trial,'excluded') || ~h.trial.excluded) && ~isfield(h.trial,'forceProbeStuff')
+        fprintf('%s\n',h.trial.name);
+        %fprintf('%s\n','Need to figure out if this is a 2X or 5X objective');
+        trial = h.trial;
+        probeTrackROI_IR;
+        h.trial = trial;
+        guidata(roibutt,h)
+        trialnum_Callback(h.trialnum, eventdata, h)
+
+    elseif isfield(h.trial,'forceProbeStuff')
+        fprintf('\t* Already detected the probe (delete probe stuff from quickshow window): %s\n',h.trial.name);
+    else
+        fprintf('\t* Bad movie: No line or tangent: %s\n',h.trial.name);
+    end
+
+end
+
+guidata(roibutt,h)
 %quickShow_Protocol(h.trialnum, eventdata, h)
 
 
@@ -787,16 +917,19 @@ end
 
 hasnotes = false;
 hasmats = false;
-files = dir(handles.dir);
-for f = 1:length(files)
-    if ~isempty(strfind(files(f).name,'notes')) && ~isempty(strfind(files(f).name,'.txt'))
-        hasnotes = true;
-    end
-    if ~isempty(strfind(files(f).name,'.mat'))
-        hasmats = true;
-    end
+hasAcq = false;
+if ~isempty(dir(fullfile(handles.dir,'notes*.txt')))
+    hasnotes = true;
 end
-if ~isempty(strfind(handles.dir,'Raw_Data')) && hasnotes && hasmats
+if ~isempty(dir(fullfile(handles.dir,'Acquisition*.mat')))
+    hasAcq = true;
+end
+if ~isempty(dir(fullfile(handles.dir,'*_Raw_*.mat')))
+    hasmats = true;
+end
+
+%% Shouln't matter where the folder is, the file names should just match the location
+if hasAcq && hasnotes && hasmats
 % test if folder is in Acquisition, has a data, contains mat files and
     % a notes file
     handles.isInCellDirLogical = true;
@@ -857,7 +990,7 @@ set(handles.infoPanel,'string',out)%,'position',position);
 function loadstr_button_Callback(hObject, eventdata, handles)
 % An earlier version printed the script for the quickShow function 4/27/15
 handles = guidata(hObject);
-evalin('base', ['trial = load(''' regexprep(handles.trial.name,'Acquisition','Raw_Data') ''')']);
+evalin('base', ['trial = load(''' handles.trial.name ''')']);
 clipboard('copy',sprintf('trial = load(''%s'');\n',(fullfile(handles.dir, sprintf(handles.trialStem,handles.currentTrialNum)))));
 
 
@@ -917,13 +1050,6 @@ function showmenu_chkbx_Callback(hObject, eventdata, handles) %#ok<*INUSD>
 handles = guidata(hObject);
 set(handles.analyses_chckbox,'value',0);
 guidata(hObject, handles);
-
-% --- Executes on button press in trialpath.
-function trialpath_Callback(hObject, eventdata, handles) %#ok<*INUSL>
-fprintf('%%*********************\n');
-fprintf('''%s'';\n',(fullfile(handles.dir, sprintf(handles.trialStem,handles.currentTrialNum))))
-clipboard('copy',sprintf('''%s'';\n',(fullfile(handles.dir, sprintf(handles.trialStem,handles.currentTrialNum)))));
-
 
 % --- Executes button press in Combine Blocks.
 function combineblocks_Callback(hObject, eventdata, handles) %#ok<*DEFNU>
@@ -1005,14 +1131,14 @@ for prt_ind = 1:length(handles.prtclData)
         handles.prtclData(prt_ind).combinedTrialBlock = handles.trial.params.trialBlock;
         trial = load(fullfile(handles.dir,sprintf(handles.trialStem,handles.prtclData(prt_ind).trial)));
         trial.params.combinedTrialBlock = handles.trial.params.trialBlock;
-        save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
+        save(trial.name, '-struct', 'trial');
     else 
         handles.prtclData(prt_ind).combinedTrialBlock = 0;
         trial = load(fullfile(handles.dir,sprintf(handles.trialStem,handles.prtclData(prt_ind).trial)));
         if isfield('trial.params','combinedTrialBlock')
             trial.params = rmfield(trial.params,'combinedTrialBlock');
         end
-        save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
+        save(trial.name, '-struct', 'trial');
     end
 
 end
@@ -1033,7 +1159,7 @@ else
     fprintf('Trial %g included\n',handles.trial.params.trial);
 end
 trial = handles.trial;
-save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
+save(trial.name, '-struct', 'trial');
 guidata(hObject,handles)
 
 % --- Executes on button press in allow_excluding.
@@ -1051,7 +1177,7 @@ guidata(hObject,handles)
 % --- Executes on button press in image_button.
 function image_button_Callback(hObject, eventdata, handles)
 handles = guidata(hObject);
-vid = VideoReader(regexprep(handles.trial.imageFile,'Acquisition','Raw_Data'));
+vid = VideoReader(handles.trial.imageFile);
 imstr = sprintf('Video Reader Info, trial %d:\nDuration: %.2f\nFrameRate: %.2f\nSize: %d x %d x %.0f',...
     handles.trial.params.trial,...
     vid.Duration,...
@@ -1114,14 +1240,14 @@ handles.trial.tags = s;
 if strcmp(button,'Yes')
     nums = findLikeTrials_includingExcluded('name',handles.trial.name,'datastruct',handles.prtclData,...
         'exclude',{'step','amp','displacement','freq','speed'});
-    for n_ind = 1:length(nums);
+    for n_ind = 1:length(nums)
         trial = load(fullfile(handles.dir,sprintf(handles.trialStem,nums(n_ind))));
         trial.tags = s;
-        save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
+        save(trial.name, '-struct', 'trial');
     end
 else
     trial = handles.trial;
-    save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
+    save(trial.name, '-struct', 'trial');
 end
 guidata(hObject, handles);
 trialnum_Callback(handles.trialnum, eventdata, handles)
@@ -1172,7 +1298,7 @@ switch button
         annotation{idx,3} = answer{1}{1};
         handles.trial.annotation = annotation;
         trial.annotation = annotation;
-        save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
+        save(trial.name, '-struct', 'trial');
         guidata(hObject,handles)
         showAnnotations(hObject);
     otherwise
@@ -1302,7 +1428,7 @@ if isfield(handles.trial,'badmovie')
         case 'Yes'
             trial = rmfield(handles.trial,'badmovie');
             trial = rmfield(trial,'badmoviecomment');
-            save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
+            save(trial.name, '-struct', 'trial');
             handles.trial = trial;
             guidata(hObject, handles);
             return
@@ -1317,7 +1443,7 @@ else
     handles.trial.badmovie = 1;
     handles.trial.badmoviecomment = reason;
     trial = handles.trial;
-    save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
+    save(trial.name, '-struct', 'trial');
     guidata(hObject, handles);
     return
 end
@@ -1408,14 +1534,14 @@ if strcmp(button,'Yes')
     nums = findLikeTrials_includingExcluded('name',handles.trial.name,'datastruct',handles.prtclData,...
         'exclude',{'step','amp','displacement','freq'});
     ex = handles.trial.excluded;
-    for n_ind = 1:length(nums);
+    for n_ind = 1:length(nums)
         trial = load(fullfile(handles.dir,sprintf(handles.trialStem,nums(n_ind))));
         trial.excluded = ex;
-        save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
+        save(trial.name, '-struct', 'trial');
     end
 else
     trial = handles.trial;
-    save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
+    save(trial.name, '-struct', 'trial');
 end
 
 guidata(hObject, handles);
@@ -1445,7 +1571,7 @@ if strcmp(button,'Yes')
             trial = rmfield(trial,'spikeSpotChecked');
         end
 
-        save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
+        save(trial.name, '-struct', 'trial');
         fprintf('%d spikes removed from trial %d\n',d,trial.params.trial);
         
     end
@@ -1463,7 +1589,7 @@ else
         trial = rmfield(trial,'spikeDetectionParams');
         fprintf('Spike params removed\n');
     end
-    save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
+    save(trial.name, '-struct', 'trial');
     handles.trial = trial;
     fprintf('Spikes removal complete\n');
         
@@ -1514,13 +1640,13 @@ handles = guidata(hObject);
 if strcmp(button,'Yes')
     nums = findLikeTrials_includingExcluded('name',handles.trial.name,'datastruct',handles.prtclData,...
         'exclude',{'step','amp','displacement','freq'});
-    for n_ind = 1:length(nums);
+    for n_ind = 1:length(nums)
         trial = load(fullfile(handles.dir,sprintf(handles.trialStem,nums(n_ind))));
         trial = rmfield(trial,'kmeans_ROI');
         trial = rmfield(trial,'kmeans_threshold');
         trial = rmfield(trial,'clmask');
         trial = rmfield(trial,'clustertraces');
-        save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
+        save(trial.name, '-struct', 'trial');
     end
 else
     trial = handles.trial;
@@ -1528,7 +1654,7 @@ else
     trial = rmfield(trial,'kmeans_threshold');
     trial = rmfield(trial,'clmask');
     trial = rmfield(trial,'clustertraces');
-    save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
+    save(trial.name, '-struct', 'trial');
     handles.trial = trial;
 end
 
@@ -1548,13 +1674,13 @@ if strcmp(button,'Yes')
         catch e, fprintf('%s\n',e.message); 
         end
         try trial = rmfield(trial,'forceProbe_tangent'); catch e, fprintf('%s\n',e.message); end
-        save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
+        save(trial.name, '-struct', 'trial');
     end
 else
     trial = handles.trial;
         try trial = rmfield(trial,'forceProbe_line'); catch e, fprintf('%s\n',e.message); end
         try trial = rmfield(trial,'forceProbe_tangent'); catch e, fprintf('%s\n',e.message); end
-    save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
+    save(trial.name, '-struct', 'trial');
     handles.trial = trial;
 end
 
@@ -1572,7 +1698,7 @@ if strcmp(button,'Yes')
     for n_ind = 1:length(nums)
         trial = load(fullfile(handles.dir,sprintf(handles.trialStem,nums(n_ind))));
         trial = rmfield(trial,'forceProbeStuff');
-        save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
+        save(trial.name, '-struct', 'trial');
     end
 else
     trial = handles.trial;
@@ -1585,7 +1711,7 @@ else
             error(e)
         end
     end
-    save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
+    save(trial.name, '-struct', 'trial');
     handles.trial = trial;
 end
 
@@ -1600,7 +1726,7 @@ handles = guidata(hObject);
 if strcmp(button,'Yes')
     trial = handles.trial;
     trial = rmfield(trial,'annotation');
-    save(regexprep(trial.name,'Acquisition','Raw_Data'), '-struct', 'trial');
+    save(trial.name, '-struct', 'trial');
     handles.trial = trial;
 end
 

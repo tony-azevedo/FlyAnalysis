@@ -72,59 +72,19 @@ abvthresh1D = abvthresh(:);
 
 hOVM = alphamask(abvthresh, [0 0 1],.1,dispax);
 
-%% create a mask for the bar, if it's there
-% the bar line turns into a rectangle centered on the intersection point
-if isfield(trial,'forceProbeStuff')
-    l = trial.forceProbe_line;
-    p = trial.forceProbe_tangent;
-    l_0 = l - repmat(mean(l,1),2,1);
-    p_0 = p - mean(l,1);
-    
-    % for my purposes, get the line equation (m,b)
-    m = diff(l(:,2))/diff(l(:,1));
-    b = l(1,2)-m*l(1,1);
-    
-    % find y vector
-    barbar = l_0(2,:)/norm(l_0(2,:));
-    barside = [barbar*norm(l_0(2,:));barbar*-norm(l_0(2,:))];
-    
-    % project tangent point
-    p_scalar = barbar*p_0';
-    
-    % find intercept, recenter
-    p_ = p_scalar*barbar+mean(l,1);
-    
-    % rotate coordinates
-    R = [cos(pi/2) -sin(pi/2);
-        sin(pi/2) cos(pi/2)];
-    l_r = (R*l_0')'/4;
-    upperright_ind = find(l_r(:,1)>l_r(:,2));
-    x = l_r(upperright_ind,:)/norm(l_r(upperright_ind,:));
-    l_r = l_r + repmat(p_,2,1);
-    
-    barright = barside+repmat(x*trial.forceProbeStuff.barmodel(3)*2,2,1);
-    barleft = barside+repmat(x*-trial.forceProbeStuff.barmodel(3)*2,2,1);
-    
-    line(barright(:,1)+trial.forceProbeStuff.Origin(1),barright(:,2)+trial.forceProbeStuff.Origin(2),'parent',dispax,'color',[.7 .7 .7]);
-    line(barleft(:,1)+trial.forceProbeStuff.Origin(1),barleft(:,2)+trial.forceProbeStuff.Origin(2),'parent',dispax,'color',[1 .7 .7]);
-    
-    bar = [barright;flipud(barleft)];
-    barmask = poly2mask(bar(:,1)+trial.forceProbeStuff.Origin(1),bar(:,2)+trial.forceProbeStuff.Origin(2),size(smooshedframe,1),size(smooshedframe,2));
-    
-    im = imshow(smooshedframe,[0 quantile(smooshedframe(:),0.975)],'parent',dispax); hold(dispax,'on');
-    % im = imshow(barmask,[],'parent',dispax);
-    barshadow = alphamask(barmask, [1 1 0],.3,dispax);
-end
-
 
 %% open the video and create a matrix for the pixels in ROI X total frames
 vid.CurrentTime = t_i;
 N = vid.Duration*vid.FrameRate;
-h2 = postHocExposure(trial,N);
 t = makeInTime(trial.params);
 % t_i = 0.05;
 t_f = trial.params.stimDurInSec-5*1/vid.FrameRate;
-frames = find(t(h2.exposure)>t_i & t(h2.exposure)<t_f);
+
+cam2 = postHocExposure2(trial,N);
+frames = find(t(cam2.exposure2)>t_i & t(cam2.exposure2)<t_f);
+
+cam1 = postHocExposure(trial,length(trial.legPositions.Tibia_Angle));
+cam1frametimes = t(cam1.exposure);
 
 fctr = vid.FrameRate/50; % pretend you're sampling at 50 hz;
 N = floor(length(frames)/fctr); % average over enough frames to make it 50 Hz 
@@ -150,11 +110,20 @@ for chnk_idx = 1:chnksz:length(trialnumlist)
         vid.CurrentTime = t_i;       
 
         frmcnt = 0;
+        ta = trial.legPositions.Tibia_Angle;
+        
         while frmcnt < N 
             frmcnt = frmcnt+1;
             % fprintf('frmcnt %d: ',frmcnt);
             
             frmrgb = readFrame(vid);
+                
+            cam1FrameTimesOverCam2Frame = cam1frametimes > vid.CurrentTime - 1/vid.FrameRate & cam1frametimes <= vid.CurrentTime;
+            anglesOverFrames = ta(cam1FrameTimesOverCam2Frame);
+                
+            if any(anglesOverFrames < 35)
+                continue;
+            end
             if length(size(frmrgb))==2
                 frm = double(frmrgb(:,:,1));
             else
@@ -262,10 +231,12 @@ for chnk_idx = 1:chnksz:length(trialnumlist)
 
     for t_idx = chnk_idx:tr_idx
         trial = load(sprintf(trialStem,trialnumlist(t_idx)));
-        trial.clmask = clmask_N;
+        fprintf('%s\n',trial.name);
+        trial.clmask = clmask;
         save(trial.name, '-struct', 'trial')
     end
-    
+    setacqpref('quickshowPrefs','clmask',trial.clmask);
+
     delete(br);
 end
 

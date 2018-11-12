@@ -1,73 +1,36 @@
-function spikeThresholdUpdateGUI(disttreshfig,norm_detectedSpikeCandidates,spikeWaveforms)
+function eventAmplitudeUpdateGUI(disttreshfig,norm_detectedSpikeCandidates,spikeWaveforms)
 global squiggles
 global spikes
 
 squiggles = norm_detectedSpikeCandidates;
 spikes = spikeWaveforms;
 
-ax_main = findobj(disttreshfig,'Tag','main');
+% set(suspect_ls(suspect),'color',[0 0 0])
 ax_hist = findobj(disttreshfig,'Tag','hist');
 ax_detect = findobj(disttreshfig,'Tag','detect');
 
 ax_hist.ButtonDownFcn = @updateSpikeThreshold;
 ax_detect.ButtonDownFcn = @runDetectionWithNewTemplate;
 
-title(ax_main,'When done, hit a button')
-
-title(ax_hist,'Click to change distance threshold (X-axis)');
 updateSpikeThreshold(ax_hist,[])
-
-while ~waitforbuttonpress;end
-
-ax_hist.ButtonDownFcn = @updateAmpThreshold;
-ax_detect.ButtonDownFcn = [];
-
-title(ax_hist,'Click to change amplitude threshold (Y-axis)');
-title(ax_detect,'');
-
-updateAmpThreshold(ax_hist,[])
-while ~waitforbuttonpress;end
-
 end
 
 function updateSpikeThreshold(hObject,eventdata)
 global vars 
+global squiggles
+global spikes
 
+disttreshfig = get(hObject,'parent');
 if ~isempty(eventdata) && hObject==eventdata.Source
     vars.Distance_threshold = hObject.CurrentPoint(1);
 end
-
-updatePanels(hObject,[])
-end
-
-function updateAmpThreshold(hObject,eventdata)
-global vars 
-global goodspikeamp
-if isempty(goodspikeamp)
-    error('No goodspikeamp');
-end
-
-if ~isempty(eventdata) && hObject==eventdata.Source
-    vars.Amplitude_threshold = hObject.CurrentPoint(1,2)/goodspikeamp;
-end
-
-updatePanels(hObject,[])
-end
-
-
-function updatePanels(hObject,~)
-
-global vars 
-global squiggles
-global spikes
-global goodspikeamp
-
-disttreshfig = get(hObject,'parent');
-
+    
 ax_main = findobj(disttreshfig,'Tag','main');
 ax_hist = findobj(disttreshfig,'Tag','hist');
 ax_detect = findobj(disttreshfig,'Tag','detect');
 ax_detect_patch = findobj(disttreshfig,'Tag','detect_patch');
+
+title(ax_main,'When done, close window')
 
 ax_fltrd_suspect = findobj(disttreshfig,'Tag','fltrd_suspect');
 ax_unfltrd_suspect = findobj(disttreshfig,'Tag' ,'unfltrd_suspect');
@@ -76,24 +39,18 @@ ax_unfltrd_notsuspect = findobj(disttreshfig,'Tag','unfltrd_notsuspect');
 
 suspect_ls = findobj(ax_detect,'Tag','squiggles'); suspect_ls = flipud(suspect_ls);
 suspect_dots = findobj(ax_main,'Tag','dots'); suspect_dots = flipud(suspect_dots);
-suspectUF_ls = findobj(ax_detect_patch,'Tag','spikes'); suspectUF_ls = flipud(suspectUF_ls); 
-suspectUF_avel = findobj(ax_detect_patch,'color',[0 .7 1],'linewidth',2);
-if isempty(goodspikeamp)
-    goodspikeamp = suspectUF_avel.UserData;
-end
+suspectUF_ls = findobj(ax_detect_patch,'Tag','spikes'); suspectUF_ls = flipud(suspectUF_ls);
 
-distthresh_l = findobj(ax_hist,'tag','dist_threshold');
-distthresh_l.XData = vars.Distance_threshold*[1 1];
-ampthresh_l = findobj(ax_hist,'tag','amp_threshold');
-ampthresh_l.YData = vars.Amplitude_threshold*goodspikeamp*[1 1];
+thresh_l = findobj(ax_hist,'tag','threshold');
+thresh_l.XData = vars.Distance_threshold*[1 1];
 
-threshidx = findobj(ax_hist,'tag','distance_hist'); threshidx = threshidx.UserData; %threshidx = threshidx(:)';
-suspect = threshidx(:,1)<vars.Distance_threshold & threshidx(:,2) > vars.Amplitude_threshold*goodspikeamp;
+threshidx = findobj(ax_hist,'tag','distance_hist'); threshidx = threshidx.UserData; threshidx = threshidx(:)';
+suspect = threshidx<vars.Distance_threshold;
 
 set(suspect_ls(suspect),'color',[0 0 0])
 set(suspect_ls(~suspect),'color',[1 0 0])
-set(suspect_dots(suspect),'color',[0 0 0],'linewidth',1)
-set(suspect_dots(~suspect),'color',[1 0 0],'linewidth',.5)
+set(suspect_dots(suspect),'color',[0 0 0],'linewidth',.5)
+set(suspect_dots(~suspect),'color',[1 0 0],'linewidth',2)
 set(suspectUF_ls(suspect),'color',[0 0 0])
 set(suspectUF_ls(~suspect),'color',[1 0 0])
 
@@ -163,10 +120,13 @@ suspect_dots = findobj(ax_main,'Tag','dots'); suspect_dots = flipud(suspect_dots
 suspectUF_ls = findobj(ax_detect_patch,'Tag','spikes'); suspectUF_ls = flipud(suspectUF_ls);
 all_filtered_data = findobj(ax_filtered,'Tag','filtered_data'); all_filtered_data = all_filtered_data.YData;
 
-hist = findobj(ax_hist,'Tag','distance_hist');
-selectcriteria = hist.UserData;
-spike_locs = selectcriteria(:,3);
-targetSpikeDist = selectcriteria(:,1);
+if length(suspect_dots)==1
+    spike_locs = get(suspect_dots,'XData')-get(suspect_dots(1),'userdata');
+else
+    spike_locs = cell2mat(get(suspect_dots,'XData'))-get(suspect_dots(1),'userdata');
+end
+spike_locs = unique(spike_locs);
+targetSpikeDist = zeros(size(spike_locs));
 
 meansquiggle = findobj(ax_detect,'tag','potential_template');
 initsquiggle = findobj(ax_detect,'tag','initial_template');
@@ -191,10 +151,8 @@ for i=1:length(spike_locs)
 end
 
 hist = findobj(ax_hist,'Tag','distance_hist');
-hist.XData = targetSpikeDist;
-
-selectcriteria(:,1) = targetSpikeDist;
-hist.UserData = selectcriteria;
+hist.XData = sort(targetSpikeDist);
+hist.UserData = targetSpikeDist;
 
 vars.spikeTemplate = spikeTemplate;
 vars.locs = spike_locs;

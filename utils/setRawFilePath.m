@@ -93,7 +93,7 @@ else
     error('No filename has the file separator character')
 end
 
-if ~strcmp(n0,t.name);
+if ~strcmp(n0,t.name)
     trial = t;
     save(trial.name, '-struct', 'trial');
     fprintf('Saving Raw file - \nname: %s...%s...%s; \npc: %s...%s; \nmac: %s...%s\n',...

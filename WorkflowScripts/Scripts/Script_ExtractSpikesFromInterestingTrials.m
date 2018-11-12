@@ -3,14 +3,14 @@
 % for now, use trials in the sets
 close all
 % Go through all the sets of trials
-for set = 1:Nsets 
-    fprintf('\n\t***** Batch %d of %d\n',set,Nsets);
-    trialnumlist = trials{set};
+for setidx = 1:Nsets 
+    fprintf('\n\t***** Batch %d of %d\n',setidx,Nsets);
+    trialnumlist = trials{setidx};
         
     % Do a little investigation of filter properties on a couple of trials
     % first
     spikevars_cell = cell(3,1); cnt = 0;
-    for tr_idx = trialnumlist([ 1 4 5])%(1:6) % ([ 1 4 5])%
+    for tr_idx = trialnumlist(1:6) % ([ 1 4 5])%
         trial = load(sprintf(trialStem,tr_idx)); 
                 
         fprintf('%s\n',trial.name);
@@ -38,19 +38,31 @@ for set = 1:Nsets
     end
     
     thresh = 0;
-    peak = Inf;
+    ampthresh = Inf;
+    peak = 0;
     spikeTemplate = zeros(size(spikevars.spikeTemplate));
     for cnt = 1:length(spikevars_cell)
         thresh = max([thresh,spikevars_cell{cnt}.Distance_threshold]);
-        peak = min([peak,spikevars_cell{cnt}.peak_threshold]);
+        ampthresh = min([ampthresh,spikevars_cell{cnt}.Amplitude_threshold]);
+        peak = max([peak,spikevars_cell{cnt}.peak_threshold]);
         spikeTemplate = spikeTemplate + spikevars_cell{cnt}.spikeTemplate;
     end
     spikevars.spikeTemplate = spikeTemplate/cnt;
     spikevars.Distance_threshold = thresh;
     spikevars.peak_threshold = peak;
+    spikevars.Amplitude_threshold = ampthresh;
     
     [distancestructure] = spikeDetectionBatch(trialStem,trialnumlist,invec1,spikevars);
     if ~isempty(distancestructure.trialnumids)
     close all; spikeSpotCheckBatch(trialStem,trialnumlist,invec1,'spikes',distancestructure);
     end
 end
+% x = distancestructure.targetSpikeDist_acrossCells;
+% y = distancestructure.spikeAmplitude_acrossCells;
+% 
+% figure
+% h2 = histogram2(x,y)
+% [n,c] = hist3([x, y],[30,30]);
+% scatter(x,y,'.k'); 
+% hold on
+% contour(c{1},c{2},n)

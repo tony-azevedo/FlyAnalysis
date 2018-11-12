@@ -323,8 +323,8 @@ if filtered_mu(lefthash)>coef(1)+dark  % right side of the bar comes up too much
     bar_threshold_left = 3/4;%
     fprintf('\t\tWeight the left side of bar\n');
 else
-    bar_threshold_right = 3/4;%
-    bar_threshold_left = 3/4;%
+    bar_threshold_right = 23/32;%
+    bar_threshold_left = 19/32;%
     fprintf('\t\tWeight the left and right of bar equally\n');
 end
 
@@ -568,14 +568,19 @@ while hasFrame(vid)
     % find the dark values
     dark = mean(filtered_frame_mu(filtered_frame_mu<quantile(filtered_frame_mu(:),0.12)));
     
-    if filtered_frame_mu(righthash) < filtered_frame_mu(trough)
-        [pk,loc] = max(filtered_frame_mu(trough:righthash)-dark);
-        loc = loc+trough;
-    else
-        [pk,loc] = max(filtered_frame_mu(trough:lefthash)-dark);
-        loc = loc+trough;
-    end
+%     if filtered_frame_mu(righthash) < filtered_frame_mu(trough)
+%         [pk,loc] = max(filtered_frame_mu(trough:righthash)-dark);
+%         loc = loc+trough;
+%     else
+%         [pk,loc] = max(filtered_frame_mu(trough:lefthash)-dark);
+%         loc = loc+trough;
+%     end
 
+    [pks,locs] = findpeaks(filtered_frame_mu-dark,'MinPeakWidth',length(filtered_frame_mu)/50,'MinPeakProminence',2); %/30);
+    [~,loc] = min(abs(locs-com));
+    pk = pks(loc);
+    loc = locs(loc);
+    
     % 9) Assume the shape of the bar doesn't change and get the CoM of the
     % fullwidth @ 67% max, hopefully this will eliminate the weird jumping of
     % the bar
