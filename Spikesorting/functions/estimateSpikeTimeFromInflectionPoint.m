@@ -17,7 +17,7 @@ for sp = 1:size(spikeWaveforms,2)
 end
 
 goodspikes = targetSpikeDist<quantile(targetSpikeDist,.25);
-if sum(goodspikes<4)
+if sum(goodspikes)<4
     goodspikes(:) = 1;
 end
 spikeWaveform = mean(spikeWaveforms(:,goodspikes),2);
@@ -37,7 +37,6 @@ spikes =  vars.locs;
 
 ipps = nan(size(spikes));
 
-
 %% Debug figure
 debug = 0;
 if debug
@@ -50,8 +49,12 @@ if debug
     set(gca,'YLim',[-.1 1.1]);
 end
 %%
+% for i = 1:length(spikes)
+%     spikes(i) = spikes(i)+spikewindow(inflPntPeak_ave);
+% end
 
 for i = 1:length(spikes)
+
     if targetSpikeDist(i)>vars.Distance_threshold
         % Don't correct the spike if it is above the distance
         % threshold and there is another spike nearby
@@ -62,18 +65,16 @@ for i = 1:length(spikes)
         end
     end
     
+    start_idx = vars.fs/10000*20; % 50 for fs - 50k, 10 for fs - 10k
+    end_idx = vars.fs/10000*10;
+
     detectedSpikeWaveform = spikeWaveforms(:,i);
     detectedSpikeWaveform = smooth(detectedSpikeWaveform-detectedSpikeWaveform(1),vars.fs/2000);
     detectedSpikeWaveform_ = smoothAndDifferentiate(detectedSpikeWaveform,vars.fs/2000);
     
     % normalize
-    detectedSpikeWaveform_ = (detectedSpikeWaveform_-min(detectedSpikeWaveform_))/diff([min(detectedSpikeWaveform_) max(detectedSpikeWaveform_)]);
-    
-    % see how this works:
-    % really narrow the interest range
-    start_idx = vars.fs/10000*10; % 50 for fs - 50k, 10 for fs - 10k
-    end_idx = vars.fs/10000*10;
-    
+    detectedSpikeWaveform_ = (detectedSpikeWaveform_-min(detectedSpikeWaveform_(start_idx+1:end-end_idx)))/diff([min(detectedSpikeWaveform_(start_idx+1:end-end_idx)) max(detectedSpikeWaveform_(start_idx+1:end-end_idx))]);
+        
     idx_i = round(vars.spikeTemplateWidth/4);
     
     [pks,inflPntPeak] = findpeaks(detectedSpikeWaveform_(start_idx+1:end-end_idx),'MinPeakProminence',0.02);
@@ -83,37 +84,37 @@ for i = 1:length(spikes)
         inflPntPeak = inflPntPeak(abs(inflPntPeak-vars.likelyiflpntpeak)==min(abs(inflPntPeak-vars.likelyiflpntpeak)));
     end
     
-    if length(inflPntPeak)==1
+    if length(inflPntPeak)==1 && inflPntPeak> vars.fs/10000*30 && inflPntPeak<length(detectedSpikeWaveform_)-end_idx
         ipps(i) = inflPntPeak;
         spikes(i) = spikes(i)+spikewindow(inflPntPeak);
     else
         % Peak of 2nd derivative is still undefined
         spikes(i) = spikes(i)+spikewindow(inflPntPeak_ave);
         
-        % if ~isempty(spikeWaveform_) && ~isempty(inflPntPeak_ave)
-        % use spike time closest to middle of template
-        if isempty(inflPntPeak)
-            % use spike time closest to middle of template
-            % much shallower peak
-            [~,inflPntPeak] = findpeaks(detectedSpikeWaveform_(idx_i+1:end-10),'MinPeakProminence',0.001);
-            inflPntPeak = inflPntPeak+idx_i;
-            if isempty(inflPntPeak)
-                continue
-            else
-                if numel(inflPntPeak)>=1
-                    inflPntPeak = inflPntPeak(abs(inflPntPeak-vars.likelyiflpntpeak)==min(abs(inflPntPeak-vars.likelyiflpntpeak)));
-                end
-            end
-            try spikes(i) = spikes(i)+spikewindow(inflPntPeak);
-            catch e
-                % somehow, two peaks are exactly the same distance from
-                % vars.likelyiflpntpeak, just pick one. This is not likely
-                % a spike
-                if strcmp(e.identifier,'MATLAB:subsassignnumelmismatch')
-                    spikes(i) = spikes(i)+spikewindow(inflPntPeak(randi(length(inflPntPeak),1)));
-                end
-            end
-        end
+        %         % if ~isempty(spikeWaveform_) && ~isempty(inflPntPeak_ave)
+        %         % use spike time closest to middle of template
+        %         if isempty(inflPntPeak)
+        %             % use spike time closest to middle of template
+        %             % much shallower peak
+        %             [~,inflPntPeak] = findpeaks(detectedSpikeWaveform_(idx_i+1:end-10),'MinPeakProminence',0.001);
+        %             inflPntPeak = inflPntPeak+idx_i;
+        %             if isempty(inflPntPeak)
+        %                 continue
+        %             else
+        %                 if numel(inflPntPeak)>=1
+        %                     inflPntPeak = inflPntPeak(abs(inflPntPeak-vars.likelyiflpntpeak)==min(abs(inflPntPeak-vars.likelyiflpntpeak)));
+        %                 end
+        %             end
+        %             try spikes(i) = spikes(i)+spikewindow(inflPntPeak);
+        %             catch e
+        %                 % somehow, two peaks are exactly the same distance from
+        %                 % vars.likelyiflpntpeak, just pick one. This is not likely
+        %                 % a spike
+        %                 if strcmp(e.identifier,'MATLAB:subsassignnumelmismatch')
+        %                     spikes(i) = spikes(i)+spikewindow(inflPntPeak(randi(length(inflPntPeak),1)));
+        %                 end
+        %             end
+        %         end
         
     end
     
@@ -139,6 +140,20 @@ if debug
 end
 %%
 
+[~,temp] = unique(spikes);
+% duplicate indices
+duplicate_idxs = setdiff(1:size(spikes(:), 1), temp);
+% duplicate values
+for idx = 1:length(duplicate_idxs)
+    duplicate_value = spikes(duplicate_idxs(idx));
+    repind = find(spikes==duplicate_value);
+    for ridx = 1:length(repind)
+        spikes(repind(ridx)) = spikes(repind(ridx))+ridx-1;
+    end
+end
+if length(unique(spikes))~=length(spikes)
+    warning('Still some duplicate spike values in estimateSpikeTimeFromInflectionPoint')
+end
 
 vars.locs = spikes;
 vars.spikeWaveform = spikeWaveform;

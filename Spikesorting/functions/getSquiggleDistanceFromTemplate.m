@@ -28,7 +28,7 @@ for i=1:length(spike_locs)
         [targetSpikeDist(i), ~,~] = dtw_WarpingDistance(norm_curSpikeTarget, norm_spikeTemplate);
     end
 end
-
+% ------------- First attempt to measure amplitude based on spike height ------------
 if numel(targetSpikeDist)>1
     goodSpikes = targetSpikeDist<=quantile(targetSpikeDist,.5);
 else
@@ -55,6 +55,24 @@ s_hat = s_hat(:);
 spikeAmplitude = ...
     (detectedUFSpikeCandidates(inflPntPeak_ave:end-idx_f,:) - ...
     repmat(detectedUFSpikeCandidates(inflPntPeak_ave,:),length(inflPntPeak_ave:stw-idx_f),1))' * s_hat;
+
+% ------------- Second attempt to measure amplitude based on squiggle height ------------
+if numel(targetSpikeDist)>1
+    goodSpikes = targetSpikeDist<=quantile(targetSpikeDist,.5);
+else
+    goodSpikes = 1;
+end
+detectedSpikeCandidates = detectedSpikeCandidates -repmat(mean(detectedSpikeCandidates,1),size(detectedSpikeCandidates,1),1);
+spikeCandidate = mean(detectedSpikeCandidates(:,goodSpikes),2);
+s_hat = spikeCandidate - spikeCandidate(1);
+s_hat = s_hat/abs(sum(s_hat));
+s_hat = s_hat(:);
+
+% squiggleAmplitude = detectedSpikeCandidates' * s_hat;
+squiggleAmplitude = max(detectedSpikeCandidates,[],1);
+
+squiggleAmplitude = squiggleAmplitude(:)/mean(squiggleAmplitude(goodSpikes))*mean(spikeAmplitude(goodSpikes));
+% spikeAmplitude = squiggleAmplitude;
 
 if any(isnan(detectedUFSpikeCandidates(:)))
     error('some of the spikes are at the edge of the data');

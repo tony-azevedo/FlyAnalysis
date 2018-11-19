@@ -1,4 +1,4 @@
-%% ForceProbe patcing workflow 180313_F1_C1
+%% ForceProbe patcing workflow 181014_F1_C1
 trial = load('F:\Acquisition\181014\181014_F1_C1\CurrentStep2T_Raw_181014_F1_C1_12.mat');
 [protocol,dateID,flynum,cellnum,trialnum,D,trialStem,datastructfile] = extractRawIdentifiers(trial.name);
 
@@ -34,11 +34,11 @@ trial = load('F:\Acquisition\181014\181014_F1_C1\EpiFlash2TTrain_Raw_181014_F1_C
 [~,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
 
 clear trials
-trials{1} = 1:10; % bar
-% trials{1} = 11:18; % no bar
-trials{2} = 19:22; % atropine
-trials{3} = 23:30; % atropine MLA
-trials{4} = 31:34; % atropine MLA
+% trials{1} = 1:10; % bar
+% trials{2} = 11:18; % no bar
+trials{1} = 19:34; % atropine
+% trials{4} = 23:30; % atropine MLA
+% trials{5} = 31:34; % atropine MLA
 
 
 Nsets = length(trials);
@@ -76,6 +76,48 @@ routine = {
     'probeTrackROI_IR' 
     };
 
+%% Piezo Steps, looking for changes in spike rate 
+
+trial = load('F:\Acquisition\181014\181014_F1_C1\PiezoStep2T_Raw_181014_F1_C1_4.mat');
+[~,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
+
+clear trials
+trials{1} = 4:213; % No MLA
+trials{2} = 214:255; % atropine in
+trials{3} = 256:297; % MLA and atropine
+
+Nsets = length(trials);
+    
+trial = load(sprintf(trialStem,6));
+% showProbeImage(trial)
+
+routine = {
+    'probeTrackROI_IR' 
+    'probeTrackROI_IR' 
+    'probeTrackROI_IR' 
+    };
+
+
+%% Piezo Ramps, looking for changes in spike rate 
+
+trial = load('F:\Acquisition\181014\181014_F1_C1\PiezoRamp2T_Raw_181014_F1_C1_2.mat');
+[~,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
+
+clear trials
+trials{1} = 1:308; % No MLA
+trials{2} = 309:364; % atropine in
+trials{3} = 365:420; % MLA and atropine
+
+Nsets = length(trials);
+    
+trial = load(sprintf(trialStem,6));
+% showProbeImage(trial)
+
+routine = {
+    'probeTrackROI_IR' 
+    'probeTrackROI_IR' 
+    'probeTrackROI_IR' 
+    };
 
 %% Run scripts one at a time
 

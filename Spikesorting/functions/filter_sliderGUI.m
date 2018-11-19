@@ -7,22 +7,24 @@ global vars;
 global patchax
 global filtax
 
-vars.unfiltered_data = unfiltered_data;
+% vars.unfiltered_data = unfiltered_data;
 thresh_pos = 840;
 lp_pos = 420;
 hp_pos = 20;
 
-vars.filtered_data = filterDataWithSpikes(vars);
+% vars.filtered_data = filterDataWithSpikes(vars);
 vars.locs = findSpikeLocations(vars);
 
 % Make a figure
 fig = figure('position',[100 100 1200 900], 'NumberTitle', 'off', 'color', 'w');
+fig.CloseRequestFcn = {@(hObject,eventdata,handles) disp('Hit enter')};
 
 patchax = axes(fig,'units','normalized','position',[0.1300 0.8500 0.7750 0.1]);
 plot(patchax,(1:vars.len),unfiltered_data(1:vars.len),'color',[0.8500    0.3250    0.0980]);
 ticks = raster(patchax,vars.locs,max(unfiltered_data(1:vars.len))+.02*diff([max(unfiltered_data(1:vars.len)),min(unfiltered_data(1:vars.len))]));
 set(ticks,'tag','ticks');
 title(patchax,'select filter params and threshold, then close window');  
+xlim(patchax,[1 vars.len]);
 
 filtax = axes(fig,'units','normalized','position',[0.1300 0.1100 0.7750 0.7150]);
 set(fig,'toolbar','figure');
@@ -35,18 +37,22 @@ uicontrol('Parent', fig,'Style', 'text', 'String', {'derivative (0-2)'}, 'Positi
 uicontrol('Parent', fig,'Style', 'text', 'String', {'polarity {-1, 1}'}, 'Position', [hp_pos 200 90 20]);
 
 % plot_unfilt = 2+2*(vars.unfiltered_data(1:vars.len)'-mean(vars.unfiltered_data(1:vars.len)))/max(abs(vars.unfiltered_data(1:vars.len)));
-plot_filt = (vars.filtered_data(1:vars.len)-mean(vars.filtered_data))/max(vars.filtered_data);
-plot_filt = (vars.filtered_data(1:vars.len))/max(vars.filtered_data);
+% plot_filt = (vars.filtered_data(1:vars.len)-mean(vars.filtered_data))/max(vars.filtered_data);
+% plot_filt = (vars.filtered_data(1:vars.len))/max(vars.filtered_data);
+plot_filt = vars.filtered_data(1:vars.len);
 plot_spikes = vars.locs(vars.locs<vars.len);
-plot_thresh = (vars.peak_threshold *std(vars.filtered_data)-mean(vars.filtered_data))/max(vars.filtered_data);
+% plot_thresh = (vars.peak_threshold *std(vars.filtered_data)-mean(vars.filtered_data))/max(vars.filtered_data);
+plot_thresh = vars.peak_threshold;
 
 hold(filtax,'off');
 axes(filtax);
 plot(filtax,plot_spikes, plot_filt(plot_spikes),'ro');hold on;
 plot(filtax,plot_filt,'k');hold on;
-plot(filtax,[1 vars.len],max(plot_filt)-[plot_thresh plot_thresh],'--','color',[.8 .8 .8]);%% uncomment to plot piezo signal or another channel
+% plot(filtax,[1 vars.len],max(plot_filt)-[plot_thresh plot_thresh],'--','color',[.8 .8 .8]);%% uncomment to plot piezo signal or another channel
+plot(filtax,[1 vars.len],[plot_thresh plot_thresh],'--','color',[.8 .8 .8]);%% uncomment to plot piezo signal or another channel
 
-% ylim(filtax,[-1 1]);
+ylim(filtax,[min(plot_filt) max(plot_filt)]);
+xlim(filtax,[1 vars.len]);
 
 hp_filter_Slider = uicontrol('Parent', fig,'Style','slider','Min',0.5,'Max',1000,...
                 'SliderStep',[0.001 0.1],'Value',vars.hp_cutoff,...
@@ -58,10 +64,10 @@ lp_filter_Slider = uicontrol('Parent', fig,'Style','slider','Min',0.11,'Max',100
                 'Position',[lp_pos+100 20 200 30], 'Callback', @filter_GUI);
                  vars.lp_cutoff = get(lp_filter_Slider,'Value');
    
-threshold_Slider = uicontrol('Parent', fig,'Style','slider','Min',1,'Max',12,...
-                'SliderStep',[0.002 0.2],'Value',vars.peak_threshold,...
+threshold_Slider = uicontrol('Parent', fig,'Style','slider','Min',-10,'Max',-2,...
+                'SliderStep',[0.002 0.2],'Value',log10(vars.peak_threshold),...
                 'Position',[thresh_pos+100 20 200 30], 'Callback', @filter_GUI);
-                 vars.peak_threshold = get(threshold_Slider,'Value');
+                 vars.peak_threshold = 10^(get(threshold_Slider,'Value'));
         
                  % a slider to select first or second derivative
 diff_Slider = uicontrol('Parent', fig,'Style','slider','Min',0,'Max',2,...
@@ -77,7 +83,7 @@ polarity_Toggle = uicontrol('Parent', fig,'Style','togglebutton','Min',-1,'Max',
  % Puts the value of the peak_thresholdeter on the GUI.
 uicontrol('Parent', fig,'Tag','HP_cutoff','Style', 'text', 'String', num2str(vars.hp_cutoff),'Position', [hp_pos+300 20 60 20]);
 uicontrol('Parent', fig,'Tag','LP_cutoff','Style', 'text', 'String', num2str(vars.lp_cutoff),'Position', [lp_pos+300 20 60 20]);
-uicontrol('Parent', fig,'Tag','PEAK_threshold','Style', 'text', 'String', num2str(vars.peak_threshold),'Position', [thresh_pos+300 20 60 20]);
+uicontrol('Parent', fig,'Tag','PEAK_threshold','Style', 'text', 'String', sprintf('%.2e',vars.peak_threshold),'Position', [thresh_pos+300 20 60 20]);
 uicontrol('Parent', fig,'Tag','DIFF','Style', 'text', 'String', num2str(vars.diff),'Position', [hp_pos+15 75 60 20]);
 
 % A button to reset the view
@@ -104,7 +110,7 @@ xx = get(filtax,'XLim');
 yy = get(filtax,'YLim');
 vars.hp_cutoff = get(hp_filter_Slider,'Value');
 vars.lp_cutoff = get(lp_filter_Slider,'Value');
-vars.peak_threshold = get(threshold_Slider,'Value');
+vars.peak_threshold = 10^(get(threshold_Slider,'Value'));
 vars.diff = round(get(diff_Slider,'Value'));
 vars.polarity = get(polarity_Toggle,'Value');
 
@@ -117,7 +123,7 @@ end
 % Puts the value of the peak_thresholdeter on the GUI.
 set(findobj('Tag','HP_cutoff','Style', 'text'),'String', num2str(vars.hp_cutoff))
 set(findobj('Tag','LP_cutoff','Style', 'text'),'String', num2str(vars.lp_cutoff))
-set(findobj('Tag','PEAK_threshold','Style', 'text'),'String', num2str(vars.peak_threshold))
+set(findobj('Tag','PEAK_threshold','Style', 'text'),'String', sprintf('%.2e',vars.peak_threshold))
 set(findobj('Tag','DIFF','Style', 'text'),'String', num2str(vars.diff))
 set(findobj('Tag','Polarity_butt','Style', 'togglebutton'),'String', num2str(vars.polarity))
 
@@ -125,18 +131,20 @@ delete(findobj(patchax,'type','line','tag','ticks'));
 ticks = raster(patchax,vars.locs,max(vars.unfiltered_data(1:vars.len))+.02*diff([max(vars.unfiltered_data(1:vars.len)),min(vars.unfiltered_data(1:vars.len))]));
 set(ticks,'tag','ticks');
 
-plot_filt = (vars.filtered_data(1:vars.len)-mean(vars.filtered_data))/max(vars.filtered_data);
-plot_filt = (vars.filtered_data(1:vars.len))/max(vars.filtered_data);
-% plot_filt = vars.filtered_data(1:vars.len);
+plot_filt = vars.filtered_data(1:vars.len);
 plot_spikes = vars.locs(vars.locs<vars.len);
-plot_thresh = (vars.peak_threshold *std(vars.filtered_data)-mean(vars.filtered_data))/max(vars.filtered_data);
+% plot_thresh = (vars.peak_threshold *std(vars.filtered_data)-mean(vars.filtered_data))/max(vars.filtered_data);
+plot_thresh = vars.peak_threshold;
 
 %hold(filtax,'off');
 cla(filtax);
 plot(filtax,plot_spikes, plot_filt(plot_spikes),'ro'); hold on;
 plot(filtax,plot_filt,'k');hold on;
-plot(filtax,[1 vars.len],max(plot_filt)-[plot_thresh plot_thresh],'--','color',[.8 .8 .8]);
-xlim(filtax,xx);ylim(filtax,yy);hold off;
+% plot(filtax,[1 vars.len],max(plot_filt)-[plot_thresh plot_thresh],'--','color',[.8 .8 .8]);
+plot(filtax,[1 vars.len],[plot_thresh plot_thresh],'--','color',[.8 .8 .8]);
+xlim(filtax,xx);
+ylim(filtax,[min(plot_filt) max(plot_filt)]);
+hold off;
 
 % set(filtax,'ButtonDownFcn',@clickToPositionThresh);
 

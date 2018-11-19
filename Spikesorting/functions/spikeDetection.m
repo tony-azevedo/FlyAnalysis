@@ -4,11 +4,11 @@ function [trial,vars_skeleton] = spikeDetection(trial,inputToAnalyze,vars_initia
 % I start looking at pairs of neurons. Alternatively the wrapper function
 % could just cal this function on the two sets of spikes.
 
-if trial.params.gain_1==100 && strcmp(inputToAnalyze,'voltage_1')
-    unfiltered_data = trial.(inputToAnalyze);
-else
-    unfiltered_data = filterMembraneVoltage(trial.(inputToAnalyze),trial.params.sampratein);
-end% d1 = getacqpref('FlyAnalysis',['VoltageFilter_fs' num2str(trial.params.sampratein)]);
+% if trial.params.gain_1==100 && strcmp(inputToAnalyze,'voltage_1')
+%     unfiltered_data = trial.(inputToAnalyze);
+% else
+unfiltered_data = filterMembraneVoltage(trial.(inputToAnalyze),trial.params.sampratein);
+% end% d1 = getacqpref('FlyAnalysis',['VoltageFilter_fs' num2str(trial.params.sampratein)]);
 % unfiltered_data = filter(d1,unfiltered_data);
 
 
@@ -52,6 +52,8 @@ while strcmp(newbutton,'No')
 
     filter_sliderGUI(vars.unfiltered_data);
     while ~waitforbuttonpress;end
+    slidefig = gcf;
+    slidefig.CloseRequestFcn = {@(hObject,eventdata,handles) delete(hObject)};
     close(gcf)
 
     selected_spikes = [];
@@ -123,9 +125,12 @@ end
         % think it would go the opposite way, such that the template was smoother 
         % than the target spikes. I'm now using 3 poles as a happy medium               
         
-        all_filtered_data = filterDataWithSpikes(vars);
-        spike_locs = findSpikeLocations(vars,all_filtered_data);
-                
+        vars.filtered_data = filterDataWithSpikes(vars);
+        if vars.peak_threshold > 1E4*std(vars.filtered_data)
+            vars.peak_threshold = 3*std(vars.filtered_data);
+        end
+        spike_locs = findSpikeLocations(vars, vars.filtered_data);
+
         if any(spike_locs~=unique(spike_locs))
             error('Why are there multiple peak at the same time?')
         end
@@ -139,12 +144,13 @@ end
             spikeAmplitude,...
             window,...
             spikewindow] = ...
-            getSquiggleDistanceFromTemplate(spike_locs,spikeTemplate,all_filtered_data,vars.unfiltered_data,vars.spikeTemplateWidth,vars.fs);
+            getSquiggleDistanceFromTemplate(spike_locs,spikeTemplate,vars.filtered_data,vars.unfiltered_data,vars.spikeTemplateWidth,vars.fs);
         
         vars.locs = spike_locs;
-        
+                
         %% Create a figure that you can then click on to analyze spikes
         disttreshfig = figure; clf; set(disttreshfig, 'Position', [140          80        1600         900],'color', 'w');
+        disttreshfig.CloseRequestFcn = {@(hObject,eventdata,handles) disp('Hit a button')};
         panl = panel(disttreshfig);
         
         vertdivisions = [2 1 4 4]; vertdivisions = num2cell(vertdivisions/sum(vertdivisions));
@@ -162,60 +168,74 @@ end
         
         % Plot filtered data
         ax_filtered = panl(2).select(); ax_filtered.Tag = 'filtered';
-        plot(ax_filtered,all_filtered_data-mean(all_filtered_data),'color',[.0 .45 .74],'tag','filtered_data'), hold(ax_filtered,'on');
+        plot(ax_filtered,vars.filtered_data-mean(vars.filtered_data),'color',[.0 .45 .74],'tag','filtered_data'), hold(ax_filtered,'on');
         axis(ax_filtered,'off');
         
-        linkaxes([ax_main ax_filtered],'x');
-        
-        panl(3).pack('h',{1/3 1/3 1/3})
-        
-        % Plot cumulative histogram of targetSpikeDist
-        %         ax_hist = panl(3,1).select(); ax_hist.Tag = 'hist';
-        %         title(ax_hist,'Click to change threshold'); xlabel(ax_hist,'DTW Distance');
-        %         [dist, order] = sort(targetSpikeDist);
-        %         cumy = (1:length(dist))/length(dist);
-        %         plot(ax_hist,dist,cumy,'o','markeredgecolor',[0 0.45 0.74],'tag','distance_hist','userdata',targetSpikeDist); hold(ax_hist,'on');
-        %         plot(ax_hist,vars.Distance_threshold*[1 1],[0 1],'color',[1 0 0],'tag','threshold');
-        
-        % Plot targetSpikeDist vs spikeAmplitude
-        ax_hist = panl(3,1).select(); ax_hist.Tag = 'hist';
-        title(ax_hist,'Click to change threshold'); xlabel(ax_hist,'DTW Distance');
-        %[dist, order] = sort(targetSpikeDist);
-        % cumy = (1:length(dist))/length(dist);
-        plot(ax_hist,targetSpikeDist,spikeAmplitude,'.','markerfacecolor',[0 0.45 0.74],'tag','distance_hist','userdata',[targetSpikeDist(:) spikeAmplitude(:) spike_locs(:)]); hold(ax_hist,'on');
-        plot(ax_hist,vars.Distance_threshold*[1 1],[min(spikeAmplitude) max(spikeAmplitude)],'color',[1 0 0],'tag','dist_threshold');
-        plot(ax_hist,[min(targetSpikeDist) max(targetSpikeDist)],vars.Amplitude_threshold*[1 1],'color',[1 0 0],'tag','amp_threshold');
-        
+        linkaxes([ax_main ax_filtered],'x');        
         
         % This is useful feedback to see what has been detected thus far,
         % but if there are no spikes, stop here.
         if ~isempty(targetSpikeDist)
             
-            % Plot all detected waveforms
-            ax_detect = panl(3,2).select(); ax_detect.Tag = 'detect';
-            title(ax_detect,'Click anywhere to use blue line as template');
-            suspect_ls = plot(ax_detect,window,norm_detectedSpikeCandidates,'tag','squiggles');
-            hold(ax_detect,'on');
-            plot(ax_detect,window,norm_spikeTemplate,'color',[.85 .85 .85], 'linewidth', 2,'tag','initial_template')
-            plot(ax_detect,window,mean(norm_detectedSpikeCandidates,2),'color',[0 .7 1], 'linewidth', 2,'tag','potential_template')
-            
+            panl(3).pack('h',{1/3 1/3 1/3})
             goodspikeAmp = mean(spikeAmplitude(targetSpikeDist<quantile(targetSpikeDist,.25)));
             suspect = targetSpikeDist<vars.Distance_threshold & spikeAmplitude > goodspikeAmp*vars.Amplitude_threshold;
+
+            % Plot targetSpikeDist vs spikeAmplitude
+            ax_hist = panl(3,1).select(); ax_hist.Tag = 'hist';
+            title(ax_hist,'Click to change threshold'); xlabel(ax_hist,'DTW Distance');
             
-            set(suspect_ls(suspect),'color',[0 0 0])
+            % hist_dots_out = 
+            plot(ax_hist,targetSpikeDist(~suspect),spikeAmplitude(~suspect),...
+                '.','color',[0.9290 0.6940 0.1250],'markersize',10,'tag','distance_hist_out'); hold(ax_hist,'on');
+            % hist_dots_in = 
+            plot(ax_hist,targetSpikeDist(suspect),spikeAmplitude(suspect),...
+                '.','color',[.0 .45 .74],'markersize',10,'tag','distance_hist',...
+                'userdata',[targetSpikeDist(:) spikeAmplitude(:) spike_locs(:)]); 
+            hold(ax_hist,'on');
+            
+            plot(ax_hist,vars.Distance_threshold*[1 1],[min(spikeAmplitude) max(spikeAmplitude)],'color',[1 0 0],'tag','dist_threshold');
+            plot(ax_hist,[min(targetSpikeDist) max(targetSpikeDist)],vars.Amplitude_threshold*[1 1],'color',[1 0 0],'tag','amp_threshold');
+
+            % Plot good and bad detected waveforms
+            ax_detect = panl(3,2).select(); ax_detect.Tag = 'detect';
+            title(ax_detect,'Click anywhere to use blue line as template');
+            hold(ax_detect,'on');
+            
+            weird = targetSpikeDist<vars.Distance_threshold & ...
+                targetSpikeDist>quantile(targetSpikeDist(targetSpikeDist<vars.Distance_threshold),0.85) &...
+                spikeAmplitude > goodspikeAmp*vars.Amplitude_threshold;
+            good = targetSpikeDist<quantile(targetSpikeDist(targetSpikeDist<vars.Distance_threshold),0.2) &...
+                spikeAmplitude > goodspikeAmp*vars.Amplitude_threshold;
+            weirdbad = (targetSpikeDist>vars.Distance_threshold & ...
+                targetSpikeDist<2*quantile(targetSpikeDist(targetSpikeDist<vars.Distance_threshold),0.85)) | ...
+                (spikeAmplitude <= goodspikeAmp*vars.Amplitude_threshold & ...
+                spikeAmplitude > 0);
+            bad = targetSpikeDist>vars.Distance_threshold &...
+                spikeAmplitude < goodspikeAmp*vars.Amplitude_threshold;
+            
+            goodSuspectSquiggles = plot(ax_detect,window,detectedSpikeCandidates(:,good),'tag','squiggles');
+            weirdSuspectSquiggles = plot(ax_detect,window,detectedSpikeCandidates(:,weird),'tag','weirdsquiggles');
+            plot(ax_detect,window,spikeTemplate,'color',[.85 .85 .85], 'linewidth', 2,'tag','initial_template')
+            plot(ax_detect,window,mean(detectedSpikeCandidates(:,good),2),'color',[0 .3 1], 'linewidth', 2,'tag','potential_template')
+            
+            set(goodSuspectSquiggles,'Color',[.8 .8 .8]);
+            set(weirdSuspectSquiggles,'Color',[0 0 0]);
+            
             
             % Plot all detected spikes
             ax_detect_patch = panl(3,3).select(); ax_detect_patch.Tag = 'detect_patch';
+            hold(ax_detect_patch,'on');
             spikeWaveforms = detectedUFSpikeCandidates-repmat(detectedUFSpikeCandidates(1,:),size(detectedUFSpikeCandidates,1),1);
             spikeWaveform = smooth(mean(spikeWaveforms(:,suspect),2),vars.fs/2000);
             spikeWaveform_ = smoothAndDifferentiate(spikeWaveform,vars.fs/2000);
             
-            hold(ax_detect_patch,'on');
+            plot(ax_detect_patch,spikewindow,spikeWaveforms(:,good),'color',[0 .8 .8],'tag','spikes');
+            plot(ax_detect_patch,spikewindow,spikeWaveforms(:,weird),'color',[0 0 0],'tag','weirdspikes');
             
             smthwnd = (vars.fs/2000+1:length(spikewindow)-vars.fs/2000);
-            suspectUF_ls = plot(ax_detect_patch,spikewindow,spikeWaveforms,'tag','spikes');
-            suspectUF_avel = plot(ax_detect_patch,spikewindow,spikeWaveform,'color',[0 .7 1],'linewidth',2,'userdata',goodspikeAmp);
-            suspectUF_ddT2l = plot(ax_detect_patch,spikewindow(smthwnd(2:end-1)),spikeWaveform_(smthwnd(2:end-1))/max(spikeWaveform_(smthwnd(2:end-1)))*max(spikeWaveform),'color',[0 .8 .4],'linewidth',2);
+            suspectUF_avel = plot(ax_detect_patch,spikewindow,spikeWaveform,'color',[0 .3 1],'linewidth',2,'userdata',goodspikeAmp,'tag','goodspike');
+            suspectUF_ddT2l = plot(ax_detect_patch,spikewindow(smthwnd(2:end-1)),spikeWaveform_(smthwnd(2:end-1))/max(spikeWaveform_(smthwnd(2:end-1)))*max(spikeWaveform),'color',[0 .8 .4],'linewidth',2,'tag','spike_ddt');
             
             if any(suspect)
                 spikeTime = spikewindow(spikeWaveform_==max(spikeWaveform_));
@@ -226,42 +246,54 @@ end
                 spikePT = 0;
             end
             
-            set(suspectUF_ls(suspect),'color',[0 0 0])
             
             % Plot spikes
-            suspect_dots = raster(ax_main,spike_locs+spikePT,max(vars.unfiltered_data-mean(vars.unfiltered_data))+.02*diff([min(vars.unfiltered_data) max(vars.unfiltered_data)]));
-            set(suspect_dots,'color',[0 0 0],'linewidth',1,'tag','dots','userdata',spikePT);
-            set(suspect_dots(~suspect),'color',[1 0 0],'linewidth',.5)
+            suspect_ticks = raster(ax_main,spike_locs+spikePT,max(vars.unfiltered_data-mean(vars.unfiltered_data))+.02*diff([min(vars.unfiltered_data) max(vars.unfiltered_data)]));
+            set(suspect_ticks,'color',[0 0 0],'linewidth',1,'tag','ticks','userdata',spikePT);
+            set(suspect_ticks(~suspect),'color',[1 0 0],'linewidth',.5)
             
             % Divide detected events into spike suspects and non spike suspects
             panl(4).pack('h',{1/4 1/4 1/4 1/4});
             
-            ax_fltrd_suspect = panl(4,1).select(); ax_fltrd_suspect.Tag = 'fltrd_suspect';
-            if any(suspect)
-                plot(ax_fltrd_suspect,window,norm_detectedSpikeCandidates(:,suspect),'tag','squiggles_suspect','color',[0 0 0]);
+            ax_fltrd_suspect = panl(4,1).select(); ax_fltrd_suspect.Tag = 'fltrd_suspect'; hold(ax_fltrd_suspect,'on');
+            if any(good)
+                plot(ax_fltrd_suspect,window,detectedSpikeCandidates(:,good),'tag','squiggles_good','color',.8*[1 1 1]);
+            end
+            if any(weird)
+                plot(ax_fltrd_suspect,window,detectedSpikeCandidates(:,weird),'tag','squiggles_weird','color',.0*[1 1 1]);
             end
             
-            ax_unfltrd_suspect = panl(4,2).select(); ax_unfltrd_suspect.Tag = 'unfltrd_suspect';
-            if any(suspect)
-                plot(ax_unfltrd_suspect,spikewindow,spikeWaveforms(:,suspect),'tag','spikes_suspect','color',[0 0 0]);
+            ax_unfltrd_suspect = panl(4,2).select(); ax_unfltrd_suspect.Tag = 'unfltrd_suspect';  hold(ax_unfltrd_suspect,'on');
+            if any(good)
+                plot(ax_unfltrd_suspect,spikewindow,spikeWaveforms(:,good),'tag','spikes_good','color',.8*[1 1 1]);
+            end
+            if any(weird)
+                plot(ax_unfltrd_suspect,spikewindow,spikeWaveforms(:,weird),'tag','spikes_weird','color',.0*[1 1 1]);
             end
             
-            ax_fltrd_notsuspect = panl(4,3).select(); ax_fltrd_notsuspect.Tag = 'fltrd_notsuspect';
-            if any(~suspect)
-                plot(ax_fltrd_notsuspect,window,norm_detectedSpikeCandidates(:,~suspect),'tag','squiggles_notsuspect','color',[0 0 0]);
+            ax_fltrd_notsuspect = panl(4,3).select(); ax_fltrd_notsuspect.Tag = 'fltrd_notsuspect'; hold(ax_fltrd_notsuspect,'on')
+            if any(bad)
+                plot(ax_fltrd_notsuspect,window,detectedSpikeCandidates(:,bad),'tag','squiggles_bad','color',[1 .7 .7]);
+            end
+            if any(weirdbad)
+                plot(ax_fltrd_notsuspect,window,detectedSpikeCandidates(:,weirdbad),'tag','squiggles_weirdbad','color',[.7 0 0]);
             end
             
-            ax_unfltrd_notsuspect = panl(4,4).select(); ax_unfltrd_notsuspect.Tag = 'unfltrd_notsuspect';
-            if any(~suspect)
-                plot(ax_unfltrd_notsuspect,spikewindow,spikeWaveforms(:,~suspect),'tag','spikes_notsuspect','color',[0 0 0]);
+            ax_unfltrd_notsuspect = panl(4,4).select(); ax_unfltrd_notsuspect.Tag = 'unfltrd_notsuspect'; hold(ax_unfltrd_notsuspect,'on')
+            if any(bad)
+                plot(ax_unfltrd_notsuspect,spikewindow,spikeWaveforms(:,bad),'tag','spikes_notsuspect_','color',[1 .7 .7]);
+            end
+            if any(weirdbad)
+                plot(ax_unfltrd_notsuspect,spikewindow,spikeWaveforms(:,weirdbad),'tag','spikes_notsuspect_','color',[.7 0 0]);
             end
             
             %% Now update the threshold for the squiggles
             vars_0 = vars;
-            
-            spikeThresholdUpdateGUI(disttreshfig,norm_detectedSpikeCandidates,spikeWaveforms);
-            
-            close(disttreshfig)
+            %disttreshfig.CloseRequestFcn = {@(hObject,eventdata,handles) disp('Hit a button')};
+
+            spikeThresholdUpdateGUI(disttreshfig,detectedSpikeCandidates,spikeWaveforms);
+            %disttreshfig.CloseRequestFcn = [];
+            delete(disttreshfig)
             % while ~waitforbuttonpress;end 
             % uiwait();
                                     
@@ -273,10 +305,10 @@ end
             % Calculate the distance one last time
             for i=1:length(spike_locs)
                 
-                if min(spike_locs(i)+vars.spikeTemplateWidth/2,length(all_filtered_data)) - max(spike_locs(i)-vars.spikeTemplateWidth/2,0)< vars.spikeTemplateWidth
+                if min(spike_locs(i)+vars.spikeTemplateWidth/2,length(vars.filtered_data)) - max(spike_locs(i)-vars.spikeTemplateWidth/2,0)< vars.spikeTemplateWidth
                     continue
                 else
-                    curSpikeTarget = all_filtered_data(spike_locs(i)+window);
+                    curSpikeTarget = vars.filtered_data(spike_locs(i)+window);
                     norm_curSpikeTarget = (curSpikeTarget-min(curSpikeTarget))/(max(curSpikeTarget)-min(curSpikeTarget));
                     [targetSpikeDist(i), ~,~] = dtw_WarpingDistance(norm_curSpikeTarget, norm_spikeTemplate);
                 end
@@ -349,7 +381,10 @@ end
         cursorobj.Enable = 'on';     % Turn on the data cursor, hold alt to select multiple points
         set(cursorobj,'UpdateFcn',{@labeldtips})
         
+        fig.CloseRequestFcn = {@(hObject,eventdata,handles) disp('Hit a button')};
+
         while ~waitforbuttonpress;end 
+        fig.CloseRequestFcn = {@(hObject,eventdata,handles) delete(hObject)};
         
         cursorobj.Enable = 'off';
         mypoints = getCursorInfo(cursorobj);

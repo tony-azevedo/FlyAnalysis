@@ -88,6 +88,10 @@ for tr_idx = trialnumlist
         continue
     end
     
+    if find(trialnumlist==tr_idx) > 50
+        continue
+    end
+
     % find the spikes < dist thresh, get the best fit
     goodspikeAmp = mean(spikeAmplitude(targetSpikeDist<quantile(targetSpikeDist,.25)));
     suspect = targetSpikeDist<vars.Distance_threshold & spikeAmplitude > goodspikeAmp*vars.Amplitude_threshold;
@@ -113,14 +117,12 @@ for tr_idx = trialnumlist
     norm_spikeTemplate = (norm_spikeTemplate-min(norm_spikeTemplate))/(max(norm_spikeTemplate)-min(norm_spikeTemplate));
 
         % plot the spike distances as you go
-    plot(ax_hist,targetSpikeDist(~suspect),spikeAmplitude(~suspect),'.','color',[0.9290 0.6940 0.1250],'tag',['suspect_hist_out_' num2str(tr_idx)]); hold(ax_hist,'on');
+    plot(ax_hist,targetSpikeDist(~suspect),spikeAmplitude(~suspect),'.','color',[0.9290 0.6940 0.1250],'tag','distance_hist_out'); hold(ax_hist,'on');
+
     plot(ax_hist,suspectdist,suspectamp,'.','markeredgecolor',[0 0.45 0.74],'markerfacecolor','none','tag',['suspect_hist_' num2str(tr_idx)],'userdata',[targetSpikeDist(:) spikeAmplitude(:)]);
+
     plot(ax_hist,suspectdist(goodi),suspectamp(goodi),'.','markeredgecolor',[0 0 0],'markerfacecolor',[0 0 0],'tag',['good_hist' num2str(tr_idx)]); hold(ax_hist,'on');
     plot(ax_hist,suspectdist(weirdi),suspectamp(weirdi),'.','markeredgecolor',[0 1 .7], 'markerfacecolor',[0 1 .7],'tag',['weird_hist' num2str(tr_idx)]); hold(ax_hist,'on');
-    
-    if find(trialnumlist==tr_idx) > 50
-        continue
-    end
     
     if ~isempty(goodspikes)
         % suspect_ls = plot(ax_detect,window,norm_detectedSpikeCandidates(:,goodspikes),'tag','squiggles');

@@ -1203,10 +1203,21 @@ imstr = sprintf('Spike Vars, trial %d:\nHighpass: %.2f - Lowpass: %.2f - Diff: %
 
 switch handles.trial.params.mode_1; case 'VClamp', invec1 = 'current_1'; case 'IClamp', invec1 = 'voltage_1'; otherwise; invec1 = 'voltage_1'; end
 
-spikeSpotCheck(handles.trial,invec1,handles.trial.spikeDetectionParams)
+global cmd
+cmd = [];
+spikeSpotCheck(handles.trial,invec1,handles.trial.spikeDetectionParams);
+uiwait();
 
 guidata(hObject,handles)
-trialnum_Callback(handles.trialnum, eventdata, handles)
+if isempty(cmd)
+    trialnum_Callback(handles.trialnum, eventdata, handles)
+elseif strcmp(cmd,'next')
+    cur = str2double(handles.trialnum.String);
+    handles.trialnum.String = num2str(cur+1);
+    trialnum_Callback(handles.trialnum, eventdata, handles)
+    handles = guidata(hObject);
+    spike_spot_check_button_Callback(hObject, eventdata, handles)
+end    
 
 
 % --- Executes on button press in tag_button.
@@ -1608,6 +1619,7 @@ trial = handles.trial;
 switch handles.trial.params.mode_1; case 'VClamp', invec1 = 'current_1'; case 'IClamp', invec1 = 'voltage_1'; otherwise; invec1 = 'voltage_1'; end
 
 button = questdlg('Use params from preferences?','Preferences','No');
+% button = 'No';
 if strcmp(button,'No')
     spikeDetection(trial,invec1,trial.spikeDetectionParams);
 elseif strcmp(button,'Yes')

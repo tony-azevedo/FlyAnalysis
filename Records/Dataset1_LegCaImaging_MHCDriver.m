@@ -41,6 +41,8 @@ Workflow_MHCLexA_GCaMP6f_181011_F3_C1_MuscleImaging % Nice! Use this to explore
 Workflow_MHCLexA_GCaMP6f_181017_F1_C1_MuscleImaging % Throwing this out because the leg moves quite a bit, not glued down
 Workflow_MHCLexA_GCaMP6f_181017_F2_C1_MuscleImaging % Not great, EMG is not large
 
+Workflow_MHCLexA_GCaMP6f_181111_F1_C1_MuscleImaging % Not great, EMG is not large
+Workflow_MHCLexA_GCaMP6f_181111_F2_C1_MuscleImaging % Not great, EMG is not large
 
 
 

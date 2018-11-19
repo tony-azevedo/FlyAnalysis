@@ -13,8 +13,13 @@ end
 %[peaklocs, ~] = peakfinder(filtered_data,mean(filtered_data)+vars.peak_threshold *std(filtered_data));
 
 %[peaks, peaklocs] = findpeaks(filtered_data,'MinPeakHeight',mean(filtered_data)+vars.peak_threshold *std(filtered_data));
-[peaks, peaklocs] = findpeaks(filtered_data,'MinPeakProminence',mean(filtered_data)+vars.peak_threshold *std(filtered_data));
+%[peaks, peaklocs] = findpeaks(filtered_data,'MinPeakProminence',mean(filtered_data)+vars.peak_threshold *std(filtered_data));
 
+% [~, peaklocs] = findpeaks(filtered_data,'MinPeakProminence',mean(filtered_data)+vars.peak_threshold);
+[~, peaklocs] = findpeaks(filtered_data,'MinPeakHeight',mean(filtered_data)+vars.peak_threshold,'MinPeakDistance',vars.fs/1800);
+if isempty(peaklocs)
+    fprintf('Nice! no peaks\n')
+end
 peaklocs = peaklocs(peaklocs > vars.spikeTemplateWidth & peaklocs <  length(filtered_data)-vars.spikeTemplateWidth);
 peaklocs = peaklocs(filtered_data(peaklocs) < mean(filtered_data(peaklocs))+ 5*std(filtered_data(peaklocs)));
 

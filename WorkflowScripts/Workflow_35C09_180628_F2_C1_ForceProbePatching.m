@@ -1,5 +1,5 @@
 %% ForceProbe patcing workflow 180628_F2_C1
-trial = load('B:\Raw_Data\180628\180628_F2_C1\CurrentStep2T_Raw_180628_F2_C1_29.mat');
+trial = load('E:\Data\180628\180628_F2_C1\CurrentStep2T_Raw_180628_F2_C1_29.mat');
 [protocol,dateID,flynum,cellnum,trialnum,D,trialStem,datastructfile] = extractRawIdentifiers(trial.name);
 
 cd (D)
@@ -24,6 +24,8 @@ routine = {
     'probeTrackROI_IR' 
     };
 
+% Done:
+
 %% epi flash random movements
 
 trial = load('B:\Raw_Data\180628\180628_F2_C1\EpiFlash2T_Raw_180628_F2_C1_1.mat');
@@ -44,9 +46,23 @@ routine = {
     'probeTrackROI_IR' 
     };
 
+%% piezo step
+
+trial = load('E:\Data\180628\180628_F2_C1\PiezoStep2T_Raw_180628_F2_C1_1.mat');
+[~,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
+
+clear trials
+trials{1} = 1:244;
+trials{2} = 245:328; % MLA
+Nsets = length(trials);
+    
+
+routine = {
+    };
+
 %% piezo ramp
 
-trial = load('B:\Raw_Data\180628\180628_F2_C1\PiezoRamp2T_Raw_180628_F2_C1_1.mat');
+trial = load('E:\Data\180628\180628_F2_C1\PiezoRamp2T_Raw_180628_F2_C1_1.mat');
 [~,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
 
 clear trials
