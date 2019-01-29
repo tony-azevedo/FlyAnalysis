@@ -20,7 +20,7 @@ goodspikes = targetSpikeDist<quantile(targetSpikeDist,.25);
 if sum(goodspikes)<4
     goodspikes(:) = 1;
 end
-spikeWaveform = mean(spikeWaveforms(:,goodspikes),2);
+spikeWaveform = nanmean(spikeWaveforms(:,goodspikes),2);
 spikeWaveform = smooth(spikeWaveform-spikeWaveform(1),vars.fs/2000);
 spikeWaveform_ = smoothAndDifferentiate(spikeWaveform,vars.fs/2000);
 spikeWaveform_ = spikeWaveform_-spikeWaveform_(smthwnd(1));

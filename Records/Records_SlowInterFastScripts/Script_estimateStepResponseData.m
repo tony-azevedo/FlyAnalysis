@@ -21,10 +21,13 @@ for cidx = 1:length(CellID)
 
     fprintf('Starting %s\n',cid);
 
-    Dir = fullfile('B:\Raw_Data',cid(1:6),cid);
+    Dir = fullfile('E:\Data',cid(1:6),cid);
+    if ~exist(Dir,'dir')
+        Dir = fullfile('F:\Acquisition',cid(1:6),cid);
+    end
     cd(Dir);
     
-    datafilename = fullfile('B:\Raw_Data',cid(1:regexp(cid,'_')-1),cid);
+    datafilename = fullfile(Dir);
     datafilename = fullfile(datafilename,[T.Protocol{cidx} '_' cid '.mat']);
     try data = load(datafilename); data = data.data;
     catch e

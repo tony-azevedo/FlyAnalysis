@@ -1,9 +1,10 @@
 %% Script_UseAllTrialsInSetToCalculateLegElevation
+
 %% Not Many points
 DP = 1;
 if DP
     f = figure;
-    ax = subplot(1,1,1);
+    ax = subplot(1,1,1); ax.NextPlot = 'add';
 end
 trial = load(sprintf(trialStem,trialnumlist(1)));
 
@@ -12,26 +13,42 @@ Nr = size(trial.legPositions.Tibia_Projection,1);
 Nrr = round(Nr*.1);
 ellipsepoints = nan((Nr+Nrr)*length(trialnumlist),2);
 
+origins = nan(length(trialnumlist),2);
+
 cnt = 0;
 for tr_idx = trialnumlist
     cnt = cnt+1;
-    trial = load(sprintf(trialStem,tr_idx));
+    trial = load(sprintf(trialStem,tr_idx),'legPositions');
     
     lp = trial.legPositions;
     N = size(lp.Tibia_Projection,1);
     TP = lp.Tibia_Projection(:,1:2);
-    TP = TP - repmat(lp.Origin(1:2),N,1);
+    %TP = TP - repmat(lp.Origin(1:2),N,1);
+    
+    origins(cnt,:) = lp.Origin(1:2);
+    
+    ellipsepoints((cnt-1)*(Nr)+(1:Nr),:) = TP;
+end
+origin = median(origins,1);
+ellipsepoints = ellipsepoints-repmat(origin,size(ellipsepoints,1),1);
 
-    % do a funny thing here where you artificially take few points and
-    % project them to the other side of the origin, ~3%
-    fidx = randperm(Nr,Nrr);
-    epsf = [TP;-TP(fidx,:)];
-    ellipsepoints((cnt-1)*(Nr+Nrr)+(1:Nr+Nrr),:) = epsf;
-end
+Nr = size(trial.legPositions.Tibia_Projection,1)*length(trialnumlist);
+Nrr =  round(size(trial.legPositions.Tibia_Projection,1)*.1)*length(trialnumlist);
+
+fidx = randperm(Nr,Nrr);
+
+ellipsepoints(Nr+1:end,:) = -ellipsepoints(fidx,:);
+
+% do a funny thing here where you artificially take few points and
+% project them to the other side of the origin, ~10%
+
+ellipsepoints = ellipsepoints(any(~isnan(ellipsepoints),2),:);
 if DP
-    plot(ax,ellipsepoints(:,1),ellipsepoints(:,2),'r.')
-    hold on
+    plot(ax,ellipsepoints(:,1),ellipsepoints(:,2),'r.') 
+    plot(ax,origins(:,1),origins(:,2),'co')
+    plot(ax,origin(:,1),origin(:,2),'m+');
 end
+
 
 % %% Too Many points
 % DP = 1;
@@ -78,7 +95,7 @@ end
 
 
 %%
-fprintf('\n%d: Fitting ellipse \t',trial.params.trial),tic
+fprintf('\n: Fitting ellipse \t'),tic
 
 if size(ellipsepoints,1)>1000
     a = zeros(6,1);
@@ -94,7 +111,7 @@ if size(ellipsepoints,1)>1000
             drawnow;
         end
     end
-    origin_est = mean(z,1)+lp.Origin;
+    origin_est = mean(z,1)+origin;
     [axL,o] = sort([a;b]);
     minor = mean(axL(1:6));
     major = mean(axL(7:12));
@@ -169,6 +186,7 @@ for tr_idx = trialnumlist
     fprintf('%d: save trial \n',trial.params.trial)
     save(trial.name,'-struct','trial');
     
+    cla(ax5)
     vid = VideoReader(trial.imageFile);
     vid.CurrentTime = 1;
     frame = rgb2gray(vid.readFrame);
@@ -196,5 +214,4 @@ for tr_idx = trialnumlist
     fprintf('%d: save fig \n',trial.params.trial)
     
     saveas(f,fullfile(D,'trackedPositions',sprintf(regexprep(trialStem,{'_Raw_','.mat'},{'_TrackedPosFig_',''}),trial.params.trial)),'png');
-    cla(ax5)
 end

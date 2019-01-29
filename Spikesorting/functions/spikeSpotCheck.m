@@ -6,10 +6,6 @@ if isfield(trial,'excluded') && trial.excluded
     return
 end
 
-if isempty(trial.spikes)
-    fprintf(' * No spikes to double check. Run the detection algorithm again\n')
-end
-
 % if length(unique(trial.spikes))~=length(trial.spikes)
 %     fprintf(' * Duplicate spikes found. Removing.\n')
 %     trial.spikes = unique(trial.spikes);
@@ -21,10 +17,12 @@ if ~isempty(ax_hist)
     spotCheckFig = ax_hist.Parent;
     ax_main = findobj(spotCheckFig,'type','axes','tag','main');
     ax_filtered = findobj(spotCheckFig,'type','axes','tag','filtered');
+    ax_emg = findobj(spotCheckFig,'type','axes','tag','emg');
     ax_detect = findobj(spotCheckFig,'type','axes','tag','detect');
     ax_squigs = findobj(spotCheckFig,'type','axes','tag','squiggles');
     cla(ax_main)
     cla(ax_filtered)
+    cla(ax_emg)
     cla(ax_detect)
     cla(ax_squigs)
     cla(ax_hist);
@@ -43,13 +41,15 @@ else
     
     panl = panel(spotCheckFig);
 
-    vertdivisions = [2,1,4]; vertdivisions = num2cell(vertdivisions/sum(vertdivisions));
+    vertdivisions = [2,1,1,4]; vertdivisions = num2cell(vertdivisions/sum(vertdivisions));
     panl.pack('v',vertdivisions)  % response panel, stimulus panel
     panl.margin = [20 20 10 10];
     panl.fontname = 'Arial';
-    panl(3).pack('h',{1/4 3/8 3/8})
+    panl(4).pack('h',{1/4 3/8 3/8})
     panl(1).marginbottom = 2;
     panl(2).margintop = 2;
+    panl(2).marginbottom = 2;
+    panl(3).margintop = 2;
 
     % Top figure is the trial voltage,
     % next is the filtered trial
@@ -64,19 +64,38 @@ else
     % Plot filtered data
     ax_filtered = panl(2).select(); ax_filtered.Tag = 'filtered';
     
+    % Plot filtered data
+    ax_emg = panl(3).select(); ax_emg.Tag = 'emg';
+
     % Plot cumulative histogram of targetSpikeDist
-    ax_hist = panl(3,1).select(); ax_hist.Tag = 'hist';
-    title(ax_hist,'Histogram'); xlabel(ax_hist,'DTW Distance');
+    ax_hist = panl(4,1).select(); ax_hist.Tag = 'hist';
+    title(ax_hist,'Click to select spikes, ''tab'' (shift) to move to next'); xlabel(ax_hist,'DTW Distance');
 
     % Examine each spike
-    ax_detect = panl(3,2).select(); ax_detect.Tag = 'detect';
-    title(ax_detect,'Is this a spike? In the right place?');
+    ax_detect = panl(4,2).select(); ax_detect.Tag = 'detect';
+    title(ax_detect,'Is this a spike (y or n)? Arrows to skootch');
 
     % Look at the filtered data too
-    ax_squigs = panl(3,3).select(); ax_squigs.Tag = 'squiggles';
+    ax_squigs = panl(4,3).select(); ax_squigs.Tag = 'squiggles';
     title(ax_squigs,'Is this a spike? In the right place?');
 
     % trial = load(sprintf(trialStem,trialnumlist(1)));
+end
+
+t = makeInTime(trial.params);
+vars.unfiltered_data = filterMembraneVoltage(trial.(inputToAnalyze),trial.params.sampratein);
+if isempty(findobj(ax_main,'tag','unfiltered_data'))
+    plot(ax_main,t,vars.unfiltered_data,'color',[.85 .33 .1],'tag','unfiltered_data'), hold(ax_main,'on');
+    axis(ax_main,'off');
+else
+    gobj = findobj(ax_main,'tag','unfiltered_data');
+    gobj.YData = vars.unfiltered_data;
+end
+
+if isempty(trial.spikes)
+    title(ax_main,sprintf('* No spikes to double check: Trial %d',trial.params.trial));
+    fprintf(' * No spikes to double check. Run the detection algorithm again\n')
+    return
 end
 
 vars = cleanUpSpikeVarsStruct(trial.spikeDetectionParams);
@@ -126,7 +145,7 @@ plot(ax_squigs,...
     window,vars.spikeTemplate,...
     'color',[0.8500    0.3250    0.0980],'linewidth',1,'tag','templatesquig'); hold(ax_squigs,'on')
 
-title(ax_main,sprintf('Trial %d ',trial.params.trial));
+title(ax_main,sprintf('Hit Return if done, N if doing a series: Trial %d',trial.params.trial));
 spotCheckFig.UserData = trial;
     
 t = makeInTime(trial.params);
@@ -149,6 +168,17 @@ else
     gobj.YData = all_filtered_data-mean(all_filtered_data);
 end
 
+if ~isfield(trial,'current_2')
+    axis(ax_emg,'off');
+elseif isempty(findobj(ax_emg,'tag','emg_data'))
+    plot(ax_emg,t,trial.current_2,'color',[.74 0 0],'tag','emg_data'), hold(ax_emg,'on');
+    axis(ax_emg,'off');
+else
+    gobj = findobj(ax_emg,'tag','filtered_data');
+    gobj.YData = trial.current_2;
+end
+
+
 % Get out all the potential spikes from the input structure
 cla(ax_hist)
     
@@ -169,8 +199,8 @@ amp_out = spikeAmplitude(isnan(spikes_map(:,1)));
 
 scat_out = plot(ax_hist,sDs_out,amp_out,'.','color',[0.9290 0.6940 0.1250],'markersize',10,'tag','distance_hist_out'); hold(ax_hist,'on');
 scat_in = plot(ax_hist,sDs_in,amp_in,'.','color',[.0 .45 .74],'markersize',10,'tag','distance_hist_in'); hold(ax_hist,'on');
-distthresh = plot(ax_hist,vars.Distance_threshold*[1 1],[min(spikeAmplitude) max(spikeAmplitude)],'color',[1 0 0],'tag','dist_threshold');
-ampthresh = plot(ax_hist,[min(targetSpikeDist) max(targetSpikeDist)],vars.Amplitude_threshold*[1 1],'color',[1 0 0],'tag','amp_threshold');
+distthresh = plot(ax_hist,vars.Distance_threshold*[1 1],[min([min(spikeAmplitude) 0]) max(spikeAmplitude)],'color',[1 0 0],'tag','dist_threshold');
+ampthresh = plot(ax_hist,[0 max(targetSpikeDist)],vars.Amplitude_threshold*[1 1],'color',[1 0 0],'tag','amp_threshold');
 
 ax_hist.YLim = distthresh.YData;
 ax_hist.XLim = ampthresh.XData;
@@ -368,7 +398,7 @@ if isempty(evntdata) && ~isempty(hist_dots_in)
     % squigTplt.YData = squigTplt.YData; % xvalues for squiggle
     if spike==spikes_map(spike_idx,2)
         spike_ddT.Color = [0 .8 .4];
-        title(ax_detect,'Checked spike matches current spike');
+        %title(ax_detect,'Checked spike matches current spike');
     else
         spike_ddT.Color = [.8 .4 0];
         if spike>spikes_map(spike_idx,2)
@@ -397,7 +427,9 @@ if isempty(evntdata) && ~isempty(hist_dots_in)
     ax_hist.Parent.KeyPressFcn = @spotCheck_XY;
 
     hist_dots_in.ButtonDownFcn = @dotSelect;
-    hist_dots_out.ButtonDownFcn = @dotSelect;
+    if ~isempty(hist_dots_out)
+        hist_dots_out.ButtonDownFcn = @dotSelect;
+    end
     for tick = ticks'
         tick.ButtonDownFcn = @rasterSelect;
     end
@@ -420,7 +452,8 @@ else % Evntdata is from a key press or clicking on another spike
         % delete(current_tick); % just turn current_tick back into a normal
         % tick
         set(current_tick,'tag','raster_ticks','color',[0 0 0],'linewidth',1);
-
+        title(ax_detect,'Done');
+    
         delete(context);
         delete(current_spike);  
         spike_ave.XData = wind;
@@ -522,8 +555,10 @@ else % Evntdata is from a key press or clicking on another spike
             hist_dots_in = plot(ax_hist,sDs(in_idx),amps(in_idx),'.','color',[.0 .45 .74],'markersize',10,'tag','distance_hist_in'); hold(ax_hist,'on');
             hist_dots_in.UserData = spikes_map;
             hist_dots_in.ButtonDownFcn = @dotSelect;
-            hist_dots_out.ButtonDownFcn = @dotSelect;
-
+            if ~isempty(hist_dots_out)
+                hist_dots_out.ButtonDownFcn = @dotSelect;
+            end
+            
             ns_f = numel(trial.spikes);
             
             if ns_i~=ns_f 
@@ -552,8 +587,10 @@ else % Evntdata is from a key press or clicking on another spike
             amps = spikes_map;
             out_idx = isnan(spikes_map(:,1));
             in_idx = ~isnan(spikes_map(:,1));
-            sDs(out_idx) = hist_dots_out.XData;
-            amps(out_idx) = hist_dots_out.YData;
+            if ~isempty(hist_dots_out)
+                sDs(out_idx) = hist_dots_out.XData;
+                amps(out_idx) = hist_dots_out.YData;
+            end
             sDs(in_idx) = hist_dots_in.XData;
             amps(in_idx) = hist_dots_in.YData;
             
@@ -590,7 +627,9 @@ else % Evntdata is from a key press or clicking on another spike
             hist_dots_in = plot(ax_hist,sDs(in_idx),amps(in_idx),'.','color',[.0 .45 .74],'markersize',10,'tag','distance_hist_in'); hold(ax_hist,'on');
             hist_dots_in.UserData = spikes_map;
             hist_dots_in.ButtonDownFcn = @dotSelect;
-            hist_dots_out.ButtonDownFcn = @dotSelect;
+            if ~isempty(hist_dots_out)
+                hist_dots_out.ButtonDownFcn = @dotSelect;
+            end
             uistack([hist_dots_out hist_dots_in],'bottom')
 
             % Change the marker from red to green

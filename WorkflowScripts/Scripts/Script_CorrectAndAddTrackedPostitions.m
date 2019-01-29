@@ -1,6 +1,6 @@
-%% Script_AddTrackedPositionsAndLegAngle
+%% Script_CorrectAndAddTrackedPostitions
 DEBUG_PLOT = 0;
-DEBUG_WATCHFIT = 0;
+DEBUG_WATCHFIT = 1;
 
 if ~exist(fullfile(D,'csv'),'dir')
     mkdir(fullfile(D,'csv'))
@@ -29,18 +29,143 @@ elseif ~isfield(trial,'legPositions')
     end
     T_0 = preview(trial.legPositions.filename,opts);
     T2 = readtable(trial.legPositions.filename,opts);
-    
+        
     T2.Properties.VariableNames = bdprtcrds;
     
     % strip down the table to Femur and Tibia XY points (and index)
     trial.legPositions.Positions = T2(:,[1 find(contains(bdprtcrds,{'Femur','Tibia'}) & contains(bdprtcrds,{'_x','_y'}))]) ;
+    bodyparts = bodyparts(contains(bdprtcrds,{'Femur','Tibia'}) & contains(bdprtcrds,{'_x','_y'}));
+    bodyparts = unique(bodyparts(2:end));
+
+    imgidx = 1;
+    if DEBUG_PLOT
+        %% Proofread csv file to make sure positions are correct.
+        vid = VideoReader(trial.imageFile);
+        I = vid.readFrame;
+        I = double(squeeze(I(:,:,1)));
+        
+        displayf = figure;
+        set(displayf,'position',[120 10 fliplr(size(I))]+[0 0 0 10],'tag','big_fig');
+        displayf.MenuBar = 'none';
+        displayf.ToolBar = 'none';
+        
+        dispax = axes('parent',displayf,'units','pixels','position',[0 0 fliplr(size(I))]);
+        set(dispax,'box','off','xtick',[],'ytick',[],'tag','dispax');
+        colormap(dispax,'gray')
+        
+        clear pnt
+
+        im = imshow(I,[0 1.6*quantile(I(:),0.975)],'parent',dispax);
+        % ask to label each point static point in turn
+        txt = text(dispax,size(I,2)/3,20,'TXT');
+        txt.Position = [20 10 0]*size(I,2)/640;
+        txt.VerticalAlignment = 'top';
+        txt.Color = [1 1 1];
+        txt.FontSize = 18;
+        txt.FontName = 'Ariel';
+        
+        % put each body part on the image
+        clrs = distinguishable_colors(length(bodyparts));
+
+        try delete(pnt); catch e, end
+        for bdidx = 1:length(bodyparts)
+            T_X = trial.legPositions.Positions.([bodyparts{bdidx} '_x']);
+            T_Y = trial.legPositions.Positions.([bodyparts{bdidx} '_y']);
+            xy = [T_X(imgidx,1) T_Y(imgidx,1)];
+            pnt(bdidx) = impoint(dispax,xy);
+            pnt(bdidx).setColor(clrs(bdidx,:));
+            pnt(bdidx).setString(bodyparts{bdidx});
+        end
+        
+        button = questdlg('Are points correctly labeled?','Correct Labels?','Yes');
+        uiwait();
+        switch button
+            case 'No'
+                error('Ahhhhh! Where did I go wrong on this one?');
+                
+            case 'Cancel'
+                return
+            case 'Yes'
+                fprintf('Continuing, saving positions')
+        end
+    end
     
+    
+    TibiaCoords_x = trial.legPositions.Positions{:,startsWith(bdprts,'Tibia')& endsWith(bdprts,'_x') };
+    TibiaCoords_y = trial.legPositions.Positions{:,startsWith(bdprts,'Tibia')& endsWith(bdprts,'_y') };
+
+    TibiaCoords_x = trial.legPositions.Positions(:,startsWith(bdprts,'Tibia')& endsWith(bdprts,'_x'));
+    TibiaCoords_y = trial.legPositions.Positions(:,startsWith(bdprts,'Tibia')& endsWith(bdprts,'_y'));
+
+    TibiaParts = regexprep(TibiaCoords_x.Properties.VariableNames,'_x','');
+    TibiaParts = regexprep(TibiaParts,'Constriction','Kink');
+    
+    % compute pairwise distances for each point
+    varTypes = cell(1,sum(1:size(TibiaCoords_x,2))); varTypes(:) = {'double'};
+    D = table('Size',[size(TibiaCoords_x,1),sum(1:size(TibiaCoords_x,2))],'VariableTypes',varTypes);%T = table('Size',sz,'VariableTypes',varTypes)
+    c = 0;
+    varNames = varTypes;
+    for c1 = 1:size(TibiaCoords_x,2)
+        for c2 = c1:size(TibiaCoords_x,2)
+            c = c+1;
+            D{:,c} = sqrt((TibiaCoords_x{:,c1} - TibiaCoords_x{:,c2}).^2 + (TibiaCoords_y{:,c1} - TibiaCoords_y{:,c2}).^2);
+            varNames{c} = [TibiaParts{c1} '_vs_' TibiaParts{c2}];
+        end
+    end
+    D.Properties.VariableNames = varNames;
+        
+    distfig = figure;
+    pairs = TibiaParts;
+    for i = 1:length(TibiaParts)
+        name = regexprep(TibiaParts{i},{'TibiaDorsal','TibiaVentral'},{'fore','aft'});
+        name = [TibiaParts{i} '_vs_' regexprep(name,{'fore','aft'},{'TibiaVentral','TibiaDorsal'})];
+        try plot(D.(name)); hold on, catch e, end
+        pairs{i} = name;
+    end
+    
+    
+    if DEBUG_PLOT
+        %% Look at how good the tracking is and apply median filter
+        tcx = medfilt1(TibiaCoords_x,5,[],1,'omitnan','truncate');
+        tcy = medfilt1(TibiaCoords_y,5,[],1,'omitnan','truncate');
+
+        xlims = [min(TibiaCoords_x(:)) max(TibiaCoords_x(:))];
+        ylims = [min(TibiaCoords_y(:)) max(TibiaCoords_y(:))];
+
+        medfilterfig = figure;
+        medfilterfig.Position = [171 78 1069 900];
+        ax = subplot(2,2,1,'parent',medfilterfig);
+%         plot(ax,TibiaCoords_y,'color',[.8 .8 .8]); hold(ax,'on')
+        plot(ax,TibiaCoords_y); hold(ax,'on')
+%         plot(ax,tcy); 
+        ax.YLim = ylims;
+
+        ax = subplot(2,2,4,'parent',medfilterfig);
+%         plot(ax,TibiaCoords_x,'color',[.8 .8 .8]); hold(ax,'on')
+        plot(ax,TibiaCoords_x); hold(ax,'on')
+%         plot(ax,tcx); 
+        ax.YLim = xlims;
+        ax.View = [90 -90]
+        
+        ax = subplot(2,2,2,'parent',medfilterfig);
+%         plot(ax,TibiaCoords_x,TibiaCoords_y,'color',[.8 .8 .8]); hold(ax,'on')
+        plot(ax,TibiaCoords_x,TibiaCoords_y); hold(ax,'on')
+%         plot(ax,tcx,tcy); 
+%         axis(ax,'equal')
+        ax.XLim = xlims;
+        ax.YLim = ylims
+        
+    end    
     % save file (adds another 98 KB to file, not bad)
     save(trial.name, '-struct', 'trial')
     movefile(fullfile(D,trial.legPositions.filename),fullfile(D,'csv'))
     
     fprintf('%s: %d of %d body part coords\n',sprintf(trialStem,trial.params.trial),width(trial.legPositions.Positions),width(T2));
 end
+
+
+
+%% Everything below this will be deleted
 
 if isfield(trial.legPositions,'Origin_4D')
     fprintf('\%d: Origin and elevation already calculated;\n',trial.params.trial)
@@ -83,8 +208,6 @@ elseif ~isfield(trial.legPositions,'Origin_4D')
     %% Then go through all the points in the Tibia coords and fit an
     % ellipse, with width constraints?
     
-    TibiaCoords_x = trial.legPositions.Positions{:,startsWith(bdprts,'Tibia')& endsWith(bdprts,'_x') };
-    TibiaCoords_y = trial.legPositions.Positions{:,startsWith(bdprts,'Tibia')& endsWith(bdprts,'_y') };
     vid.CurrentTime = 0;
     TibiaLine = zeros(height(trial.legPositions.Positions),4);
     imgidx = 0;
@@ -187,96 +310,3 @@ elseif ~isfield(trial.legPositions,'Origin_4D')
     save(trial.name,'-struct','trial');
 
 end
-
-% 
-% if ~isfield(trial.legPositions,'Tibia_ProjectionElipse')
-%     % Finally, fit an ellipse and assume the plane is rotated off horizontal
-%     fprintf('\n%d: Fitting ellipse \t',trial.params.trial),tic
-%     % do a funny thing here where you artificially take few points and
-%     % project them to the other side of the origin, ~3%
-%     fakevects = -1*tibia_vects(randi(size(tibia_vects,1),round(size(tibia_vects,1)/33),1),:);
-%     elvect = [tibia_vects;fakevects];
-%     [z, a, b, alpha] = fitellipse(elvect);
-%     toc
-%     
-%     origin_est = origin+z';
-%     R = mean(tibiaAngleLength(tibiaAngleLength(:,2)>quantile(tibiaAngleLength(:,2),.95),2));
-%     
-%     tibia_vects = TibiaLine(:,1:2)-repmat(origin_est,size(TibiaLine,1),1);
-%     origin_est(3) = 0;
-%     tibia_vects_plane = [tibia_vects,zeros(size(TibiaLine,1),1)];
-%     tibia_vects_3D = tibia_vects_plane;
-%     tibiaAngleLength_elavated = tibiaAngleLength;
-%     
-%     femurUnit_plane = [femurUnit;0];
-%     
-%     if DEBUG_PLOT
-%         figure
-%         ax4 = subplot(1,1,1);
-%         plot3(ax4,origin_est(1),origin_est(2),origin_est(3),'mo');
-%         hold(ax4,'on')
-%         ax4.XGrid = 'on';
-%         ax4.YGrid = 'on';
-%     end
-%     for imgidx = 1:size(TibiaLine,1)
-%         %fprintf('\n%d:',imgidx);
-%         tibia_vect = tibia_vects_plane(imgidx,:);
-%         tibia_vect(3) = sqrt(abs(R^2 - norm(tibia_vect(1:2))^2));
-%         tibia_vects_3D(imgidx,:) = tibia_vect;
-%         tibiaAngleLength_elavated(imgidx,:) = [acosd((tibia_vect*femurUnit_plane)/norm(tibia_vect)) norm(tibia_vect)];
-%         if DEBUG_PLOT
-%             plot3(ax4,[origin_est(1) origin_est(1)+tibia_vect(1)],[origin_est(2) origin_est(2)+tibia_vect(2)],[origin_est(3) origin_est(3)+tibia_vect(3)],'c')
-%         end
-%     end
-%     
-%     trial.legPositions.Origin_3D = origin_est;
-%     %trial.legPositions.Tibia_3D_polar = tibiaAngleLength_elavated;
-%     trial.legPositions.Tibia_3D = tibia_vects_3D;
-%     trial.legPositions.Femur_3D = femurUnit_plane;
-%     % trial.legPositions.Tibia_Projection = tibia_vects;
-%     % trial.legPositions.Tibia_Projection_polar = tibiaAngleLength; % get this with 
-%     %[trial.legPositions.Tibia_Projection * repmat(femurUnit_plane(1:2),N,1),
-%     %    sqrt(trial.legPositions.Tibia_Projection(:,1).^2 + trial.legPositions.Tibia_Projection(:,2).^2)];
-%     trial.legPositions.Tibia_Angle = tibiaAngleLength_elavated(:,1);
-%     trial.legPositions.elevationAngle = acosd(b/a);
-%     trial.legPositions.Tibia_ProjectionElipse = [z, a, b, alpha];
-%     
-%     fprintf('\t%d: Saving trial\t\n',trial.params.trial)
-%     
-%     save(trial.name,'-struct','trial');
-%     if DEBUG_PLOT
-%         pause, close all
-%     end
-%     
-%     
-%     f = figure;
-%     f.Position = [680    32   560   964];
-%     ax5 = subplot(2,1,1,'parent',f); ax5.Position = [0.02 0.5838 0.96 0.4];
-%     vid = VideoReader(trial.imageFile);
-%     vid.CurrentTime = 1;
-%     frame = vid.readFrame;
-%     frame = double(squeeze(frame(:,:,1)));
-%     im = imshow(frame,[0 128],'InitialMagnification',75,'parent',ax5);
-%     hold(ax5,'on');
-%     
-%     plotellipse(ax5,origin+z', a, b, alpha);
-%     plot3(ax5,origin_est(1)+tibia_vects_3D(:,1),origin_est(2)+tibia_vects_3D(:,2),origin_est(3)+tibia_vects_3D(:,3),'c.');
-%     plot3(ax5,origin_est(1)+300*[0,femurUnit_plane(1)], origin_est(2)+300*[0,femurUnit_plane(2)],origin_est(3)+300*[0,femurUnit_plane(3)],'r');
-%     
-%     ax6 = subplot(2,1,2,'parent',f);
-%     el = plotellipse(ax6,origin+z', a, b, alpha);
-%     el.ZData = 0*el.YData;
-%     hold(ax6,'on')
-%     plot3(ax6,origin_est(1)+tibia_vects_3D(:,1),origin_est(2)+tibia_vects_3D(:,2),origin_est(3)+tibia_vects_3D(:,3),'m.');
-%     plot3(ax6,origin_est(1)+300*[0,femurUnit_plane(1)], origin_est(2)+300*[0,femurUnit_plane(2)],origin_est(3)+300*[0,femurUnit_plane(3)],'r');
-%     
-%     ax6.XGrid = 'on';
-%     ax6.YGrid = 'on';
-%     ax6.YDir = 'reverse';
-%     ax6.CameraPosition = [-2.8334    1.2368    2.0467]*1E3;
-%     
-%     
-%     saveas(f,fullfile(D,'trackedPositions',sprintf(regexprep(trialStem,{'_Raw_','.mat'},{'_TrackedPosFig_',''}),trial.params.trial)),'png');
-%     close(f)
-% end
-

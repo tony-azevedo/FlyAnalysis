@@ -67,8 +67,8 @@ trial = load('E:\Data\180628\180628_F2_C1\PiezoRamp2T_Raw_180628_F2_C1_1.mat');
 
 clear trials
 trials{1} = 1:265;
-% trials{2} = 266:307; % MLA wash in
-trials{2} = 308:349; % MLA
+trials{2} = 266:307; % MLA wash in
+trials{3} = 308:349; % MLA
 Nsets = length(trials);
     
 

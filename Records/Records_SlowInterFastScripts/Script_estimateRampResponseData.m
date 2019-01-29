@@ -21,10 +21,13 @@ for cidx = 1:length(CellID)
     
     fprintf('Starting %s\n',cid);
     
-    Dir = fullfile('B:\Raw_Data',cid(1:6),cid);
+    Dir = fullfile('E:\Data',cid(1:6),cid);
+    if ~exist(Dir,'dir')
+        Dir = fullfile('F:\Acquisition',cid(1:6),cid);
+    end
     cd(Dir);
     
-    datafilename = fullfile('B:\Raw_Data',cid(1:regexp(cid,'_')-1),cid);
+    datafilename = fullfile(Dir);
     datafilename = fullfile(datafilename,[T.Protocol{cidx} '_' cid '.mat']);
     try data = load(datafilename); data = data.data;
     catch e
@@ -99,8 +102,8 @@ for cidx = 1:length(CellID)
                     ax.YLim = base+[-10 10];
                     ax.XLim = [-.03 trial.params.stimDurInSec];
                     drawnow
-                    pause();
-                    %pause(.1)
+                    %pause();
+                    pause(.1)
                 end
                 
                 T_row.Position = pos;

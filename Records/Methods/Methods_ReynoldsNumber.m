@@ -1,8 +1,11 @@
 %% Ren
 nu = 1E-6; %H2O Re - 5
 nu = 1.48E-5; %air Re - 0.3378
-L = 5E-4;
-u = 1e-2;
+L = 5E-4; % Fly ~1/2 a milimeter
+L = 1; % human ~ meter
+
+u = 2e-2;   % velocity of fly
+u = 1;   % velocity of human
 
 Re = u*L/nu;
 

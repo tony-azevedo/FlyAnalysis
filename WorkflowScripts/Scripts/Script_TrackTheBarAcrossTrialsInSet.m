@@ -1,8 +1,8 @@
 %% Script_TrackTheBarAcrossTrialsInSet
 
-for set = 1:Nsets
-    fprintf('\n\t***** Batch %d of %d\n',set,Nsets);
-    trialnumlist = trials{set};
+for setidx = 1:length(trials)
+    fprintf('\n\t***** Batch %d of %d\n',setidx,length(trials));
+    trialnumlist = trials{setidx};
     
     close all
     
@@ -16,14 +16,15 @@ for set = 1:Nsets
         
         if isfield(trial ,'forceProbe_line') && isfield(trial,'forceProbe_tangent') && (~isfield(trial,'excluded') || ~trial.excluded) && ~isfield(trial,'forceProbeStuff')
             fprintf('%s\n',trial.name);
-            eval(routine{set}); %probeTrackROI_IR;
+            %eval(routine{set}); 
+            probeTrackROI_IR;
         elseif isfield(trial,'forceProbeStuff')
-            fprintf('%s\n',trial.name);
-            fprintf('\t*Has profile: passing over trial for now\n')
+%             fprintf('%s\n',trial.name);
+%             fprintf('\t*Has profile: passing over trial for now\n')
             
             % OR...
-%             fprintf('\t*Has profile: redoing\n')
-%             eval(routine{set}); %probeTrackROI_IR;
+             fprintf('\t*Has profile: redoing\n')
+             probeTrackROI_IR;
 
             %OR...
             if isfield(trial.forceProbeStuff,'keimograph')

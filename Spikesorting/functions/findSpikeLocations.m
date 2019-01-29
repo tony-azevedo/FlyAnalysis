@@ -20,8 +20,12 @@ end
 if isempty(peaklocs)
     fprintf('Nice! no peaks\n')
 end
+
+% no peak locations within a spiketemplate width of the end or beginning
 peaklocs = peaklocs(peaklocs > vars.spikeTemplateWidth & peaklocs <  length(filtered_data)-vars.spikeTemplateWidth);
-peaklocs = peaklocs(filtered_data(peaklocs) < mean(filtered_data(peaklocs))+ 5*std(filtered_data(peaklocs)));
+
+% This was to elliminate really large peaks, obsolete
+% peaklocs = peaklocs(filtered_data(peaklocs) <= mean(filtered_data(peaklocs))+ 5*std(filtered_data(peaklocs)));
 
 % %% Debug figure
 % tempf = figure;

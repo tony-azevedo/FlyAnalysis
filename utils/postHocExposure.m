@@ -1,4 +1,4 @@
-function h = postHocExposure(h,varargin)
+function b = postHocExposure(h,varargin)
 if nargin>1
     N = round(varargin{1});
 end
@@ -17,7 +17,16 @@ end
 if exist('p','var') && isfield(p.Results,'use')
     use = p.Results.use;
 end
-if ((h.exposure(1) == 1 || h.exposure(2) == 1) && ~islogical(h.exposure)) || strcmp(use,'raw')
+if ~islogical(h.exposure)
+    start = find(h.exposure,1,'first');
+    next = find(h.exposure(start+1:end)==0,1,'first');
+    DF = find(h.exposure(next+1:end),1,'first')+next;
+end
+
+if (~islogical(h.exposure) && DF > start) || strcmp(use,'raw')
+    if ~(h.exposure(1) == 1 || h.exposure(2) == 1)
+       warning('Exposure vector is not well conditioned for current analysis\n1st true index (exp starts) = %d',start); 
+    end
     exposure = h.exposure;
     if strcmp(use,'raw') && isfield(h,'exposure_raw')
         exposure = h.exposure_raw;
@@ -61,8 +70,9 @@ if ((h.exposure(1) == 1 || h.exposure(2) == 1) && ~islogical(h.exposure)) || str
             error('Are there enough exposures to skootch this trial and maintain frame number?')
         end
     end
-    h.exposure = logical(exposure_1_0);
+    b.exposure = logical(exposure_1_0);
 elseif isfield(h,'exposure_raw') || strcmp(use,'skoootched')
+    b.exposure = h.exposure;
     fprintf(' * Exposure vector has been skootched!\n')
 else
    error('Exposure vector is not well conditioned for current analysis\n1st true index (exp starts) = %d',find(h.exposure,1,'first')); 
@@ -74,5 +84,5 @@ if isfield(h,'exposure2') && ((h.exposure2(1) == 1 || h.exposure2(2) == 1) && ~i
     
     % turn exposure into a vector where the end of the exposure -> 1
     exposure_1_0(1:end-1) = exposure2(1:end-1)&~exposure2(2:end); 
-    h.exposure2 = logical(exposure_1_0);
+    b.exposure2 = logical(exposure_1_0);
 end

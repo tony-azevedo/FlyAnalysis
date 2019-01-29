@@ -1,6 +1,8 @@
 function all_filtered_data = filterDataWithSpikes(vars)
 
-vars.spikeTemplateWidth = length(vars.spikeTemplate);
+if ~isempty(vars.spikeTemplate)
+    vars.spikeTemplateWidth = length(vars.spikeTemplate);
+end
 filts1 = vars.hp_cutoff/(vars.fs/2);
 [x,y] = butter(3,filts1,'high');%%bandpass filter between 50 and 200 Hz
 filtered_data_high = filter(x, y, vars.unfiltered_data-vars.unfiltered_data(1));

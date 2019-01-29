@@ -4,7 +4,6 @@ vid = VideoReader(trial.imageFile2);
 t_i = 10*1/vid.FrameRate + trial.params.preDurInSec;
 t_f = min([trial.params.stimDurInSec-10*1/vid.FrameRate,1]);
 
-
 vid.CurrentTime = t_i;
 cnt = 1;
 frame3 = readFrame(vid);
@@ -75,7 +74,6 @@ y_offset = getacqpref('FlyAnalysis','CaImgCam2Y_Offset');
 theta = getacqpref('FlyAnalysis','CaImgCam2Rotation');
 
 mask(Y_offset+1:min([Y_offset+ wh_Green(1),wh(1)]),X_offset+1:min([X_offset+ wh_Green(2),wh(2)])) = green;
-green_1 = green;
 
 a = alphamask(mask,[0 1 0],.5,dispax);
 drawnow
@@ -143,6 +141,8 @@ while 1
     a.AlphaData = mask*.5;
     drawnow;
 end
+
+
 %%
 delete(a)
 
@@ -167,4 +167,5 @@ switch button
     case 'No'
     case 'Cancel'
 end
+
 

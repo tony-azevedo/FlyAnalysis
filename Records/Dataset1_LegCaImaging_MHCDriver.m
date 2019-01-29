@@ -36,14 +36,22 @@ caImavi
 % Workflow_MHCLexA_GCaMP6f_181007_F2_C1_MuscleImaging
 
 Workflow_MHCLexA_GCaMP6f_181011_F2_C1_MuscleImaging
-Workflow_MHCLexA_GCaMP6f_181011_F3_C1_MuscleImaging % Nice! Use this to explore
 
 Workflow_MHCLexA_GCaMP6f_181017_F1_C1_MuscleImaging % Throwing this out because the leg moves quite a bit, not glued down
 Workflow_MHCLexA_GCaMP6f_181017_F2_C1_MuscleImaging % Not great, EMG is not large
 
-Workflow_MHCLexA_GCaMP6f_181111_F1_C1_MuscleImaging % Not great, EMG is not large
-Workflow_MHCLexA_GCaMP6f_181111_F2_C1_MuscleImaging % Not great, EMG is not large
+Workflow_MHCLexA_GCaMP6f_181105_F1_C1_MuscleImaging % 
 
+% Workflow_MHCLexA_GCaMP6f_181111_F1_C1_MuscleImaging % Objective was not
+% washed, ignoring for now, could come back to it.
+% Workflow_MHCLexA_GCaMP6f_181111_F2_C1_MuscleImaging % 
+
+%% Sent the following to Shaul
+Workflow_MHCLexA_GCaMP6f_181011_F3_C1_MuscleImaging % Nice! Use this to explore
+Workflow_MHCLexA_GCaMP6f_181121_F2_C1_MuscleImaging % Cleaned the objective
+
+Workflow_MHCLexA_GCaMP6f_181209_F2_C1_MuscleImaging
+Workflow_MHCLexA_GCaMP6f_181210_F1_C1_MuscleImaging
 
 
 %% calculate cluster intensity with the entire set from 170705

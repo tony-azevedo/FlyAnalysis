@@ -1,63 +1,74 @@
 % Slow Workflows
 
 % Slow
-Workflow_35C09_180111_F1_C1_ForceProbePatching
-Workflow_35C09_180307_F2_C1_ForceProbePatching
-Workflow_35C09_180313_F1_C1_ForceProbePatching
-
-Workflow_35C09_180621_F1_C1_ForceProbePatching
-Workflow_35C09_180628_F2_C1_ForceProbePatching % working on
-Workflow_35C09_181014_F1_C1_ForceProbePatching % complete!
-
-Workflow_35C09_181021_F1_C1_ForceProbePatching
-Workflow_35C09_181024_F2_C1_ForceProbePatching
+% Workflow_35C09_180111_F1_C1_ForceProbePatching
+% Workflow_35C09_180307_F2_C1_ForceProbePatching
+% Workflow_35C09_180313_F1_C1_ForceProbePatching
+% 
+% Workflow_35C09_180621_F1_C1_ForceProbePatching % 
+% Workflow_35C09_180628_F2_C1_ForceProbePatching % spike detection complete
+% Workflow_35C09_181014_F1_C1_ForceProbePatching % complete!
+% 
+% Workflow_35C09_181021_F1_C1_ForceProbePatching
+% Workflow_35C09_181024_F2_C1_ForceProbePatching
+% Workflow_35C09_181127_F1_C1_ForceProbePatching
+% Workflow_35C09_181127_F2_C1_ForceProbePatching
+% 
+% Workflow_35C09_181128_F1_C1_ForceProbePatching
+% Workflow_35C09_181128_F2_C1_ForceProbePatching
 
 
 %% Intermediate workflows
-Workflow_22A08_180222_F1_C1_ForceProbePatching % clear movement of the bar with single spikes, very nice!
-Workflow_22A08_180223_F1_C1_ForceProbePatching
-Workflow_22A08_180320_F1_C1_ForceProbePatching
-Workflow_22A08_180405_F3_C1_ChRStimulation_ForceProbePatching
-Workflow_22A08_180807_F1_C1_ChRStimulation_ForceProbePatching
+% Workflow_22A08_180222_F1_C1_ForceProbePatching % clear movement of the bar with single spikes, very nice!
+% Workflow_22A08_180223_F1_C1_ForceProbePatching
+% Workflow_22A08_180320_F1_C1_ForceProbePatching
+% 
+% Workflow_22A08_180405_F3_C1_ChRStimulation_ForceProbePatching
+% Workflow_22A08_180807_F1_C1_ChRStimulation_ForceProbePatching
+% 
+% Workflow_22A08_181118_F1_C1_ForceProbePatching
+% Workflow_22A08_181205_F1_C1_ForceProbePatching
 
 
 %% Fast work flows
 
 % 81A07 - with ChR
-Workflow_81A07_171101_F1_C1_ForceProbePatching
-Workflow_81A07_171102_F1_C1_ForceProbePatching
-Workflow_81A07_171102_F2_C1_ForceProbePatching
-Workflow_81A07_171103_F1_C1_ForceProbePatching
-Workflow_81A07_180308_F3_C1_ForceProbePatching
+% Workflow_81A07_171101_F1_C1_ForceProbePatching
+% Workflow_81A07_171102_F1_C1_ForceProbePatching
+% Workflow_81A07_171102_F2_C1_ForceProbePatching
+% Workflow_81A07_171103_F1_C1_ForceProbePatching
+% Workflow_81A07_180308_F3_C1_ForceProbePatching
+% Workflow_81A07_190116_F1_C1_ForceProbePatching % Is this a flexor?
+% Workflow_81A07_190116_F3_C1_ForceProbePatching
 
 
 %% Others
 
-% Slow
-% 81A06
-Workflow_81A06_171025_F1_C1_ForceProbePatching % 171025_F1_C1
-
-% Workflow_81A06_171107_F1_C2_ForceProbePatching % not much leg movement
-Workflow_81A06_171116_F1_C1_ForceProbePatching % Good cell, current injection nice, still need to 
-
-
-% Intermediate workflows
-
-% 81A06
-% Interesting cell, used the spike current hack thing, even had a signal in
-% the EMG. 
-Workflow_81A06_171026_F2_C1_ForceProbePatching 
-
-% no spiking, not clear what this was, but large sensory responses that
-% don't really look like 
-Workflow_81A06_171107_F1_C1_ForceProbePatching 
-
-% first really clear evidence of intermediate neuron, with a nice fill
-Workflow_81A06_171122_F1_C1_ForceProbePatching
-
-% Nice spikes, good strong responses to sensory information. piezo ramp
-% videos
-Workflow_81A06_180112_F1_C1_ForceProbePatching
+% % Slow
+% % 81A06
+% Workflow_81A06_171025_F1_C1_ForceProbePatching % 171025_F1_C1
+% 
+% % Workflow_81A06_171107_F1_C2_ForceProbePatching % not much leg movement
+% Workflow_81A06_171116_F1_C1_ForceProbePatching % Good cell, current injection nice, still need to 
+% 
+% 
+% % Intermediate workflows
+% 
+% % 81A06
+% % Interesting cell, used the spike current hack thing, even had a signal in
+% % the EMG. 
+% Workflow_81A06_171026_F2_C1_ForceProbePatching 
+% 
+% % no spiking, not clear what this was, but large sensory responses that
+% % don't really look like 
+% Workflow_81A06_171107_F1_C1_ForceProbePatching 
+% 
+% % first really clear evidence of intermediate neuron, with a nice fill
+% Workflow_81A06_171122_F1_C1_ForceProbePatching
+% 
+% % Nice spikes, good strong responses to sensory information. piezo ramp
+% % videos
+% Workflow_81A06_180112_F1_C1_ForceProbePatching
 
 
 %% Steps 
@@ -74,7 +85,7 @@ T{1,:} = {'171101_F1_C1', '81A07',            'fast', 'PiezoStep2T','empty',[0  
 %T{end+1,:} = {'171102_F1_C1', '81A07',            'fast', 'PiezoStep2T','empty',[                  ], [],[1 2 3],[],[],[],[],[],[]}; % no steps
 T{end+1,:} = {'171102_F2_C1', '81A07',            'fast', 'PiezoStep2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[],[]}; % said -200 in the notes, but suspect this was from the previous EpiFlash set
 T{end+1,:} = {'171103_F1_C1', '81A07',            'fast', 'PiezoStep2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[],[]};
-    T{end+1,:} = {'180308_F3_C1', '81A07',            'fast', 'PiezoStep2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[],[]};
+T{end+1,:} = {'180308_F3_C1', '81A07',            'fast', 'PiezoStep2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[],[]};
 T{end+1,:} = {'180404_F1_C1', '81A07/iav-LexA',   'fast', 'PiezoStep2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[],[]};
 T{end+1,:} = {'180410_F1_C1', '81A07/iav-LexA',   'fast',  'PiezoStep2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[],[]};
 T{end+1,:} = {'180703_F3_C1', '81A07/iav-LexA',   'fast',  'PiezoStep2T','empty',[0                  ], [],[1 2 3],[],[],[],[],[],[]};
@@ -87,6 +98,8 @@ T{end+1,:} = {'180807_F1_C1', '22A08',            'intermediate', 'PiezoStep2T',
 T{end+1,:} = {'180328_F4_C1', '22A08/iav-LexA',     'intermediate', 'PiezoStep2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[],[]};
 T{end+1,:} = {'180821_F1_C1', '22A08/iav-LexA',     'intermediate', 'PiezoStep2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[],[]};
 T{end+1,:} = {'180822_F1_C1', '22A08/iav-LexA',     'intermediate',  'PiezoStep2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[],[]};
+T{end+1,:} = {'181118_F1_C1', '22A08',     'intermediate',  'PiezoStep2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[],[]};
+T{end+1,:} = {'181205_F1_C1', '22A08',     'intermediate',  'PiezoStep2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[],[]};
 
 T{end+1,:} = {'180111_F2_C1', '35C09',     'slow', 'PiezoStep2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[],[]};
 % T{end+1,:} = {'180307_F2_C1', '35C09',     'slow', 'PiezoStep2T','empty',[-150 -75  0 75 120], [],[1 2 3],[],[],[],[],[],[]};
@@ -96,6 +109,13 @@ T{end+1,:} = {'180628_F2_C1', '35C09',     'slow', 'PiezoStep2T','empty',[-150 -
 T{end+1,:} = {'180328_F1_C1', '35C09/iav-LexA',     'slow',  'PiezoStep2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[],[]};
 T{end+1,:} = {'180329_F1_C1', '35C09/iav-LexA',     'slow',  'PiezoStep2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[],[]};
 T{end+1,:} = {'180702_F1_C1', '35C09/iav-LexA',     'slow', 'PiezoStep2T','empty',[0                  ], [],[1 2 3],[],[],[],[],[],[]};
+T{end+1,:} = {'181014_F1_C1', '35C09',     'slow', 'PiezoStep2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[],[]};
+T{end+1,:} = {'181021_F1_C1', '35C09',     'slow', 'PiezoStep2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[],[]};
+T{end+1,:} = {'181024_F2_C1', '35C09',     'slow', 'PiezoStep2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[],[]};
+T{end+1,:} = {'181127_F1_C1', '35C09',     'slow', 'PiezoStep2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[],[]};
+T{end+1,:} = {'181127_F2_C1', '35C09',     'slow', 'PiezoStep2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[],[]};
+T{end+1,:} = {'181128_F1_C1', '35C09',     'slow', 'PiezoStep2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[],[]};
+T{end+1,:} = {'181128_F2_C1', '35C09',     'slow', 'PiezoStep2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[],[]};
 
 
 Script_estimateStepResponseData
@@ -108,18 +128,34 @@ cids = unique(T_Step.CellID);
 clbls = unique(T.Cell_label);
 
 figure
-ax = subplot(1,1,1); hold(ax,'on');
-plot(ax,[-10 10],[0 0],'color',[1 1 1]*.8)
+ax1 = subplot(1,3,1); hold(ax1,'on');
+plot(ax1,[-10 10],[0 0],'color',[1 1 1]*.8)
+ax2 = subplot(1,3,2); hold(ax2,'on');
+plot(ax2,[-10 10],[0 0],'color',[1 1 1]*.8)
+ax3 = subplot(1,3,3); hold(ax3,'on');
+plot(ax3,[-10 10],[0 0],'color',[1 1 1]*.8)
 for cidx = 1:length(cids)
     idx = strcmp(T_Step.CellID,cids{cidx});
-    x = cell2mat(T_Step.Step(idx));
-    y = cell2mat(T_Step.Peak(idx));
+%     if contains(T_Step.Genotype{find(idx,1)},'iav')
+%         continue
+%     end
+
+    posidx = cell2mat(T_Step.Position)==0;
+    
+    x = cell2mat(T_Step.Step(idx&posidx));
+    y = cell2mat(T_Step.Peak(idx&posidx));
     y = y.*-sign(x);
     typ = find(strcmp(clbls,T_Step.Cell_label{find(idx,1)}));
     clr = clrs(strcmp(clbls,T_Step.Cell_label{find(idx,1)}),:);
+    eval(['ax = ax' num2str(typ) ';']);
     plot(ax,x,y,'color',clr,'marker','.');
 end
-ax.XLim = [-11 11];
+ax1.XLim = [-11 11];
+ax2.XLim = [-11 11];
+ax3.XLim = [-11 11];
+ax1.YLim = [-11 11];
+ax2.YLim = [-11 11];
+ax3.YLim = [-11 11];
 
 
 %% Plot the delay for any good (ie non iav) fast or intermediate cells 
@@ -186,12 +222,13 @@ for cidx = 1:length(cids)
     ax = panl(typ).select(); hold(ax,'on');
 
     positions = (T_Step.Positions{find(idx,1)});
-    if length(positions)==1
-        continue
-    end
+%     if length(positions)==1
+%         continue
+%     end
     cell_y = nan(size(positions));
     cell_x = positions;
     for pos = positions
+        
         posidx = idx & cell2mat(T_Step.Position) == pos;
         if ~sum(posidx)
             fprintf('%s is missing data for position %d\n',cids{cidx},pos);
@@ -218,6 +255,9 @@ ax = panl(4).select(); hold(ax,'on');
 for typ = 1:length(clbls)
     lns = findobj(ax,'type','line','tag',['type' num2str(typ)]);
     xs = lns(1).XData;
+    if length(xs)==1
+        continue
+    end
     ys = nan(length(lns),length(xs));
     for ln = 1:length(lns)
         ys(ln,:) = lns(ln).YData;

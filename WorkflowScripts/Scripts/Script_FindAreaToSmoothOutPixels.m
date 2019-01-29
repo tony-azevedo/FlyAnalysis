@@ -1,7 +1,7 @@
 %% Script_SetProbeLine
 
-for set = 1:Nsets
-    trialnumlist = trials{set};
+for setidx = 1:length(trials)
+    trialnumlist = trials{setidx};
     
     for tr_idx = trialnumlist(1:3)
         trial = load(sprintf(trialStem,tr_idx));

@@ -1,58 +1,73 @@
 % Slow Workflows
 
 % Slow
-Workflow_35C09_180111_F1_C1_ForceProbePatching
-Workflow_35C09_180307_F2_C1_ForceProbePatching
-Workflow_35C09_180313_F1_C1_ForceProbePatching
-Workflow_35C09_180621_F1_C1_ForceProbePatching
-Workflow_35C09_180628_F2_C1_ForceProbePatching
+% Workflow_35C09_180111_F1_C1_ForceProbePatching
+% Workflow_35C09_180307_F2_C1_ForceProbePatching
+% Workflow_35C09_180313_F1_C1_ForceProbePatching
+% 
+% Workflow_35C09_180621_F1_C1_ForceProbePatching % 
+% Workflow_35C09_180628_F2_C1_ForceProbePatching % spike detection complete
+% Workflow_35C09_181014_F1_C1_ForceProbePatching % complete!
+% 
+% Workflow_35C09_181021_F1_C1_ForceProbePatching % spike detection and leg movement complete
+% Workflow_35C09_181024_F2_C1_ForceProbePatching
+% Workflow_35C09_181127_F1_C1_ForceProbePatching
+% Workflow_35C09_181127_F2_C1_ForceProbePatching
+% 
+% Workflow_35C09_181128_F1_C1_ForceProbePatching
+% Workflow_35C09_181128_F2_C1_ForceProbePatching
 
 
 %% Intermediate workflows
-Workflow_22A08_180222_F1_C1_ForceProbePatching % clear movement of the bar with single spikes, very nice!
-Workflow_22A08_180223_F1_C1_ForceProbePatching
-Workflow_22A08_180320_F1_C1_ForceProbePatching
-Workflow_22A08_180405_F3_C1_ChRStimulation_ForceProbePatching
-Workflow_22A08_180807_F1_C1_ChRStimulation_ForceProbePatching
+% Workflow_22A08_180222_F1_C1_ForceProbePatching % clear movement of the bar with single spikes, very nice!
+% Workflow_22A08_180223_F1_C1_ForceProbePatching
+% Workflow_22A08_180320_F1_C1_ForceProbePatching
+% 
+% Workflow_22A08_180405_F3_C1_ChRStimulation_ForceProbePatching
+% Workflow_22A08_180807_F1_C1_ChRStimulation_ForceProbePatching
+% 
+% Workflow_22A08_181118_F1_C1_ForceProbePatching
+% 
+% Workflow_22A08_181205_F1_C1_ForceProbePatching
 
 
 %% Fast work flows
 
 % 81A07 - with ChR
-Workflow_81A07_171101_F1_C1_ForceProbePatching
-Workflow_81A07_171102_F1_C1_ForceProbePatching
-Workflow_81A07_171102_F2_C1_ForceProbePatching
-Workflow_81A07_171103_F1_C1_ForceProbePatching
-Workflow_81A07_180308_F3_C1_ForceProbePatching
+% Workflow_81A07_171101_F1_C1_ForceProbePatching
+% Workflow_81A07_171102_F1_C1_ForceProbePatching
+% Workflow_81A07_171102_F2_C1_ForceProbePatching
+% Workflow_81A07_171103_F1_C1_ForceProbePatching
+% Workflow_81A07_180308_F3_C1_ForceProbePatching
 
-
+% 
 %% Others
-
-% Slow
-% 81A06
-Workflow_81A06_171025_F1_C1_ForceProbePatching % 171025_F1_C1
-
-% Workflow_81A06_171107_F1_C2_ForceProbePatching % not much leg movement
-Workflow_81A06_171116_F1_C1_ForceProbePatching % Good cell, current injection nice, still need to 
-
-
-% Intermediate workflows
-
-% 81A06
-% Interesting cell, used the spike current hack thing, even had a signal in
-% the EMG. 
-Workflow_81A06_171026_F2_C1_ForceProbePatching 
-
-% no spiking, not clear what this was, but large sensory responses that
-% don't really look like 
-Workflow_81A06_171107_F1_C1_ForceProbePatching 
-
-% first really clear evidence of intermediate neuron, with a nice fill
-Workflow_81A06_171122_F1_C1_ForceProbePatching
-
-% Nice spikes, good strong responses to sensory information. piezo ramp
-% videos
-Workflow_81A06_180112_F1_C1_ForceProbePatching
+% 
+% % Slow
+% % 81A06
+% Workflow_81A06_171025_F1_C1_ForceProbePatching % 171025_F1_C1
+% 
+% % Workflow_81A06_171107_F1_C2_ForceProbePatching % not much leg movement
+% Workflow_81A06_171116_F1_C1_ForceProbePatching % Good cell, current injection nice, still need to 
+% 
+% 
+% % Intermediate workflows
+% 
+% % 81A06
+% % Interesting cell, used the spike current hack thing, even had a signal in
+% % the EMG. 
+% Workflow_81A06_171026_F2_C1_ForceProbePatching 
+% 
+% % no spiking, not clear what this was, but large sensory responses that
+% % don't really look like 
+% Workflow_81A06_171107_F1_C1_ForceProbePatching 
+% 
+% % first really clear evidence of intermediate neuron, with a nice fill
+% Workflow_81A06_171122_F1_C1_ForceProbePatching
+% 
+% % Nice spikes, good strong responses to sensory information. piezo ramp
+% % videos
+% Workflow_81A06_180112_F1_C1_ForceProbePatching
 
 
 
@@ -69,29 +84,38 @@ T.Properties.VariableNames = varNames;
 T{1,:} = {'171101_F1_C1', '81A07',            'fast', 'PiezoRamp2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[]};% just 0 position
 %T{3,:} = {'171102_F1_C1', '81A07',            'fast', 'PiezoStep2T','empty',[                  ], [],[1 2 3],[],[],[],[],[]}; % no steps
 T{2,:} = {'171102_F2_C1', '81A07',            'fast', 'PiezoRamp2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[]}; % said -200 in the notes, but suspect this was from the previous EpiFlash set
-T{3,:} = {'171103_F1_C1', '81A07',            'fast', 'PiezoRamp2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[]};
-T{4,:} = {'180308_F3_C1', '81A07',            'fast', 'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]};
-T{5,:} = {'180404_F1_C1', '81A07/iav-LexA',   'fast', 'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]};
-T{6,:} = {'180410_F1_C1', '81A07/iav-LexA',   'fast',  'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]};
-T{7,:} = {'180703_F3_C1', '81A07/iav-LexA',   'fast',  'PiezoRamp2T','empty',[0                  ], [],[1 2 3],[],[],[],[],[]};
+T{end+1,:} = {'171103_F1_C1', '81A07',            'fast', 'PiezoRamp2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[]};
+T{end+1,:} = {'180308_F3_C1', '81A07',            'fast', 'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]};
+T{end+1,:} = {'180404_F1_C1', '81A07/iav-LexA',   'fast', 'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]};
+T{end+1,:} = {'180410_F1_C1', '81A07/iav-LexA',   'fast',  'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]};
+T{end+1,:} = {'180703_F3_C1', '81A07/iav-LexA',   'fast',  'PiezoRamp2T','empty',[0                  ], [],[1 2 3],[],[],[],[],[]};
 
-T{8,:} = {'180222_F1_C1', '22A08',            'intermediate', 'PiezoRamp2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[]};
-T{9,:} = {'180223_F1_C1', '22A08',            'intermediate', 'PiezoRamp2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[]};
-T{10,:} = {'180320_F1_C1', '22A08',            'intermediate', 'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]};
-T{11,:} = {'180405_F3_C1', '22A08',            'intermediate', 'PiezoRamp2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[]};
-T{12,:} = {'180807_F1_C1', '22A08',            'intermediate', 'PiezoRamp2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[]};
-T{13,:} = {'180328_F4_C1', '22A08/iav-LexA',     'intermediate', 'PiezoRamp2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[]};
-T{14,:} = {'180821_F1_C1', '22A08/iav-LexA',     'intermediate', 'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]};
-T{15,:} = {'180822_F1_C1', '22A08/iav-LexA',     'intermediate',  'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]};
+T{end+1,:} = {'180222_F1_C1', '22A08',            'intermediate', 'PiezoRamp2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[]};
+T{end+1,:} = {'180223_F1_C1', '22A08',            'intermediate', 'PiezoRamp2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[]};
+T{end+1,:} = {'180320_F1_C1', '22A08',            'intermediate', 'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]};
+T{end+1,:} = {'180405_F3_C1', '22A08',            'intermediate', 'PiezoRamp2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[]};
+T{end+1,:} = {'180807_F1_C1', '22A08',            'intermediate', 'PiezoRamp2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[]};
+T{end+1,:} = {'180328_F4_C1', '22A08/iav-LexA',     'intermediate', 'PiezoRamp2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[]};
+T{end+1,:} = {'180821_F1_C1', '22A08/iav-LexA',     'intermediate', 'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]};
+T{end+1,:} = {'181118_F1_C1', '22A08/iav-LexA',     'intermediate',  'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]};
+T{end+1,:} = {'181205_F1_C1', '22A08/iav-LexA',     'intermediate',  'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]};
 
-T{16,:} = {'180111_F2_C1', '35C09',     'slow', 'PiezoRamp2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[]};
+T{end+1,:} = {'180111_F2_C1', '35C09',     'slow', 'PiezoRamp2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[]};
 % T{17,:} = {'180307_F2_C1', '35C09',     'slow', 'PiezoStep2T','empty',[-150 -75  0 75 120], [],[1 2 3],[],[],[],[],[]};
-T{17,:} = {'180313_F1_C1', '35C09',     'slow', 'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]};
-T{18,:} = {'180621_F1_C1', '35C09',     'slow', 'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]};
-T{19,:} = {'180628_F2_C1', '35C09',     'slow', 'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]}; % MLA
-T{20,:} = {'180328_F1_C1', '35C09/iav-LexA',     'slow',  'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]};
-T{21,:} = {'180329_F1_C1', '35C09/iav-LexA',     'slow',  'PiezoRamp2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[]};
-T{22,:} = {'180702_F1_C1', '35C09/iav-LexA',     'slow', 'PiezoRamp2T','empty',[0                  ], [],[1 2 3],[],[],[],[],[]};
+T{end+1,:} = {'180313_F1_C1', '35C09',     'slow', 'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]};
+T{end+1,:} = {'180621_F1_C1', '35C09',     'slow', 'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]};
+T{end+1,:} = {'180628_F2_C1', '35C09',     'slow', 'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]}; % MLA
+T{end+1,:} = {'180328_F1_C1', '35C09/iav-LexA',     'slow',  'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]};
+T{end+1,:} = {'180329_F1_C1', '35C09/iav-LexA',     'slow',  'PiezoRamp2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[]};
+T{end+1,:} = {'180702_F1_C1', '35C09/iav-LexA',     'slow', 'PiezoRamp2T','empty',[0                  ], [],[1 2 3],[],[],[],[],[]};
+T{end+1,:} = {'181014_F1_C1', '35C09',     'slow',  'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]};
+T{end+1,:} = {'181021_F1_C1', '35C09',     'slow',  'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]};
+T{end+1,:} = {'181024_F2_C1', '35C09',     'slow',  'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]};
+T{end+1,:} = {'181127_F1_C1', '35C09',     'slow',  'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]};
+T{end+1,:} = {'181127_F2_C1', '35C09',     'slow',  'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]};
+T{end+1,:} = {'181128_F1_C1', '35C09',     'slow',  'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]};
+T{end+1,:} = {'181128_F2_C1', '35C09',     'slow',  'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]};
+
 
 
 Script_estimateRampResponseData
@@ -104,23 +128,34 @@ cids = unique(T_Ramp.CellID);
 clbls = unique(T.Cell_label);
 
 figure
-ax = subplot(1,1,1); hold(ax,'on');
-plot(ax,[-10 10],[0 0],'color',[1 1 1]*.8)
+ax1 = subplot(1,3,1); hold(ax1,'on');
+plot(ax1,[-10 10],[0 0],'color',[1 1 1]*.8)
+ax2 = subplot(1,3,2); hold(ax2,'on');
+plot(ax2,[-10 10],[0 0],'color',[1 1 1]*.8)
+ax3 = subplot(1,3,3); hold(ax3,'on');
+plot(ax3,[-10 10],[0 0],'color',[1 1 1]*.8)
 for cidx = 1:length(cids)
     dcpl = cell2mat(T_Ramp.Displacement);
     idx = strcmp(T_Ramp.CellID,cids{cidx}) & dcpl==-10;
-    x = cell2mat(T_Ramp.Speed(idx));
-    y = cell2mat(T_Ramp.Peak(idx));
+    posidx = cell2mat(T_Ramp.Position)==0;
 
-    y = y(x==50|x==100|x == 150);
-    x = x(x==50|x==100|x == 150);
+    x = cell2mat(T_Ramp.Speed(idx&posidx));
+    y = cell2mat(T_Ramp.Peak(idx&posidx));
+
+    y = y(x==50|x==100|x == 150| x==300);
+    x = x(x==50|x==100|x == 150| x==300);
     
     typ = find(strcmp(clbls,T_Ramp.Cell_label{find(idx,1)}));
     clr = clrs(strcmp(clbls,T_Ramp.Cell_label{find(idx,1)}),:);
+    eval(['ax = ax' num2str(typ) ';']);
     plot(ax,x,y,'color',clr,'marker','.');
 end
-ax.XLim = [45 155];
-
+ax1.XLim = [40 310];
+ax2.XLim = [40 310];
+ax3.XLim = [40 310];
+ax1.YLim = [0 15];
+ax2.YLim = [0 15];
+ax3.YLim = [0 15];
 
 %% Plot the peaks for -10 step, 150 speed
 steps = cell2mat(T_Ramp.Displacement);

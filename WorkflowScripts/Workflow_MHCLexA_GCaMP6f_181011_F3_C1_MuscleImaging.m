@@ -1,37 +1,36 @@
 %% Muscle Imaging Leg Tracking and ForceProbe Workflow 
 
 %% EpiFlash2CB2T Bar detection
-trial = load('F:\Acquisition\181011\181011_F3_C1\EpiFlash2CB2T_Raw_181011_F3_C1_1.mat');
+trial = load('E:\Data\181011\181011_F3_C1\EpiFlash2CB2T_Raw_181011_F3_C1_3.mat');
 [~,~,~,~,~,D,trialStem] = extractRawIdentifiers(trial.name);
 cd(D);
 
-clear trials
+clear trials nobartrials bartrials
+
+nobartrials{1} = 1:15;
+nobartrials{2} = 16:75;
 
 % if the position of the prep changes, make a new set
-trials{1} = 76:120;
+bartrials{1} = 76:90;
+bartrials{2} = 91:120;
 
-routine = {
-    'probeTrackROI_IR' 
-    };
-
-Nsets = length(trials);
 
 %% Run scripts one at a time
 
 % Set probe line 
-Script_SetProbeLine 
+% Script_SetProbeLine 
 
 % double check some trials
-trial = load(sprintf(trialStem,215));
-showProbeLocation(trial)
+% trial = load(sprintf(trialStem,215));
+% showProbeLocation(trial)
 
 % trial = probeLineROI(trial);
 
 % Find an area to smooth out the pixels
-Script_FindAreaToSmoothOutPixels
+% Script_FindAreaToSmoothOutPixels
 
 % Track the bar
-Script_TrackTheBarAcrossTrialsInSet
+% Script_TrackTheBarAcrossTrialsInSet
 
 % Find the trials with Red LED transients and mark them down
 % Script_FindTheTrialsWithRedLEDTransients % Using UV Led
@@ -47,127 +46,143 @@ ZeroForce = 700-(setpoint-700);
 Script_SetTheMinimumCoM_byHand
 
 %% Calculate position of femur and tibia from csv files
-trial = load('F:\Acquisition\181011\181011_F3_C1\EpiFlash2CB2T_Raw_181011_F3_C1_1.mat');
-[~,~,~,~,~,D,trialStem] = extractRawIdentifiers(trial.name);
-cd(D);
 
-clear trials
+% After bringing videos back from DeepLabCut, run through all trials, get
+% some stats on the dots, do some error correction, make some videos.
 
-% 50 Hz, kmeans clustering
-trials{1} = 1:75;
-trialnumlist = trials{1};
-
-close all
-
-br = waitbar(0,'Batch');
-br.Position =  [1050    251    270    56];
-
-for tr_idx = trialnumlist
-    trial = load(sprintf(trialStem,tr_idx));
-    waitbar((tr_idx-trialnumlist(1))/length(trialnumlist),br,regexprep(trial.name,{regexprep(D,'\\','\\\'),'_'},{'','\\_'}));
-    Script_AddTrackedPostitionsAndLegAngle    
-end
-
-Script_UseAllTrialsInSetToCalculateLegElevation
-
-
-delete(br);
+% trials = nobartrials;
+% trialnumlist = [];
+% for idx = 1:length(trials)
+%     trialnumlist = [trialnumlist trials{idx}]; %#ok<AGROW>
+% end
+% close all
+% 
+% Script_AddTrackedPositions;
+% Script_UseAllTrialsInSetToCorrectLegPosition;
+% Script_AddTrackedLegAngleToTrial
+% Script_UseAllTrialsInSetToCalculateLegElevation
 
 %% EpiFlash2T Calcium clusters calculation without bar
-trial = load('F:\Acquisition\181011\181011_F3_C1\EpiFlash2CB2T_Raw_181011_F3_C1_1.mat');
-[~,~,~,~,~,D,trialStem] = extractRawIdentifiers(trial.name);
-cd(D);
+% trial = load('F:\Acquisition\181011\181011_F3_C1\EpiFlash2CB2T_Raw_181011_F3_C1_1.mat');
+% [~,~,~,~,~,D,trialStem] = extractRawIdentifiers(trial.name);
+% cd(D);
+% 
+% clear trials
+% 
+% % 50 Hz, kmeans clustering
+% trials{1} = 1:15;
+% 
+% Nsets = length(trials);
+% 
+% for setidx = 1:Nsets
+%     trialnumlist = trials{setidx};
+%     %batch_avikmeansThreshold 
+%     Script_KmeansClusterID_NoBar % this excludes frames when the leg is flexed
+% end
 
-clear trials
-
-% 50 Hz, kmeans clustering
-trials{1} = 1:15;
-
-Nsets = length(trials);
-
-for setidx = 1:Nsets
-    trialnumlist = trials{setidx};
-    %batch_avikmeansThreshold 
-    Script_KmeansClusterID_NoBar
-end
-
-%% showCaImagingROI
-trial = load('F:\Acquisition\181011\181011_F3_C1\EpiFlash2CB2T_Raw_181011_F3_C1_1.mat');
-Script_AlignCaImagingCameraWithIRCamera
 
 %% The previous routine set the clusters for the 50 Hz data. Now add cluster intensit to 100 Hz data
-trial = load('F:\Acquisition\181011\181011_F3_C1\EpiFlash2CB2T_Raw_181011_F3_C1_1.mat');
+% trial = load('F:\Acquisition\181011\181011_F3_C1\EpiFlash2CB2T_Raw_181011_F3_C1_1.mat');
+% % 
 % 
-
-clear trials
-trials{1} = 1:15;
-trials{2} = 16:75;
-Nsets = length(trials);
-
-% Save the clusters found for the 50Hz trials to all the other trials
-for setidx = 1:Nsets
-    trialnumlist = trials{setidx};
-    for tr_idx = trialnumlist %1:length(data)
-        
-        trial = load(sprintf(trialStem,tr_idx));
-        fprintf('%s: ',trial.name);
-        if ~isfield(trial,'clmask')
-            fprintf('No mask',trial.name);
-        end
-        trial.clmask = getacqpref('quickshowPrefs','clmask');
-        save(trial.name, '-struct', 'trial')
-        fprintf('\n');
-    end
-end
+% clear trials
+% trials{1} = 1:15;
+% trials{2} = 16:75;
+% Nsets = length(trials);
+% 
+% % Save the clusters found for the 50Hz trials to all the other trials
+% for setidx = 1:Nsets
+%     trialnumlist = trials{setidx};
+%     for tr_idx = trialnumlist %1:length(data)
+%         
+%         trial = load(sprintf(trialStem,tr_idx));
+%         fprintf('%s: ',trial.name);
+%         if ~isfield(trial,'clmask')
+%             fprintf('No mask',trial.name);
+%         end
+%         trial.clmask = getacqpref('quickshowPrefs','clmask');
+%         save(trial.name, '-struct', 'trial')
+%         fprintf('\n');
+%     end
+% end
 
 %% Now calculate all the cluster intensities
 
-N_Cl = 6;
+% N_Cl = 6;
+% 
+% for setidx = 1:Nsets
+%     trialnumlist = trials{setidx};
+%     fprintf('\t- Intensity\n');
+%     Script_KmeansIntensityCalculation_NoBar
+% end
 
-for setidx = 1:Nsets
-    trialnumlist = trials{setidx};
-    fprintf('\t- Intensity\n');
-    Script_KmeansIntensityCalculation_NoBar
+%% showCaImagingROI
+trial = load('E:\Data\181011\181011_F3_C1\EpiFlash2CB2T_Raw_181011_F3_C1_3.mat');
+Script_AlignCaImagingCameraWithIRCamera
+
+cam1v2alignment.X_offset = 640;
+cam1v2alignment.Y_offset = 0;
+cam1v2alignment.x_offset = getacqpref('FlyAnalysis','CaImgCam2X_Offset');
+cam1v2alignment.y_offset = getacqpref('FlyAnalysis','CaImgCam2Y_Offset');
+cam1v2alignment.theta = getacqpref('FlyAnalysis','CaImgCam2Rotation');
+
+% Save the alignment to the trials, as well
+for setidx = 1:length(bartrials)
+    trialnumlist = bartrials{setidx};
+    for tr_idx = trialnumlist
+        trial = load(sprintf(trialStem,tr_idx));
+        fprintf('%s: \n',trial.name);
+        trial.cam1v2alignment = cam1v2alignment;
+        save(trial.name, '-struct', 'trial')
+        
+    end
 end
+
 
 %% Now calculate clusters for trials with bars
 
-trial = load('F:\Acquisition\181011\181011_F3_C1\EpiFlash2CB2T_Raw_181011_F3_C1_76.mat');
-[~,~,~,~,~,D,trialStem] = extractRawIdentifiers(trial.name);
-cd(D);
-
-clear trials
-
-% 50 Hz, kmeans clustering
-trials{1} = 76:100;
-
-Nsets = length(trials);
-
-trialnumlist = trials{1};
-batch_avikmeansThreshold
-Script_KmeansClusterID_N
-
+% trials = bartrials;
+% 
+% trialnumlist = trials{1};
+% batch_avikmeansThreshold
 % showCaImagingROI
+% Script_KmeansClusterID_Bar
+% trial = load(sprintf(trialStem,trialnumlist(1)));
+% clmask = trial.clmask;
+% 
+% %Save the clusters found for the 50Hz trials to all the other trials
+% for setidx = 1:length(bartrials)
+%     trialnumlist = bartrials{setidx};
+%     for tr_idx = trialnumlist %1:length(data)
+%         
+%         trial = load(sprintf(trialStem,tr_idx));
+%         fprintf('%s: \n',trial.name);
+%         if ~isfield(trial,'clmask')
+%             fprintf('No mask',trial.name);
+%             trial.clmask = clmask;
+%             save(trial.name, '-struct', 'trial')
+%             fprintf('\n');
+%         elseif numel(clmask)~=numel(trial.clmask) || any(trial.clmask(:)~=clmask(:))
+%             fprintf('Saving correct mask: %s\n',trial.name);
+%             trial.clmask = clmask;
+%             save(trial.name, '-struct', 'trial')
+%         end
+% 
+%     end
+% end
 
-%% Compare clusters either with or without bars
+%% 
+% N_Cl = 6;
+% 
+% for setidx = 1:length(bartrials)
+%     trialnumlist = bartrials{setidx};
+%     fprintf('\t- Intensity\n');
+%     Script_KmeansIntensityCalculation_Bar
+% end
 
-
-%% Calculate intensity of clusters calculated without bars
-trial = load('F:\Acquisition\181011\181011_F3_C1\EpiFlash2CB2T_Raw_181011_F3_C1_76.mat');
-[~,~,~,~,~,D,trialStem] = extractRawIdentifiers(trial.name);
-cd(D);
-
-clear trials
-
-% 50 Hz, kmeans clustering
-trials{1} = 76:120;
+%% Or, alternatively, use the no bar trial clusters to calculate K_meansIntenstiy
+nobartrial = load('E:\Data\181011\181011_F3_C1\EpiFlash2CB2T_Raw_181011_F3_C1_7.mat');
 
 N_Cl = 6;
 
-for setidx = 1:Nsets
-    trialnumlist = trials{setidx};
-    fprintf('\t- Intensity\n');
-    Script_KmeansIntensityCalculation_NoBar
-end
-
-
+Script_KmeansIntensityCalculation_BarFromNoBar

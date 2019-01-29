@@ -30,7 +30,7 @@ xlim(ax1,[min(x) max(x)]);
 ax2 = panl(2).select(); 
 line(x,trial.(invec2),'parent',ax2,'color',[1 .2 .2],'tag',savetag);
 ylabel(ax2,'I (pA)'); %xlim([0 max(t)]);
-box(ax2,'off'); set(ax2,'TickDir','out','tag','quickshow_inax'); axis(ax2,'tight');
+box(ax2,'off'); set(ax2,'TickDir','out','tag','quickshow_inax2'); axis(ax2,'tight');
 xlim(ax2,[min(x) max(x)]);
 
 

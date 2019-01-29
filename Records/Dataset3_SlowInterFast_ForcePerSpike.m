@@ -24,12 +24,18 @@ Workflow_81A07_171101_F1_C1_ForceProbePatching
 Workflow_81A07_171102_F1_C1_ForceProbePatching
 Workflow_81A07_171102_F2_C1_ForceProbePatching
 Workflow_81A07_171103_F1_C1_ForceProbePatching
-Workflow_81A07_180308_F3_C1_ForceProbePatching
+% Workflow_81A07_180308_F3_C1_ForceProbePatching
+% Workflow_81A07_190123_F2_C1_ChRStimulation
 
 %% Intermediate workflows
-Workflow_22A08_180222_F1_C1_ForceProbePatching
+% Workflow_22A08_180222_F1_C1_ForceProbePatching % Not channel rhodopsin
 Workflow_22A08_180405_F3_C1_ChRStimulation_ForceProbePatching
-Workflow_22A08_180807_F1_C1_ChRStimulation_ForceProbePatching % Red LED artifact
+% Workflow_22A08_180807_F1_C1_ChRStimulation_ForceProbePatching % Red LED
+% artifact (corrected 190128)
+% % Workflow_22A08_181205_F1_C1_ForceProbePatching % some spikes not a lot
+% % Workflow_22A08_181219_F1_C1_ChRStimulation_KBoingTest % not patching,
+% there are EMG spikes though
+% Workflow_22A08_190110_F2_C1_ChRStimulation
 
 %% Miscelaneous
 
@@ -52,10 +58,12 @@ T{3,:} = {'171102_F1_C1', '81A07',            'fast', 'EpiFlash2T','empty',[ 0 1
 T{4,:} = {'171102_F2_C1', '81A07',            'fast', 'EpiFlash2T','empty',[-200 -100 0 100 200], [],[47:173],0,0,0,0,0}; 
 T{5,:} = {'171103_F1_C1', '81A07',            'fast', 'EpiFlash2T','empty',[-200 -100 0 100 200], [],[72:223],0,0,0,0,0}; 
 T{6,:} = {'180308_F3_C1', '81A07',            'fast', 'EpiFlash2T','empty',[-150 -75 0 75 150],   [],[ 4:99],0,0,0,0,0};
+T{6,:} = {'190123_F2_C1', '81A07',            'fast', 'EpiFlash2T','empty',[-150 -75 0 75 150],   [],[ 1:175],0,0,0,0,0};
 
 T{7,:} = {'180222_F1_C1', '22A08',    'intermediate', 'CurrentStep2T','empty',[0               ], [],[98:126],0,0,0,0,0};
 T{8,:} = {'180405_F3_C1', '22A08',    'intermediate', 'EpiFlash2T','empty',[0                  ], [],[42:125],0,0,0,0,0};
 T{9,:} = {'180807_F1_C1', '22A08',    'intermediate', 'EpiFlash2T','empty',[0                  ], [],[25:258],0,0,0,0,0};
+T{10,:} = {'181219_F1_C1', '22A08',    'intermediate', 'EpiFlash2T','empty',[0                  ], [],[17:159],0,0,0,0,0};
 
 Script_estimateForcePerSpikeCurves
 T_new_fastinter = T_new;

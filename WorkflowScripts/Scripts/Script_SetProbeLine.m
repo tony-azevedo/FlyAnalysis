@@ -1,16 +1,17 @@
 %% Script_SetProbeLine
+trialStem = extractTrialStem(trial.name);
 
 close all
 % Go through all the sets of trials
-for set = 1:Nsets
-    fprintf('\n\t***** Batch %d of %d\n',set,Nsets);
-    trialnumlist = trials{set};
+for setidx = 1:length(trials)
+    fprintf('\n\t***** Batch %d of %d\n',setidx,length(trials));
+    trialnumlist = trials{setidx};
     
-    br = waitbar(0,sprintf('Batch %d of %d',set,Nsets));
+    br = waitbar(0,sprintf('Batch %d of %d',setidx,length(trials)));
     br.Position =  [1050    251    270    56];
     
     % set probeline for a few test movies
-    for tr_idx = trialnumlist(1:4) 
+    for tr_idx = trialnumlist(1:3) 
         trial = load(sprintf(trialStem,tr_idx));
         
         waitbar((tr_idx-trialnumlist(1)+1)/6,br,regexprep(trial.name,{regexprep(D,'\\','\\\'),'_'},{'','\\_'}));
@@ -27,7 +28,7 @@ for set = 1:Nsets
     temp.forceProbe_line = getacqpref('quickshowPrefs','forceProbeLine');
     temp.forceProbe_tangent = getacqpref('quickshowPrefs','forceProbeTangent');
 
-    for tr_idx = trialnumlist(5:end)
+    for tr_idx = trialnumlist(4:end)
         trial = load(sprintf(trialStem,tr_idx));
         trial.forceProbe_line = temp.forceProbe_line;
         trial.forceProbe_tangent = temp.forceProbe_tangent;

@@ -2,20 +2,22 @@
 
 
 %% EpiFlash2CB2T Bar detection
-trial = load('F:\Acquisition\181017\181017_F2_C1\EpiFlash2CB2T_Raw_181017_F2_C1_1.mat');
+trial = load('F:\Acquisition\181111\181111_F1_C1\EpiFlash2CB2T_Raw_181111_F1_C1_43.mat');
 [~,~,~,~,~,D,trialStem] = extractRawIdentifiers(trial.name);
 cd(D);
 
-clear trials
+clear trials nobartrials bartrials
 
 % if the position of the prep changes, make a new set
-trials{1} = 66:110;
+bartrials{1} = 23:42; 
+bartrials{1} = 63:82; 
 
-routine = {
-    'probeTrackROI_IR' 
-    };
+nobartrials{1} = 1:12;
+nobartrials{1} = 13:22; % moved from first one, use this as the cluster calculations
+nobartrials{2} = 43:62;
+nobartrials{3} = 83:102; % after that lost the solution
 
-Nsets = length(trials);
+
 
 %% Run scripts one at a time
 
@@ -48,31 +50,21 @@ ZeroForce = 700-(setpoint-700);
 Script_SetTheMinimumCoM_byHand
 
 %% Calculate position of femur and tibia from csv files
-trial = load('F:\Acquisition\181017\181017_F2_C1\EpiFlash2CB2T_Raw_181017_F2_C1_1.mat');
-[~,~,~,~,~,D,trialStem] = extractRawIdentifiers(trial.name);
-cd(D);
 
-clear trials
+% After brining videos back from DeepLabCut, run through all trials, get
+% some stats on the dots, do some error correction, make some videos.
 
-% 50 Hz, kmeans clustering
-trials{1} = 1:75;
-trialnumlist = trials{1};
-
+trials = nobartrials;
+trialnumlist = [];
+for idx = 1:length(trials)
+    trialnumlist = [trialnumlist trials{idx}]; %#ok<AGROW>
+end
 close all
 
-br = waitbar(0,'Batch');
-br.Position =  [1050    251    270    56];
-
-for tr_idx = trialnumlist
-    trial = load(sprintf(trialStem,tr_idx));
-    waitbar((tr_idx-trialnumlist(1))/length(trialnumlist),br,regexprep(trial.name,{regexprep(D,'\\','\\\'),'_'},{'','\\_'}));
-    Script_AddTrackedPostitionsAndLegAngle    
-end
-
+Script_AddTrackedPositions;
+Script_UseAllTrialsInSetToCorrectLegPosition;
+Script_AddTrackedLegAngleToTrial
 Script_UseAllTrialsInSetToCalculateLegElevation
-
-
-delete(br);
 
 %% EpiFlash2T Calcium clusters calculation without bar
 trial = load('F:\Acquisition\181011\181011_F3_C1\EpiFlash2CB2T_Raw_181011_F3_C1_1.mat');

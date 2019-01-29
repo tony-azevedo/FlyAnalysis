@@ -17,18 +17,8 @@
 % Step 10: Merge leg position and kinematics with calcium data
 
 %%
-
-Workflow_MHCLexA_GCaMP6f_181011_F2_C1_MuscleImaging
-Workflow_MHCLexA_GCaMP6f_181011_F3_C1_MuscleImaging % Nice! Use this to explore
-
-Workflow_MHCLexA_GCaMP6f_181017_F1_C1_MuscleImaging % Throwing this out because the leg moves quite a bit, not glued down
-Workflow_MHCLexA_GCaMP6f_181017_F2_C1_MuscleImaging % Not great, EMG is not large
-
-Workflow_MHCLexA_GCaMP6f_181111_F1_C1_MuscleImaging % Not great, EMG is not large
-Workflow_MHCLexA_GCaMP6f_181111_F2_C1_MuscleImaging % Not great, EMG is not large
-
-
-
-
+Workflow_MNStim_LegCaImaging_81A07_181008_F1_C1 % 81A07
+Workflow_MNStim_LegCaImaging_81A07_181011_F4_C1 % 81A07
+Workflow_MNStim_LegCaImaging_81A07_181111_F3_C1 % 35C09
 
 

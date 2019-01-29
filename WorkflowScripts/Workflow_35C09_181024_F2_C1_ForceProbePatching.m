@@ -3,50 +3,76 @@ trial = load('F:\Acquisition\181024\181024_F2_C1\CurrentStep2T_Raw_181024_F2_C1_
 [protocol,dateID,flynum,cellnum,trialnum,D,trialStem,datastructfile] = extractRawIdentifiers(trial.name);
 
 cd (D)
-clear trials
+clear trials spiketrials bartrials
 
 %% Current step to get force
 
 trial = load('F:\Acquisition\181024\181024_F2_C1\CurrentStep2T_Raw_181024_F2_C1_1.mat');
 [~,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
 
-clear trials
-trials{1} = 6:60; % no drugs
+clear trials spiketrials bartrials
 
-Nsets = length(trials);
+spiketrials{1} = 6:60; %#ok<*NASGU> % no drugs
+spiketrials{2} = 61:110; %atropine MLA
 
-% check the location
-trial = load(sprintf(trialStem,12));
-showProbeImage(trial)
-
-routine = {
-    'probeTrackROI_IR' 
-    };
+bartrials{1} =  6:60; % no drugs
+bartrials{1} =  6:60; % no drugs
+% no additional MLA trials
 
 
-%% epi flash train random movements
 
-trial = load('F:\Acquisition\181021\181021_F1_C1\EpiFlash2TTrain_Raw_181021_F1_C1_1.mat');
+%% EpiFlash2TTrain - random movements
+
+trial = load('F:\Acquisition\181024\181024_F2_C1\EpiFlash2TTrain_Raw_181024_F2_C1_4.mat');
 [~,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
 
-clear trials
-% trials{1} = 1:4; % bar, but no blue light!
-trials{1} = 5:12; % bar
-% trials{1} = 11:18; % no bar
+
+clear spiketrials bartrials
+
+spiketrials{1} = 1:4; % bar
+
+bartrials{1} = 1:4; % bar
 
 
-Nsets = length(trials);
-    
-trial = load(sprintf(trialStem,3));
-% showProbeImage(trial)
+%% Sweep2T - , looking for changes in spike rate with slow movement of the bar
+trial = load('F:\Acquisition\181024\181024_F2_C1\Sweep2T_Raw_181024_F2_C1_20.mat');
+[~,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
 
-routine = {
-    'probeTrackROI_IR' 
-    'probeTrackROI_IR' 
-    };
+clear spiketrials bartrials
+spiketrials{1} = 1:35; % 
+spiketrials{2} = 36:55; % atropine, MLA
+
+% bartrials{1} = 16:35; % bar position vs spike rate
+% bartrials{2} = 36:55; % bar position vs spike rate
+
+% ***** These 10 s trials are longer than the arbitrary max length for
+% spike detection. Fix it.
+
+%% PiezoStep2T -  looking for changes in spike rate 
+
+trial = load('F:\Acquisition\181024\181024_F2_C1\PiezoStep2T_Raw_181024_F2_C1_14.mat');
+[~,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
+
+clear spiketrials bartrials
+spiketrials{1} = 1:210; % control
+spiketrials{2} = 211:252; % atropine
+spiketrials{3} = 253:336; % atropine MLA
+
+
+
+%% PiezoRamp2T - looking for changes in spike rate 
+
+trial = load('F:\Acquisition\181024\181024_F2_C1\PiezoRamp2T_Raw_181024_F2_C1_1.mat');
+[~,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
+
+clear spiketrials bartrials
+spiketrials{1} = 1:280; % control
+spiketrials{2} = 281:336; % atropine
+spiketrials{3} = 337:448; % atropine MLA
 
 
 %% Run scripts one at a time
+trials = bartrials;
 
 % Set probe line 
 Script_SetProbeLine 
@@ -78,6 +104,9 @@ Script_LookAtTrialsWithMinimumCoM %% can run this any time, but probably best af
 % Script_SetTheMinimumCoM_byHand
 
 
-% Extract spikes
+%% Extract spikes
+trials = spiketrials;
 Script_ExtractSpikesFromInterestingTrials
 
+%% Calculate position of femur and tibia from csv files
+% None here

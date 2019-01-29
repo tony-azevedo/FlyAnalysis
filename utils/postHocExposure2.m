@@ -1,4 +1,4 @@
-function h = postHocExposure2(h,varargin)
+function b = postHocExposure2(h,varargin)
 if nargin>1
     N = round(varargin{1});
 end
@@ -34,8 +34,9 @@ if isfield(h,'exposure2') && ((h.exposure2(1) == 1 || h.exposure2(2) == 1) && ~i
         end
     end
 
-    h.exposure2 = logical(exposure_1_0);
+    b.exposure2 = logical(exposure_1_0);
 else
    error('Exposure vector is not well conditioned for current analysis\n1st true index (exp starts) = %d',find(h.exposure,1,'first')); 
 end
+
 

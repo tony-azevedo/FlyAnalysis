@@ -3,9 +3,9 @@
 
 fid = fopen(fullfile(D,'RedLEDArifact.txt'),'w');
 
-for set = 1:Nsets
-    fprintf('\n\t***** Batch %d of %d\n',set,Nsets);
-    trialnumlist = trials{set};
+for setidx = 1:length(trials)
+    fprintf('\n\t***** Batch %d of %d\n',setidx,length(trials));
+    trialnumlist = trials{setidx};
     
     close all
     for tr_idx = trialnumlist

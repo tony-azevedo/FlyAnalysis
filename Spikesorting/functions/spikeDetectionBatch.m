@@ -63,6 +63,7 @@ hold(ax_detect,'on');
 for tr_idx = trialnumlist
     
     trial = load(sprintf(trialStem,tr_idx));
+    fprintf('%s\n',trial.name)
     if isfield(trial,'excluded') && trial.excluded
         fprintf(' * Trial excluded: %s\n',trial.name)
         continue
@@ -113,10 +114,12 @@ for tr_idx = trialnumlist
     norm_spikeTemplate = (norm_spikeTemplate-min(norm_spikeTemplate))/(max(norm_spikeTemplate)-min(norm_spikeTemplate));
 
         % plot the spike distances as you go
-    plot(ax_hist,targetSpikeDist(~suspect),spikeAmplitude(~suspect),'.','color',[0.9290 0.6940 0.1250],'tag',['suspect_hist_out_' num2str(tr_idx)]); hold(ax_hist,'on');
-    plot(ax_hist,suspectdist,suspectamp,'.','markeredgecolor',[0 0.45 0.74],'markerfacecolor','none','tag',['suspect_hist_' num2str(tr_idx)],'userdata',[targetSpikeDist(:) spikeAmplitude(:)]);
+    hist_dots_out = plot(ax_hist,targetSpikeDist(~suspect),spikeAmplitude(~suspect),'.','color',[0.9290 0.6940 0.1250],'tag',['suspect_hist_out_' num2str(tr_idx)]); hold(ax_hist,'on');
+    hist_dots_in = plot(ax_hist,suspectdist,suspectamp,'.','markeredgecolor',[0 0.45 0.74],'markerfacecolor','none','tag',['suspect_hist_' num2str(tr_idx)],'userdata',[targetSpikeDist(:) spikeAmplitude(:)]);
     plot(ax_hist,suspectdist(goodi),suspectamp(goodi),'.','markeredgecolor',[0 0 0],'markerfacecolor',[0 0 0],'tag',['good_hist' num2str(tr_idx)]); hold(ax_hist,'on');
     plot(ax_hist,suspectdist(weirdi),suspectamp(weirdi),'.','markeredgecolor',[0 1 .7], 'markerfacecolor',[0 1 .7],'tag',['weird_hist' num2str(tr_idx)]); hold(ax_hist,'on');
+    
+    uistack([hist_dots_out hist_dots_in],'bottom')
     
     if find(trialnumlist==tr_idx) > 50
         continue
@@ -167,6 +170,7 @@ for tr_idx = trialnumlist
     if any(goodspikes)
         %plot(ax_fltrd_suspect,window,norm_detectedSpikeCandidates(:,goodspikes),'tag','squiggles_suspect','color',[0 0 0]);
         plot(ax_fltrd_suspect,window,detectedSpikeCandidates(:,goodspikes),'tag','squiggles_suspect','color',[0 0 0]);
+        spikeTemplate_.YData = template;
     end
     
     if any(goodspikes)
@@ -183,31 +187,28 @@ for tr_idx = trialnumlist
     end
     
     % norm_spikeTemplate_.YData = norm_spikeTemplate;
-    spikeTemplate_.YData = template;
     drawnow
 end
 
 ylims = [min([min(ax_unfltrd_notsuspect.YLim) min(ax_unfltrd_suspect.YLim)]) max([max(ax_unfltrd_notsuspect.YLim) max(ax_unfltrd_suspect.YLim)])];
 set([ax_unfltrd_notsuspect,ax_unfltrd_suspect],'YLim',ylims)
+vars = rmfield(vars,'unfiltered_data');
+vars = rmfield(vars,'locs');
 
-distthresh_l = plot(ax_hist,vars.Distance_threshold*[1 1],[min(spikeAmplitude_acrossCells) max(spikeAmplitude_acrossCells)],'color',[1 0 0],'tag','dist_threshold');
-ampthresh_l = plot(ax_hist,[min(targetSpikeDist_acrossCells) max(targetSpikeDist_acrossCells)],vars.Amplitude_threshold*[1 1],'color',[1 0 0],'tag','amp_threshold');
-
-xlims = ampthresh_l.XData+[-1 1]*.1*diff(ampthresh_l.XData);
-xlims = [xlims(1) max([xlims(2) distthresh_l.XData(2)*1.1])];
-ylims = distthresh_l.YData+[-1 1]*.1*diff(distthresh_l.YData);
-ylims = [min([ylims(1), ampthresh_l.YData(1)-0.1*diff([ampthresh_l.YData(1) max(distthresh_l.YData)])]) ylims(2)];
-set(ax_hist,'XLim',xlims,'YLim',ylims);
-
-spikeThresholdUpdateGUI_local(disttreshfig,norm_detectedSpikeCandidates_acrossCells,detectedUFSpikeCandidates_acrossCells,targetSpikeDist_acrossCells,spikeAmplitude_acrossCells,trialnumids);
-
-fprintf('Calculating spike times');
-
-
-% The threshold is finally set, get rid of spikes that are over
-% the threshold
 if ~isempty(targetSpikeDist_acrossCells)
-        
+    distthresh_l = plot(ax_hist,vars.Distance_threshold*[1 1],[min(spikeAmplitude_acrossCells) max(spikeAmplitude_acrossCells)],'color',[1 0 0],'tag','dist_threshold');
+    ampthresh_l = plot(ax_hist,[min(targetSpikeDist_acrossCells) max(targetSpikeDist_acrossCells)],vars.Amplitude_threshold*[1 1],'color',[1 0 0],'tag','amp_threshold');
+    
+    xlims = ampthresh_l.XData+[-1 1]*.1*diff(ampthresh_l.XData);
+    xlims = [xlims(1) max([xlims(2) distthresh_l.XData(2)*1.1])];
+    ylims = distthresh_l.YData+[-1 1]*.1*diff(distthresh_l.YData);
+    ylims = [min([ylims(1), ampthresh_l.YData(1)-0.1*diff([ampthresh_l.YData(1) max(distthresh_l.YData)])]) ylims(2)];
+    set(ax_hist,'XLim',xlims,'YLim',ylims);
+    
+    spikeThresholdUpdateGUI_local(disttreshfig,norm_detectedSpikeCandidates_acrossCells,detectedUFSpikeCandidates_acrossCells,targetSpikeDist_acrossCells,spikeAmplitude_acrossCells,trialnumids);
+    
+    fprintf('Calculating spike times');
+
     % pull out spikes, but keep a record of indices 
     suspect = targetSpikeDist_acrossCells<vars.Distance_threshold & spikeAmplitude_acrossCells > vars.Amplitude_threshold;
  
@@ -218,7 +219,10 @@ if ~isempty(targetSpikeDist_acrossCells)
     spikes = spikes+start_point;
     spikes_acrossCells = spikes;
     spikes_uncorrected = vars.locs_uncorrected+start_point;
-
+    
+    vars = rmfield(vars,'locs');
+    vars = rmfield(vars,'locs_uncorrected');
+    
     for tr_idx = trialnumlist
         vars.lastfilename = trial.name;
        
@@ -229,7 +233,7 @@ if ~isempty(targetSpikeDist_acrossCells)
         end
         if isfield(trial,'spikeSpotChecked') && trial.spikeSpotChecked
             fprintf(' * Trial spot checked for spikes already, not saving: %s\n',trial.name)
-            %continue
+            continue
         end
 
         tr_spikes = spikes(trialnumids==tr_idx & suspect);
@@ -252,6 +256,29 @@ if ~isempty(targetSpikeDist_acrossCells)
         
     end
     
+else
+    fprintf('*******No spikes detected in that set**********\n')
+    for tr_idx = trialnumlist
+        vars.lastfilename = trial.name;
+        
+        trial = load(sprintf(trialStem,tr_idx));
+        if isfield(trial,'excluded') && trial.excluded
+            fprintf(' * Trial excluded: %s\n',trial.name)
+            continue
+        end
+        if isfield(trial,'spikeSpotChecked') && trial.spikeSpotChecked
+            fprintf(' * Trial spot checked for spikes already, not saving: %s\n',trial.name)
+            continue
+        end
+        
+        trial.spikes = [];
+        trial.spikes_uncorrected = [];
+        trial.spikeDetectionParams = vars;
+        save(trial.name, '-struct', 'trial');
+        fprintf('Saved Spikes (0) and filter parameters saved: %s\n',numel(trial.spikes),trial.name);
+        
+    end
+
 end
 acrossCellSpikeData.detectedUFSpikeCandidates_acrossCells = detectedUFSpikeCandidates_acrossCells;
 acrossCellSpikeData.detectedSpikeCandidates_acrossCells = detectedSpikeCandidates_acrossCells;
@@ -309,10 +336,16 @@ varargout = {acrossCellSpikeData};
         spikeamp_cell = mean(spikeAmplitude(targetSpikeDist<quantile(targetSpikeDist,.25)));
         spikeamp_cell = mean(spikeAmplitude(targetSpikeDist<quantile(targetSpikeDist,.25) &...
             spikeAmplitude > vars.Amplitude_threshold * spikeamp_cell));
+        if isnan(spikeamp_cell)
+            spikeamp_cell = mean(spikeAmplitude);
+        end
         
         % Normalize the spike Amplitudes for comparison across cells
         spikeAmplitude = spikeAmplitude/spikeamp_cell;
         detectedUFSpikeCandidates = detectedUFSpikeCandidates/spikeamp_cell;
+        if any(isnan(detectedUFSpikeCandidates(1,:)))
+            disp(spikeamp_cell);
+        end
         
         vars.locs = spike_locs;
     end

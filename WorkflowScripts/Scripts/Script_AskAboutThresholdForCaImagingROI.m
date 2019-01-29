@@ -39,7 +39,7 @@ im = imshow(smooshedframe,[0 2*quantile(smooshedframe(:),0.975)],'parent',dispax
 %%
 hold(dispax,'on');
 
-if isfield(trial,'kmeans_ROI')
+if isfield(trial,'kmeans_ROI') && ~exist('REDO','var')
     for roi_ind = 1:length(trial.kmeans_ROI)
         line(...
             [trial.kmeans_ROI{roi_ind}(:,1);trial.kmeans_ROI{roi_ind}(1,1)],...
@@ -47,6 +47,18 @@ if isfield(trial,'kmeans_ROI')
             'parent',dispax,'color',[1 0 0]);
     end
     button = questdlg('Make new ROI?','ROI','No');
+elseif isfield(trial,'kmeans_ROI') && exist('REDO','var')
+    for roi_ind = 1:length(REDO.kmeans_ROI)
+        line(...
+            [REDO.kmeans_ROI{roi_ind}(:,1);REDO.kmeans_ROI{roi_ind}(1,1)],...
+            [REDO.kmeans_ROI{roi_ind}(:,2);REDO.kmeans_ROI{roi_ind}(1,2)],...
+            'parent',dispax,'color',[1 0 0]);
+    end
+    button = questdlg('Make new ROI?','ROI','No');
+    if strcmp(button,'No')
+        trial.kmeans_ROI = REDO.kmeans_ROI;
+        save(trial.name,'-struct','trial')
+    end
 else
     temp.ROI = getacqpref('quickshowPrefs','avi_kmeans_roi');
     for roi_ind = 1:length(temp.ROI)
@@ -60,6 +72,7 @@ else
         trial.kmeans_ROI = temp.ROI;
     end
 end
+
 if strcmp(button,'Yes')
     trial.kmeans_ROI = {};
     roihand = impoly(dispax,'Closed',1);
@@ -78,13 +91,14 @@ elseif strcmp(button,'Cancel')
     return
 end
 
+clear mask
 for roi_ind = 1:length(trial.kmeans_ROI)
     mask{roi_ind} = poly2mask(trial.kmeans_ROI{roi_ind}(:,1),trial.kmeans_ROI{roi_ind}(:,2),size(smooshedframe,1),size(smooshedframe,2));
 end
 
 
 %% Set a threshold for pixel values for the mean
-if isfield(trial,'kmeans_threshold')
+if isfield(trial,'kmeans_threshold') && ~isempty(trial.kmeans_threshold)
     % Set based on kmeans_threshold
     blwthresh = smooshedframe<trial.kmeans_threshold & mask{1};
     blwthresh = imgaussfilt(double(blwthresh),3)>.1;
@@ -125,9 +139,10 @@ if strcmp(button,'Yes')
     sldr.Callback = {@updateThreshold,smooshedframe,mask{1},sldr,edtr,dispax};
     edtr.Callback = {@updateThreshold,smooshedframe,mask{1},sldr,edtr,dispax};
 
+    updateThreshold(sldr,[],smooshedframe,mask{1},sldr,edtr,dispax)
     uiwait(threshcontrolfigure)
 
-    hOVM =findobj(dispax,'Tag','blwthresh');
+    hOVM = findobj(dispax,'Tag','blwthresh');
     trial.kmeans_threshold = hOVM.UserData;
     abvthresh = hOVM.AlphaData;
     setacqpref('quickshowPrefs','avi_kmeans_thresh',trial.kmeans_threshold)

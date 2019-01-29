@@ -23,10 +23,14 @@ for set = 1:Nsets
         cnt = cnt+1;
         trial = load(sprintf(trialStem,tr_idx));
                 
-        if isfield(trial,'forceProbeStuff')
+        if isfield(trial,'forceProbeStuff') && ~trial.excluded
             t = makeInTime(trial.params);
             ft = makeFrameTime(trial,t);
-            ft_idx = ft<0|ft>ft(find(ft>trial.params.stimDurInSec,1));
+            if strcmp(trial.params.protocol,'EpiFlash2T') && trial.params.stimDurInSec <.1
+                ft_idx = ft<0|ft>ft(find(ft>trial.params.stimDurInSec,1));
+            else
+                ft_idx = ft>0|ft<ft(find(ft>trial.params.stimDurInSec,1));
+            end
             plot(ax,ft(ft_idx),trial.forceProbeStuff.CoM(ft_idx),'tag',num2str(trial.params.trial));
             CoM_origin(cnt) = mean(trial.forceProbeStuff.CoM(ft_idx' & trial.forceProbeStuff.CoM<quantile(trial.forceProbeStuff.CoM(:),0.05)));
         else

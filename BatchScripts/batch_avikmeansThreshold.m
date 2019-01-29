@@ -10,7 +10,9 @@ for tr_idx = trialnumlist(1:4)
 
     Script_AskAboutThresholdForCaImagingROI;
     thresholds(tr_idx) = trial.kmeans_threshold;
+    REDO.kmeans_ROI = trial.kmeans_ROI;
 end
+clear REDO;
 
 temp.ROI = getacqpref('quickshowPrefs','avi_kmeans_roi');
 temp.threshold = median(thresholds);

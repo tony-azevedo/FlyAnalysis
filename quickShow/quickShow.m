@@ -660,16 +660,35 @@ orient(fig,'tall');
 trialnum_Callback(handles.trialnum,[],handles)
 
 
+
+function SimpleSpikeSpotCheckCheck(fig, eventdata)
+if eventdata.Button == 3
+    h = guidata(eventdata.Source);
+    if ~isfield(h.trial,'spikeSpotChecked') || ~h.trial.spikeSpotChecked
+        trial = h.trial;
+        trial.spikeSpotChecked = 1;
+        save(trial.name, '-struct', 'trial');
+        
+        trialnum_Callback(h.trialnum, eventdata, h)
+    end
+end
+
+
 function Spikes_Callback(spikebutt, eventdata, h)
 
 if ~spikebutt.Value
     s = findobj(h.quickShowPanel,'type','line','tag','Spikes');
+    ax = findobj(h.quickShowPanel,'type','axes','tag','quickshow_inax');
+    ax.ButtonDownFcn = '';
+
     if ~isempty(s)
         delete(s);
     end
+    guidata(spikebutt,h)
     return
 end
 s = findobj(h.quickShowPanel,'type','line','tag','Spikes');
+
 if ~isempty(s)
     delete(s);
 end
@@ -684,7 +703,12 @@ elseif isfield(h.trial,'spikes') && isfield(h.trial,'spikeDetectionParams')
         error('Clear panel, go to quickShow visualization\n')
     end
     if isempty(h.trial.spikes)
+        t = findobj(ax,'type','text','String','Spike detection has run: 0 spikes');
+        delete(t);
         text(ax,ax.XLim(1)+0.05*diff(ax.XLim), ax.YLim(1)+0.05*diff(ax.YLim),sprintf('Spike detection has run: 0 spikes'))
+
+        ax.ButtonDownFcn = @SimpleSpikeSpotCheckCheck;
+        guidata(spikebutt,h)
         return
     end
     y = ax.YLim(2);
@@ -697,7 +721,8 @@ elseif isfield(h.trial,'spikes') && isfield(h.trial,'spikeDetectionParams')
         ticks = raster(ax,t(h.trial.spikes_uncorrected(isnan(h.trial.spikes))),y);
         ticks.Color = [0    0.4470    0.7410];
     end
-    
+    ax.ButtonDownFcn = @SimpleSpikeSpotCheckCheck;
+
     guidata(spikebutt,h)
 
     % enable for other trials
@@ -1190,32 +1215,52 @@ msgbox(imstr,'VideoReader Info')
 
 % --- Executes on button press in spike_spot_check_button.
 function spike_spot_check_button_Callback(hObject, eventdata, handles)
+global cmd
+
 handles = guidata(hObject);
-imstr = sprintf('Spike Vars, trial %d:\nHighpass: %.2f - Lowpass: %.2f - Diff: %d\nPeak: %.2f - Distance: %.2f\nLast Trial: %s',...
+imstr = sprintf('Spike Vars, trial %d:\nHighpass: %.2f - Lowpass: %.2f - Diff: %d\nPeak: %.2f - Distance: %.2f\nLast Trial: %s\n',...
     handles.trial.params.trial,...
     handles.trial.spikeDetectionParams.hp_cutoff,...
     handles.trial.spikeDetectionParams.lp_cutoff,...
     handles.trial.spikeDetectionParams.diff,...
     handles.trial.spikeDetectionParams.peak_threshold,...
     handles.trial.spikeDetectionParams.Distance_threshold,...
-    handles.trial.spikeDetectionParams.lastfilename(end-18:end-4));
+    handles.trial.spikeDetectionParams.lastfilename(end-19:end-4));
 % msgbox(imstr,'Spike Vars')
+fprintf(imstr)
 
 switch handles.trial.params.mode_1; case 'VClamp', invec1 = 'current_1'; case 'IClamp', invec1 = 'voltage_1'; otherwise; invec1 = 'voltage_1'; end
 
-global cmd
-cmd = [];
+if ~isempty(handles.trial.spikes)
+    cmd = [];
+end
 spikeSpotCheck(handles.trial,invec1,handles.trial.spikeDetectionParams);
-uiwait();
+if ~isempty(handles.trial.spikes)
+    uiwait();
+else 
+    butt = questdlg('No spikes detected. Spot check OK?','Spot checking no spike','Yes');
+    switch butt
+        case 'Yes'
+            handles.trial.spikeSpotChecked = 1;
+        otherwise
+            handles.trial.spikeSpotChecked = 0;
+    end
+    trial = handles.trial;
+    save(trial.name, '-struct', 'trial');
+end
 
 guidata(hObject,handles)
+trialnum_Callback(handles.trialnum, eventdata, handles)
+handles = guidata(hObject);
+
 if isempty(cmd)
-    trialnum_Callback(handles.trialnum, eventdata, handles)
 elseif strcmp(cmd,'next')
-    cur = str2double(handles.trialnum.String);
-    handles.trialnum.String = num2str(cur+1);
-    trialnum_Callback(handles.trialnum, eventdata, handles)
-    handles = guidata(hObject);
+    while isfield(handles.trial,'spikeSpotChecked') && handles.trial.spikeSpotChecked
+        cur = str2double(handles.trialnum.String);
+        handles.trialnum.String = num2str(cur+1);
+        trialnum_Callback(handles.trialnum, eventdata, handles)
+        handles = guidata(hObject);
+    end
     spike_spot_check_button_Callback(hObject, eventdata, handles)
 end    
 
@@ -1250,7 +1295,7 @@ handles.trial.tags = s;
 
 if strcmp(button,'Yes')
     nums = findLikeTrials_includingExcluded('name',handles.trial.name,'datastruct',handles.prtclData,...
-        'exclude',{'step','amp','displacement','freq','speed'});
+        'exclude',{'step','amp','displacement','freq','speed','ndf'});
     for n_ind = 1:length(nums)
         trial = load(fullfile(handles.dir,sprintf(handles.trialStem,nums(n_ind))));
         trial.tags = s;
@@ -1538,13 +1583,20 @@ guidata(hObject, handles);
 
 function excludeBlock_toggle(hObject,eventdata,handles)
 button = questdlg('Exclude entire block?','Exclude Block','Yes');
-if strcmp(button,'Cancel'), return, end
+if strcmp(button,'Cancel') || strcmp(button,'No'), return, end
 
 handles = guidata(hObject);
 if strcmp(button,'Yes')
     nums = findLikeTrials_includingExcluded('name',handles.trial.name,'datastruct',handles.prtclData,...
-        'exclude',{'step','amp','displacement','freq'});
+        'exclude',{'step','amp','displacement','freq','speed','ndf'});
     ex = handles.trial.excluded;
+    switch ex
+        case 1 
+            fprintf('Trial is excluded, excluding others in block\n');
+        case 0
+            fprintf('Trial is included, including others in block\n');
+    end
+    
     for n_ind = 1:length(nums)
         trial = load(fullfile(handles.dir,sprintf(handles.trialStem,nums(n_ind))));
         trial.excluded = ex;

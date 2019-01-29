@@ -3,50 +3,61 @@ trial = load('F:\Acquisition\181021\181021_F1_C1\CurrentStep2T_Raw_181021_F1_C1_
 [protocol,dateID,flynum,cellnum,trialnum,D,trialStem,datastructfile] = extractRawIdentifiers(trial.name);
 
 cd (D)
-clear trials
+clear trials spiketrials bartrials
 
 %% Current step to get force
 
 trial = load('F:\Acquisition\181021\181021_F1_C1\CurrentStep2T_Raw_181021_F1_C1_1.mat');
-[~,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
+% clear spiketrials bartrials
 
-clear trials
-trials{1} = 6:60; % no drugs
+% spiketrials{1} = 6:60; %#ok<*NASGU> % no drugs % Done
 
-Nsets = length(trials);
-
-% check the location
-trial = load(sprintf(trialStem,12));
-showProbeImage(trial)
-
-routine = {
-    'probeTrackROI_IR' 
-    };
+% bartrials{1} =  6:60; % no drugs % Done
+% no additional MLA trials
 
 
-%% epi flash train random movements
 
-trial = load('F:\Acquisition\181021\181021_F1_C1\EpiFlash2TTrain_Raw_181021_F1_C1_1.mat');
-[~,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
+%% EpiFlash2TTrain - random movements
 
-clear trials
-% trials{1} = 1:4; % bar, but no blue light!
-trials{1} = 5:12; % bar
-% trials{1} = 11:18; % no bar
+trial = load('F:\Acquisition\181021\181021_F1_C1\EpiFlash2TTrain_Raw_181021_F1_C1_5.mat');
+% clear spiketrials bartrials
+
+% spiketrials{1} = 1:12; % bar % No all of the trials are good, depolarization block
+
+% bartrials{1} = 1:12; % bar
 
 
-Nsets = length(trials);
-    
-trial = load(sprintf(trialStem,3));
-% showProbeImage(trial)
+%% Sweep2T - , looking for changes in spike rate with slow movement of the bar
+% None for this cell
+% trial = load('F:\Acquisition\');
+% [~,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
+% 
+% clear spiketrials bartrials
+% spiketrials{1} = ; % 
+% 
+% bartrials{1} = ; % 
+% 
 
-routine = {
-    'probeTrackROI_IR' 
-    'probeTrackROI_IR' 
-    };
+%% PiezoStep2T -  looking for changes in spike rate 
 
+% trial = load('F:\Acquisition\181021\181021_F1_C1\PiezoStep2T_Raw_181021_F1_C1_173.mat');
+% [~,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
+% 
+% clear spiketrials bartrials
+% spiketrials{1} = 6:173; % No MLA
+
+
+%% PiezoRamp2T -, looking for changes in spike rate 
+
+% trial = load('F:\Acquisition\181021\181021_F1_C1\PiezoRamp2T_Raw_181021_F1_C1_220.mat');
+% clear spiketrials bartrials
+% spiketrials{1} = 2:191; % No MLA
+% spiketrials{2} = 192:219; % No MLA
+% 
 
 %% Run scripts one at a time
+trials = bartrials;
+Nsets = length(trials);
 
 % Set probe line 
 Script_SetProbeLine 
@@ -78,6 +89,9 @@ Script_LookAtTrialsWithMinimumCoM %% can run this any time, but probably best af
 % Script_SetTheMinimumCoM_byHand
 
 
-% Extract spikes
+%% Extract spikes
+trials = spiketrials;
 Script_ExtractSpikesFromInterestingTrials
 
+%% Calculate position of femur and tibia from csv files
+% None here

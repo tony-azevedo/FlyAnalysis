@@ -247,7 +247,7 @@ plot(ax2,evalpnts_x(locs(loc)),pks(loc),'b+');
 
 
 % 3) Find the location of the darkest spot to the left of the bar
-dark = mean(filtered_mu(filtered_mu<quantile(filtered_mu(:),0.12)));
+dark = mean(filtered_mu(filtered_mu<quantile(filtered_mu((1:length(filtered_mu))<bar_idx_i),0.12) & (1:length(filtered_mu))'<bar_idx_i));
 % where the bar dips below dark
 left_trough = find(flipud(filtered_mu(1:bar_idx_i))<dark*1.05,1,'first');
 trough = bar_idx_i-left_trough;
@@ -480,7 +480,7 @@ bar = line([loc,loc],[1 size(ProfileMat_BS,1)],'parent',dispax3,'color',[1 0 1])
 
 trial.forceProbeStuff.line = trial.forceProbe_line;
 trial.forceProbeStuff.tangent = trial.forceProbe_tangent;
-trial.forceProbeStuff.barmodel = coef;
+% trial.forceProbeStuff.barmodel = coef;
 % h.forceProbeStuff.TransformMap = cat(3,Cmap,Rmap);
 % h.forceProbeStuff.Background = Background;
 % h.forceProbeStuff.lefthash = Background;

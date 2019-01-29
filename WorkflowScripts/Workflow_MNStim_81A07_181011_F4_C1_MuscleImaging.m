@@ -1,18 +1,17 @@
 %% Muscle Imaging Leg Tracking and ForceProbe Workflow 
 
+
 %% EpiFlash2CB2T Bar detection
-trial = load('F:\Acquisition\181011\181011_F4_C1\EpiFlash2CB2T_Raw_181011_F4_C1_40.mat');
+trial = load('F:\Acquisition\181017\181017_F2_C1\EpiFlash2CB2T_Raw_181017_F2_C1_1.mat');
 [~,~,~,~,~,D,trialStem] = extractRawIdentifiers(trial.name);
 cd(D);
 
 clear trials
 
 % if the position of the prep changes, make a new set
-trials{1} = 40:69;
-trials{2} = 85:99;
+trials{1} = 66:110;
 
 routine = {
-    'probeTrackROI_IR' 
     'probeTrackROI_IR' 
     };
 
@@ -49,7 +48,7 @@ ZeroForce = 700-(setpoint-700);
 Script_SetTheMinimumCoM_byHand
 
 %% Calculate position of femur and tibia from csv files
-trial = load('F:\Acquisition\181011\181011_F3_C1\EpiFlash2CB2T_Raw_181011_F3_C1_1.mat');
+trial = load('F:\Acquisition\181017\181017_F2_C1\EpiFlash2CB2T_Raw_181017_F2_C1_1.mat');
 [~,~,~,~,~,D,trialStem] = extractRawIdentifiers(trial.name);
 cd(D);
 

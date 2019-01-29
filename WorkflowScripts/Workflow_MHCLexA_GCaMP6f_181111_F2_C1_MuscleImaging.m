@@ -2,20 +2,21 @@
 
 
 %% EpiFlash2CB2T Bar detection
-trial = load('F:\Acquisition\181017\181017_F2_C1\EpiFlash2CB2T_Raw_181017_F2_C1_1.mat');
+trial = load('F:\Acquisition\181111\181111_F2_C1\EpiFlash2CB2T_Raw_181111_F2_C1_1.mat');
 [~,~,~,~,~,D,trialStem] = extractRawIdentifiers(trial.name);
 cd(D);
 
-clear trials
+clear trials nobartrials bartrials
 
 % if the position of the prep changes, make a new set
-trials{1} = 66:110;
+bartrials{1} = 11:23; 
+bartrials{1} = 44:73; 
+bartrials{1} = 94:103;
 
-routine = {
-    'probeTrackROI_IR' 
-    };
-
-Nsets = length(trials);
+nobartrials{1} = 1:10;
+nobartrials{2} = 44:53; % moved from first one, use this as the cluster calculations
+nobartrials{3} = 74:93; % moved from first one, use this as the cluster calculations
+nobartrials{3} = 104:113; 
 
 %% Run scripts one at a time
 
