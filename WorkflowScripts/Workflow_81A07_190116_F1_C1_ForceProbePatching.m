@@ -8,8 +8,6 @@ clear trials spiketrials bartrials
 %% EpiFlash2TTrain - random movements
 
 trial = load('F:\Acquisition\190116\190116_F1_C1\EpiFlash2TTrain_Raw_190116_F1_C1_77.mat');
-[~,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
-
 
 clear spiketrials bartrials
 
@@ -22,7 +20,6 @@ bartrials{1} = 78:92; % bar 10-15 Were in Voltage clamp, incorrect units.
 %% PiezoRamp2T - looking for changes in spike rate 
 
 trial = load('F:\Acquisition\190116\190116_F1_C1\PiezoRamp2T_Raw_190116_F1_C1_1.mat');
-[~,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
 
 % No spikes here
 % spiketrials{1} = 1:263; % control
@@ -32,7 +29,6 @@ trial = load('F:\Acquisition\190116\190116_F1_C1\PiezoRamp2T_Raw_190116_F1_C1_1.
 %% PiezoStep2T -  looking for changes in spike rate 
 
 trial = load('F:\Acquisition\190116\190116_F1_C1\PiezoStep2T_Raw_190116_F1_C1_1.mat');
-[~,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
 
 % No spikes here
 % spiketrials{1} = 1:210; % control

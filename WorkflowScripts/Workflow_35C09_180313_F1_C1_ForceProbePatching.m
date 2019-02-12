@@ -5,66 +5,90 @@ trial = load('B:\Raw_Data\180313\180313_F1_C1\EpiFlash2TTrain_Raw_180313_F1_C1_1
 cd (D)
 clear trials
 
-%% Current step to get force
-trial = load('B:\Raw_Data\180313\180313_F1_C1\CurrentStep2T_Raw_180313_F1_C1_1.mat');
-[~,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
 
-clear trials
-trials{1} = 12:61;
+%% CurrentStep2T - to get force
 
-Nsets = length(trials);
+% trial = load('E:\Data\180313\180313_F1_C1\CurrentStep2T_Raw_180313_F1_C1_12.mat');
+% trialStem = extractTrialStem(trial.name); D = fileparts(trial.name);
+%
+% clear trials spiketrials bartrials
+% spiketrials{1} = 12:61;
+% examplespiketrials = {
+% 'E:\Data\180313\180313_F1_C1\CurrentStep2T_Raw_180313_F1_C1_12.mat'
+% };
 
-% check the location
-trial = load(sprintf(trialStem,35));
-showProbeImage(trial)
+% bartrials{1} = 12:61; 
 
-routine = {
-    'probeTrackROI_IR' 
+%% EpiFlash2T - random movements 
+
+% Not worth looking at spikes
+trial = load('E:\Data\180313\180313_F1_C1\EpiFlash2T_Raw_180313_F1_C1_1.mat');
+trialStem = extractTrialStem(trial.name); D = fileparts(trial.name);
+
+clear trials spiketrials bartrials nobartrials
+spiketrials{1} = 1:4; % bar
+examplespiketrials = {
+    'E:\Data\180313\180313_F1_C1\EpiFlash2T_Raw_180313_F1_C1_1.mat'
     };
 
-%% epi flash random movements
+% bartrials{1} = 1:4;
 
-trial = load('B:\Raw_Data\180313\180313_F1_C1\EpiFlash2T_Raw_180313_F1_C1_4.mat');
-[~,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
+%% EpiFlash2TTrain - random movements 
 
-clear trials
-trials{1} = 1:4;
-Nsets = length(trials);
-    
-trial = load(sprintf(trialStem,3));
-showProbeImage(trial)
+trial = load('E:\Data\180313\180313_F1_C1\EpiFlash2TTrain_Raw_180313_F1_C1_2.mat');
+trialStem = extractTrialStem(trial.name); D = fileparts(trial.name);
 
-routine = {
-    'probeTrackROI_IR' 
+clear trials spiketrials bartrials nobartrials
+spiketrials{1} = 1:5; % bar
+examplespiketrials = {
+    'E:\Data\181014\181014_F1_C1\Sweep2T_Raw_181014_F1_C1_34.mat'
     };
 
-%% epi flash train random movements
+% bartrials{1} = 1:5;
 
-trial = load('B:\Raw_Data\180313\180313_F1_C1\EpiFlash2TTrain_Raw_180313_F1_C1_1.mat');
-[~,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
+%% PiezoRamp2T - looking for changes in spike rate 
 
-clear trials
-trials{1} = 1:5;
-Nsets = length(trials);
-    
-trial = load(sprintf(trialStem,3));
-showProbeImage(trial)
+% Not worth detecting spikes
+trial = load('E:\Data\180313\180313_F1_C1\PiezoStep2T_Raw_180313_F1_C1_1.mat');
+trialStem = extractTrialStem(trial.name); D = fileparts(trial.name);
+ 
+clear trials spiketrials
+spiketrials{1} = 1:180; 
+examplespiketrials = {
+'E:\Data\180313\180313_F1_C1\PiezoStep2T_Raw_180313_F1_C1_1.mat'};
 
-routine = {
-    'probeTrackROI_IR' 
+
+%% PiezoStep2T -  looking for changes in spike rate 
+
+% Not worth detecting spikes
+trial = load('E:\Data\180313\180313_F1_C1\PiezoStep2T_Raw_180313_F1_C1_1.mat');
+trialStem = extractTrialStem(trial.name); D = fileparts(trial.name);
+
+clear trials spiketrials
+spiketrials{1} = 1:180; 
+
+examplespiketrials = {
+    'E:\Data\180307\180307_F2_C1\PiezoStep2T_Raw_180307_F2_C1_7.mat'
     };
 
+%% Run each section above in turn, then run the sections below on each protocol
 
-%% Run scripts one at a time
+%% Extract spikes
+trials = spiketrials;
+exampletrials = examplespiketrials;
+Script_ExtractSpikesFromInterestingTrials
+
+%% Correct for transients
+% trials = bartrials;
+% Script_FixTheTrialsWithRedLEDTransients
+
+
+%% Run Bar detection scripts one at a time
+
+trials = bartrials;
 
 % Set probe line 
-Script_SetProbeLine 
-
-% double check some trials
-trial = load(sprintf(trialStem,66));
-showProbeLocation(trial)
-
-% trial = probeLineROI(trial);
+Script_SetProbeLine % showProbeLocation(trial)
 
 % Find an area to smooth out the pixels
 Script_FindAreaToSmoothOutPixels
@@ -72,21 +96,10 @@ Script_FindAreaToSmoothOutPixels
 % Track the bar
 Script_TrackTheBarAcrossTrialsInSet
 
-% Find the trials with Red LED transients and mark them down
-% Script_FindTheTrialsWithRedLEDTransients % Using UV Led
-
-% Fix the trials with Red LED transients and mark them down
-% Script_FixTheTrialsWithRedLEDTransients % Using UV Led
-
 % Find the minimum CoM, plot a few examples from each trial block and check.
 % Script_FindTheMinimumCoM %% can run this any time, but probably best after all the probe positions have been calculated
 Script_LookAtTrialsWithMinimumCoM %% can run this any time, but probably best after all the probe positions have been calculated
 
-trialnumlist_specific = 226:258;
-ZeroForce = 700-(setpoint-700);
-Script_SetTheMinimumCoM_byHand
-
-
-% Extract spikes
-Script_ExtractSpikesFromInterestingTrials
-
+% trialnumlist_specific = 226:258;
+% ZeroForce = 700-(setpoint-700);
+% Script_SetTheMinimumCoM_byHand

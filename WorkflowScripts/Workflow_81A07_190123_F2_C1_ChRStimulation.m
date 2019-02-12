@@ -1,5 +1,5 @@
 %% ForceProbe patcing workflow 190123_F3_C1
-trial = load('F:\Acquisition\190123\190123_F3_C1\EpiFlash2T_Raw_190123_F3_C1_78.mat');
+trial = load('E:\Data\190123\190123_F3_C1\EpiFlash2T_Raw_190123_F3_C1_78.mat');
 [protocol,dateID,flynum,cellnum,trialnum,D,trialStem,datastructfile] = extractRawIdentifiers(trial.name);
 
 cd (D)
@@ -9,17 +9,15 @@ clear trials spiketrials bartrials
 
 %% EpiFlash2T - random movements
 
-trial = load('F:\Acquisition\190123\190123_F3_C1\EpiFlash2T_Raw_190123_F3_C1_78.mat');
-[~,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
-
+trial = load('E:\Data\190123\190123_F3_C1\EpiFlash2T_Raw_190123_F3_C1_78.mat');
 
 clear spiketrials bartrials
 
 spiketrials{1} = 1:287;
 spiketrials{2} = 288:381; 
 examplespiketrials = {
-    'F:\Acquisition\190123\190123_F3_C1\EpiFlash2T_Raw_190123_F3_C1_99.mat'
-    'F:\Acquisition\190123\190123_F3_C1\EpiFlash2T_Raw_190123_F3_C1_333.mat'
+    'E:\Data\\190123\190123_F3_C1\EpiFlash2T_Raw_190123_F3_C1_99.mat'
+    'E:\Data\\190123\190123_F3_C1\EpiFlash2T_Raw_190123_F3_C1_333.mat'
     };
 
 bartrials{1} = 1:287; 
@@ -30,6 +28,24 @@ bartrials{2} = 288:381; % MLA
 %% PiezoStep2T -  looking for changes in spike rate 
 
 %% Sweep2T - , looking for changes in spike rate with slow movement of the bar
+
+%% Extract spikes
+trials = spiketrials;
+exampletrials = examplespiketrials;
+Script_ExtractSpikesFromInterestingTrials
+
+%% Extract spikes
+spikevars = getacqpref('FlyAnalysis','Spike_params_current_2_flipped_fs50000');
+
+trial = load(examplespiketrials{1});
+trial.current_2_flipped = -1*trial.current_2; 
+[trial,vars_skeleton] = spikeDetection(trial,'current_2_flipped',spikevars,'alt_spike_field','EMGspikes');
+
+trials = spiketrials(1);
+exampletrials = examplespiketrials;
+
+Script_ExtractEMGSpikesFromInterestingTrials
+
 
 %% Run scripts one at a time
 trials = bartrials;
@@ -58,11 +74,6 @@ Script_LookAtTrialsWithMinimumCoM %% can run this any time, but probably best af
 % Script_SetTheMinimumCoM_byHand
 
 
-%% Extract spikes
-% trials = spiketrials;
-% exampletrials = examplespiketrials;
-% Script_ExtractSpikesFromInterestingTrials
-% Script_FixTheTrialsWithRedLEDTransients % I'm convinced that with 10 ms
-% flashes, nothing happens during the flash
+Script_FixTheTrialsWithRedLEDTransients
 
 

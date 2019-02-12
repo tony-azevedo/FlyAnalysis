@@ -1,9 +1,7 @@
 %% ForceProbe patcing workflow 181205_F1_C1
 trial = load('F:\Acquisition\181205\181205_F1_C1\EpiFlash2TTrain_Raw_181205_F1_C1_1.mat');
-[protocol,dateID,flynum,cellnum,trialnum,D,trialStem,datastructfile] = extractRawIdentifiers(trial.name);
-
+D = fileparts(trial.name);
 cd (D)
-clear trials spiketrials bartrials
 
 %% CurrentStep2T - to get force
 
@@ -57,6 +55,11 @@ trial = load('F:\Acquisition\181205\181205_F1_C1\PiezoStep2T_Raw_181205_F1_C1_10
 % spiketrials{2} = 215:256; % MLA
 % spiketrials{3} = 257:298; % TTX
 
+%% Extract spikes
+trials = spiketrials;
+exampletrials = examplespiketrials;
+Script_ExtractSpikesFromInterestingTrials
+
 
 %% Run scripts one at a time
 trials = bartrials;
@@ -90,10 +93,6 @@ Script_LookAtTrialsWithMinimumCoM %% can run this any time, but probably best af
 % ZeroForce = 700-(setpoint-700);
 % Script_SetTheMinimumCoM_byHand
 
-
-%% Extract spikes
-trials = spiketrials;
-Script_ExtractSpikesFromInterestingTrials
 
 %% Calculate position of femur and tibia from csv files
 trial = load('F:\Acquisition\181127\181127_F2_C1\EpiFlash2TTrain_Raw_181127_F2_C1_16.mat');

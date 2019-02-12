@@ -14,7 +14,14 @@ trial = load('F:\Acquisition\181219\181219_F1_C1\EpiFlash2T_Raw_181219_F1_C1_108
 
 clear spiketrials bartrials
 
-% spiketrials{1} = 1:4; % bar
+emgspiketrials{1} = 17:159; % bar
+emgspiketrials{1} = 17:66; % bar
+emgspiketrials{2} = 100:159; % bar
+
+examplespiketrials = {
+    'F:\Acquisition\181219\181219_F1_C1\EpiFlash2T_Raw_181219_F1_C1_54.mat'
+    'F:\Acquisition\181219\181219_F1_C1\EpiFlash2T_Raw_181219_F1_C1_149.mat'
+    };
 
 bartrials{1} = 17:159; % bar
 % bartrials{2} = 160:162; % bar
@@ -25,7 +32,7 @@ bartrials{1} = 17:159; % bar
 % bartrials{7} = 178:180; % bar
 % 
 
-%% Sweep2T - , looking for changes in spike rate with slow movement of the bar
+%% Sweep2T - KBoing test
 trial = load('F:\Acquisition\181219\181219_F1_C1\Sweep2T_Raw_181219_F1_C1_6.mat');
 [~,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
 
@@ -73,8 +80,19 @@ Script_LookAtTrialsWithMinimumCoM %% can run this any time, but probably best af
 
 
 %% Extract spikes
-trials = spiketrials;
-Script_ExtractSpikesFromInterestingTrials
+% spikevars = getacqpref('FlyAnalysis','Spike_params_current_2_flipped_fs50000');
+%
+% trial = load(examplespiketrials{2});
+trial.current_2_flipped = -1*trial.current_2; 
+[trial,vars_skeleton] = spikeDetection(trial,'current_2_flipped',spikevars);
 
-%% Calculate position of femur and tibia from csv files
-% None here
+trials = emgspiketrials;
+exampletrials = examplespiketrials;
+
+Script_ExtractEMGSpikes
+
+%% Fix the light transient
+% trials = emgspiketrials;
+% Script_FixTheTrialsWithRedLEDTransients % I'm convinced that with 10 ms
+% flashes, nothing happens during the flash
+

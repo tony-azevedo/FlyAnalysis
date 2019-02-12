@@ -25,15 +25,17 @@ EMG = zeros(length(x),length(blocktrials));
 fprobe = zeros(length(ft),length(blocktrials));
 
 cnt = 0;
+gap = 0;
 for bt_ind = 1:length(blocktrials)
     handles.trial = load(fullfile(handles.dir,sprintf(handles.trialStem,blocktrials(bt_ind))));
     trials = findLikeTrials('name',handles.trial.name,'datastruct',handles.prtclData);
+    gap = gap+1;
     for t_ind = 1:length(trials)
         cnt = cnt+1;
         
         trial = load(fullfile(handles.dir,sprintf(handles.trialStem,trials(t_ind))));
 
-        raster(ax1_1,x(trial.spikes),cnt+[-.4 .4]+cnt*.5);
+        raster(ax1_1,x(trial.spikes),cnt+[-.4 .4]+gap*2);
         
         voltage(:,bt_ind) = voltage(:,bt_ind)+trial.voltage_1;
         current(:,bt_ind) = current(:,bt_ind)+trial.current_1;
@@ -46,7 +48,7 @@ for bt_ind = 1:length(blocktrials)
     fprobe(:,bt_ind) = fprobe(:,bt_ind)/length(trials);
     ex_trace(:,bt_ind) = trial.voltage_1;
 end
-ax1_1.YLim = [0 cnt+1];
+ax1_1.YLim = [0 cnt+1+gap*2];
 
 ax1_2 = subplot(7,1,1,'parent',fig); cla(ax1_2), hold(ax1_2,'on'), ylabel(ax1_2,'pA');
 ax3 = subplot(7,1,[6 7],'parent',fig); cla(ax3), hold(ax3,'on'), ylabel(ax3,'CoM (pixels)');

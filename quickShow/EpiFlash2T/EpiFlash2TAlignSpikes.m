@@ -60,6 +60,9 @@ end
 
 t_win = ((1:DT_pre*trial.params.sampratein+DT_post*trial.params.sampratein)-DT_pre*trial.params.sampratein)/trial.params.sampratein;
 
+%% Random plot index
+i = randi(size(spike_trajects,2),1);
+
 %%
 delete(findobj(fig,'type','axes'));
 ax = subplot(3,1,[1],'parent',fig);
@@ -67,6 +70,7 @@ cla(ax,'reset')
 title(ax,[handles.currentPrtcl ' - ' num2str(handles.trial.params.stimDurInSec) ' s duration'])
 
 plot(ax,t_win,spike_trajects,'color',[1 .7 .7],'tag',savetag); hold on
+plot(ax,t_win,spike_trajects(:,i),'color',[1 0 .0],'tag',num2str(i)); hold on
 plot(ax,t_win,nanmean(spike_trajects,2),'color',[.1 0 0],'tag',savetag); hold on
 
 axis(ax,'tight')
@@ -84,6 +88,7 @@ ax = subplot(3,1,[2],'parent',fig);
 cla(ax,'reset')
 
 plot(ax,t_win,alt_trajects,'color',[.7 .7 1],'tag',savetag); hold on
+plot(ax,t_win,alt_trajects(:,i),'color',[0 0 1],'tag',num2str(i)); hold on
 plot(ax,t_win,nanmean(ctr_trajects,2),'color',[0 0 0],'tag',savetag); hold on
 plot(ax,t_win,nanmean(alt_trajects,2),'color',[0 0 .7],'tag',savetag); hold on
 

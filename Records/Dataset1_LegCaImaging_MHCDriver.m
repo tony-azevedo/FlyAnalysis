@@ -30,26 +30,21 @@ caImavi
 % Step 9: get the intensity for all of the clusters for 16-75
 % Step 10: Merge leg position and kinematics with calcium data
 
-%%
-
+%% Not worth it
 % Workflow_MHCLexA_GCaMP6f_181007_F1_C1_MuscleImaging 
 % Workflow_MHCLexA_GCaMP6f_181007_F2_C1_MuscleImaging
+% Workflow_MHCLexA_GCaMP6f_181011_F2_C1_MuscleImaging
 
-Workflow_MHCLexA_GCaMP6f_181011_F2_C1_MuscleImaging
-
-Workflow_MHCLexA_GCaMP6f_181017_F1_C1_MuscleImaging % Throwing this out because the leg moves quite a bit, not glued down
+%% Maybe worth it some 100Hz Gcamp imaging
+Workflow_MHCLexA_GCaMP6f_181017_F1_C1_MuscleImaging % No hook, tibia goes to the femur
 Workflow_MHCLexA_GCaMP6f_181017_F2_C1_MuscleImaging % Not great, EMG is not large
-
-Workflow_MHCLexA_GCaMP6f_181105_F1_C1_MuscleImaging % 
-
-% Workflow_MHCLexA_GCaMP6f_181111_F1_C1_MuscleImaging % Objective was not
-% washed, ignoring for now, could come back to it.
-% Workflow_MHCLexA_GCaMP6f_181111_F2_C1_MuscleImaging % 
+Workflow_MHCLexA_GCaMP6f_181105_F1_C1_MuscleImaging % Looks fine
+Workflow_MHCLexA_GCaMP6f_181111_F1_C1_MuscleImaging % Objective was not washed, ignoring for now, could come back to it.
+Workflow_MHCLexA_GCaMP6f_181111_F2_C1_MuscleImaging % 
 
 %% Sent the following to Shaul
 Workflow_MHCLexA_GCaMP6f_181011_F3_C1_MuscleImaging % Nice! Use this to explore
 Workflow_MHCLexA_GCaMP6f_181121_F2_C1_MuscleImaging % Cleaned the objective
-
 Workflow_MHCLexA_GCaMP6f_181209_F2_C1_MuscleImaging
 Workflow_MHCLexA_GCaMP6f_181210_F1_C1_MuscleImaging
 

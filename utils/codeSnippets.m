@@ -1,3 +1,4 @@
+
 % Useful code snippets and scratch
 error('Code not meant to be run')
 %%
@@ -119,6 +120,8 @@ panl(2).margintop = 8;
 
 panl(1).pack('h',{1/3 2/3})
 %p(1).de.margin = 2;
+
+vertdivisions = [2 1 4 4]; vertdivisions = num2cell(vertdivisions/sum(vertdivisions));
 
 [protocol,dateID,flynum,cellnum,trialnum] = extractRawIdentifiers(data.name);
     

@@ -7,7 +7,7 @@ for setidx = 1:length(trials)
     trialnumlist = trials{setidx};
     
     %close all
-    for tr_idx = [208:225]
+    for tr_idx = trialnumlist
         trial = load(sprintf(trialStem,tr_idx));
         if ~isfield(trial,'forceProbeStuff')
             continue
@@ -16,15 +16,21 @@ for setidx = 1:length(trials)
             t = makeInTime(trial.params);
             if t(trial.spikes(1)) <= trial.params.stimDurInSec && trial.params.stimDurInSec==.01
                 fprintf(fid,[regexprep(trial.name,'\\','\\\'),'\n']);
-                zeroOutStimArtifactsAssumefast(trial)
-            elseif trial.params.stimDurInSec==.1
+                zeroOutStimArtifactsAssumefast %(trial)
+            elseif trial.params.stimDurInSec>=.02
                 zeroOutStimArtifactsAssumeTranslate
             else
-                zeroOutStimArtifactsAssumefast(trial)
+                zeroOutStimArtifactsAssumefast
                 % redLEDArtifactClickyCorrect(trial)
             end
         else
-            zeroOutStimArtifactsAssumefast(trial)
+%             error('Get spikes first, or comment this out')
+            if trial.params.stimDurInSec>=.02
+                zeroOutStimArtifactsAssumeTranslate
+            else
+                zeroOutStimArtifactsAssumefast
+                % redLEDArtifactClickyCorrect(trial)
+            end
         end
     end
 end

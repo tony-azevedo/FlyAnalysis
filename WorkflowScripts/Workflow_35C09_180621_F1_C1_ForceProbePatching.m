@@ -1,193 +1,112 @@
 %% ForceProbe patcing workflow 180621_F1_C1
-trial = load('B:\Raw_Data\180621\180621_F1_C1\CurrentStep2T_Raw_180621_F1_C1_1.mat');
-[protocol,dateID,flynum,cellnum,trialnum,D,trialStem,datastructfile] = extractRawIdentifiers(trial.name);
-
+trial = load('E:\Data\180621\180621_F1_C1\CurrentStep2T_Raw_180621_F1_C1_1.mat');
+D = fileparts(trial.name);
 cd (D)
-clear trials
 
-%% Current step to get force
-trial = load('B:\Raw_Data\180621\180621_F1_C1\CurrentStep2T_Raw_180621_F1_C1_1.mat');
-[~,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
+%% CurrentStep2T - to get force
 
-clear trials
-trials{1} = 1:50;
+% trial = load('E:\Data\180621\180621_F1_C1\CurrentStep2T_Raw_180621_F1_C1_1.mat');
+% trialStem = extractTrialStem(trial.name); D = fileparts(trial.name);
 
-Nsets = length(trials);
-
-% check the location
-trial = load(sprintf(trialStem,35));
-showProbeImage(trial)
-
-routine = {
-    'probeTrackROI_IR' 
-    };
-
-%% epi flash random movements
-
-trial = load('B:\Raw_Data\180621\180621_F1_C1\EpiFlash2T_Raw_180621_F1_C1_1.mat');
-[~,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
-
-clear trials
-trials{1} = 1:10;
-trials{2} = 11:22;
-% trials{3} = 23:46; % no bar
-trials{3} = 37:46;
-Nsets = length(trials);
-    
-trial = load(sprintf(trialStem,3));
-showProbeImage(trial)
-
-routine = {
-    'probeTrackROI_IR' 
-    'probeTrackROI_IR' 
-    'probeTrackROI_IR' 
-    };
-
-%% epi flash train random movements
-
-% trial = load('B:\Raw_Data\180313\180313_F1_C1\EpiFlash2TTrain_Raw_180313_F1_C1_1.mat');
-% [~,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
-% 
-% clear trials
-% trials{1} = 1:5;
-% Nsets = length(trials);
-%     
-% trial = load(sprintf(trialStem,3));
-% showProbeImage(trial)
-% 
-% routine = {
-%     'probeTrackROI_IR' 
+% clear trials spiketrials bartrials
+% spiketrials{1} = 1:50;
+% examplespiketrials = {
+% 'E:\Data\180621\180621_F1_C1\CurrentStep2T_Raw_180621_F1_C1_1.mat'
 %     };
 
+% bartrials{1} = 1:50; 
 
-%% Set probe line 
+%% EpiFlash2T - random movements
 
-close all
-% Go through all the sets of trials
-for set = 1:Nsets
-    fprintf('\n\t***** Batch %d of %d\n',set,Nsets);
-    trialnumlist = trials{set};
-    
-    br = waitbar(0,sprintf('Batch %d of %d',set,Nsets));
-    br.Position =  [1050    251    270    56];
-    
-    % set probeline for a few test movies
-    for tr_idx = trialnumlist(1:4) 
-        trial = load(sprintf(trialStem,tr_idx));
-        
-        waitbar((tr_idx-trialnumlist(1)+1)/6,br,regexprep(trial.name,{regexprep(D,'\\','\\\'),'_'},{'','\\_'}));
-        
-        fprintf('%s\n',trial.name);
-        if isfield(trial,'excluded') && trial.excluded
-            fprintf(' * Bad movie: %s\n',trial.name)
-            continue
-        end
-        trial = probeLineROI(trial);
-    end
-    
-    % just set the line for the rest of the trials
-    temp.forceProbe_line = getacqpref('quickshowPrefs','forceProbeLine');
-    temp.forceProbe_tangent = getacqpref('quickshowPrefs','forceProbeTangent');
+% trial = load('E:\Data\180621\180621_F1_C1\EpiFlash2T_Raw_180621_F1_C1_24.mat');
+% trialStem = extractTrialStem(trial.name); D = fileparts(trial.name);
+ 
+% clear trials spiketrials bartrials nobartrials
+% spiketrials{1} = 1:10;
+% spiketrials{2} = 11:22;
+% spiketrials{3} = 23:36; % no bar, not much movement, not going to work on this
+% spiketrials{4} = 37:46;
+% examplespiketrials = {
+% 'E:\Data\180621\180621_F1_C1\EpiFlash2T_Raw_180621_F1_C1_12.mat'
+% 'E:\Data\180621\180621_F1_C1\EpiFlash2T_Raw_180621_F1_C1_12.mat'
+% 'E:\Data\180621\180621_F1_C1\EpiFlash2T_Raw_180621_F1_C1_24.mat'
+% 'E:\Data\180621\180621_F1_C1\EpiFlash2T_Raw_180621_F1_C1_24.mat'
+% };
 
-    for tr_idx = trialnumlist(5:end)
-        trial = load(sprintf(trialStem,tr_idx));
-        trial.forceProbe_line = temp.forceProbe_line;
-        trial.forceProbe_tangent = temp.forceProbe_tangent;
-        fprintf('Saving bar and tangent in trial %s\n',num2str(tr_idx))
-        save(trial.name,'-struct','trial')
-    end
-    
-    delete(br);
-end
-%% double check some trials
-trial = load(sprintf(trialStem,6));
-showProbeLocation(trial)
+nobartrials{1} = 23:36; % Nice Tibia angles calculated
 
-% trial = probeLineROI(trial);
+% bartrials{1} = 1:10;
+% bartrials{2} = 11:22;
+% spiketrials{4} = 37:46;
+
+%% PiezoStep2T -  looking for changes in spike rate 
+
+trial = load('E:\Data\180621\180621_F1_C1\PiezoStep2T_Raw_180621_F1_C1_2.mat');
+trialStem = extractTrialStem(trial.name); D = fileparts(trial.name);
+
+clear trials spiketrials
+spiketrials{1} = 2:218; % No MLA
+
+examplespiketrials = {
+    'E:\Data\180621\180621_F1_C1\PiezoRamp2T_Raw_180621_F1_C1_43.mat'
+    };
 
 
-%% Find an area to smooth out the pixels
-for set = 1:Nsets
-    trialnumlist = trials{set};
-    
-    for tr_idx = trialnumlist(1:3)
-        trial = load(sprintf(trialStem,tr_idx));
-        
-        if (~isfield(trial,'excluded') || ~trial.excluded) 
-            tic
-            fprintf('%s\n',trial.name);
-            trial = smoothOutBrightPixels(trial);
-            
-            toc
-        else
-            fprintf('\t* Bad movie: No line or tangent: %s\n',trial.name);
-            continue
-        end
-    end
-    
-    % just set the line for the rest of the trials
-    temp.ROI = getpref('quickshowPrefs','brightSpots2Smooth');
+%% PiezoRamp2T - looking for changes in spike rate 
 
-    for tr_idx = trialnumlist(4:end)
-        trial = load(sprintf(trialStem,tr_idx));
-        trial.brightSpots2Smooth = temp.ROI;
-        fprintf('Saving bright spots to smooth in trial %s\n',num2str(tr_idx))
-        save(trial.name,'-struct','trial')
-    end
-end
+trial = load('E:\Data\180621\180621_F1_C1\PiezoRamp2T_Raw_180621_F1_C1_43.mat');
+trialStem = extractTrialStem(trial.name); D = fileparts(trial.name);
+
+clear trials spiketrials
+spiketrials{1} = 2:277; % No MLA
+
+examplespiketrials = {
+    'E:\Data\180621\180621_F1_C1\PiezoRamp2T_Raw_180621_F1_C1_43.mat'
+    };
 
 
-%% Track the bar
-
-for set = 1:Nsets
-    fprintf('\n\t***** Batch %d of %d\n',set,Nsets);
-    trialnumlist = trials{set};
-    
-    close all
-    
-    br = waitbar(0,'Batch');
-    br.Position =  [1050    251    270    56];
-    
-    for tr_idx = trialnumlist
-        trial = load(sprintf(trialStem,tr_idx));
-        
-        waitbar((tr_idx-trialnumlist(1))/length(trialnumlist),br,regexprep(trial.name,{regexprep(D,'\\','\\\'),'_'},{'','\\_'}));
-        
-        if isfield(trial ,'forceProbe_line') && isfield(trial,'forceProbe_tangent') && (~isfield(trial,'excluded') || ~trial.excluded) && ~isfield(trial,'forceProbeStuff')
-            fprintf('%s\n',trial.name);
-            eval(routine{set}); %probeTrackROI_IR;
-        elseif isfield(trial,'forceProbeStuff')
-            fprintf('%s\n',trial.name);
-            fprintf('\t*Has profile: passing over trial for now\n')
-            
-            %OR...
-            %fprintf('\t*Has profile: redoing\n')
-            %eval(routine{set}); %probeTrackROI_IR;
-
-            %OR...
-            if isfield(trial.forceProbeStuff,'keimograph')
-                fprintf('\t*Moving keimograph to alt file: redoing\n')
-                keimograph = trial.forceProbeStuff.keimograph;
-                save(regexprep(trial.name,'_Raw_','_keimograph_'),'keimograph');
-                trial.forceProbeStuff = rmfield(trial.forceProbeStuff,'keimograph');
-                save(trial.name,'-struct','trial')
-            end
-            if exist(regexprep(trial.name,'.mat','_barkeimograph.mat'),'file')
-                fprintf('\t*Moving keimograph to alt file: movefile\n')
-                movefile(regexprep(trial.name,'.mat','_barkeimograph.mat'),regexprep(trial.name,'_Raw_','_keimograph_'));
-            end
-        else
-            fprintf('\t* Bad movie: No line or tangent: %s\n',trial.name);
-            continue
-        end
-    end
-    
-    delete(br);
-    
-end
-
-%% Epi flash trials
+%% Run each section above in turn, then run the sections below on each protocol
 
 %% Extract spikes
+trials = spiketrials;
+exampletrials = examplespiketrials;
+Script_ExtractSpikesFromInterestingTrials
+
+%% Run Bar detection scripts one at a time
+
+trials = bartrials;
+
+% Set probe line 
+Script_SetProbeLine % showProbeLocation(trial)
+
+% Find an area to smooth out the pixels
+Script_FindAreaToSmoothOutPixels
+
+% Track the bar
+Script_TrackTheBarAcrossTrialsInSet
+
+% Find the minimum CoM, plot a few examples from each trial block and check.
+% Script_FindTheMinimumCoM %% can run this any time, but probably best after all the probe positions have been calculated
+Script_LookAtTrialsWithMinimumCoM %% can run this any time, but probably best after all the probe positions have been calculated
+
+% trialnumlist_specific = 226:258;
+% ZeroForce = 700-(setpoint-700);
+% Script_SetTheMinimumCoM_byHand
 
 
+%% Calculate position of femur and tibia from csv files
+
+% After bringing videos back from DeepLabCut, run through all trials, get
+% some stats on the dots, do some error correction, make some videos.
+
+% trials = nobartrials;
+% trialnumlist = [];
+% for idx = 1:length(trials)
+%     trialnumlist = [trialnumlist trials{idx}]; %#ok<AGROW>
+% end
+% close all
+% 
+% Script_AddTrackedPositions
+% Script_UseAllTrialsInSetToCorrectLegPosition;
+% Script_AddTrackedLegAngleToTrial
+% Script_UseAllTrialsInSetToCalculateLegElevation

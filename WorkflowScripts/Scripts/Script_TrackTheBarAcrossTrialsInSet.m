@@ -12,19 +12,18 @@ for setidx = 1:length(trials)
     for tr_idx = trialnumlist
         trial = load(sprintf(trialStem,tr_idx));
         
-        waitbar((tr_idx-trialnumlist(1))/length(trialnumlist),br,regexprep(trial.name,{regexprep(D,'\\','\\\'),'_'},{'','\\_'}));
-        
+        waitbar((tr_idx-trialnumlist(1)+1)/length(trialnumlist),br,regexprep(sprintf(trialStem,tr_idx),'_','\\_'));
         if isfield(trial ,'forceProbe_line') && isfield(trial,'forceProbe_tangent') && (~isfield(trial,'excluded') || ~trial.excluded) && ~isfield(trial,'forceProbeStuff')
             fprintf('%s\n',trial.name);
             %eval(routine{set}); 
             probeTrackROI_IR;
         elseif isfield(trial,'forceProbeStuff')
-%             fprintf('%s\n',trial.name);
-%             fprintf('\t*Has profile: passing over trial for now\n')
+            fprintf('%s\n',trial.name);
+            fprintf('\t*Has profile: passing over trial for now\n')
             
             % OR...
-             fprintf('\t*Has profile: redoing\n')
-             probeTrackROI_IR;
+            % fprintf('\t*Has profile: redoing\n')
+            % probeTrackROI_IR;
 
             %OR...
             if isfield(trial.forceProbeStuff,'keimograph')

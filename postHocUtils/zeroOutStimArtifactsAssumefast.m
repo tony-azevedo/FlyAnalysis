@@ -1,4 +1,4 @@
-function zeroOutStimArtifactsAssumefast(trial)
+%function zeroOutStimArtifactsAssumefast(trial)
 %% This routine doesn't work if there is no probe CoM vector
 
 if ~isfield(trial.forceProbeStuff,'CoM')

@@ -130,11 +130,11 @@ delete(handles.figure1)
 
 
 function folderButton_Callback(hObject, eventdata, handles)
-if ~isempty(strfind(pwd,'B:\Raw_Data\'))
+if ~isempty(strfind(pwd,'E:\Data\'))
     [~, remain] = strtok(fliplr(pwd),'\');
     curdir = fliplr(remain);
 else
-    curdir = 'B:\Raw_Data\';
+    curdir = 'E:\Data\';
 end
 handles.dir = uigetdir(curdir,'Choose cell folder');
 if ~handles.dir
@@ -456,6 +456,7 @@ else
     delete(findobj(handles.quickShowPanel,'tag','delete'));
 end
 set(findobj(get(handles.quickShowPanel,'children'),'type','axes'),'xscale','linear');
+delete(findobj(handles.quickShowPanel,'tag','annotations'));
 
 guidata(hObject,handles)
 updateInfoPanel(handles);
@@ -493,10 +494,14 @@ else
         analysis_popup_Callback(hObject, eventdata, handles)
     end
     
-    if isfield(handles.trial,'spikes') && isfield(handles.trial,'spikes')
+    if isfield(handles.trial,'spikes') 
         handles.Spikes.FontWeight = 'bold';
-        if ~isfield(handles.trial,'spikeSpotChecked') || ~handles.trial.spikeSpotChecked
+        if ~isfield(handles.trial,'spikeSpotChecked') 
             handles.spike_spot_check_button.Enable = 'on';
+            handles.spike_spot_check_button.FontWeight = 'normal';
+        elseif ~handles.trial.spikeSpotChecked
+            handles.spike_spot_check_button.Enable = 'on';
+            handles.spike_spot_check_button.FontWeight = 'Bold';
         else
             handles.spike_spot_check_button.Enable = 'off';
             handles.spike_spot_check_button.FontWeight = 'Bold';
@@ -512,10 +517,16 @@ else
     end
     
     if isfield(handles.trial,'forceProbeStuff')
+        handles.probetrace_button.String = 'Probe';
+        handles.probetrace_button.FontWeight = 'bold';
+    elseif isfield(handles.trial,'legPositions')
+        handles.probetrace_button.String = 'Leg Pose';
         handles.probetrace_button.FontWeight = 'bold';
     else
         handles.probetrace_button.FontWeight = 'normal';
+        handles.probetrace_button.String = 'Probe';
     end
+    
     if get(handles.probetrace_button,'value')
         probetrace_button_Callback(handles.probetrace_button, [], handles)
     end
@@ -673,6 +684,17 @@ if eventdata.Button == 3
     end
 end
 
+function SimpleEMGSpikeSpotCheckCheck(fig, eventdata)
+if eventdata.Button == 3
+    h = guidata(eventdata.Source);
+    if ~isfield(h.trial,'EMGspikeSpotChecked') || ~h.trial.EMGspikeSpotChecked
+        trial = h.trial;
+        trial.EMGspikeSpotChecked = 1;
+        save(trial.name, '-struct', 'trial');
+        
+        trialnum_Callback(h.trialnum, eventdata, h)
+    end
+end
 
 function Spikes_Callback(spikebutt, eventdata, h)
 
@@ -684,6 +706,15 @@ if ~spikebutt.Value
     if ~isempty(s)
         delete(s);
     end
+    
+    % Potential EMG spikes
+    s = findobj(h.quickShowPanel,'type','line','tag','EMGSpikes');
+    ax = findobj(h.quickShowPanel,'type','axes','tag','quickshow_inax2');
+    ax.ButtonDownFcn = '';
+    if ~isempty(s)
+        delete(s);
+    end
+
     guidata(spikebutt,h)
     return
 end
@@ -723,12 +754,59 @@ elseif isfield(h.trial,'spikes') && isfield(h.trial,'spikeDetectionParams')
     end
     ax.ButtonDownFcn = @SimpleSpikeSpotCheckCheck;
 
+    if isfield(h.trial,'EMGspikes') && isfield(h.trial,'EMGspikeDetectionParams')
+
+        ax = findobj(h.quickShowPanel,'type','axes','tag','quickshow_inax2');
+        if isempty(h.trial.EMGspikes)
+            t = findobj(ax,'type','text','String','Spike detection has run: 0 spikes');
+            delete(t);
+            text(ax,ax.XLim(1)+0.05*diff(ax.XLim), ax.YLim(1)+0.05*diff(ax.YLim),sprintf('Spike detection has run: 0 spikes'))
+            
+            ax.ButtonDownFcn = @SimpleEMGSpikeSpotCheckCheck;
+            guidata(spikebutt,h)
+            return
+        end
+        y = ax.YLim(2);
+        t = makeInTime(h.trial.params);
+        if ~any(isnan(h.trial.EMGspikes))
+            ticks = raster(ax,t(h.trial.EMGspikes),y);
+            set(ticks,'Tag','EMGSpikes');
+            if isfield(h.trial,'EMGspikeSpotChecked') && ~h.trial.EMGspikeSpotChecked
+                set(ticks,'Color',[0    1    0.7410]);
+            end
+        else
+            raster(ax,t(h.trial.spikes(~isnan(h.trial.EMGspikes))),y);
+            ticks = raster(ax,t(h.trial.spikes_uncorrected(isnan(h.trial.EMGspikes))),y);
+            set(ticks,'Color',[0    1    0.7410]);
+        end
+        ax.ButtonDownFcn = @SimpleEMGSpikeSpotCheckCheck;
+    end
+    
     guidata(spikebutt,h)
 
     % enable for other trials
     % If not, find out if the spike detection has been run for the cell
 else 
     % Go through other trials, first check nearby ones in this protocol
+    % beep
+    if isfield(h.trial,'excluded') && h.trial.excluded
+        fprintf(' * Bad trial: %s\n',h.trial.name)
+        return
+    elseif isempty(eventdata)
+        butt = questdlg('Get spikes?','Spike detection', 'Cancel');
+        switch butt
+            case 'Yes'            
+            case 'No'
+                spikebutt.Value = 0;
+                guidata(spikebutt,h)
+                return
+            case 'Cancel'
+                spikebutt.Value = 0;
+                guidata(spikebutt,h)
+                return
+        end
+    end
+
     nums = h.trial.params.trial+[-1 1 -2 2 -3 3 -4 4];
     nums = nums(nums>0&nums<h.prtclData(end).trial);
     gotone = 0;
@@ -757,23 +835,23 @@ else
     end
     % optional: then check other protocols
     
-    % If no spike detection has been run, get vars from
-    % prefs('FlyAnalysis')
-        % vars_skeleton = rmfield(vars,'unfiltered_data'); vars_skeleton =
-        % rmfield(vars_skeleton,'filtered_data'); vars_skeleton =
-        % rmfield(vars_skeleton,'piezo');
-        % setpref('FlyAnalysis','Spike_params',vars_skeleton);
-    if ~exist('spikevars','var')
+    switch h.trial.params.mode_1; case 'VClamp', invec1 = 'current_1'; case 'IClamp', invec1 = 'voltage_1'; otherwise; invec1 = 'voltage_1'; end
+    if ~exist('spikevars','var') 
         fstag = ['fs' num2str(h.trial.params.sampratein)];
-        spikevars = getacqpref('FlyAnalysis',['Spike_params_' fstag]);
+        spikevars = getacqpref('FlyAnalysis',['Spike_params_' invec1 '_' fstag]);
     end 
+    if max(spikevars.spikeTemplate)>.98 % Old trials have normalized spike templates, rplace it if there is a better one
+        fstag = ['fs' num2str(h.trial.params.sampratein)];
+        spikevars_temp = getacqpref('FlyAnalysis',['Spike_params_' invec1 '_' fstag]);
+        if strcmp(spikevars_temp.lastfilename(1:28),h.trialStem(1:28))
+            spikevars.spikeTemplate = spikevars_temp.spikeTemplate;
+        end
+    end
+
     % run the spike filter GUI with these prefs., select example spikes.
     
-    switch h.trial.params.mode_1; case 'VClamp', invec1 = 'current_1'; case 'IClamp', invec1 = 'voltage_1'; otherwise; invec1 = 'voltage_1'; end
-    %     switch trial.params.mode_2; case 'VClamp', invec2 = 'current_2'; case 'IClamp', invec2 = 'voltage_2'; otherwise; invec2 = 'voltage_2'; end
-
     % may need to allow for different versions of spike analysis
-    [h.trial,spikevars] = spikeDetection(h.trial,invec1,spikevars);
+    [h.trial,~] = spikeDetection(h.trial,invec1,spikevars);
     guidata(spikebutt,h)
     trialnum_Callback(h.trialnum, eventdata, h)
 end
@@ -813,6 +891,20 @@ if isfield(h.trial,'forceProbeStuff')
     ax.XLim = inax.XLim;
     
     % enable for other trials
+    
+elseif isfield(h.trial,'legPositions')
+    ax = findobj(h.quickShowPanel,'type','axes','tag','quickshow_outax');
+    if isempty(ax)
+        error('Clear panel, go to quickShow visualization\n')
+    end
+    delete(ax.Children)
+    t = makeInTime(h.trial.params);
+    h2 = postHocExposure(h.trial,length(h.trial.legPositions.Tibia_Angle));
+    frame_times = t(h2.exposure);
+    plot(ax,frame_times,h.trial.legPositions.Tibia_Angle(1:length(frame_times)),'color',[.3 .4 1],'tag','ProbeTrace'), hold(ax,'on');
+    inax = findobj(h.quickShowPanel,'type','axes','tag','quickshow_inax');
+    ax.XLim = inax.XLim;
+
 else 
     beep
     if isfield(h.trial,'excluded') && h.trial.excluded
@@ -1017,7 +1109,15 @@ function loadstr_button_Callback(hObject, eventdata, handles)
 handles = guidata(hObject);
 evalin('base', ['trial = load(''' handles.trial.name ''')']);
 clipboard('copy',sprintf('trial = load(''%s'');\n',(fullfile(handles.dir, sprintf(handles.trialStem,handles.currentTrialNum)))));
+hObject.ButtonDownFcn = @loadstr_button_alternative;
 
+function loadstr_button_alternative(hObject, eventdata, handles)
+% An earlier version printed the script for the quickShow function 4/27/15
+handles = guidata(hObject);
+if strcmp(handles.figure1.SelectionType,'alt')
+    clipboard('copy',sprintf('''%s''\n',(fullfile(handles.dir, sprintf(handles.trialStem,handles.currentTrialNum)))));
+    fprintf('''%s''\n',(fullfile(handles.dir, sprintf(handles.trialStem,handles.currentTrialNum))));
+end
 
 function trialImages_Callback(hObject, eventdata, handles,varargin)
 handles = guidata(hObject);
@@ -1676,7 +1776,7 @@ if strcmp(button,'No')
     spikeDetection(trial,invec1,trial.spikeDetectionParams);
 elseif strcmp(button,'Yes')
     fstag = ['fs' num2str(trial.params.sampratein)];
-    spikevars = getacqpref('FlyAnalysis',['Spike_params_' fstag]);
+    spikevars = getacqpref('FlyAnalysis',['Spike_params_' invec1 '_' fstag]);
     [~,spikevars] = spikeDetection(trial,invec1,spikevars);
 end
 figure(gcbf);

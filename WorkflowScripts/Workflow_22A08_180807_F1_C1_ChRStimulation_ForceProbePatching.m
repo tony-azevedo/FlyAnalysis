@@ -11,10 +11,10 @@ trial = load('E:\Data\180807\180807_F1_C1\EpiFlash2T_Raw_180807_F1_C1_26.mat');
 [~,~,~,~,~,D,trialStem,~] = extractRawIdentifiers(trial.name); cd (D)
 
 clear bartrials spiketrials trials 
-bartrials{1} = 25:204; % Low
+bartrials{1} = 10:204; % Low
 bartrials{2} = 205:258; % High 
 
-spiketrials{1} = 25:204; % Low
+spiketrials{1} = 10:204; % Low
 spiketrials{2} = 205:258; % High 
 
 examplespiketrials{1} = [168 199 150];
@@ -48,12 +48,6 @@ showProbeLocation(trial)
 
 % Track the bar
 % Script_TrackTheBarAcrossTrialsInSet
-
-% Find the trials with Red LED transients and mark them down
-% Script_FindTheTrialsWithRedLEDTransients % Using UV Led
-
-% Fix the trials with Red LED transients and mark them down
-% Script_FixTheTrialsWithRedLEDTransients % Using UV Led
 
 % Find the minimum CoM, plot a few examples from each trial block and check.
 % Script_FindTheMinimumCoM %% can run this any time, but probably best after all the probe positions have been calculated

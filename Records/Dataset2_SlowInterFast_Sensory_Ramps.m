@@ -72,53 +72,64 @@
 
 
 %% Ramps 
-varNames = {'CellID','Genotype','Cell_label','Protocol','TableFile','Positions','Position','Trialnums','Displacement','Speed','Peak','TimeToPeak','Area'};
-varTypes = {'string','string','string','double','double','string','double'};
+varNames = {'CellID','Genotype','Cell_label','Protocol','TableFile','Positions','Position','Trialnums','Displacement','Speed',	'Peak','TimeToPeak','Area','MLA'};
+varTypes = {'string','string',  'string',    'string',  'string',   'double',   'double',  'double',   'double'      , 'double','string','double','double','double'};
 
 sz = [2 length(varNames)];
 data = cell(sz);
 T = cell2table(data);
 T.Properties.VariableNames = varNames;
 
-%T{1,:} = {'170921_F1_C1', '81A07',            'fast', 'PiezoStep2T','empty',[                  ], [],[1 2 3],[],[],[],[],[]}; % no steps
-T{1,:} = {'171101_F1_C1', '81A07',            'fast', 'PiezoRamp2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[]};% just 0 position
-%T{3,:} = {'171102_F1_C1', '81A07',            'fast', 'PiezoStep2T','empty',[                  ], [],[1 2 3],[],[],[],[],[]}; % no steps
-T{2,:} = {'171102_F2_C1', '81A07',            'fast', 'PiezoRamp2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[]}; % said -200 in the notes, but suspect this was from the previous EpiFlash set
-T{end+1,:} = {'171103_F1_C1', '81A07',            'fast', 'PiezoRamp2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[]};
-T{end+1,:} = {'180308_F3_C1', '81A07',            'fast', 'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]};
-T{end+1,:} = {'180404_F1_C1', '81A07/iav-LexA',   'fast', 'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]};
-T{end+1,:} = {'180410_F1_C1', '81A07/iav-LexA',   'fast',  'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]};
-T{end+1,:} = {'180703_F3_C1', '81A07/iav-LexA',   'fast',  'PiezoRamp2T','empty',[0                  ], [],[1 2 3],[],[],[],[],[]};
+%T{1,:} = {'170921_F1_C1', '81A07',            'fast', 'PiezoStep2T','empty',[                  ], [],[1 2 3],[],[],[],[],[],[]}; % no steps
+T{1,:} = {'171101_F1_C1', '81A07',            'fast', 'PiezoRamp2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[],[]};% just 0 position
+%T{3,:} = {'171102_F1_C1', '81A07',            'fast', 'PiezoStep2T','empty',[                  ], [],[1 2 3],[],[],[],[],[],[]}; % no steps
+T{2,:} = {'171102_F2_C1', '81A07',            'fast', 'PiezoRamp2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[],[]}; % said -200 in the notes, but suspect this was from the previous EpiFlash set
+T{end+1,:} = {'171103_F1_C1', '81A07',            'fast', 'PiezoRamp2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[],[]};
+T{end+1,:} = {'180308_F3_C1', '81A07',            'fast', 'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[],[]};
+T{end+1,:} = {'180404_F1_C1', '81A07/iav-LexA',   'fast', 'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[],[]};
+T{end+1,:} = {'180410_F1_C1', '81A07/iav-LexA',   'fast',  'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[],[]};
+T{end+1,:} = {'180703_F3_C1', '81A07/iav-LexA',   'fast',  'PiezoRamp2T','empty',[0                  ], [],[1 2 3],[],[],[],[],[],[]};
+T{end+1,:} = {'190116_F1_C1', '81A07',            'fast', 'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[],[]};
+T{end+1,:} = {'190116_F3_C1', '81A07',            'fast', 'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[],[]};
 
-T{end+1,:} = {'180222_F1_C1', '22A08',            'intermediate', 'PiezoRamp2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[]};
-T{end+1,:} = {'180223_F1_C1', '22A08',            'intermediate', 'PiezoRamp2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[]};
-T{end+1,:} = {'180320_F1_C1', '22A08',            'intermediate', 'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]};
-T{end+1,:} = {'180405_F3_C1', '22A08',            'intermediate', 'PiezoRamp2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[]};
-T{end+1,:} = {'180807_F1_C1', '22A08',            'intermediate', 'PiezoRamp2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[]};
-T{end+1,:} = {'180328_F4_C1', '22A08/iav-LexA',     'intermediate', 'PiezoRamp2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[]};
-T{end+1,:} = {'180821_F1_C1', '22A08/iav-LexA',     'intermediate', 'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]};
-T{end+1,:} = {'181118_F1_C1', '22A08/iav-LexA',     'intermediate',  'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]};
-T{end+1,:} = {'181205_F1_C1', '22A08/iav-LexA',     'intermediate',  'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]};
+T{end+1,:} = {'180222_F1_C1', '22A08',            'intermediate', 'PiezoRamp2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[],[]};
+T{end+1,:} = {'180223_F1_C1', '22A08',            'intermediate', 'PiezoRamp2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[],[]};
+T{end+1,:} = {'180320_F1_C1', '22A08',            'intermediate', 'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[],[]};
+T{end+1,:} = {'180405_F3_C1', '22A08',            'intermediate', 'PiezoRamp2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[],[]};
+T{end+1,:} = {'180807_F1_C1', '22A08',            'intermediate', 'PiezoRamp2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[],[]};
+T{end+1,:} = {'180328_F4_C1', '22A08/iav-LexA',     'intermediate', 'PiezoRamp2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[],[]};
+T{end+1,:} = {'180821_F1_C1', '22A08/iav-LexA',     'intermediate', 'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[],[]};
+T{end+1,:} = {'181118_F1_C1', '22A08',            'intermediate',  'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[],[]};
+T{end+1,:} = {'181205_F1_C1', '22A08',            'intermediate',  'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[],[]};
 
-T{end+1,:} = {'180111_F2_C1', '35C09',     'slow', 'PiezoRamp2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[]};
-% T{17,:} = {'180307_F2_C1', '35C09',     'slow', 'PiezoStep2T','empty',[-150 -75  0 75 120], [],[1 2 3],[],[],[],[],[]};
-T{end+1,:} = {'180313_F1_C1', '35C09',     'slow', 'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]};
-T{end+1,:} = {'180621_F1_C1', '35C09',     'slow', 'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]};
-T{end+1,:} = {'180628_F2_C1', '35C09',     'slow', 'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]}; % MLA
-T{end+1,:} = {'180328_F1_C1', '35C09/iav-LexA',     'slow',  'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]};
-T{end+1,:} = {'180329_F1_C1', '35C09/iav-LexA',     'slow',  'PiezoRamp2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[]};
-T{end+1,:} = {'180702_F1_C1', '35C09/iav-LexA',     'slow', 'PiezoRamp2T','empty',[0                  ], [],[1 2 3],[],[],[],[],[]};
-T{end+1,:} = {'181014_F1_C1', '35C09',     'slow',  'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]};
-T{end+1,:} = {'181021_F1_C1', '35C09',     'slow',  'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]};
-T{end+1,:} = {'181024_F2_C1', '35C09',     'slow',  'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]};
-T{end+1,:} = {'181127_F1_C1', '35C09',     'slow',  'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]};
-T{end+1,:} = {'181127_F2_C1', '35C09',     'slow',  'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]};
-T{end+1,:} = {'181128_F1_C1', '35C09',     'slow',  'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]};
-T{end+1,:} = {'181128_F2_C1', '35C09',     'slow',  'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[]};
-
-
+T{end+1,:} = {'180111_F2_C1', '35C09',     'slow', 'PiezoRamp2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[],[]};
+% T{17,:} = {'180307_F2_C1', '35C09',     'slow', 'PiezoStep2T','empty',[-150 -75  0 75 120], [],[1 2 3],[],[],[],[],[],[]};
+T{end+1,:} = {'180313_F1_C1', '35C09',     'slow', 'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[],[]};
+T{end+1,:} = {'180621_F1_C1', '35C09',     'slow', 'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[],[]};
+T{end+1,:} = {'180628_F2_C1', '35C09',     'slow', 'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[],[]}; % MLA
+T{end+1,:} = {'180328_F1_C1', '35C09/iav-LexA',     'slow',  'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[],[]};
+T{end+1,:} = {'180329_F1_C1', '35C09/iav-LexA',     'slow',  'PiezoRamp2T','empty',[0                 ], [],[1 2 3],[],[],[],[],[],[]};
+T{end+1,:} = {'180702_F1_C1', '35C09/iav-LexA',     'slow', 'PiezoRamp2T','empty',[0                  ], [],[1 2 3],[],[],[],[],[],[]};
+T{end+1,:} = {'181014_F1_C1', '35C09',     'slow',  'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[],[]};
+T{end+1,:} = {'181021_F1_C1', '35C09',     'slow',  'PiezoRamp2T','empty',[     -75  0 75 150], [],[1 2 3],[],[],[],[],[],[]};
+T{end+1,:} = {'181024_F2_C1', '35C09',     'slow',  'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[],[]};
+T{end+1,:} = {'181127_F1_C1', '35C09',     'slow',  'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[],[]};
+T{end+1,:} = {'181127_F2_C1', '35C09',     'slow',  'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[],[]};
+T{end+1,:} = {'181128_F1_C1', '35C09',     'slow',  'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[],[]};
+T{end+1,:} = {'181128_F2_C1', '35C09',     'slow',  'PiezoRamp2T','empty',[-150 -75  0 75 150], [],[1 2 3],[],[],[],[],[],[]};
 
 Script_estimateRampResponseData
+% clear T_Ramp
+% writetable(T_Ramp,'E:\Results\Dataset2_SIF_Sensory_RampData')
+% T_Ramp2 = readtable('E:\Results\Dataset2_SIF_Sensory_RampData');
+
+
+%% Steps 
+% varNames = {'CellID','Genotype','Cell_label','Protocol','TableFile','Positions','Position','Trialnums','Displacement',  'Speed','Peak',      'TimeToPeak',  'Area', 'MLA'};
+varNames = {'CellID','Genotype','Cell_label','Protocol','TableFile','Positions','Position','Trialnums','Step',          'Peak', 'TimeToPeak','Area',        'Delay','Speed'};
+T.Properties.VariableNames = varNames;
+Script_estimateStepResponseData
+
 
 %% Plot the peaks across speed
 clrs = [0 0 0
@@ -172,7 +183,7 @@ for g = 1:length(T_m10_50.Genotype)
         geno_l(g) = false;
     end
 end
-% T_m10_50 = T_m10_50(geno_l,:);
+T_m10_50 = T_m10_50(geno_l,:);
 
 % double check trial nums
 for c = 1:length(T_m10_50.CellID)
@@ -382,37 +393,169 @@ for cidx = 1:length(cids)
         plot(ax,dps/ratio+pos,y,'color',clr,'marker','.');
 
         
-%         step10atposidx = posidx & cell2mat(T_Ramp.Step)==-10;
-%         if sum(step10atposidx)
-%             % cell_x(pos == positions) = pos;
-%             cell_y(pos == positions) = cell2mat(T_Ramp.Peak(step10atposidx));
-%         end
+        step10atposidx = posidx & cell2mat(T_Ramp.Displacement)==-10;
+        if sum(step10atposidx)
+            % cell_x(pos == positions) = pos;
+            cell_y(pos == positions) = nanmean(cell2mat(T_Ramp.Peak(step10atposidx)));
+        end
     end
-%     ax = panl(4).select(); hold(ax,'on');
-%     plot(ax,cell_x,cell_y/max(cell_y),'color',ltclr,'marker','.','tag',['type' num2str(typ)]);
+    ax = panl(4).select(); hold(ax,'on');
+    plot(ax,cell_x,cell_y/max(cell_y),'color',ltclr,'marker','.','tag',['type' num2str(typ)]);
 end
 
+ax = panl(4).select(); hold(ax,'on');
+for typ = 1:length(clbls)
+    lns = findobj(ax,'type','line','tag',['type' num2str(typ)]);
+    xs = lns(1).XData;
+    ys = nan(length(lns),length(xs));
+    for ln = 1:length(lns)
+        if length(lns(ln).YData)==length(xs)
+            ys(ln,:) = lns(ln).YData;
+        else
+            [~,idx] = intersect(xs,lns(ln).XData);
+            ys(ln,idx) = lns(ln).YData;
+        end
+    end
+    plot(ax,xs,nanmean(ys,1),'color',clrs(typ,:),'marker','.','tag',['type' num2str(typ)],'linewidth',2,'markersize',10);
+end
+
+ax.XLim = [-200 200];
+ax.YLim = [-.1 1.1];
+ax.XTick = xs;
+
+% angle calculation based on Methods_LegMeasurements
+tl = {};
+for pos = positions
+    tl{pos==positions} = num2str(round(asind(pos/L)*10)/10);
+end
+ax.XTickLabel = tl;
+xlabel(ax,'Leg Angle (Degrees)');
+
+%% Get firing rate data on slow neurons
+Script_estimateSpikeRatesForRampsAndSteps
+head(SlowRampRows)
+
+% Plot the peaks vs speed for each category at each displacement, including steps
+
+clrs = [0 .5 0];
+lightclrs = [.7 1 .7];
+cids = unique(SlowRampRows.CellID);
+clbls = unique(SlowRampRows.Cell_label);
+
+rampFRVsPosF = figure;
+rampFRVsPosF.Position = [680 80 1177 898];
+panl = panel(rampFRVsPosF);
+panl.pack('v',{1/5 1/5 1/5 2/5});
+panl.margin = [18 10 2 10];
+panl.fontname = 'Arial';
+
+positions = [-150 -75 0 75 150];
+dps = [-272.8463
+  -40.9269
+   40.9269
+  272.8463];
+ratio = 10;
+xtick = repmat(dps,1,5)/ratio+repmat(positions,length(dps),1);
+xticklabels = num2str(repmat(round(dps*10)/10,6,1));
+
+for a = 1:length(clbls)
+    ax = panl(a).select(); hold(ax,'on');
+    plot(ax,[-180 180],[0 0],'color',[1 1 1]*.8)
+    ax.XTick = xtick(:);
+    ax.XTickLabel = xticklabels;
+    ax.XTickLabelRotation = 45;
+end
+panl(1).ylabel('FR peak (sp/sec)');
+panl(1).xlabel('Angular velocity (degree/s)');
+
 % ax = panl(4).select(); hold(ax,'on');
-% for typ = 1:length(clbls)
-%     lns = findobj(ax,'type','line','tag',['type' num2str(typ)]);
-%     xs = lns(1).XData;
-%     ys = nan(length(lns),length(xs));
-%     for ln = 1:length(lns)
-%         ys(ln,:) = lns(ln).YData;
-%     end
-%     plot(ax,xs,nanmean(ys,1),'color',clrs(typ,:),'marker','.','tag',['type' num2str(typ)],'linewidth',2,'markersize',10);
-% end
-% 
-% ax.XLim = [-200 200];
-% ax.YLim = [-.1 1.1];
-% ax.XTick = xs;
-% 
-% % angle calculation based on Methods_LegMeasurements
-% tl = {};
-% for pos = positions
-%     tl{pos==positions} = num2str(round(asind(pos/L)*10)/10);
-% end
-% ax.XTickLabel = tl;
-% xlabel(ax,'Leg Angle (Degrees)');
-% 
+
+L = 419.9858; %um
+
+for cidx = 1:length(cids)    
+   
+    idx = strcmp(SlowRampRows.CellID,cids{cidx});
+    % typ = find(strcmp(clbls,SlowRampRows.Cell_label{find(idx,1)}));
+    ax = panl(typ).select(); hold(ax,'on'); %#ok<FNDSB>
+    
+    positions = (SlowRampRows.Positions{find(idx,1)});
+    %     if length(positions)==1
+    %         continue
+    %     end
+    cell_y = nan(size(positions));
+    cell_x = positions;
+    for position = positions
+        posidx = idx & cell2mat(SlowRampRows.Position) == position;
+        if ~sum(posidx)
+            fprintf('%s is missing data for position %d\n',cids{cidx},position);
+            continue
+        end
+        x = cell2mat(T_Ramp.Speed(posidx)) .* sign(cell2mat(T_Ramp.Displacement(posidx))) *3; % 3um/V, speed in V/sec, 
+        y = cell2mat(T_Ramp.Peak(posidx));
+        y = y.*-sign(x);
+        
+        
+        if ~exist('T_Step','var')
+            fprintf('No T_Step, run Dataset2_SlowInterFast_Sensory_Steps');
+        else
+            neg_fast_idx = cell2mat(T_Step.Step) == -10 & strcmp(T_Step.CellID,cids{cidx}) & cell2mat(T_Step.Position) == pos;
+            neg_fast = -1 * cell2mat(T_Step.Speed(neg_fast_idx));
+            neg_peak = cell2mat(T_Step.Peak(neg_fast_idx));
+            pos_fast_idx = cell2mat(T_Step.Step) == 10 & strcmp(T_Step.CellID,cids{cidx}) & cell2mat(T_Step.Position) == pos;
+            pos_fast = cell2mat(T_Step.Speed(pos_fast_idx));
+            pos_peak =  -1 * cell2mat(T_Step.Peak(pos_fast_idx));
+            
+            x = [x; neg_fast; pos_fast];
+            y = [y; neg_peak; pos_peak];
+            
+        end
+        
+        [x,o] = sort(x);
+        y = y(o);
+
+        w = x/L;
+        dps = w/(2*pi)*360;
+
+        clr = clrs(strcmp(clbls,T_Ramp.Cell_label{find(posidx,1)}),:);
+        ltclr = lightclrs(strcmp(clbls,T_Ramp.Cell_label{find(posidx,1)}),:);
+        plot(ax,dps/ratio+pos,y,'color',clr,'marker','.');
+
+        
+        step10atposidx = posidx & cell2mat(T_Ramp.Displacement)==-10;
+        if sum(step10atposidx)
+            % cell_x(pos == positions) = pos;
+            cell_y(pos == positions) = nanmean(cell2mat(T_Ramp.Peak(step10atposidx)));
+        end
+    end
+    ax = panl(4).select(); hold(ax,'on');
+    plot(ax,cell_x,cell_y/max(cell_y),'color',ltclr,'marker','.','tag',['type' num2str(typ)]);
+end
+
+ax = panl(4).select(); hold(ax,'on');
+for typ = 1:length(clbls)
+    lns = findobj(ax,'type','line','tag',['type' num2str(typ)]);
+    xs = lns(1).XData;
+    ys = nan(length(lns),length(xs));
+    for ln = 1:length(lns)
+        if length(lns(ln).YData)==length(xs)
+            ys(ln,:) = lns(ln).YData;
+        else
+            [~,idx] = intersect(xs,lns(ln).XData);
+            ys(ln,idx) = lns(ln).YData;
+        end
+    end
+    plot(ax,xs,nanmean(ys,1),'color',clrs(typ,:),'marker','.','tag',['type' num2str(typ)],'linewidth',2,'markersize',10);
+end
+
+ax.XLim = [-200 200];
+ax.YLim = [-.1 1.1];
+ax.XTick = xs;
+
+% angle calculation based on Methods_LegMeasurements
+tl = {};
+for pos = positions
+    tl{pos==positions} = num2str(round(asind(pos/L)*10)/10);
+end
+ax.XTickLabel = tl;
+xlabel(ax,'Leg Angle (Degrees)');
 

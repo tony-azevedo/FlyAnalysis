@@ -5,16 +5,24 @@
 DEBUG =1;
 
 CellID = T.CellID;
-T_Ramp = T(1,:);
-T_Ramp.CellID = 'placeholder';
-Row_cnt = 0;
+if ~exist('T_Ramp')
+    T_Ramp = T(1,:);
+    T_Ramp.CellID = 'placeholder';
+    Row_cnt = 0;
+    start_idx = 1;
+else
+    cid = T_Ramp.CellID{end};
+    cididx = find(strcmp(T_Ramp.CellID,cid),1,'first');
+    T_Ramp = T_Ramp(1:cididx-1,:);
+    start_idx = find(strcmp(CellID,cid),1,'first');
+end
 
 if (DEBUG)
     figure
     ax = subplot(1,1,1);
 end
 
-for cidx = 1:length(CellID)
+for cidx = start_idx:length(CellID)
     T_row = T(cidx,:);
     
     cid = CellID{cidx};
@@ -72,6 +80,10 @@ for cidx = 1:length(CellID)
                         continue
                     end
                     v_(cnt,:) = trial.voltage_1;
+                    
+                end
+                if all(isnan(v_(:)))
+                    continue
                 end
                 v = nanmean(v_,1);
                 base = mean(v(t<0 &t>-trial.params.preDurInSec+.1));

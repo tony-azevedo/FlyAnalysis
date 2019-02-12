@@ -1,81 +1,85 @@
 %% ForceProbe patcing workflow 180307_F2_C1
-trial = load('B:\Raw_Data\180307\180307_F2_C1\CurrentStep2T_Raw_180307_F2_C1_24.mat');
-[protocol,dateID,flynum,cellnum,trialnum,D,trialStem,datastructfile] = extractRawIdentifiers(trial.name);
-
+trial = load('E:Data\180307\180307_F2_C1\CurrentStep2T_Raw_180307_F2_C1_24.mat');
+D = fileparts(trial.name);
 cd (D)
-clear trials
 
-%% Current step to get force
-trial = load('B:\Raw_Data\180307\180307_F2_C1\CurrentStep2T_Raw_180307_F2_C1_24.mat');
-[~,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
+%% CurrentStep2T - to get force
 
-clear trials
-% trials{1} = 7:12;
-% trials{2} = 13:17;
-% trials{3} = 18:22;
-trials{1} = 24:73;
+% trial = load('E:\Data\180307\180307_F2_C1\CurrentStep2T_Raw_180307_F2_C1_24.mat');
+% trialStem = extractTrialStem(trial.name); D = fileparts(trial.name);
+% 
+% clear trials spiketrials bartrials
+% spiketrials{1} = 24:73; % not good. Skipping this 190201
+% 
+% 
+% examplespiketrials = {
+% 'E:\Data\180307\180307_F2_C1\CurrentStep2T_Raw_180307_F2_C1_56.mat'
+% 'E:\Data\180307\180307_F2_C1\CurrentStep2T_Raw_180307_F2_C1_73.mat'
+%     };
+% 
+% bartrials{1} = 24:73; 
 
-Nsets = length(trials);
+%% EpiFlash2T - random movements
 
-% check the location
-trial = load(sprintf(trialStem,35));
-% showProbeImage(trial)
+trial = load('E:\Data\180307\180307_F2_C1\EpiFlash2T_Raw_180307_F2_C1_1.mat');
+trialStem = extractTrialStem(trial.name); D = fileparts(trial.name);
 
-routine = {
-    'probeTrackROI_IR' 
-    'probeTrackROI_IR'
-    'probeTrackROI_IR'
-    'probeTrackROI_IR'
-    'probeTrackROI_IR'
+clear trials spiketrials bartrials nobartrials
+spiketrials{1} = 1:20; % bar
+examplespiketrials = {
+'E:\Data\180307\180307_F2_C1\EpiFlash2T_Raw_180307_F2_C1_16.mat'
     };
 
-%% epi flash random movements
+bartrials{1} = 1:20;
 
-trial = load('B:\Raw_Data\180307\180307_F2_C1\EpiFlash2T_Raw_180307_F2_C1_5.mat');
-[~,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
+%% PiezoRamp2T - looking for changes in spike rate 
 
-clear trials
-trials{1} = 1:20;
-Nsets = length(trials);
-    
-showProbeImage(load(sprintf(trialStem,20)))
-showProbeImage(load('B:\Raw_Data\180307\180307_F2_C1\CurrentStep2T_Raw_180307_F2_C1_13.mat'))
-% These are the same image, so the ZeroForce Routine will work
-   
-routine = {
-    'probeTrackROI_IR' 
+% trial = load('E:\Data\180307\180307_F2_C1\PiezoRamp2T_Raw_180307_F2_C1_1.mat');
+trialStem = extractTrialStem(trial.name); D = fileparts(trial.name);
+ 
+clear trials spiketrials
+spiketrials{1} = 1:30; 
+spiketrials{2} = 31:60; 
+examplespiketrials = {
+    'E:\Data\180307\180307_F2_C1\PiezoRamp2T_Raw_180307_F2_C1_2.mat'
+     };
+
+bartrials = spiketrials;
+
+
+%% PiezoStep2T -  looking for changes in spike rate 
+
+trial = load('E:\Data\180307\180307_F2_C1\PiezoStep2T_Raw_180307_F2_C1_7.mat');
+trialStem = extractTrialStem(trial.name); D = fileparts(trial.name);
+
+clear trials spiketrials
+spiketrials{1} = 1:60; 
+spiketrials{2} = 61:90; 
+spiketrials{3} = 91:150; 
+spiketrials{4} = 151:180; 
+spiketrials{5} = 181:240; 
+
+examplespiketrials = {
+    'E:\Data\180307\180307_F2_C1\PiezoStep2T_Raw_180307_F2_C1_7.mat'
+    'E:\Data\180307\180307_F2_C1\PiezoStep2T_Raw_180307_F2_C1_7.mat'
+    'E:\Data\180307\180307_F2_C1\PiezoStep2T_Raw_180307_F2_C1_7.mat'
+    'E:\Data\180307\180307_F2_C1\PiezoStep2T_Raw_180307_F2_C1_7.mat'
+    'E:\Data\180307\180307_F2_C1\PiezoStep2T_Raw_180307_F2_C1_7.mat'
     };
 
-%% Piezo Ramp stimuli
+%% Run each section above in turn, then run the sections below on each protocol
 
-trial = load('B:\Raw_Data\180307\180307_F2_C1\PiezoRamp2T_Raw_180307_F2_C1_1.mat');
-[protocol,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
-
-clear trials
-trials{1} = 1:30; 
-trials{2} = 31:60; 
-Nsets = length(trials);
-    
-trial = load(sprintf(trialStem,30));
-showProbeImage(trial)
-
-routine = {
-    'probeTrackROI_IR' 
-    'probeTrackROI_IR' 
-    'probeTrackROI_IR'
-    };
+%% Extract spikes
+trials = spiketrials;
+exampletrials = examplespiketrials;
+Script_ExtractSpikesFromInterestingTrials
 
 
-%% Run scripts one at a time
+%% Run Bar detection scripts one at a time
+trials = bartrials;
 
 % Set probe line 
-Script_SetProbeLine 
-
-% double check some trials
-trial = load(sprintf(trialStem,66));
-showProbeLocation(trial)
-
-% trial = probeLineROI(trial);
+Script_SetProbeLine % showProbeLocation(trial)
 
 % Find an area to smooth out the pixels
 Script_FindAreaToSmoothOutPixels
@@ -83,29 +87,31 @@ Script_FindAreaToSmoothOutPixels
 % Track the bar
 Script_TrackTheBarAcrossTrialsInSet
 
-% Find the trials with Red LED transients and mark them down
-% Script_FindTheTrialsWithRedLEDTransients % Using UV Led
-
-% Fix the trials with Red LED transients and mark them down
-% Script_FixTheTrialsWithRedLEDTransients % Using UV Led
-
 % Find the minimum CoM, plot a few examples from each trial block and check.
 % Script_FindTheMinimumCoM %% can run this any time, but probably best after all the probe positions have been calculated
 Script_LookAtTrialsWithMinimumCoM %% can run this any time, but probably best after all the probe positions have been calculated
 
-trialnumlist_specific = 226:258;
-ZeroForce = 700-(setpoint-700);
-Script_SetTheMinimumCoM_byHand
+% trialnumlist_specific = 226:258;
+% ZeroForce = 700-(setpoint-700);
+% Script_SetTheMinimumCoM_byHand
 
 
-% Extract spikes
-Script_ExtractSpikesFromInterestingTrials
+%% Calculate position of femur and tibia from csv files
 
+% After bringing videos back from DeepLabCut, run through all trials, get
+% some stats on the dots, do some error correction, make some videos.
 
-
-%% Epi flash trials
-
-%% Extract spikes
+% trials = nobartrials;
+% trialnumlist = [];
+% for idx = 1:length(trials)
+%     trialnumlist = [trialnumlist trials{idx}]; %#ok<AGROW>
+% end
+% close all
+% 
+% Script_AddTrackedPositions
+% Script_UseAllTrialsInSetToCorrectLegPosition;
+% Script_AddTrackedLegAngleToTrial
+% Script_UseAllTrialsInSetToCalculateLegElevation
 
 %% alternative, look at main frequencies rather than spikes
 

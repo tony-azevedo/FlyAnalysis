@@ -34,7 +34,7 @@ ft = frame_times;
 
 t_i_f = [-.05 .2];
 t_win = t>-.05&t<.2;
-frame_win = ft>t_i_f(1) & ft <t_i_f(2) & (ft<=0 | ft>(ft(find(ft>trial.params.stimDurInSec,1))));
+frame_win = ft>t_i_f(1) & ft <t_i_f(2) %& (ft<=0 | ft>(ft(find(ft>trial.params.stimDurInSec,1))));
 
 CoM = trials(tr).forceProbeStuff.CoM;
 

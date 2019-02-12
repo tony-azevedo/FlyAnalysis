@@ -1,51 +1,7 @@
-%% ForceProbe patcing workflow 190116_F1_C1
-trial = load('F:\Acquisition\190116\190116_F3_C1\EpiFlash2TTrain_Raw_190116_F1_C1_77.mat');
+% 35C09 Typical workflow
 D = fileparts(trial.name);
 cd (D)
 clear trials spiketrials bartrials
-
-%% EpiFlash2T - random movements
-% Free movement is interesting but bar gets stuck
-
-trial = load('E:\Data\190116\190116_F3_C1\EpiFlash2T_Raw_190116_F3_C1_18.mat');
-
-clear spiketrials bartrials nobartrials
-
-nobartrials{1} = 1:15; % no bar, caffeine
-
-% spiketrials{1} = 1:15; % caffeine
-% spiketrials{2} = 16:30; % caffeine
-% examplespiketrials = {
-% 'E:\Data\190116\190116_F3_C1\EpiFlash2T_Raw_190116_F3_C1_7.mat'
-% 'E:\Data\190116\190116_F3_C1\EpiFlash2T_Raw_190116_F3_C1_18.mat'
-%     };
-
-bartrials{1} = 16:30; 
-
-%% EpiFlash2TTrain - random movements
-
-trial = load('E:\Data\190116\190116_F3_C1\EpiFlash2TTrain_Raw_190116_F3_C1_75.mat');
-
-clear spiketrials bartrials nobartrials
-
-% No spikes in these data for this fly
-nobartrials{1} = 1:15; % no bar
-nobartrials{1} = 46:75; % no bar
-
-bartrials{1} = 16:45; 
-
-%% PiezoRamp2T - looking for changes in spike rate 
-
-trial = load('E:\Data\190116\190116_F3_C1\PiezoRamp2T_Raw_190116_F3_C1_1.mat');
-
-% No spikes here
-
-%% PiezoStep2T -  looking for changes in spike rate 
-
-trial = load('E:\Data\190116\190116_F3_C1\PiezoStep2T_Raw_190116_F3_C1_4.mat');
-
-% No spikes here
-
 %% Run each section above in turn, then run the sections below on each protocol
 
 %% Extract spikes

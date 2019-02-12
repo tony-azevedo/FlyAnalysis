@@ -14,7 +14,7 @@ for setidx = 1:length(trials)
     for tr_idx = trialnumlist(1:3) 
         trial = load(sprintf(trialStem,tr_idx));
         
-        waitbar((tr_idx-trialnumlist(1)+1)/6,br,regexprep(trial.name,{regexprep(D,'\\','\\\'),'_'},{'','\\_'}));
+        waitbar((tr_idx-trialnumlist(1)+1)/6,br,regexprep(sprintf(trialStem,tr_idx),'_','\\_'));
         
         fprintf('%s\n',trial.name);
         if isfield(trial,'excluded') && trial.excluded

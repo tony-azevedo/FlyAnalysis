@@ -16,7 +16,7 @@ panl.margin = [18 16 10 10];
 panl.descendants.margin = [8 8 8 8];
 
 t_i_f = [-0.006 0.02];
-t_i_f = [-0.02 .13];
+% t_i_f = [-0.02 .13];
 
 n_sp = zeros(size(trialnumlist));
 fr_12 = zeros(size(trialnumlist));
@@ -30,6 +30,7 @@ n_bar_ax.XLim = t_i_f;
 %     n_emg_ax.YLim = [-15 8];
 n_bar_ax.XTick = [];
 hold(n_bar_ax,'on')
+baseline = plot(n_bar_ax,t_i_f,[0 0],'Color',[.8 .8 .8]);
 
 % tr_ph_ax = panl(2,2).select();
 % set(tr_ph_ax,'color',[0 0 0],'xcolor',[1 1 1],'ycolor',[1 1 1],'tickdir','out','xlim',[-10 100],'ylim',1E3*[-5 7]); hold(tr_ph_ax,'on')
@@ -53,7 +54,8 @@ for n = 2:-1:1
     n_emg_ax.XTick = [];
     hold(n_emg_ax,'on')
   
-    
+    linkaxes([n_sp_ax,n_emg_ax],'x')
+
     for tr = trialnumlist
         trial = load(sprintf(trialStem,tr));
         if trial.excluded
@@ -93,7 +95,7 @@ for n = 2:-1:1
         emgtrjct = plot(n_emg_ax, t(trjct_twin)-t(trial.spikes(1)),trial.current_2(trjct_twin),'color',[.8 0 0],'tag',num2str(tr));
         
         % get rid of artifact, if necessary
-        trjct_win = ft>=trjct_t(1) & ft<=trjct_t(2) & ft>ft(find(ft>trial.params.stimDurInSec,1)+1);
+        trjct_win = ft>=trjct_t(1) & ft<=trjct_t(2) %& ft>ft(find(ft>trial.params.stimDurInSec,1)+1);
         brtrjct = plot(n_bar_ax, ft(trjct_win)-t(trial.spikes(1)),CoM(trjct_win),'color',clrs(n,:));
         
 %         trjct_ph_win = ft_ph>trjct_t(1)&ft_ph<trjct_t(2);
@@ -108,6 +110,7 @@ for n = 2:-1:1
 end
 n_emg_ax.XTick = [0 .05 .1];
 n_bar_ax.XTick = [0 .05 .1];
+uistack(baseline,'top');
 % savedir = 'E:\tony\Projects\FlySensorimotor\Talks\CSHL_DmelNeuro';
 % savePDF(N_spikes_fi,savedir,[],sprintf('select_spikes_trajec_short_%s_%d-%d',ID,trialnumlist(1),trialnumlist(2)))
 

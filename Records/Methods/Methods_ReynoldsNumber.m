@@ -1,13 +1,18 @@
-%% Ren
+%% Reynolds number calculation
 nu = 1E-6; %H2O Re - 5
-nu = 1.48E-5; %air Re - 0.3378
+% nu = 1.48E-5; %air Re - 0.3378
 L = 5E-4; % Fly ~1/2 a milimeter
-L = 1; % human ~ meter
+% L = 1; % human ~ meter
 
 u = 2e-2;   % velocity of fly
-u = 1;   % velocity of human
+% u = 1;   % velocity of human
 
 Re = u*L/nu;
+
+% Fly air: 10
+% Fly water: 0.34
+% Human air: 68 E3
+% Human water: 1 E6
 
 %% Drag Coefficient - not the correct calculation!
 

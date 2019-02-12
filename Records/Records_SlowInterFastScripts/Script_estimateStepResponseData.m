@@ -2,7 +2,7 @@
 % Go through each cell and add lines for each displacement value at each
 % position.
 
-DEBUG =1;
+DEBUG =0;
 
 CellID = T.CellID;
 T_Step = T(1,:);

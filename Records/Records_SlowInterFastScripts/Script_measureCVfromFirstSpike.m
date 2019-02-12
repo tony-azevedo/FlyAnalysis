@@ -2,10 +2,10 @@
 % Go through each cell and add lines for each displacement value at each
 % position.
 
-DEBUG =0;
+DEBUG =1;
 
-CellID = T.CellID;
-T_new = T(1,:);
+CellID = T_fastinter.CellID;
+T_new = T_fastinter(1,:);
 T_new.CellID = 'placeholder';
 Row_cnt = 0;
 
@@ -38,16 +38,7 @@ for cidx = 1:length(CellID)
             e.rethrow
         end
     end
-    
-    fprintf(1,'\tTablizing datastructure %s\n',datafilename);
-    TP = datastruct2table(data,'DataStructFileName',datafilename);
-    fprintf(1,'\tFinding tagged positions: [');
-    fprintf(1,'%d\t',T.Positions{cidx});
-    fprintf(1,']\n');
-    
-    TP = addProbePositionToDataTable(TP,T.Positions{cidx});
-    % TP = addSpikeNumsToDataTable(TP);
-    
+        
     trialnums = T.Trialnums{cidx};
     trialname = fullfile(Dir,[T.Protocol{cidx} '_Raw_' cid '_' num2str(trialnums(1)) '.mat']);
     [~,~,~,~,~,~,trialStem] = extractRawIdentifiers(trialname);
@@ -72,37 +63,45 @@ for cidx = 1:length(CellID)
 
     for tr = 1:length(TP_spikes_position.trial)
         trial = load(fullfile(Dir,sprintf(trialStem,TP_spikes_position.trial(tr))));
-        if isfield(trial,'excluded') && trial.excluded
+        if trial.excluded
+            continue;
+        end
+        if length(trial.spikes) ~= N
             continue
         end
+        if n==2
+            fr_12(tr-trialnumlist(1)+1) = 1/diff(trial.spikes(1:2));
+        end
+
         
         t = makeInTime(trial.params);
-        spikenums(tr) = length(t(t(trial.spikes)>0 & t(trial.spikes)<trial.params.stimDurInSec));
-
-        % get baseline firing rate while you're at it
-        fr(tr) = sum(t(trial.spikes)<0 & t(trial.spikes)>-trial.params.preDurInSec-.06)/(trial.params.preDurInSec-.06);
-
-        if spikenums(tr)==0
-            continue
-        end
-
-        ft = makeFrameTime(trial);
+                
+        frame_times = makeFrameTime(trial);
+        ft = frame_times;
         
-        twitch = smooth(trial.forceProbeStuff.CoM,10);
-        twitch = twitch - twitch(find(ft<0,1,'last'));
+        sp_win = t>=t(trial.spikes(1))+t_i_f(1) & t<t(trial.spikes(1))+t_i_f(2);
+        frame_win = frame_times>=t(trial.spikes(1))+t_i_f(1) & frame_times <= t(trial.spikes(1))+t_i_f(2);
         
-        [peak(tr),ttpk_i] = max(twitch(ft>trial.params.stimDurInSec/2 & ft<trial.params.stimDurInSec+.1));
-        ttpk_i = ttpk_i+sum(ft<=trial.params.stimDurInSec/2);
-        ttpk(tr) = ft(ttpk_i);
+        CoM = trial.forceProbeStuff.CoM;
+        origin = min(CoM(ft>ft(3)&ft<0));
+        CoM = CoM - origin;
 
-        if DEBUG
-            l = plot(ax_cell,ft(ft>0 & ft<trial.params.stimDurInSec+.1),twitch(ft>0 & ft<trial.params.stimDurInSec+.1));
-            l.Tag = [cid ' ' num2str(TP_spikes_position.trial(tr))];
-            plot(ax_cell,ttpk(tr),twitch(ttpk_i),'ok');
-            drawnow
-        end
-
+        trjct_t = t_i_f+t(trial.spikes(1));
+        trjct_win = ft>=trjct_t(1)&ft<=trjct_t(2);
+        trjct_twin = t>=trjct_t(1)&t<=trjct_t(2);
         
+        spike_i_idx = trial.spikes(1)-4;
+        sptrjct = plot(n_sp_ax, t(trjct_twin)-t(trial.spikes(1)),trial.voltage_1(trjct_twin)-trial.voltage_1(spike_i_idx),'color',clrs(n,:),'tag',num2str(tr));
+        %emgtrjct = plot(n_emg_ax, t(trjct_twin)-t(trial.spikes(1)),trial.current_2(trjct_twin),'color',[.8 0 0],'tag',num2str(tr));
+        
+        % get rid of artifact, if necessary
+        
+%         trjct_ph_win = ft_ph>trjct_t(1)&ft_ph<trjct_t(2);
+%         phtrjct = plot(tr_ph_ax,CoM_s(trjct_ph_win),dCoMdt(trjct_ph_win),'color',clrs(n,:));
+        
+        %     set(tr_emg_ax,'xlim',mean(trjct_t)+0.75/2*[-1 1],'xtick',[]);
+        %     set(tr_ca_ax,'xlim',mean(trjct_t)+0.75/2*[-1 1],'xtick',[]);
+        %     set(tr_bar_ax,'xlim',mean(trjct_t)+0.75/2*[-1 1],'xtick',[]);        
     end
 
     if DEBUG
@@ -124,5 +123,7 @@ for cidx = 1:length(CellID)
 
 end
 T_new = T_new(~strcmp(T_new.CellID,'placeholder'),:);
+
+
 
 

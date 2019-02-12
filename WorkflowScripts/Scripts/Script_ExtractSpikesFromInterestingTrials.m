@@ -2,16 +2,17 @@
 
 % for now, use trials in the sets
 close all
-
+clear spikevars params
 fprintf('\n\t***** Detecting spikes for each set **** \n');
 
 % Go through all the sets of trials
 REDODETECTION = 1;
-for setidx = 2:length(trials) 
+for setidx = 1:length(trials) 
     fprintf('\n\t***** Batch %d of %d\n',setidx,length(trials));
     [~,fn] = fileparts(exampletrials{setidx});
     fprintf('Example %d: %s\n',setidx,fn)
-    
+    trialStem = extractTrialStem(trial.name); D = fileparts(trial.name);
+
     spikevars = load(exampletrials{setidx},'spikeDetectionParams'); spikevars = spikevars.spikeDetectionParams;   
     params = load(exampletrials{setidx},'params'); params = params.params;
     disp(spikevars);
@@ -21,8 +22,9 @@ for setidx = 2:length(trials)
 
     for tr_idx = trialnumlist
         trial = load(sprintf(trialStem,tr_idx));
-        if (~isfield(trial,'spikes') || REDODETECTION) && (~isfield(trial,'spikeSpotChecked') || ~trial.spikeSpotChecked)  
-            [trial,vars_skeleton] = spikeDetectionNonInteractive(trial,invec1,spikevars);
+        
+        if (~isfield(trial,'spikes') || REDODETECTION) %&& (~isfield(trial,'spikeSpotChecked') || ~trial.spikeSpotChecked)  
+            [trial,~] = spikeDetection(trial,invec1,spikevars,'interact','no'); % fieldname will be 'spikes'
         else
             fprintf('Skipping %d\n',tr_idx)
         end
