@@ -1,4 +1,8 @@
 function T = datastruct2table(data,varargin)
+% Turns a structure array into a data table. It assumes all the structures
+% have the same fields and just creates a row for each structure array
+% entry. 
+% Amazingly, the table is quite a bit more efficient, eg 5kb vs 21 kb
 
 p = inputParser;
 p.PartialMatching = 0;

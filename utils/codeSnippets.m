@@ -178,3 +178,7 @@ b = [a,{'r'}];
 switch trial.params.mode_1; case 'VClamp', invec1 = 'current_1'; case 'IClamp', invec1 = 'voltage_1'; otherwise; invec1 = 'voltage_1'; end   
 switch trial.params.mode_2; case 'VClamp', invec2 = 'current_2'; case 'IClamp', invec2 = 'voltage_2'; otherwise; invec2 = 'voltage_2'; end   
 
+%% Right hand axis
+yyaxis right
+ax.YLim = [-20 140];
+ylabel('FR (Hz)');

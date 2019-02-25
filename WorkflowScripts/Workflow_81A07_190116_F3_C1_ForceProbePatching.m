@@ -1,5 +1,5 @@
-%% ForceProbe patcing workflow 190116_F1_C1
-trial = load('F:\Acquisition\190116\190116_F3_C1\EpiFlash2TTrain_Raw_190116_F1_C1_77.mat');
+%% ForceProbe patcing workflow 190116_F3_C1
+trial = load('E:\Data\190116\190116_F3_C1\Sweep2T_Raw_190116_F3_C1_8.mat');
 D = fileparts(trial.name);
 cd (D)
 clear trials spiketrials bartrials
@@ -43,6 +43,15 @@ trial = load('E:\Data\190116\190116_F3_C1\PiezoRamp2T_Raw_190116_F3_C1_1.mat');
 %% PiezoStep2T -  looking for changes in spike rate 
 
 trial = load('E:\Data\190116\190116_F3_C1\PiezoStep2T_Raw_190116_F3_C1_4.mat');
+
+% No spikes here
+
+
+%% Sweep2T -  looking for changes in spike rate 
+
+trial = load('E:\Data\190116\190116_F3_C1\Sweep2T_Raw_190116_F3_C1_8.mat');
+clear spiketrials bartrials nobartrials
+bartrials{1} = 6:15; 
 
 % No spikes here
 
