@@ -66,7 +66,7 @@ for cidx = 1:length(cids)
         end
         x = T_Step_noIav.Displacement(posidx) *6; % 6um/V, speed in V/sec, 
         y = T_Step_noIav.Peak(posidx);
-        y = y.*-sign(x);
+        %y = y.*-sign(x);
                     
         [x,o] = sort(x);
         y = y(o);

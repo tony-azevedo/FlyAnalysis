@@ -26,7 +26,7 @@ dps = [-1700/bringinstepspeedfactor
 gapratio = 11;
 xtick = repmat(dps,1,5)/gapratio+repmat(positions,length(dps),1);
 dps(1) = dps(1)*bringinstepspeedfactor;
-dps(6) = dps(6)*bringinstepspeedfactor;
+dps(end) = dps(end)*bringinstepspeedfactor;
 xticklabels = num2str(repmat(round(dps),6,1));
 xticklabels = num2str(repmat(round(dps),6,1));
 
@@ -72,7 +72,7 @@ for cidx = 1:length(cids)
         end
         x = T_RampAndStep_noIav.Speed(posidx) .* sign(T_RampAndStep_noIav.Displacement(posidx)) *6; % 6um/V, speed in V/sec, 
         y = T_RampAndStep_noIav.Peak(posidx);
-        y = y.*-sign(x);
+        %y = y.*-sign(x);
                     
         [x,o] = sort(x);
         y = y(o);
@@ -164,7 +164,7 @@ for typ = 1:length(clbls)
             ys(ln,idx) = lns(ln).YData;
         end
     end
-    plot(ax,xs,nanmean(ys,1),'color',clrs(typ,:),'marker','.','tag',['type' num2str(typ)],'linewidth',2,'markersize',10);
+    errorbar(ax,xs,nanmean(ys,1),nanstd(ys,1)./sqrt(sum(~isnan(ys),1)),'color',clrs(typ,:),'marker','.','tag',['type' num2str(typ)],'linewidth',2,'markersize',10);
 end
 
 ax.XLim = [-200 200];

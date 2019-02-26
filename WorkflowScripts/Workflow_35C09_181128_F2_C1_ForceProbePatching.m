@@ -53,7 +53,7 @@ clear spiketrials bartrials
 % 'E:\Data\181128\181128_F2_C1\PiezoRamp2T_Raw_181128_F2_C1_1.mat'
 %     };
 
-bartrials{1} = 337:392; % atropine, atropine MLA
+bartrials{1} = 337:392; % compare to probe command atropine, atropine MLA
 
 %% PiezoStep2T -  looking for changes in spike rate 
 

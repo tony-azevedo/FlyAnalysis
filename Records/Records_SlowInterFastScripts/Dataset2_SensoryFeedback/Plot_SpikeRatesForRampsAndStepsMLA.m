@@ -1,6 +1,7 @@
 % Pick good neurons
-CellID = '181128_F2_C1';
-positions = [-150 -75 0 75 150];
+% close all
+% CellID = '181128_F2_C1';
+% positions = [-150 -75 0 75 150];
 speeds = [50 100 150]; % interested in 150 100 50
 
 clrs = [0 0 0
@@ -16,7 +17,7 @@ figure(fig);
 set(fig,'color',[1 1 1])
 panl = panel(fig);
 
-hdivisions = positions*0+1; hdivisions = num2cell(hdivisions/sum(hdivisions));
+hdivisions = [1 1]; hdivisions = num2cell(hdivisions/sum(hdivisions));
 vdivisions = speeds*0+1; vdivisions = num2cell(vdivisions/sum(vdivisions));
 
 panl.pack('h',hdivisions)  % response panel, stimulus panel
@@ -25,39 +26,41 @@ panl.fontname = 'Arial';
 % panl(1).marginbottom = 2;
 clear axs axl
 axs = gobjects(length(hdivisions),length(vdivisions));
-for p_idx = 1:length(positions)
-    panl(p_idx).pack('v',vdivisions);
-    panl(p_idx).de.margin = [4 4 4 4];
+for m_idx = 1:length(hdivisions)
+    panl(m_idx).pack('v',vdivisions);
+    panl(m_idx).de.margin = [4 4 4 4];
     for s_idx = 1:length(speeds)        
-        panl(p_idx,s_idx).pack('v',{3/4 1/4});
-        ax = panl(p_idx,s_idx,2).select(); ax.NextPlot = 'add'; ax.Visible = 'off';             
-        if p_idx == 1, panl(p_idx,s_idx,2).title(sprintf('v=%d',speeds(s_idx))); end
+        panl(m_idx,s_idx).pack('v',{3/4 1/4});
+        ax = panl(m_idx,s_idx,2).select(); ax.NextPlot = 'add'; ax.Visible = 'off';             
+        if m_idx == 1, panl(m_idx,s_idx,2).title(sprintf('v=%d',speeds(s_idx))); end
 
-        ax = panl(p_idx,s_idx,1).select(); ax.NextPlot = 'add'; 
-        if s_idx == 1, panl(p_idx,s_idx).title(sprintf('pos=%d',positions(p_idx))); end
+        ax = panl(m_idx,s_idx,1).select(); ax.NextPlot = 'add'; 
+%         if s_idx == 1 
+%             panl(1,s_idx).title(sprintf('Cntrl')); 
+%             panl(2,s_idx).title(sprintf('MLA')); 
+%         end
 
-        axs(p_idx,s_idx) = ax;
+        axs(m_idx,s_idx) = ax;
     end
 end
+
 set(axs,'visible','off')
 
 T_Cell = T_RmpStpSlowFR(strcmp(T_RmpStpSlowFR.CellID,CellID),:);
+posidx = T_Cell.Position == 0;
+mlaidx = T_Cell.mla;
+T_Cell = T_Cell(posidx|mlaidx,:);
 
-for p_idx = 1:length(positions)
-    
-    position = positions(p_idx);
-    posidx = T_Cell.Position == position;
-    panl(p_idx).pack('v',vdivisions);
-    panl(p_idx).de.margin = [4 4 4 4];
-    
+for m_idx = [0 1]
+    mlaidx = T_Cell.mla==m_idx;
     for s_idx = 1:length(speeds)
         
         spdidx = T_Cell.Speed(:)==speeds(s_idx);
         
         for dsp = [-10 10]
             dspidx = T_Cell.Displacement(:)==dsp;
-        
-            ridx = posidx & spdidx &dspidx; 
+            
+            ridx = mlaidx & spdidx & dspidx;
             if ~sum(ridx)
                 continue
             end
@@ -72,7 +75,7 @@ for p_idx = 1:length(positions)
             t = makeInTime(trial.params); t = t(:)';
             v_ = nan(length(t),length(group));
             spikes_ = v_;
-        
+            
             for cnt = 1:length(group)
                 trial = load(sprintf(trialStem,group(cnt)));
                 if isfield(trial,'excluded') && trial.excluded
@@ -90,24 +93,21 @@ for p_idx = 1:length(positions)
                 % all the trials were excluded
                 continue
             end
-        
+            
             v = nanmean(v_,2);
             base = mean(v(t<0 &t>-trial.params.preDurInSec+.1));
             %v = v-mean(v(t<0 &t>-trial.params.preDurInSec+.1));
             DT = 10/300;
             fr = firingRate(t,spikes_,10/300);
-
-            plot(ax,t,v);
-            plot(ax,t,fr);
-
-            ax = panl(p_idx,s_idx,1).select();            
+            
+            ax = panl(m_idx+1,s_idx,1).select();
             %plot(ax,t,v-base,'color',clrs((sign(dsp)+1)/2+1,:));
             plot(ax,[t(1) t(find(t<0,1,'last'))],T_Cell.Rest(ridx)*[1 1],'Color',[.8 .8 .8]);
             plot(ax,t,fr,'Color',clrs((sign(dsp)+1)/2+1,:));
             plot(ax,T_Cell.TimeToPeak(ridx),T_Cell.Peak(ridx),'ro');
             
             ax.XLim = [t(1) t(end)];
-            ax = panl(p_idx,s_idx,2).select(); ax.NextPlot = 'add'; ax.Visible = 'off';
+            ax = panl(m_idx+1,s_idx,2).select(); ax.NextPlot = 'add'; ax.Visible = 'off';
             plot(ax,t,PiezoRampStim(trial.params),'color',stimclrs([-10 10]==dsp,:));
             
             %plot(ax2,v(twind),fr(twind));

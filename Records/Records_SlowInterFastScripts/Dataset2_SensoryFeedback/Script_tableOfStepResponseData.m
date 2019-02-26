@@ -4,13 +4,13 @@
 
 T = T_StepCells;
 n = zeros(height(T),1); 
-Position = n; Trialnums = n; Displacement = n; Speed = n; V_m = n; Peak = n; Peak_step = n; Peak_return = n; TimeToPeak = n; Area = n; Delay = n; MLA = n;
-T = addvars(T,Position,Trialnums,Displacement,Speed,V_m,Peak,Peak_step,Peak_return,TimeToPeak,Area,Delay,MLA);
+Position = n; Trialnums = n_cell; Displacement = n; Speed = n; V_m = n; Peak = n; Peak_step = n; Peak_return = n; TimeToPeak = n; Area = n; Delay = n; mla = n;
+T = addvars(T,Position,Trialnums,Displacement,Speed,V_m,Peak,Peak_step,Peak_return,TimeToPeak,Area,Delay,mla);
 varTypes = varfun(@class,T_row,'OutputFormat','cell');
 T_Step = table('Size',[2000,size(T,2)],'VariableTypes',varTypes,'VariableNames',T.Properties.VariableNames);
 Row_cnt = 0;
 
-DEBUG =1;
+DEBUG = 0;
 
 CellID = T.CellID;
 
@@ -51,14 +51,24 @@ for cidx = 1:length(CellID)
     fprintf(1,']\n');
     
     TP = addProbePositionToDataTable(TP,T.Positions{cidx});
-    
-    positions = T.Positions{cidx};
-    for pos = positions
+    [TP, drugs] = addDrugsToDataTable(TP);
+    TP.ProbePosition(TP.caffeine | TP.mla | TP.atropine | TP.ttx | TP.serotonin) = Inf;
+
+    displacement = unique(TP.displacement);
+    positions = unique(TP.ProbePosition);
+    positions = positions(~isnan(positions));
+    for pos = positions'
         % get the trials for each step, average and calculate amplitude, area, time
         % to peak
-        displacement = unique(TP.displacement);
+        T_row.mla = false;
+        fprintf(1,'Position %d\n',pos);
         for D = 1:length(displacement)
-            group = TP.trial(TP.displacement==displacement(D) & TP.ProbePosition==pos);
+            if pos < Inf
+                group = TP.trial(TP.displacement==displacement(D) & TP.ProbePosition==pos);
+            else
+                % for now just look at MLA
+                group = TP.trial(TP.displacement==displacement(D) & TP.ProbePosition==pos & TP.mla);
+            end
             if isempty(group)
                 continue
             end
@@ -86,7 +96,9 @@ for cidx = 1:length(CellID)
             speed = max(speed*sign(displacement(D)));
             DT_step = abs(trial.params.displacement)/speed;
             DT_step = round((DT_step+trial.params.preDurInSec)*trial.params.sampratein)+1;
-            DT_return = trial.params.stimDurInSec-abs(trial.params.displacement)/speed;
+            DT_halfstep = trial.params.stimDurInSec/4; % the step time is too short, give it a sec before measuring area
+            DT_halfstep = round((DT_halfstep+trial.params.preDurInSec)*trial.params.sampratein)+1;
+            DT_return = trial.params.stimDurInSec-trial.params.stimDurInSec/4;
             DT_return = round((DT_return+trial.params.preDurInSec)*trial.params.sampratein)+1;
 
             v = nanmean(v_,1);
@@ -99,7 +111,7 @@ for cidx = 1:length(CellID)
             
             switch sign(displacement(D))
                 case 1 % flexion, decide if there is a peak or trough
-                    if area(DT_step)>0 % depolarization
+                    if area(DT_halfstep)>0 % depolarization
                         [~,ttpk] = max(v(t>=0&t<t(DT_return)));
                         ttpk = ttpk+sum(t<0);
                         peak = mean(v(ttpk-5:ttpk+5));
@@ -120,6 +132,10 @@ for cidx = 1:length(CellID)
             end
                         
             T_row.Position = pos;
+            if pos == Inf
+                T_row.mla = true;
+            end
+
             T_row.Trialnums = {group'};
             T_row.V_m = base;
             T_row.Peak = peak;

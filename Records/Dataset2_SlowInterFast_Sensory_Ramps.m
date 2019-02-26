@@ -123,7 +123,9 @@ T_RampCells = T;
 T_StepCells = T;
 T_StepCells.Protocol(:) = {'PiezoStep2T'};
 
-% Ramp estimation
+%%
+
+% Ramps
 Script_tableOfRampResponseData
 head(T_Ramp)
 
@@ -132,8 +134,8 @@ Script_tableOfStepResponseData
 head(T_Step)
 
 % Sweeps
-Script_tableOfStepResponseData
-head(T_Sweep)
+% Script_tableOfStepResponseData
+% head(T_Sweep)
 
 
 %% Combine steps and ramps of same size into one table
@@ -152,7 +154,7 @@ Script_spikeRatesForSteps
 head(T_StpSlowFR)
 
 %% Plot responses from a particular cell, look for example cells
-CellID = '181205_F1_C1'; 
+CellID = '180320_F1_C1'; 
 % Fast: 
 % 171101_F1_C1 - pretty; 
 % 171102_F2_C1 - steps in only 1 direction;
@@ -163,12 +165,15 @@ CellID = '181205_F1_C1';
 % Intermediate: 
 % 180222_F1_C1 - not great; 
 % 180223_F1_C1 - unstable, high membrane potential; 
-% 180320_F1_C1 - again, depolarization; 180405_F3_C1 - meh, not all positions; 
+% 180320_F1_C1 - again, depolarization; 
+% 180405_F3_C1 - meh, not all positions; 
 % 180807_F1_C1 - no, not all positions there;
 % ** 181118_F1_C1 - too much activity, could clean up; 
 % 181205_F1_C1 - not hyperpolarized in other direction, in fact the timing
 % of the off response follows the on response, as if missing the inhibition
 Plot_ResponsesForRampsAndSteps
+Plot_ResponsesForRampsAndStepsAndMLA
+Plot_ResponsesForRampsAndStepsAndMLASlow
 
 %% Plot responses for slow neurons with firing rate
 close all
@@ -185,10 +190,33 @@ CellID = '181128_F2_C1';
 % 181128_F2_C1 - nice;
 
 Plot_SpikeRatesForRampsAndSteps
+
 %%
 close all
 CellID = '181127_F2_C1';
 Plot_RastersForRampsAndSteps
+
+%% Plot spike rate for slow neurons in MLA
+unique(T_RampAndStep.CellID(logical(T_RampAndStep.mla)))
+close all
+CellID = '181127_F2_C1';
+% Intermediate
+% 181205_F1_C1
+% Slow
+% 180628_F2_C1 - no spikes at all
+% 181024_F2_C1 - no -150
+% 181127_F2_C1 - seeing a constent change in the resting rate of -10 and 10
+% 181128_F2_C1 - nice;
+
+Plot_SpikeRatesForRampsAndStepsMLA
+
+%%
+close all
+CellID = '181127_F2_C1';
+Plot_RastersForRampsAndStepsMLA
+
+%% Compare resting spike rates and responses to different size steps in MLA
+Script_mlaEffectOnSensoryFeedback
 
 %% Plot the peaks for -10 step, 150 speed 
 % There is no significant correlation between position and depolarization,
@@ -201,6 +229,9 @@ Script_showSensoryFeedbackPeaksVsSpeedAndPosition
 %% Plot the peaks vs amplitude for steps
 Script_showSensoryFeedbackPeaksVsAmplitudeAndPosition
 
+%% Plot the peaks vs amplitude for steps
+Script_showRelativeTimeToPeakForSlowNeurons
+
 %% Compare membrane potential changes at different timescales
 % x axis is in degrees, starting at minimum -150, going to 150
 % steps are in the opposite direction, but a step of 10V is ~8 deg, where
@@ -211,91 +242,12 @@ Script_compareSlowMNSpikeRatesAcrossTimescales
 %% Compare iav to non-iav 
 % come back and look at the firing rate after analyzing Dataset5
 % Plot the peaks vs speed for each category at each displacement, including steps
-T_RampAndStep_noIav = T_RampAndStep(~contains(T_RampAndStep.Genotype,'iav-LexA'),:);
-T_RampAndStep_Iav = T_RampAndStep(contains(T_RampAndStep.Genotype,'iav-LexA'),:);
-labels = unique(T_RampAndStep.Cell_label);
-
-figure
-ax = subplot(1,1,1); ax.NextPlot = 'add';
-
-clrs = [0 0 0
-    1 0 1
-    0 .5 0];
-lightclrs = [.8 .8 .8
-    1 .7 1
-    .7 1 .7];
-
-for lbl_idx = 1:length(labels)
-    label = labels{lbl_idx};
-    
-    % plot non iav for 0,-10,150
-    lblidx = strcmp(T_RampAndStep_noIav.Cell_label,label);
-    posidx = T_RampAndStep_noIav.Position==0;
-    stpidx = T_RampAndStep_noIav.Displacement==-10;
-    spdidx = T_RampAndStep_noIav.Speed==150;
-    
-    peaks_noniav = T_RampAndStep_noIav.Peak(lblidx & posidx & stpidx & spdidx);
-    plot(lbl_idx-.2*ones(size(peaks_noniav)),peaks_noniav,'Linestyle','none','Marker','.','Color',clrs(lbl_idx,:));
-    
-    % plot iav for 0,-10,150
-    lblidx = strcmp(T_RampAndStep_Iav.Cell_label,label);
-    posidx = T_RampAndStep_Iav.Position==0;
-    stpidx = T_RampAndStep_Iav.Displacement==-10;
-    spdidx = T_RampAndStep_Iav.Speed==150;
-    
-    peaks_iav = T_RampAndStep_Iav.Peak(lblidx & posidx & stpidx & spdidx);
-    plot(lbl_idx+.2*ones(size(peaks_iav)),peaks_iav,'Linestyle','none','Marker','.','Color',clrs(lbl_idx,:));
-
-    [h,p] = ttest2(peaks_noniav,peaks_iav,'tail','right','vartype','unequal','alpha',0.01);
-    txt = text(lbl_idx,12.5,sprintf('p=%.2f',p)); txt.HorizontalAlignment = 'center';
-    switch h
-        case 1
-            txt.Color = [.3 .5 1];
-        case 0
-            txt.Color = [1 .2 .05];
-    end
-end
-ax.XTick = [1 2 3 4];
-ax.XTickLabel = [labels; {'slow FR'}];
-ax.XLim = [0 5];
-
-lbl_idx = 4;
-% Now for firing rate of slow neurons
-T_RmpStpSlowFR_noIav = T_RmpStpSlowFR(~contains(T_RmpStpSlowFR.Genotype,'iav-LexA'),:);
-T_RmpStpSlowFR_Iav = T_RmpStpSlowFR(contains(T_RmpStpSlowFR.Genotype,'iav-LexA'),:);
-labels = unique(T_RmpStpSlowFR.Cell_label);
-    
-% plot non iav for 0,-10,150
-lblidx = strcmp(T_RmpStpSlowFR_noIav.Cell_label,label);
-posidx = T_RmpStpSlowFR_noIav.Position==0;
-stpidx = T_RmpStpSlowFR_noIav.Displacement==-10;
-spdidx = T_RmpStpSlowFR_noIav.Speed==150;
-
-peaks_noniav = T_RmpStpSlowFR_noIav.Peak(lblidx & posidx & stpidx & spdidx);
-plot(lbl_idx-.2*ones(size(peaks_noniav)),peaks_noniav/10,'Linestyle','none','Marker','.','Color',clrs(3,:));
-
-% plot iav for 0,-10,150
-lblidx = strcmp(T_RmpStpSlowFR_Iav.Cell_label,label);
-posidx = T_RmpStpSlowFR_Iav.Position==0;
-stpidx = T_RmpStpSlowFR_Iav.Displacement==-10;
-spdidx = T_RmpStpSlowFR_Iav.Speed==150;
-
-peaks_iav = T_RmpStpSlowFR_Iav.Peak(lblidx & posidx & stpidx & spdidx);
-plot(lbl_idx+.2*ones(size(peaks_iav)),peaks_iav/10,'Linestyle','none','Marker','.','Color',clrs(3,:));
-
-[h,p] = ttest2(peaks_noniav,peaks_iav,'tail','right','vartype','unequal','alpha',0.01);
-txt = text(lbl_idx,12.5,sprintf('p=%.2f',p)); txt.HorizontalAlignment = 'center';
-switch h
-    case 1
-        txt.Color = [.3 .5 1];
-    case 0
-        txt.Color = [1 .2 .05];
-end
+Script_EffectOfChRActivationOfIavNeurons
 
 
 %% Other interesting observations:
 
-%% Reflex reversal in 35C09
+%% Reflex reversal in 35C09 - Though reflex reversal in 181127_F2_C1 is better
 figure
 trial = load('E:\Data\181021\181021_F1_C1\PiezoStep2T_Raw_181021_F1_C1_168.mat');
 t = makeInTime(trial.params);

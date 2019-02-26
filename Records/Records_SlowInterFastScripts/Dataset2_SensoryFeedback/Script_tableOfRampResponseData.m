@@ -4,13 +4,13 @@
 
 T = T_RampCells;
 n = zeros(height(T),1); n_cell = cell(height(T),1);
-Position = n; Trialnums = n_cell; Displacement = n; Speed = n; V_m = n; Peak = n; Peak_step = n; Peak_return = n; TimeToPeak = n; Area = n; Delay = n; MLA = n;
-T = addvars(T,Position,Trialnums,Displacement,Speed,V_m,Peak,Peak_step,Peak_return,TimeToPeak,Area,Delay,MLA);
+Position = n; Trialnums = n_cell; Displacement = n; Speed = n; V_m = n; Peak = n; Peak_step = n; Peak_return = n; TimeToPeak = n; Area = n; Delay = n; mla = n;
+T = addvars(T,Position,Trialnums,Displacement,Speed,V_m,Peak,Peak_step,Peak_return,TimeToPeak,Area,Delay,mla);
 varTypes = varfun(@class,T,'OutputFormat','cell');
 T_Ramp = table('Size',[2000,size(T,2)],'VariableTypes',varTypes,'VariableNames',T.Properties.VariableNames);
 Row_cnt = 0;
 
-DEBUG = 1;
+DEBUG = 0;
 
 CellID = T.CellID;
 
@@ -51,19 +51,29 @@ for cidx = 1:length(CellID)
     fprintf(1,']\n');
     
     TP = addProbePositionToDataTable(TP,T.Positions{cidx});
+    [TP, drugs] = addDrugsToDataTable(TP);
+    TP.ProbePosition(TP.caffeine | TP.mla | TP.atropine | TP.ttx | TP.serotonin) = Inf;
+        
+    % get the trials for each speed and displacement, average and calculate amplitude, area, time
+    % to peak
+    displacement = unique(TP.displacement);
+    speed = unique(TP.speed);
+    positions = unique(TP.ProbePosition);
+    positions = positions(~isnan(positions));
     
-    positions = T.Positions{cidx};
-    for pos = positions
-        % get the trials for each speed and displacement, average and calculate amplitude, area, time
-        % to peak
-        displacement = unique(TP.displacement);
-        speed = unique(TP.speed);
+    for pos = positions'
+        T_row.mla = false;
+        fprintf(1,'Position %d\n',pos);
         for D = 1:length(displacement)
             fprintf(1,'\tDisplacement %d\n',displacement(D));
             for S = 1:length(speed)
                 fprintf(1,'\t\tSpeed %d\n',speed(S));
-
-                group = TP.trial(TP.displacement==displacement(D) & TP.ProbePosition==pos & TP.speed ==speed(S) );
+                if pos < Inf
+                    group = TP.trial(TP.displacement==displacement(D) & TP.ProbePosition==pos & TP.speed ==speed(S));
+                else
+                    % for now just look at MLA
+                    group = TP.trial(TP.displacement==displacement(D) & TP.ProbePosition==pos & TP.speed ==speed(S) & TP.mla);
+                end
                 if isempty(group)
                     continue
                 end
@@ -109,14 +119,12 @@ for cidx = 1:length(CellID)
                         [~,ttpk] = max(v(t>=0&t<t(DT_return)));
                         ttpk = ttpk+sum(t<0);
                         peak = mean(v(ttpk-5:ttpk+5));
-                        % l1070 = t(:)'>0&t(:)'<ttpk & v_flipped>peak*.1 & v_flipped<peak*.7;
-                        % v1070 = v_flipped(l1070);
-                        % t1070 = t(l1070);
-                        % coef = polyfit(t1070,v1070,1);
-                        % delay = -coef(2)/coef(1);
                 end
                 
                 T_row.Position = pos;
+                if pos == Inf 
+                    T_row.mla = true;
+                end
                 T_row.Trialnums = {group'};
                 T_row.V_m = base;
                 T_row.Peak = peak;
@@ -124,7 +132,6 @@ for cidx = 1:length(CellID)
                 T_row.Peak_return = mean(v(DT_return+(-10:10)));
                 T_row.TimeToPeak = t(ttpk);
                 T_row.Area = area(DT_return);
-                % T_row.Delay = delay;
                 T_row.Displacement = displacement(D);
                 T_row.Speed = speed(S);
                 T_row.TableFile = {TP.Properties.Description};
@@ -138,17 +145,17 @@ for cidx = 1:length(CellID)
                     groupid = [cid ': [' sprintf('%d,',group)]; groupid = [groupid(1:end-1) ']'];
                     title(ax,groupid); hold(ax,'on')
                     plot(ax,t(t>-.05&t<trial.params.stimDurInSec),v_(:,t>-.05&t<trial.params.stimDurInSec),'color',[1 .7 .7]); hold(ax,'on')
-                    plot(ax,t(t>-.05&t<trial.params.stimDurInSec),v(t>-.05&t<trial.params.stimDurInSec)+base,'color',[.7 0 0]); hold(ax,'on')
-                    % plot(ax,t1070,-sign(displacement(D))*(coef(1)*t1070+coef(2))+base,'color',[0 0 0],'LineWidth',2)
-                    % plot(ax,ttpk,v(t==ttpk)+base,'bo');
+                    if pos ~= Inf
+                        plot(ax,t(t>-.05&t<trial.params.stimDurInSec),v(t>-.05&t<trial.params.stimDurInSec)+base,'color',[.7 0 0]); hold(ax,'on')
+                    else
+                        plot(ax,t(t>-.05&t<trial.params.stimDurInSec),v(t>-.05&t<trial.params.stimDurInSec)+base,'color',[0 .7 0]); hold(ax,'on')
+                    end
                     plot(ax,t(ttpk),peak+base,'bo');
                     plot(ax,t(DT_step),T_row.Peak_step+base,'co');
                     plot(ax,t(DT_return),T_row.Peak_return+base,'ro');
                     ax.YLim = base+[-10 10];
                     ax.XLim = [-.1 trial.params.stimDurInSec+.1];
                     drawnow
-                    %pause();
-                    pause(.1)
                 end
 
             end
