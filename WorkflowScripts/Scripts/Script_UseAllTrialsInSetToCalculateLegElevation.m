@@ -173,11 +173,10 @@ for tr_idx = trialnumlist
             error('Something is wrong with the projection')
         end
     end
-    tibiaAngle(:,1) = real(acosd(proj));
     
     lp.Origin_3D = origin_3D;
     lp.Tibia_Position = tibia_vects_3D;
-    lp.Tibia_Angle = tibiaAngle;
+    lp.Tibia_Angle =  real(acosd(proj));
     lp.Projection_Major = major;
     lp.Projection_Minor = minor;
     lp.Projection_Rotation = rot;

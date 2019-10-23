@@ -1,4 +1,4 @@
-function trial = responseWithVideo_2T_probe(trial,handles,savetag,varargin)
+% function trial = responseWithVideo_2T_probe(trial,handles,savetag,varargin)
 [protocol,dateID,flynum,cellnum,trialnum,D] = extractRawIdentifiers(trial.name);
 figpath = [D 'figs']; 
 if ~exist(figpath,'dir')
@@ -48,27 +48,24 @@ frame_roi = frame_nums(frame_times>=t_win(1)& frame_times<=t_win(end));
 t_idx_roi = find(h2.exposure);
 % t_idx_roi = t_idx_roi(frame_roi);
 
-% open a movie
 
-% what speed?
-factor = inputdlg('How Slow?','Movie speed',1,{'1'});
-factor = str2double(factor{1});
+%% what speed?
+% factor = inputdlg('How Slow?','Movie speed',1,{'1'});
+% factor = str2double(factor{1});
+factor = 1;
 if factor>10
     error('Choose a reasonable factor')
 end
 
-% scale?
-scaletime = inputdlg('Scale? When?','Start scaling',1,{'NaN'});
-scaletime = str2double(scaletime{1});
-notscaled = 1;
-if isnan(scaletime)
-    notscaled = 0;
-    warning('Not scaling intensity')
-end
-if scaletime == -1
-    scaletime = t_win(1);
-end
+%% Set the scales
+% IR
+vid.CurrentTime = trial.params.preDurInSec;
+mov3 = readFrame(vid);
+mov = mov3(:,:,1);
+scale = [quantile(mov(:),0.025) 1.5*quantile(mov(:),0.975)];
+% scale(2) = 50;
 
+%%
 fps = 1/mean(diff(t(h2.exposure)));
 
 % if the "use camera rate" button on the flycap software is not used, and
@@ -121,9 +118,9 @@ if strcmp('EpiFlash2T',protocol)
 else
     epistim = x*0;
 end
-traceax = axes('parent',displayf,'units','pixels','position',[0 100 640 100]);
-traceax2 = axes('parent',displayf,'units','pixels','position',[0 0 640 100]);
-traceax3 = axes('parent',displayf,'units','pixels','position',[0 200 640 100]);
+traceax = axes('parent',displayf,'units','pixels','position',[10 100 620 90]);
+traceax2 = axes('parent',displayf,'units','pixels','position',[10 0 620 90]);
+traceax3 = axes('parent',displayf,'units','pixels','position',[10 200 620 90]);
 hold(traceax,'on');
 hold(traceax2,'on');
 hold(traceax3,'on');
@@ -131,18 +128,13 @@ hold(traceax3,'on');
 dE = 40;
 dT = abs(t(t_idx_roi(dE))-t(t_idx_roi(1)));
 
-kk = 0;
+kk = 1;
 frame0 = 1;
 
-while hasFrame(vid)
-    kk = kk+1;
-    if kk<frame_roi(1)
-        readFrame(vid);
-        continue
-    elseif kk>frame_roi(end)
-        break
-    end
-    
+vid.CurrentTime = 0;
+
+
+while hasFrame(vid)    
     if frame0
         frame0 = 0;
         mov3 = readFrame(vid);
@@ -150,6 +142,8 @@ while hasFrame(vid)
 %         scale = [quantile(mov(:),0.025) 2*quantile(mov(:),0.975)];
 %         im = imshow(mov,scale,'initialmagnification',50,'parent',dispax);
         im = imshow(mov,'initialmagnification',50,'parent',dispax);
+        set(dispax,'Clim',scale)
+
         hold(dispax,'on');
         
         lastt_idx = 1;
@@ -158,73 +152,94 @@ while hasFrame(vid)
         y2(lastt_idx+1:currt_idx) = v2(lastt_idx+1:currt_idx);
 
         % ---- plot voltage -----
-        voltage = plot(traceax,x,y,'color',[1 0 0]);
+        voltage = plot(traceax,x,y,'color',[1 1 1]);
         voltage.YDataSource = 'y';
         %voltage.XDataSource = 'x';
         
         xlims = [t(1) t(t_idx_roi(N))];
         dT = diff(xlims);
         xlims = xlims + [-.05*dT 0];
-        ylims = [min(v)-1 max(v)+1];
-        set(traceax,'box','off','xtick',[],'ytick',[],'tag','traceax','ylim',ylims,'xlim',xlims,'color',[0 0 0]);
+        ylims1 = [min(v)-1 max(v)+1];
+        set(traceax,'box','off','xtick',[],'ytick',[],'tag','traceax','ylim',ylims1,'xlim',xlims,'color',[0 0 0],'xcolor',[0 0 0],'ycolor',[0 0 0]);
 
-        % make scale bars
-        bary = appropriateScaleBar(ylims);
-        line((t(1)-.02*dT)*[1 1] ,ylims(1)+[0 bary],'parent',traceax,'color',[1 0 0]);
-        lab = text((t(1)-.02*dT),ylims(1),[num2str(bary) ' mV'],'parent',traceax);
-        set(lab,'Rotation',90,'VerticalAlignment','bottom','HorizontalAlignment','left','color',[1 0 0])
-        
         % ---- plot EMG -----
-        voltage2 = plot(traceax2,x,y2,'color',[1 0 0]);
+        voltage2 = plot(traceax2,x,y2,'color',[1 1 1 ]);
         voltage2.YDataSource = 'y2';
         %voltage.XDataSource = 'x';
        
-        ylims = [min(v2)-1 max(v2)+1];
-        set(traceax2,'box','off','xtick',[],'ytick',[],'tag','traceax','ylim',ylims,'xlim',xlims,'color',[0 0 0]);
+        ylims2 = [min(v2)-1 max(v2)+1];
+        % ylims2 = [-50 50];
+        set(traceax2,'box','off','xtick',[],'ytick',[],'tag','traceax','ylim',ylims2,'xlim',xlims,'color',[0 0 0],'xcolor',[0 0 0],'ycolor',[0 0 0]);
 
-        % make scale bars
-        bary = appropriateScaleBar(ylims);
-        line((t(1)-.02*dT)*[1 1] ,ylims(1)+[0 bary],'parent',traceax2,'color',[1 0 0]);
-        lab = text((t(1)-.02*dT),ylims(1),[num2str(bary) ' pA'],'parent',traceax2);
-        set(lab,'Rotation',90,'VerticalAlignment','bottom','HorizontalAlignment','left','color',[1 0 0])
 
         % ---- plot Probe -----
         prb_CoM = plot(traceax3,x_ft,y3,'color',[1 0 0]);
         prb_CoM.YDataSource = 'y3';
         %voltage.XDataSource = 'x';
 
-        ylims = [min(prb)-1 max(prb)+1];
-        set(traceax3,'box','off','xtick',[],'ytick',[],'tag','traceax','ylim',ylims,'xlim',xlims,'color',[0 0 0]);
+        ylims3 = [min(prb)-1 max(prb)+1];
+        set(traceax3,'box','off','xtick',[],'ytick',[],'tag','traceax','ylim',ylims3,'xlim',xlims,'color',[0 0 0],'xcolor',[0 0 0],'ycolor',[0 0 0]);
 
-        % make scale bars
-        bary = appropriateScaleBar(ylims);
-        line((t(1)-.02*dT)*[1 1] ,ylims(1)+[0 bary],'parent',traceax3,'color',[1 0 0]);
-        lab = text((t(1)-.02*dT),ylims(1),[num2str(bary) ' um'],'parent',traceax3);
-        set(lab,'Rotation',90,'VerticalAlignment','bottom','HorizontalAlignment','left','color',[1 0 0])
+        %% make scale bars
+        [~,outname] = fileparts(output_video);
+        fprintf('Scalebars: %s\n',outname);
+        
+        % whole cell
+        bary = appropriateScaleBar(ylims1);
+        line((t(1)-.02*dT)*[1 1] ,ylims1(1)+.2*bary+[0 bary],'parent',traceax,'color',[1 1 1],'Linewidth',2);
+        %         lab = text((t(1)-.02*dT),ylims(1)+.2*bary,[num2str(bary) ' mV'],'parent',traceax);
+        %         set(lab,'Rotation',90,'VerticalAlignment','bottom','HorizontalAlignment','left','color',[1 1 1])
+        %         lab = text((t(1)+.05*dT),ylims(2)-.2*bary,'Membrane potential','parent',traceax);
+        %         set(lab,'VerticalAlignment','top','HorizontalAlignment','left','color',[1 1 1])
+        fprintf('%s\n',[num2str(bary) ' mV']);
 
+        % EMG
+        bary = appropriateScaleBar(ylims2);
+        line((t(1)-.02*dT)*[1 1] ,ylims2(1)+.2*bary+[0 bary],'parent',traceax2,'color',[1 1 1],'Linewidth',2);
+        %         lab = text((t(1)-.02*dT),ylims(1)+.2*bary,[num2str(bary) ' pA'],'parent',traceax2);
+        %         set(lab,'Rotation',90,'VerticalAlignment','bottom','HorizontalAlignment','left','color',[1 1 1])
+        %         lab = text((t(1)+.05*dT),ylims(2)-.2*bary,'EMG','parent',traceax2);
+        %         set(lab,'VerticalAlignment','top','HorizontalAlignment','left','color',[1 1 1])
+        fprintf('%s\n',[num2str(bary) ' pA']);
+
+        % Probe
+        bary = appropriateScaleBar(ylims3);
+        line((t(1)-.02*dT)*[1 1] ,ylims3(1)+.2*bary+[0 bary],'parent',traceax3,'color',[1 1 1],'Linewidth',2);
+        % lab = text((t(1)-.02*dT),ylims(1)+.2*bary,[num2str(bary) ' um'],'parent',traceax3);
+        % set(lab,'Rotation',90,'VerticalAlignment','bottom','HorizontalAlignment','left','color',[1 1 1])
+        % lab = text((t(1)+.05*dT),ylims(2)-.2*bary,'Probe position','parent',traceax3);
+        % set(lab,'VerticalAlignment','top','HorizontalAlignment','left','color',[1 1 1])
+        fprintf('%s\n',[num2str(bary) ' um']);
+
+        % Time
+        % barx = appropriateScaleBar(xlims);
+        line([t(1) t(1)+0.2] ,ylims2(1)+0.1*diff(ylims2)*[1 1],'parent',traceax2,'color',[1 1 1],'Linewidth',2);
+        % lab = text((t(1)-.02*dT),ylims(1)+.2*bary,[num2str(bary) ' um'],'parent',traceax3);
+        % set(lab,'Rotation',90,'VerticalAlignment','bottom','HorizontalAlignment','left','color',[1 1 1])
+        % lab = text((t(1)+.05*dT),ylims(2)-.2*bary,'Probe position','parent',traceax3);
+        % set(lab,'VerticalAlignment','top','HorizontalAlignment','left','color',[1 1 1])
+        fprintf('%s\n',[num2str(0.2*1000) ' ms']);
+        
+        %% ---- put dot on probe -----
+        origin = trial.forceProbeStuff.EvalPnts_y(:,1);
+        prbxy = trial.forceProbeStuff.forceProbePosition(:,kk);
+        prbxy = prbxy+origin;
+        prbx = prbxy(1);
+        prby = prbxy(2);
+        
+        prbdot = plot(dispax,prbxy(1),prbxy(2),'o','markerfacecolor',[1 0 0],'markeredgecolor',[1 0 0],'visible','on');
+        prbdot.XDataSource = 'prbx';
+        prbdot.YDataSource = 'prby';
                
         % ---- put dot on video -----
-        epi = plot(dispax,20,20,'o','markerfacecolor',[1 1 1],'markeredgecolor',[1 1 1],'visible','off');
+        %epi = plot(dispax,20,20,'o','markerfacecolor',[1 1 1],'markeredgecolor',[1 1 1],'visible','off');
 
     else
         mov3 = readFrame(vid);
         mov = mov3(:,:,1);
-        scale = [quantile(mov(:),0.025) 1.5*quantile(mov(:),0.975)];
-        set(dispax,'Clim',scale)
-
         set(im,'CData',mov);
-        if frame_times(kk)>scaletime && notscaled && any(scale>50)
-            notscaled = 0;
 
-            scale = [quantile(mov(:),0.025) 1*quantile(mov(:),0.975)];
-            set(dispax,'Clim',scale)
-        end
-
-%         if kk<=dE
-            start_idx = 1;
-%         else
-%             start_idx = t_idx_roi(kk-dE);
-%         end
+        start_idx = 1;
         currt_idx = t_idx_roi(kk);
         y(start_idx:currt_idx) = v(start_idx:currt_idx);
         y(currt_idx:end) = nan;
@@ -237,18 +252,23 @@ while hasFrame(vid)
         y3(1:kk) = prb(1:kk);
         y3(kk:end) = nan;
 
-        if epistim(currt_idx)>.2
-            set(epi,'visible','on');
-        else
-            set(epi,'visible','off');
-        end
+
+        % ---- put dot on probe -----
+        prbxy = trial.forceProbeStuff.forceProbePosition(:,kk);
+        prbxy = prbxy+origin;
+        prbx = prbxy(1);
+        prby = prbxy(2);
+
         refreshdata([voltage],'caller');
         refreshdata([voltage2],'caller');
         refreshdata([prb_CoM],'caller');
+        refreshdata([prbdot],'caller');
+
 %         set(traceax,'xlim',[t_idx_roi(1) t_idx_roi(N)]);
 %         set(traceax2,'xlim',[t_idx_roi(1) t_idx_roi(N)]);
 
     end
+    kk = kk+1;
     frame = getframe(displayf); 
     writeVideo(writerObj,frame)
     

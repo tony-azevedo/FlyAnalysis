@@ -11,7 +11,7 @@ if isempty(fig) && p.Results.closefig
 elseif isempty(fig) || ~ishghandle(fig) 
     fig = figure(69+trials(1)); clf
 else
-    clf(fig)
+    delete(fig.Children)
 end
 
 set(fig,'tag',mfilename);
@@ -45,7 +45,7 @@ ctr_trajects = nan(DT*trial.params.sampratein,length(trial.spikes));
 spikes = trial.spikes;
 if any(trial.spikes>50)
     spikes = t(spikes);
-end;
+end
 for sp_idx = 1:length(spikes)        
     spidx = find(t==spikes(sp_idx));
     if spidx+DT_post*trial.params.sampratein>length(altin)

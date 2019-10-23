@@ -20,7 +20,7 @@ box(ax1,'off'); set(ax1,'TickDir','out'); axis(ax1,'tight');
 title(ax1,sprintf('%s', [prot '.' d '.' fly '.' cell '.' trial]));
 
 ax2 = subplot(3,1,2,'parent',plotcanvas);
-set(ax2,'tag','quickshow_inax_aux');
+set(ax2,'tag','quickshow_inax2');
 
 switch obj.trial.params.mode_2
     case 'VClamp'

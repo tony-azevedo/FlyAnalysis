@@ -144,15 +144,20 @@ for tr_idx = trialnumlist
         % nan out the pixels near the bar;
         
         [~,bar_frm] = min(abs(ft_bar-ft(frmcnt)));
-        % nan out the pixels near the bar;
-        bar_i_green = R_cam * (trial.forceProbeStuff.forceProbePosition(:,bar_frm)) + origin_green;
-        barmask = poly2mask(...
-            bar(:,1)+bar_i_green(1),...
-            bar(:,2)+bar_i_green(2),...
-            wh(2),...
-            wh(1));
-        frm(~abvthresh|barmask) = nan;        
-        pixels(:,frmcnt) = frm(abvthresh1D);
+        if any(isnan(trial.forceProbeStuff.forceProbePosition(:,bar_frm)))
+            % skip this frame
+        else
+            
+            % nan out the pixels near the bar;
+            bar_i_green = R_cam * (trial.forceProbeStuff.forceProbePosition(:,bar_frm)) + origin_green;
+            barmask = poly2mask(...
+                bar(:,1)+bar_i_green(1),...
+                bar(:,2)+bar_i_green(2),...
+                wh(2),...
+                wh(1));
+            frm(~abvthresh|barmask) = nan;
+            pixels(:,frmcnt) = frm(abvthresh1D);
+        end
     end
     close(br2)
     

@@ -1,7 +1,21 @@
-%% ForceProbe CaImaging workflow 
+%% Muscle Imaging Leg Tracking and ForceProbe Workflow 
+
+
+%% EpiFlash2CB2T Bar detection
+trial = load('E:\Data\190424\190424_F3_C1\EpiFlash2CB2T_Raw_190424_F3_C1_21.mat');
+[~,~,~,~,~,D,trialStem] = extractRawIdentifiers(trial.name);
+cd(D);
+
+clear trials nobartrials bartrials
+
+% if the position of the prep changes, make a new set
+bartrials{1} = 36:65; % Crap trials, bar got stuck
+
+nobartrials{1} = 21:35;
+% nobartrials{2} = 41:45; % leg broke free here!
 
 %% EpiFlash2T Bar detection
-trial = load('B:\Raw_Data\171107\171107_F1_C1\EpiFlash2T_Raw_171107_F1_C1_6.mat');
+trial = load('E:\Data\171107\171107_F1_C1\EpiFlash2T_Raw_171107_F1_C1_6.mat');
 [~,~,~,~,~,D,trialStem] = extractRawIdentifiers(trial.name);
 cd(D);
 
@@ -12,6 +26,9 @@ trials{3} = 1:5;
 trials{1} = 6:65;
 trials{2} = 66:70;
 Nsets = length(trials);
+
+%%
+Workflow_0_CaImaging_routines
 
 %% Go through all the sets of trials
 close all

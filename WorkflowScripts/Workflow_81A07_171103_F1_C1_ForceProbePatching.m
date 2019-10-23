@@ -1,36 +1,57 @@
 %% ForceProbe patcing workflow 171103_F1_C1
-trial = load('B:\Raw_Data\171103\171103_F1_C1\EpiFlash2T_Raw_171103_F1_C1_72.mat');
-[protocol,dateID,flynum,cellnum,trialnum,D,trialStem,datastructfile] = extractRawIdentifiers(trial.name);
-
+trial = load('E:\Data\171103\171103_F1_C1\EpiFlash2T_Raw_171103_F1_C1_72.mat');
+D = fileparts(trial.name);
 cd (D)
-clear trials
+%%
+clear trials spiketrials bartrials
 % EpiFlash Sets - cause spikes and video movement
 % Position 0 EpiFlash2T: 
-trials{1} = 72:115;
+spiketrials{1} = 72:115;
 % Position 100 EpiFlash2T:
-trials{2} = 116:139;
+spiketrials{2} = 116:139;
 % Position 200 EpiFlash2T: 
-trials{3} = 140:163;
+spiketrials{3} = 140:163;
 % Position -100 EpiFlash2T: 
-trials{4} = 164:187;
+spiketrials{4} = 164:187;
 % Position -200 EpiFlash2T:
-trials{5} =  188:211;
+spiketrials{5} =  188:211;
 % Position 0 EpiFlash2T more spikes: 
-trials{6} = 212:223;
-Nsets = length(trials);
+spiketrials{6} = 212:223;
 
-dists = [200 100 0 -100 -200 0];
-
-Nsets = length(trials);
-
-routine = {
-    'probeTrackROI_IR' 
-    'probeTrackROI_IR' 
-    'probeTrackROI_IR' 
-    'probeTrackROI_IR' 
-    'probeTrackROI_IR' 
-    'probeTrackROI_IR' 
+exampletrials = {
+    'E:\Data\171102\171102_F1_C1\EpiFlash2T_Raw_171102_F1_C1_10.mat'
+    'E:\Data\171102\171102_F1_C1\EpiFlash2T_Raw_171102_F1_C1_10.mat'
+    'E:\Data\171102\171102_F1_C1\EpiFlash2T_Raw_171102_F1_C1_10.mat'
     };
+
+
+%% Extract spikes
+% trialStem = extractTrialStem(trial.name); D = fileparts(trial.name);
+% trials = spiketrials;
+% exampletrials = examplespiketrials;
+% Script_ExtractSpikesFromInterestingTrials
+
+%% Extract spikes
+sgn = -1;
+
+% load trial
+% spikevars = getacqpref('FlyAnalysis',['Spike_params_current_2_flipped_fs', num2str(trial.params.sampratein)]);
+% setacqpref('FlyAnalysis',['Spike_params_current_2_flipped_fs', num2str(trial.params.sampratein)],spikevars);
+
+% trial.current_2_flipped = sgn*trial.current_2; 
+% [trial,spikevars] = spikeDetection(trial,'current_2_flipped',spikevars,'alt_spike_field','EMGspikes');
+
+trials = spiketrials(1:5);
+exampletrials = {
+'E:\Data\171103\171103_F1_C1\EpiFlash2T_Raw_171103_F1_C1_72.mat'
+'E:\Data\171103\171103_F1_C1\EpiFlash2T_Raw_171103_F1_C1_118.mat'
+'E:\Data\171103\171103_F1_C1\EpiFlash2T_Raw_171103_F1_C1_140.mat'
+'E:\Data\171103\171103_F1_C1\EpiFlash2T_Raw_171103_F1_C1_165.mat'
+'E:\Data\171103\171103_F1_C1\EpiFlash2T_Raw_171103_F1_C1_189.mat'
+            };
+
+Script_ExtractEMGSpikesFromInterestingTrials
+
 
 %% Run scripts one at a time
 

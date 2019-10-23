@@ -1,7 +1,6 @@
 %% ForceProbe patcing workflow 190123_F3_C1
 trial = load('E:\Data\190123\190123_F3_C1\EpiFlash2T_Raw_190123_F3_C1_78.mat');
-[protocol,dateID,flynum,cellnum,trialnum,D,trialStem,datastructfile] = extractRawIdentifiers(trial.name);
-
+D = fileparts(trial.name);
 cd (D)
 clear trials spiketrials bartrials
 
@@ -16,7 +15,7 @@ clear spiketrials bartrials
 spiketrials{1} = 1:287;
 spiketrials{2} = 288:381; 
 examplespiketrials = {
-    'E:\Data\\190123\190123_F3_C1\EpiFlash2T_Raw_190123_F3_C1_99.mat'
+'E:\Data\190123\190123_F3_C1\EpiFlash2T_Raw_190123_F3_C1_167.mat'
     'E:\Data\\190123\190123_F3_C1\EpiFlash2T_Raw_190123_F3_C1_333.mat'
     };
 

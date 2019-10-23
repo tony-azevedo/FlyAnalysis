@@ -11,7 +11,6 @@ for setidx = 1:length(trials)
     fprintf('\n\t***** Batch %d of %d\n',setidx,length(trials));
     [~,fn] = fileparts(exampletrials{setidx});
     fprintf('Example %d: %s\n',setidx,fn)
-    trialStem = extractTrialStem(trial.name); D = fileparts(trial.name);
 
     spikevars = load(exampletrials{setidx},'spikeDetectionParams'); spikevars = spikevars.spikeDetectionParams;   
     params = load(exampletrials{setidx},'params'); params = params.params;

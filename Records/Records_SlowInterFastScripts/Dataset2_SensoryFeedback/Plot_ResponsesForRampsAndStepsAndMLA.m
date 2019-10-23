@@ -1,6 +1,6 @@
 % Pick good neurons
 
-CellID = '181205_F1_C1';
+% CellID = '181127_F2_C1';
 positions = [0];
 speeds = [50 100 150]; % interested in 150 100 50
 
@@ -85,14 +85,19 @@ for m_idx = [0 1]
 
             
             panl(m_idx+1,s_idx).pack('v',{3/4 1/4});
+            panl(m_idx+3,s_idx).pack('v',{3/4 1/4});
             ax = panl(m_idx+1,s_idx,1).select(); ax.NextPlot = 'add';
             
-            %plot(ax,t,v_(:,1),'color',lghtclrs((sign(dsp)+1)/2+1,:));
-            plot(ax,t,v,'color',clrs((sign(dsp)+1)/2+1,:));
-            
+            plot(ax,t,v_(:,1),'color',clrs((sign(dsp)+1)/2+1,:));
+            %plot(ax,t,v_,'color',clrs((sign(dsp)+1)/2+1,:));
             ax.XLim = [t(1) t(end)];
+
+            ax = panl(m_idx+3,s_idx,1).select(); ax.NextPlot = 'add';
+            plot(ax,t,v,'color',clrs((sign(dsp)+1)/2+1,:));
+            ax.XLim = [t(1) t(end)];
+            
             ax = panl(m_idx+1,s_idx,2).select(); ax.NextPlot = 'add'; ax.Visible = 'off';
-            plot(ax,t,PiezoRampStim(trial.params),'color',stimclrs([-10 10]==dsp,:));
+            plot(ax,t,PiezoRampStim(trial.params)+trial.params.displacementOffset,'color',stimclrs([-10 10]==dsp,:));
             
             drawnow
             
@@ -101,9 +106,11 @@ for m_idx = [0 1]
 end
 ylims = [
     -61 -51
-    -49.5 -42];
-set(axs,'ylim',ylims(strcmp({'fast','intermediate'},Row.Cell_label),:))
-set(axs,'ylim',ylims(strcmp({'fast','intermediate'},Row.Cell_label),:))
+    -49.5 -42
+    -49.5 -25
+   ];
+set(axs,'ylim',ylims(strcmp({'fast','intermediate','slow'},Row.Cell_label),:))
+set(axs,'ylim',ylims(strcmp({'fast','intermediate','slow'},Row.Cell_label),:))
 set(axs(1,:),'visible','on')
 set(axs(1,:),'xcolor',[1 1 1])
 

@@ -1,43 +1,63 @@
 %% ForceProbe patcing workflow 171102_F1_C1 NOT A GREAT RECORDING
-trial = load('B:\Raw_Data\171102\171102_F1_C1\EpiFlash2T_Raw_171102_F1_C1_23.mat');
-[protocol,dateID,flynum,cellnum,trialnum,D,trialStem,datastructfile] = extractRawIdentifiers(trial.name);
-
+trial = load('E:\Data\171102\171102_F1_C1\EpiFlash2T_Raw_171102_F1_C1_23.mat');
+D = fileparts(trial.name);
 cd (D)
-clear trials
+
+%% EpiFlash2T - 
+clear trials spiketrials bartrials
 % EpiFlash Sets - cause spikes and video movement
 % Position 0 EpiFlash2T: 
-trials{1} = 23:51;
+spiketrials{1} = 7:51;
 % Position 100 EpiFlash2T: 
-trials{2} = 52:81;
+spiketrials{2} = 52:81;
 % Position 200 EpiFlash2T:
-trials{3} = 82:121;
+spiketrials{3} = 82:121;
+examplespiketrials = {
+    'E:\Data\171102\171102_F1_C1\EpiFlash2T_Raw_171102_F1_C1_25.mat'
+    'E:\Data\171102\171102_F1_C1\EpiFlash2T_Raw_171102_F1_C1_67.mat'
+    'E:\Data\171102\171102_F1_C1\EpiFlash2T_Raw_171102_F1_C1_104.mat'
+    };
 
+bartrials = spiketrials;
 % ** Went down hill from here, then stimulating in the leg, can see fast
 % rates
 % Position 
 % trials{4} =  132:151;
 
-Nsets = length(trials);
 
-routine = {
-    'probeTrackROI_IR' 
-    'probeTrackROI_IR' 
-    'probeTrackROI_IR' 
-    'probeTrackROI_IR' 
-    'probeTrackROI_IR' 
-    'probeTrackROI_IR' 
-    };
+%% Extract spikes
+% trialStem = extractTrialStem(trial.name); D = fileparts(trial.name);
+% trials = spiketrials;
+% exampletrials = examplespiketrials;
+% Script_ExtractSpikesFromInterestingTrials
 
-%% Run scripts one at a time
+%% Extract spikes
+% sgn = -1;
+% 
+% % load trial
+% % spikevars = getacqpref('FlyAnalysis',['Spike_params_current_2_flipped_fs', num2str(trial.params.sampratein)]);
+% % setacqpref('FlyAnalysis',['Spike_params_current_2_flipped_fs', num2str(trial.params.sampratein)],spikevars);
+% 
+% % trial.current_2_flipped = sgn*trial.current_2; 
+% % [trial,spikevars] = spikeDetection(trial,'current_2_flipped',spikevars,'alt_spike_field','EMGspikes');
+% 
+% trials = spiketrials;
+% exampletrials = {
+% 'E:\Data\171102\171102_F1_C1\EpiFlash2T_Raw_171102_F1_C1_10.mat'
+% 'E:\Data\171102\171102_F1_C1\EpiFlash2T_Raw_171102_F1_C1_10.mat'
+% 'E:\Data\171102\171102_F1_C1\EpiFlash2T_Raw_171102_F1_C1_10.mat'
+%             };
+% 
+% Script_ExtractEMGSpikesFromInterestingTrials
+
+
+%% Run Bar detection scripts one at a time
+
+trials = bartrials;
+trialStem = extractTrialStem(trial.name); D = fileparts(trial.name);
 
 % Set probe line 
-Script_SetProbeLine 
-
-% double check some trials
-trial = load(sprintf(trialStem,66));
-showProbeLocation(trial)
-
-% trial = probeLineROI(trial);
+Script_SetProbeLine % showProbeLocation(trial)
 
 % Find an area to smooth out the pixels
 Script_FindAreaToSmoothOutPixels
@@ -45,26 +65,20 @@ Script_FindAreaToSmoothOutPixels
 % Track the bar
 Script_TrackTheBarAcrossTrialsInSet
 
-% Find the trials with Red LED transients and mark them down
-% Script_FindTheTrialsWithRedLEDTransients % Using UV Led
-
-% Fix the trials with Red LED transients and mark them down
-% Script_FixTheTrialsWithRedLEDTransients % Using UV Led
-
 % Find the minimum CoM, plot a few examples from each trial block and check.
 % Script_FindTheMinimumCoM %% can run this any time, but probably best after all the probe positions have been calculated
 Script_LookAtTrialsWithMinimumCoM %% can run this any time, but probably best after all the probe positions have been calculated
 
-ZeroForce = 700-(setpoint-700);
-Script_SetTheMinimumCoM_byHand
+% trialnumlist_specific = 226:258;
+% ZeroForce = 700-(setpoint-700);
+% Script_SetTheMinimumCoM_byHand
 
-% Extract spikes
-Script_ExtractSpikesFromInterestingTrials
+% Script_FixTheTrialsWithRedLEDTransients
 
 %% skootch the exposures
-for set = 1:Nsets
+for set = 1:length(bartrials)
     knownSkootch = 1;
-    trialnumlist = trials{set};
+    trialnumlist = bartrials{set};
     % batch_undoSkootchExposure
     batch_skootchExposure_KnownSkootch
 end

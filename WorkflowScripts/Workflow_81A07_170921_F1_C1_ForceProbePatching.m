@@ -1,5 +1,8 @@
 %% ForceProbe patcing workflow 170921_F1_C1 for a single probe vector
 trial = load('E:\Data\170921\170921_F1_C1\EpiFlash2T_Raw_170921_F1_C1_22.mat');
+D = fileparts(trial.name);
+cd (D)
+clear trials spiketrials bartrials
 
 
 %% epi flash Twitch movements
@@ -19,16 +22,18 @@ exampletrials = examplespiketrials;
 Script_ExtractSpikesFromInterestingTrials
 
 %% Extract spikes
-trial = load('E:\Data\170921\170921_F1_C1\EpiFlash2T_Raw_170921_F1_C1_102.mat');
-spikevars = getacqpref('FlyAnalysis',['Spike_params_current_2_flipped_fs', num2str(trial.params.sampratein)]);
+sgn = -1;
+
+% trial = load('E:\Data\170921\170921_F1_C1\EpiFlash2T_Raw_170921_F1_C1_102.mat');
+% spikevars = getacqpref('FlyAnalysis',['Spike_params_current_2_flipped_fs', num2str(trial.params.sampratein)]);
 % setacqpref('FlyAnalysis',['Spike_params_current_2_flipped_fs', num2str(trial.params.sampratein)],spikevars);
 
-trial.current_2_flipped = -1*trial.current_2; 
-[trial,vars_skeleton] = spikeDetection(trial,'current_2_flipped',spikevars,'alt_spike_field','EMGspikes');
+trial.current_2_flipped = sgn*trial.current_2; 
+[trial,vars_skeleton] = spikeDetection(trial,'current_2_flipped',trial.EMGspikeDetectionParams,'alt_spike_field','EMGspikes');
 
 trials = spiketrials(1);
 exampletrials = {
-    'E:\Data\170921\170921_F1_C1\EpiFlash2T_Raw_170921_F1_C1_102.mat'
+'E:\Data\170921\170921_F1_C1\EpiFlash2T_Raw_170921_F1_C1_28.mat'
             };
 
 Script_ExtractEMGSpikesFromInterestingTrials

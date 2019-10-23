@@ -35,12 +35,22 @@ sigma = std(fps.CoM(ft<0&ft>-6*diff(ft(1:2))));
 
 % go through the movie around this point
 for i = 1:length(pre_idx)
+    % skip this flash if the bar is moving too quickly
+    if contains(trial.params.protocol,'Train')
+        if abs((fps.CoM(pre_idx(i)) - fps.CoM(pre_idx(i)-1))) > sigma*5
+            continue
+        end
+        if abs((fps.CoM(post_idx(i)+1) - fps.CoM(post_idx(i)))) > sigma*5
+            continue
+        end
+    end
+    
     [~,offset] = max(abs(fps.CoM(pre_idx(i))-fps.CoM(pre_idx(i)+1:pre_idx(i)+3)));
     offset_pre = fps.CoM(pre_idx(i)+offset)-fps.CoM(pre_idx(i));
     
     fps.CoM(pre_idx(i) + 1:post_idx(i) - 1) = fps.CoM(pre_idx(i)+1:post_idx(i)-1)-offset_pre;
     
-    % there are still two transients left. fill in
+    % there are still two transients left. smooth
     fps.CoM(pre_idx(i)+1) = normrnd(median(fps.CoM([pre_idx(i) pre_idx(i)+2])),sigma/2);
     fps.CoM(post_idx(i)) = normrnd(median(fps.CoM([post_idx(i)-1 post_idx(i)+1])),sigma/2);
 

@@ -18,15 +18,27 @@ trials{2} = 86:125; % High
 
 % trials{2} = 10:19; % these trials have no probe. No sense in doing
 % running this now
-Nsets = length(trials);
-    
-trial = load(sprintf(trialStem,43));
-% showProbeImage(trial)
 
-routine = {
-    'probeTrackROI_IR' 
-    'probeTrackROI_IR' 
-    };
+%% Extract spikes
+% trials = spiketrials;
+% exampletrials = examplespiketrials;
+% Script_ExtractSpikesFromInterestingTrials
+
+%% Extract spikes
+% EMG spikes aren't 1:1
+sgn = -1;
+
+% load trial
+% spikevars = getacqpref('FlyAnalysis',['Spike_params_current_2_flipped_fs', num2str(trial.params.sampratein)]);
+% setacqpref('FlyAnalysis',['Spike_params_current_2_flipped_fs', num2str(trial.params.sampratein)],spikevars);
+
+% trial.current_2_flipped = sgn*trial.current_2; 
+% [trial,spikevars] = spikeDetection(trial,'current_2_flipped',spikevars,'alt_spike_field','EMGspikes');
+
+trials = spiketrials(1);
+exampletrials = examplespiketrials;
+
+Script_ExtractEMGSpikesFromInterestingTrials
 
 
 %% Run scripts one at a time

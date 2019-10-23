@@ -1,4 +1,71 @@
 %% Record - Muscle imaging
+%% Table of muscle imaging data
+
+figureoutputfolder = 'G:\My Drive\Tony\Projects\FlySensorimotor\Figures\MatlabFigureOutput\MHC_images';
+
+varNames = {'CellID','Genotype','Protocol','TableFile','ClusterMapping','ClusterMapping_NBCls','ClusterMapping_NoBar'};
+sz = [2 length(varNames)];
+data = cell(sz);
+T_MHC = cell2table(data);
+T_MHC.Properties.VariableNames = varNames;
+
+%T_MHC{1,:} = {'181121_F2_C1', 'MHC-LexA,GCaMP6f', 'EpiFlash2CB2T','empty',  [1 2; 2 3; 3 4; 4 1; 5 5; 6 6],     [1 2; 2 4; 3 3; 4 1; 5 5],     [1 2; 2 4; 3 3; 4 1; 5 5; 6 6]};% just 0 position
+T_MHC{1,:} = {'181209_F2_C1', 'MHC-LexA,GCaMP6f', 'EpiFlash2CB2T','empty',  [1 1; 2 3; 3 5; 4  4; 5 2; 6 6],    [1 3; 2 6; 3 4; 4 5; 5 1],     [1 3; 2 6; 3 4; 4 5; 5 1; 6 2]}; 
+T_MHC{2,:} = {'181210_F1_C1', 'MHC-LexA,GCaMP6f', 'EpiFlash2CB2T','empty',[1 6; 2 2; 3 3; 4  5; 5 1; 6 4],  [1 3; 2 1; 3 2; 4 6; 5 5],     [1 3; 2 1; 3 2; 4 6; 5 5; 6 4]};
+T_MHC{end+1,:} = {'190424_F1_C1', 'MHC-LexA,GCaMP6f', 'EpiFlash2CB2T','empty',[1 2; 2 6; 3 5; 4  3; 5 4; 6 1],  [1 2; 2 6; 3 5; 4 3],     [1 2; 2 6; 3 5; 4  3; 5 4; 6 1]};
+T_MHC{end+1,:} = {'190424_F2_C1', 'MHC-LexA,GCaMP6f', 'EpiFlash2CB2T','empty',[1 1; 2 2; 3 3; 4  4; 5 5; 6 6],  [1 1; 2 2; 3 3; 4 4; 5 5],     [1 1; 2 2; 3 3; 4  4; 5 5; 6 6]};
+T_MHC{end+1,:} = {'190424_F3_C1', 'MHC-LexA,GCaMP6f', 'EpiFlash2CB2T','empty',[1 3; 2 5; 3 2; 4  4; 5 6; 6 1],  [1 3; 2 5; 3 2; 4  4; 5 6],     [1 3; 2 5; 3 2; 4  4; 5 6; 6 1]};
+% T_MHC{end+1,:} = {'181011_F3_C1', 'MHC-LexA,GCaMP6f', 'EpiFlash2CB2T','empty',[1 6; 2 2; 3 3; 4  5; 5 1; 6 4],  [1 3; 2 1; 3 2; 4 5; 5 4],     [1 4; 2 1; 3 5; 4 3; 5 6; 6 2]};% just 0 position
+
+DEBUG = 0;
+rewrite_yn = 'yes';
+
+Script_tableOfMHCImaging
+% head(T_legImagingList)
+
+%% making cluster images for no bar trials
+Script_colorNoBarClustersSimilarly
+
+%% checking clusters for no bar trials
+Script_colorBar_NoBar_ClustersSimilarly
+
+%%
+% Go through all the probe frames
+% Plot the histogram of distances, velocities, and accelerations
+Script_plotSummariesOfBartrials
+
+%%
+% Go through all the probe frames
+% Find frames where the leg is extended, average all the frames and collect
+% the cluster values.
+% Find frames where the leg is flexed extended and average all the frames
+Script_calculateFrameForFreeMovements
+
+%%
+Script_showInterestingFreeLegTrial
+
+%% Alternative 1: look at phase plots when clusters are active
+% Plot relationships of {x,x_dot,x_ddot} with cluster values
+Script_conditionPhasePlotOnClusters
+
+%% Alternative 2: look at clusters when probe is in phase plot roi
+% Plot clusters of {x,x_dot,x_ddot} with cluster values
+Script_conditionClustersOnPhasePlot
+
+%% Plotting a few interesting snippets for 181210
+% Plot relationships of {x,x_dot,x_ddot} with cluster values
+Script_conditionPhasePlotOnClusters
+
+%% Sent the following to Shaul
+Workflow_MHCLexA_GCaMP6f_181011_F3_C1_MuscleImaging % Nice! Use this to explore
+Workflow_MHCLexA_GCaMP6f_181121_F2_C1_MuscleImaging % Cleaned the objective
+Workflow_MHCLexA_GCaMP6f_181209_F2_C1_MuscleImaging
+Workflow_MHCLexA_GCaMP6f_181210_F1_C1_MuscleImaging
+
+
+%% old stuff
+
+
 % Preliminary results
 % Workflow_MHCGal4_GCaMP6f_170703_F1_C1_CaImControl
 % Workflow_MHCGal4_GCaMP6f_170705_F1_C1_CaImControl
@@ -41,13 +108,6 @@ Workflow_MHCLexA_GCaMP6f_181017_F2_C1_MuscleImaging % Not great, EMG is not larg
 Workflow_MHCLexA_GCaMP6f_181105_F1_C1_MuscleImaging % Looks fine
 Workflow_MHCLexA_GCaMP6f_181111_F1_C1_MuscleImaging % Objective was not washed, ignoring for now, could come back to it.
 Workflow_MHCLexA_GCaMP6f_181111_F2_C1_MuscleImaging % 
-
-%% Sent the following to Shaul
-Workflow_MHCLexA_GCaMP6f_181011_F3_C1_MuscleImaging % Nice! Use this to explore
-Workflow_MHCLexA_GCaMP6f_181121_F2_C1_MuscleImaging % Cleaned the objective
-Workflow_MHCLexA_GCaMP6f_181209_F2_C1_MuscleImaging
-Workflow_MHCLexA_GCaMP6f_181210_F1_C1_MuscleImaging
-
 
 %% calculate cluster intensity with the entire set from 170705
 trial = load('B:\Raw_Data\170705\170705_F1_C1\EpiFlash2T_Raw_170705_F1_C1_25.mat');

@@ -13,22 +13,22 @@ trials{1} = 114:185; % single spikes
 
 %% CurrentStep2T - to get force
 
-% trial = load('E:\Data\180621\180621_F3_C1\CurrentStep2T_Raw_180621_F3_C1_175.mat');
-% trialStem = extractTrialStem(trial.name); D = fileparts(trial.name);
-% 
-% clear trials spiketrials bartrials
-% spiketrials{1} = 41:52; 
-% spiketrials{2} = 53:58; 
-% spiketrials{3} = 114:185; % single spikes
-% examplespiketrials = {
-% 'E:\Data\180621\180621_F3_C1\CurrentStep2T_Raw_180621_F3_C1_58.mat'
-% 'E:\Data\180621\180621_F3_C1\CurrentStep2T_Raw_180621_F3_C1_58.mat'
-% 'E:\Data\180621\180621_F3_C1\CurrentStep2T_Raw_180621_F3_C1_175.mat'
-%      };
+trial = load('E:\Data\180621\180621_F3_C1\CurrentStep2T_Raw_180621_F3_C1_175.mat');
+trialStem = extractTrialStem(trial.name); D = fileparts(trial.name);
 
-% bartrials{1} = 41:52;   
-% bartrials{2} = 53:58; % out of focus but it works
-% bartrials{3} = 114:185;
+clear trials spiketrials bartrials
+spiketrials{1} = 41:52; 
+spiketrials{2} = 53:58; 
+spiketrials{3} = 114:185; % single spikes
+examplespiketrials = {
+'E:\Data\180621\180621_F3_C1\CurrentStep2T_Raw_180621_F3_C1_42.mat'
+'E:\Data\180621\180621_F3_C1\CurrentStep2T_Raw_180621_F3_C1_42.mat'
+'E:\Data\180621\180621_F3_C1\CurrentStep2T_Raw_180621_F3_C1_175.mat'
+     };
+
+bartrials{1} = 41:52;   
+bartrials{2} = 53:58; % out of focus but it works
+bartrials{3} = 114:185;
 
 %% EpiFlash2T - random movements
 
@@ -57,7 +57,7 @@ clear trials spiketrials
 spiketrials{1} = 1:60; 
 
 examplespiketrials = {
-'E:\Data\180621\180621_F3_C1\PiezoStep2T_Raw_180621_F3_C1_35.mat'
+'E:\Data\180621\180621_F3_C1\PiezoRamp2T_Raw_180621_F3_C1_1.mat'
     };
 
 

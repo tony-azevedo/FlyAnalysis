@@ -18,26 +18,25 @@ cd (D)
 
 %% EpiFlash2T - random movements
 
-% trial = load('E:\Data\180621\180621_F1_C1\EpiFlash2T_Raw_180621_F1_C1_24.mat');
-% trialStem = extractTrialStem(trial.name); D = fileparts(trial.name);
+trial = load('E:\Data\180621\180621_F1_C1\EpiFlash2T_Raw_180621_F1_C1_24.mat');
+trialStem = extractTrialStem(trial.name); D = fileparts(trial.name);
  
-% clear trials spiketrials bartrials nobartrials
-% spiketrials{1} = 1:10;
-% spiketrials{2} = 11:22;
-% spiketrials{3} = 23:36; % no bar, not much movement, not going to work on this
-% spiketrials{4} = 37:46;
-% examplespiketrials = {
-% 'E:\Data\180621\180621_F1_C1\EpiFlash2T_Raw_180621_F1_C1_12.mat'
-% 'E:\Data\180621\180621_F1_C1\EpiFlash2T_Raw_180621_F1_C1_12.mat'
-% 'E:\Data\180621\180621_F1_C1\EpiFlash2T_Raw_180621_F1_C1_24.mat'
-% 'E:\Data\180621\180621_F1_C1\EpiFlash2T_Raw_180621_F1_C1_24.mat'
-% };
+clear trials spiketrials bartrials nobartrials
+spiketrials{1} = 1:10;
+spiketrials{2} = 11:22;
+spiketrials{3} = 23:34; % no bar, not much movement, not going to work on this
+spiketrials{4} = 35:46;
+examplespiketrials = {
+'E:\Data\180621\180621_F1_C1\EpiFlash2T_Raw_180621_F1_C1_12.mat'
+'E:\Data\180621\180621_F1_C1\EpiFlash2T_Raw_180621_F1_C1_12.mat'
+'E:\Data\180621\180621_F1_C1\EpiFlash2T_Raw_180621_F1_C1_24.mat'
+'E:\Data\180621\180621_F1_C1\EpiFlash2T_Raw_180621_F1_C1_24.mat'
+};
 
-nobartrials{1} = 23:36; % Nice Tibia angles calculated
+nobartrials{1} = 23:34; 
 
-% bartrials{1} = 1:10;
-% bartrials{2} = 11:22;
-% spiketrials{4} = 37:46;
+bartrials{1} = 1:10;
+bartrials{2} = 11:22;
 
 %% PiezoStep2T -  looking for changes in spike rate 
 

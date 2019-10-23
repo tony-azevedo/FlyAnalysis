@@ -1,5 +1,5 @@
 %% ForceProbe patcing workflow 181118_F1_C1
-trial = load('F:\Acquisition\181118\181118_F1_C1\EpiFlash2TTrain_Raw_181118_F1_C1_8.mat');
+trial = load('E:\Data\181118\181118_F1_C1\EpiFlash2TTrain_Raw_181118_F1_C1_8.mat');
 D = fileparts(trial.name);
 cd (D)
 
@@ -66,7 +66,7 @@ Script_FixTheTrialsWithRedLEDTransients
 
 % After brining videos back from DeepLabCut, run through all trials, get
 % some stats on the dots, do some error correction, make some videos.
-% trial = load('F:\Acquisition\181118\181118_F1_C1\EpiFlash2TTrain_Raw_181118_F1_C1_8.mat');
+% trial = load('E:\Data\181118\181118_F1_C1\EpiFlash2TTrain_Raw_181118_F1_C1_8.mat');
 % [~,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
 % trialnumlist = 1:20; % no bar
 % 

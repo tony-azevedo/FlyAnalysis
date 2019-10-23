@@ -11,14 +11,14 @@ trial = load('E:\Data\190116\190116_F3_C1\EpiFlash2T_Raw_190116_F3_C1_18.mat');
 
 clear spiketrials bartrials nobartrials
 
-nobartrials{1} = 1:15; % no bar, caffeine
+nobartrials{1} = 1:15; % no bar
 
-% spiketrials{1} = 1:15; % caffeine
-% spiketrials{2} = 16:30; % caffeine
-% examplespiketrials = {
-% 'E:\Data\190116\190116_F3_C1\EpiFlash2T_Raw_190116_F3_C1_7.mat'
-% 'E:\Data\190116\190116_F3_C1\EpiFlash2T_Raw_190116_F3_C1_18.mat'
-%     };
+spiketrials{1} = 1:15; % no bar, caffeine
+spiketrials{2} = 16:30; % caffeine
+examplespiketrials = {
+'E:\Data\190116\190116_F3_C1\EpiFlash2T_Raw_190116_F3_C1_7.mat'
+'E:\Data\190116\190116_F3_C1\EpiFlash2T_Raw_190116_F3_C1_18.mat'
+    };
 
 bartrials{1} = 16:30; 
 
@@ -27,6 +27,13 @@ bartrials{1} = 16:30;
 trial = load('E:\Data\190116\190116_F3_C1\EpiFlash2TTrain_Raw_190116_F3_C1_75.mat');
 
 clear spiketrials bartrials nobartrials
+
+spiketrials{1} = 1:30; % no bar, caffeine
+spiketrials{2} = 30:75; % caffeine
+examplespiketrials = {
+'E:\Data\190116\190116_F3_C1\EpiFlash2T_Raw_190116_F3_C1_7.mat'
+'E:\Data\190116\190116_F3_C1\EpiFlash2T_Raw_190116_F3_C1_18.mat'
+    };
 
 % No spikes in these data for this fly
 nobartrials{1} = 1:15; % no bar

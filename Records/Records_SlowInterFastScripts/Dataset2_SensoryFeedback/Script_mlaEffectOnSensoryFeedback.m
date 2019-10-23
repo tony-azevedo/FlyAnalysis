@@ -40,7 +40,6 @@ for cell_label = cell_labels'
     % loop over positions
     lblidx = contains(T_RampAndStep.Cell_label,cell_label{1});
     clridx = find(strcmp(cell_labels,cell_label));
-    offset = offsets(clridx);
     for cellid = cellids'
         cllidx = strcmp(T_RampAndStep.CellID,cellid);
         
@@ -58,6 +57,34 @@ for cell_label = cell_labels'
 
             plot(axVm,clridx + [-.33 .33],[Row_ctrl.V_m Row_mla.V_m],'marker','.','Color',clrs(clridx,:),'tag',cellid{1});%,'LineStyle','none');
         end
+    end
+end
+
+%% now do firing rate
+wtidx = ~contains(T_RmpStpSlowFR.Genotype,'iav-LexA');
+cellhasmlaidx = logical(T_RmpStpSlowFR.mla);
+cellids = unique(T_RmpStpSlowFR.CellID(cellhasmlaidx));
+dspidx = T_RmpStpSlowFR.Displacement==-10;
+posidx = T_RmpStpSlowFR.Position==0 | T_RmpStpSlowFR.Position==Inf;
+mlaidx = logical(T_RmpStpSlowFR.mla);
+
+clridx = 3;
+for cellid = cellids'
+    cllidx = strcmp(T_RmpStpSlowFR.CellID,cellid);
+    
+    for speed = speeds'
+        
+        spdidx = T_RmpStpSlowFR.Speed==speed;
+        
+        rowsidx = wtidx & dspidx & spdidx & cllidx & posidx;
+        if sum(rowsidx)<2
+            continue
+        end
+        Row_ctrl = T_RmpStpSlowFR(rowsidx & ~mlaidx,:);
+        Row_mla = T_RmpStpSlowFR(rowsidx & mlaidx,:);
+        plot(axPeak,Row_ctrl.Speed + [-20 20]+(clridx+1)*350,[Row_ctrl.Peak Row_mla.Peak]/5,'marker','.','Color',clrs(clridx,:),'tag',cellid{1});%,'LineStyle','none');
+        
+        plot(axVm,clridx + 1 + [-.33 .33],[Row_ctrl.Rest Row_mla.Rest]/5-45,'marker','.','Color',clrs(clridx,:),'tag',cellid{1});%,'LineStyle','none');
     end
 end
 axPeak.XTick = repmat([50 100 150 300],1,3) + [1 1 1 1 2 2 2 2 3 3 3 3]*350;

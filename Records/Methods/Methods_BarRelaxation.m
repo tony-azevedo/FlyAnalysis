@@ -251,7 +251,7 @@ end
 % save('processed','good')
 
 
-%%
+%% If just replotting, start here
 good = load('processed.mat'); good = good.good;
 
 N = length(good.positions{1});
@@ -272,7 +272,6 @@ end
 phaseAxes = subplot(1,1,1,'parent',phasef); cla(phaseAxes); hold(phaseAxes,'off');
 
 
-trajects = zeros
 for mns = 1:length(good.positions)
     position = good.positions{mns};
 

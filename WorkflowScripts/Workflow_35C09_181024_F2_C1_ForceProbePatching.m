@@ -21,13 +21,13 @@ clear trials spiketrials bartrials
 
 
 %% EpiFlash2TTrain - random movements
-% 
-% trial = load('E:\Data\181024\181024_F2_C1\EpiFlash2TTrain_Raw_181024_F2_C1_4.mat');
-% 
-% clear spiketrials bartrials
-% spiketrials{1} = 1:4; % bar
-% 
-% bartrials{1} = 1:4; % bar
+
+trial = load('E:\Data\181024\181024_F2_C1\EpiFlash2TTrain_Raw_181024_F2_C1_4.mat');
+
+clear spiketrials bartrials
+spiketrials{1} = 1:4; % bar
+
+bartrials{1} = 1:4; % bar
 
 %% Sweep2T - , looking for changes in spike rate with slow movement of the bar 
 % for some reason there is just too much noise, with too small of spikes

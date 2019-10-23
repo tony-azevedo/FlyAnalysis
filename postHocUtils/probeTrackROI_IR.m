@@ -1,6 +1,9 @@
 %% Set an ROI that avoids the leg, just gets the probe
 % I think I only need 1 for now, but I'll keep the option for multiple
 % (storing in cell vs matrix)
+if trial.excluded
+    return
+end
 
 vid = VideoReader(trial.imageFile);
 N = round(vid.Duration*vid.FrameRate);
@@ -50,6 +53,8 @@ smooshedframe = smooshedframe/24;
 
 %% Smooth out the spot to show
 if isfield(trial,'brightSpots2Smooth')
+    annulusmask_all = false(size(smooshedframe));
+    spotmask_all = false(size(smooshedframe));
     for roi_ind = 1:length(trial.brightSpots2Smooth)
         spot = trial.brightSpots2Smooth{roi_ind};
         centroid = mean(spot,1); centroids = repmat(centroid,size(spot,1),1);
@@ -62,6 +67,10 @@ if isfield(trial,'brightSpots2Smooth')
         
         frame(spotmask) = I;
         smooshedframe(spotmask) = I;
+        
+        annulusmask_all = annulusmask_all | annulusmask;
+        spotmask_all = spotmask_all | spotmask;
+        
     end
 end
 
@@ -320,11 +329,11 @@ if filtered_mu(lefthash)>coef(1)+dark  % right side of the bar comes up too much
     [~,righttrough] = min(filtered_mu(bar_idx_i+1:lefthash));
     lefthash = righttrough+bar_idx_i;
     bar_threshold_right = 4/5;%
-    bar_threshold_left = 3/4;%
+    bar_threshold_left = 17/32;%
     fprintf('\t\tWeight the left side of bar\n');
 else
-    bar_threshold_right = 23/32;%
-    bar_threshold_left = 19/32;%
+    bar_threshold_right = 16/32;% 23/32
+    bar_threshold_left = 16/32; %19/32
     fprintf('\t\tWeight the left and right of bar equally\n');
 end
 
@@ -547,9 +556,9 @@ while hasFrame(vid)
 %     fprintf('Load: '),toc
     tic
     if exist('annulusvals','var')
-        annulusvals = frame(annulusmask&~spotmask);
+        annulusvals = frame(annulusmask_all&~spotmask_all);
         I = mean(annulusvals);
-        frame(spotmask) = I;
+        frame(spotmask_all) = I;
     end
 
     ProfileMat(:) = nan;
@@ -576,7 +585,7 @@ while hasFrame(vid)
 %         loc = loc+trough;
 %     end
 
-    [pks,locs] = findpeaks(filtered_frame_mu-dark,'MinPeakWidth',length(filtered_frame_mu)/50,'MinPeakProminence',2); %/30);
+    [pks,locs] = findpeaks(filtered_frame_mu-dark,'MinPeakWidth',length(filtered_frame_mu)/50,'MinPeakProminence',1); %/30);
     [~,loc] = min(abs(locs-com));
     pk = pks(loc);
     loc = locs(loc);

@@ -2,7 +2,7 @@
 % This cell has somewhat ok spikes during the EpiFlash trials, but no
 % spikes during current injection.
 
-trial = load('B:\Raw_Data\180223\180223_F1_C1\EpiFlash2T_Raw_180223_F1_C1_1.mat');
+trial = load('E:\Data\180223\180223_F1_C1\EpiFlash2T_Raw_180223_F1_C1_1.mat');
 [protocol,dateID,flynum,cellnum,trialnum,D,trialStem,datastructfile] = extractRawIdentifiers(trial.name);
 
 cd (D)
@@ -13,27 +13,22 @@ clear trials
 
 %% EpiFlash stimuli
 
-trial = load('B:\Raw_Data\180223\180223_F1_C1\EpiFlash2T_Raw_180223_F1_C1_1.mat');
-[protocol,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
+trial = load('E:\Data\180223\180223_F1_C1\EpiFlash2T_Raw_180223_F1_C1_1.mat');
 
-clear trials
-trials{1} = 1:7; % early on
-trials{2} = 8:14; % later, after a few trials
-Nsets = length(trials);
-    
-% these are different positions, so be careful how you set the zeroforce
-showProbeImage(load(sprintf(trialStem,7)))
-showProbeImage(load(sprintf(trialStem,8)))
+clear spiketrials bartrials nobartrials
 
-
-routine = {
-    'probeTrackROI_IR' 
-    'probeTrackROI_IR' 
+spiketrials{1} = 1:7; % no bar, caffeine
+spiketrials{2} = 8:14; % caffeine
+examplespiketrials = {
+'E:\Data\180223\180223_F1_C1\EpiFlash2T_Raw_180223_F1_C1_14.mat'
+'E:\Data\180223\180223_F1_C1\EpiFlash2T_Raw_180223_F1_C1_14.mat'
     };
+
+bartrials{1} = 1:14; 
 
 %% Piezo ramp stimuli
 
-trial = load('B:\Raw_Data\180223\180223_F1_C1\PiezoRamp2T_Raw_180223_F1_C1_1.mat');
+trial = load('E:\Data\180223\180223_F1_C1\PiezoRamp2T_Raw_180223_F1_C1_1.mat');
 [protocol,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
 
 clear trials

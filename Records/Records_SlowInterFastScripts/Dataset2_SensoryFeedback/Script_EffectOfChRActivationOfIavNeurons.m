@@ -22,7 +22,7 @@ for lbl_idx = 1:length(labels)
     spdidx = T_RampAndStep_noIav.Speed==150;
     
     peaks_noniav = T_RampAndStep_noIav.Peak(lblidx & posidx & stpidx & spdidx);
-    plot(lbl_idx-.2*ones(size(peaks_noniav)),peaks_noniav,'Linestyle','none','Marker','.','Color',clrs(lbl_idx,:));
+    plot(lbl_idx-.2*ones(size(peaks_noniav)),peaks_noniav,'Linestyle','none','Marker','.','Markersize',18,'Color',clrs(lbl_idx,:));
     
     % plot iav for 0,-10,150
     lblidx = strcmp(T_RampAndStep_Iav.Cell_label,label);
@@ -31,7 +31,7 @@ for lbl_idx = 1:length(labels)
     spdidx = T_RampAndStep_Iav.Speed==150;
     
     peaks_iav = T_RampAndStep_Iav.Peak(lblidx & posidx & stpidx & spdidx);
-    plot(lbl_idx+.2*ones(size(peaks_iav)),peaks_iav,'Linestyle','none','Marker','.','Color',clrs(lbl_idx,:));
+    plot(lbl_idx+.2*ones(size(peaks_iav)),peaks_iav,'Linestyle','none','Marker','.','Markersize',18,'Color',clrs(lbl_idx,:));
 
     [h,p] = ttest2(peaks_noniav,peaks_iav,'tail','right','vartype','unequal','alpha',0.01);
     txt = text(lbl_idx,12.5,sprintf('p=%.2f',p)); txt.HorizontalAlignment = 'center';
@@ -59,7 +59,7 @@ stpidx = T_RmpStpSlowFR_noIav.Displacement==-10;
 spdidx = T_RmpStpSlowFR_noIav.Speed==150;
 
 peaks_noniav = T_RmpStpSlowFR_noIav.Peak(lblidx & posidx & stpidx & spdidx);
-plot(lbl_idx-.2*ones(size(peaks_noniav)),peaks_noniav/10,'Linestyle','none','Marker','.','Color',clrs(3,:));
+plot(lbl_idx-.2*ones(size(peaks_noniav)),peaks_noniav/10,'Linestyle','none','Marker','.','Markersize',18,'Color',clrs(3,:));
 
 % plot iav for 0,-10,150
 lblidx = strcmp(T_RmpStpSlowFR_Iav.Cell_label,label);
@@ -68,7 +68,9 @@ stpidx = T_RmpStpSlowFR_Iav.Displacement==-10;
 spdidx = T_RmpStpSlowFR_Iav.Speed==150;
 
 peaks_iav = T_RmpStpSlowFR_Iav.Peak(lblidx & posidx & stpidx & spdidx);
-plot(lbl_idx+.2*ones(size(peaks_iav)),peaks_iav/10,'Linestyle','none','Marker','.','Color',clrs(3,:));
+plot(lbl_idx+.2*ones(size(peaks_iav)),peaks_iav/10,'Linestyle','none','Marker','.','Markersize',18,'Color',clrs(3,:));
+
+plot(lbl_idx+.4*[1 1],[0 10],'Color',[0 0 0]);
 
 [h,p] = ttest2(peaks_noniav,peaks_iav,'tail','right','vartype','unequal','alpha',0.01);
 txt = text(lbl_idx,12.5,sprintf('p=%.2f',p)); txt.HorizontalAlignment = 'center';

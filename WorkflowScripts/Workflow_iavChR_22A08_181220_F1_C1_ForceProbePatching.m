@@ -1,5 +1,5 @@
 %% ForceProbe patcing workflow 180821_F1_C1
-trial = load('B:\Raw_Data\180822\180822_F1_C1\EpiFlash2T_Raw_180822_F1_C1_1.mat');
+trial = load('E:\Data\181220\181220_F1_C1\EpiFlash2T_Raw_181220_F1_C1_39.mat');
 D = fileparts(trial.name);
 cd (D)
 
@@ -11,7 +11,7 @@ clear trials spiketrials bartrials
 
 spiketrials{1} = 34:156;
 spiketrials{2} = 157:270; % 5HT
-spiketrials{3} = 271:327; % MLA
+spiketrials{3} = 271:325; % MLA
 examplespiketrials = {
 'E:\Data\181220\181220_F1_C1\EpiFlash2T_Raw_181220_F1_C1_39.mat'
 'E:\Data\181220\181220_F1_C1\EpiFlash2T_Raw_181220_F1_C1_159.mat'
@@ -20,12 +20,22 @@ examplespiketrials = {
 
 bartrials = spiketrials;
 
+%% PiezoRamp2T - looking for changes in spike rate 
+
+% No spikes here
+
+%% PiezoStep2T -  looking for changes in spike rate 
+
+% No spikes here
+
 %% Extract spikes
 trials = spiketrials;
 exampletrials = examplespiketrials;
 Script_ExtractSpikesFromInterestingTrials
 
 %% Run scripts one at a time
+trials = bartrials;
+trialStem = extractTrialStem(trial.name); D = fileparts(trial.name);
 
 % Set probe line 
 Script_SetProbeLine 
@@ -42,10 +52,6 @@ Script_FindAreaToSmoothOutPixels
 % Track the bar
 Script_TrackTheBarAcrossTrialsInSet
 
-% Find the trials with Red LED transients and mark them down
-Script_FindTheTrialsWithRedLEDTransients
-
-% Fix the trials with Red LED transients and mark them down
 Script_FixTheTrialsWithRedLEDTransients
 
 % Find the minimum CoM, plot a few examples from each trial block and check.

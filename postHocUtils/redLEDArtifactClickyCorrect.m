@@ -150,7 +150,11 @@ while vid.CurrentTime <= ft(post_idx)-ft(1)
     indicator_new.YData = fps.CoM(idx);
     
     % ask for a click on the correct spot
-    pnt = drawpoint(dispax,'Position',[fps.forceProbePosition(1,idx)+p_(1),fps.forceProbePosition(2,idx)+p_(2)]);
+    if ~isnan(fps.forceProbePosition(1,idx))
+        pnt = drawpoint(dispax,'Position',[fps.forceProbePosition(1,idx)+p_(1),fps.forceProbePosition(2,idx)+p_(2)]);
+    else
+        pnt = drawpoint(dispax,'Position',[fps.forceProbePosition(1,pre_idx)+p_(1),fps.forceProbePosition(2,pre_idx)+p_(2)]);
+    end
     figure(profileFigure)
     figure(traceFigure)
     figure(displayf)

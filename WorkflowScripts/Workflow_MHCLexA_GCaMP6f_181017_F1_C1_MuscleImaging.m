@@ -5,27 +5,19 @@ trial = load('F:\Acquisition\181017\181017_F1_C1\EpiFlash2CB2T_Raw_181017_F1_C1_
 [~,~,~,~,~,D,trialStem] = extractRawIdentifiers(trial.name);
 cd(D);
 
-clear trials
+clear trials bartrials
 
 % if the position of the prep changes, make a new set
-trials{1} = 61:105;
+bartrials{1} = 61:105;
 
-routine = {
-    'probeTrackROI_IR' 
-    };
+%% Run Bar detection scripts one at a time
 
-Nsets = length(trials);
-
-%% Run scripts one at a time
+% Create trials variable, safeguard
+trials = bartrials;
+trialStem = extractTrialStem(trial.name); D = fileparts(trial.name);
 
 % Set probe line 
-Script_SetProbeLine 
-
-% double check some trials
-trial = load(sprintf(trialStem,215));
-showProbeLocation(trial)
-
-% trial = probeLineROI(trial);
+Script_SetProbeLine % showProbeLocation(trial)
 
 % Find an area to smooth out the pixels
 Script_FindAreaToSmoothOutPixels
@@ -33,18 +25,52 @@ Script_FindAreaToSmoothOutPixels
 % Track the bar
 Script_TrackTheBarAcrossTrialsInSet
 
-% Find the trials with Red LED transients and mark them down
-% Script_FindTheTrialsWithRedLEDTransients % Using UV Led
+% Setting the ZeroForce point for different trials
+Script_FindTheMinimumCoM
 
-% Fix the trials with Red LED transients and mark them down
-% Script_FixTheTrialsWithRedLEDTransients % Using UV Led
+% Script_FixTheTrialsWithRedLEDTransients
 
-% Find the minimum CoM, plot a few examples from each trial block and check.
-% Script_FindTheMinimumCoM %% can run this any time, but probably best after all the probe positions have been calculated
-Script_LookAtTrialsWithMinimumCoM %% can run this any time, but probably best after all the probe positions have been calculated
 
-ZeroForce = 700-(setpoint-700);
-Script_SetTheMinimumCoM_byHand
+%% Now calculate clusters for trials with bars
+
+trials = bartrials;
+
+trialnumlist = trials{1};
+batch_avikmeansThreshold
+showCaImagingROI
+Script_KmeansClusterID_Bar
+trial = load(sprintf(trialStem,trialnumlist(1)));
+clmask = trial.clmask;
+
+%Save the clusters found for the 50Hz trials to all the other trials
+for setidx = 1:length(bartrials)
+    trialnumlist = bartrials{setidx};
+    for tr_idx = trialnumlist %1:length(data)
+        
+        trial = load(sprintf(trialStem,tr_idx));
+        fprintf('%s: \n',trial.name);
+        if ~isfield(trial,'clmask')
+            fprintf('No mask',trial.name);
+            trial.clmask = clmask;
+            save(trial.name, '-struct', 'trial')
+            fprintf('\n');
+        elseif numel(clmask)~=numel(trial.clmask) || any(trial.clmask(:)~=clmask(:))
+            fprintf('Saving correct mask: %s\n',trial.name);
+            trial.clmask = clmask;
+            save(trial.name, '-struct', 'trial')
+        end
+
+    end
+end
+
+N_Cl = 6;
+
+for setidx = 1:length(bartrials)
+    trialnumlist = bartrials{setidx};
+    fprintf('\t- Intensity\n');
+    Script_KmeansIntensityCalculation_Bar
+end
+
 
 %% EpiFlash2T Calcium clusters calculation with bar
 trial = load('F:\Acquisition\181011\181011_F2_C1\EpiFlash2CB2T_Raw_181011_F2_C1_1.mat');

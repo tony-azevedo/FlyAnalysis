@@ -1,135 +1,137 @@
 %% Batch script for calculating intensity values for clusters.
 
 % Assuming I'm in a directory where the movies are to be processed
-trial = load(sprintf(trialStem,bartrials{1}(1)));
-        
+trial = load(sprintf(trialStem,bartrials{1}(2)));
+nobartrial = load(sprintf(trialStem,nobartrials{1}(1)));
+
 %% First, get a transformation from IR to Ca imaging.
-wh = size(trial.clmask);
-wh = wh(1:2);
-
-displayf = figure;
-displayf.Position = [40 40 fliplr(wh)];
-displayf.ToolBar = 'none';
-dispax = axes('parent',displayf,'units','pixels','position',[0 0 fliplr(wh)]);
-dispax.Box = 'off';
-dispax.XTick = [];
-dispax.YTick = [];
-dispax.Tag = 'dispax';
-
-if length(size(trial.clmask))>2
-    N_Cl_idx = nan(size(trial.clmask,3),1);
-    for idx = 1:length(N_Cl_idx)
-        N_Cl_idx(idx) = length(unique(trial.clmask(:,:,idx)))-1;
-    end
-    clmask = squeeze(trial.clmask(:,:,N_Cl_idx==min(size(trial.clustertraces))));
-else
-    clmask = trial.clmask;
-end
-
-clrs = parula(size(trial.clustertraces,2)+1);
-clrs = clrs(1:end-1,:);
-
-imshow(clmask*0,[0 255],'parent',dispax);
-for cl = 1:size(trial.clustertraces,2)
-    alphamask(clmask==cl,clrs(cl,:),.5,dispax);
-end
-
-if length(size(nobartrial.clmask))>2
-    N_Cl_idx = nan(size(nobartrial.clmask,3),1);
-    for idx = 1:length(N_Cl_idx)
-        N_Cl_idx(idx) = length(unique(nobartrial.clmask(:,:,idx)))-1;
-    end
-    clmask_nobar = squeeze(nobartrial.clmask(:,:,N_Cl_idx==min(size(nobartrial.clustertraces))));
-else
-    clmask_nobar = nobartrial.clmask;
-end
-
-green = clmask_nobar>0;
-wh_Green = size(green);
-a = alphamask(green>0,[0, 1 0],.5);
-mask = green;
-
-
-X_offset = 0;
-Y_offset = 0;
-x_offset = 0;
-y_offset = 0;
-theta = 0;
-
-txt = text(10,10,'coords');
-txt.Color = [1 1 1];
-
-%%
-while 1
-    keydown = waitforbuttonpress;
-    while keydown==0 || ~any(strcmp({' ','j','J','k','K','i','I','l','L','e','E','r','R'},displayf.CurrentCharacter))
-        %disp(displayf.CurrentCharacter);
-        keydown = waitforbuttonpress;
-    end
-    cmd_key = displayf.CurrentCharacter;
+%if ~isfield(trial,'nobarVsBarAlignment')
+    wh = size(trial.clmask);
+    wh = wh(1:2);
     
-    switch cmd_key
-        case ' '
-            fprintf('Done\n');
-            break
-        case 'j'
-            x_offset = x_offset - .5;
-        case 'J'
-            x_offset = x_offset - 5;
-        case 'k'
-            y_offset = y_offset + .5;
-        case 'K'
-            y_offset = y_offset + 5;
-        case 'i'
-            y_offset = y_offset - .5;
-        case 'I'
-            y_offset = y_offset - 5;
-        case 'l'
-            x_offset = x_offset + .5;
-        case 'L'
-            x_offset = x_offset + 5;
-        case 'e'
-            theta = theta+.5;
-        case 'E'
-            theta = theta+2;
-        case 'r'
-            theta = theta-.5;
-        case 'R'
-            theta = theta-2;
-        otherwise
+    displayf = figure;
+    displayf.Position = [40 40 fliplr(wh)];
+    displayf.ToolBar = 'none';
+    dispax = axes('parent',displayf,'units','pixels','position',[0 0 fliplr(wh)]);
+    dispax.Box = 'off';
+    dispax.XTick = [];
+    dispax.YTick = [];
+    dispax.Tag = 'dispax';
+    
+    if length(size(trial.clmask))>2
+        N_Cl_idx = nan(size(trial.clmask,3),1);
+        for idx = 1:length(N_Cl_idx)
+            N_Cl_idx(idx) = length(unique(trial.clmask(:,:,idx)))-1;
+        end
+        clmask = squeeze(trial.clmask(:,:,N_Cl_idx==min(size(trial.clustertraces))));
+    else
+        clmask = trial.clmask;
     end
-    green_1 = imrotate(green,theta,'bilinear','crop');
-    green_1 = imtranslate(green_1,[x_offset y_offset],'linear','outputview','same','fillvalue',0);
-    mask(Y_offset+1:min([Y_offset+ wh_Green(1),wh(1)]),X_offset+1:min([X_offset+ wh_Green(2),wh(2)])) = green_1;
-    a.CData(:,:,2) = mask;
-    a.AlphaData = mask*.5;
-    txt.String = sprintf('{x = %.1f, y = %.1f, theta = %.1f',x_offset,y_offset,theta);
-    drawnow;
-end
-
-roi_ind = 1;
-roimask = poly2mask(trial.kmeans_ROI{roi_ind}(:,1),trial.kmeans_ROI{roi_ind}(:,2),wh(1),wh(2));
-
-clmask_nobar_l = imrotate(clmask_nobar,theta,'bilinear','crop');
-clmask_nobar_l = imtranslate(clmask_nobar_l,[x_offset y_offset],'linear','outputview','same','fillvalue',0);
-
-clmask_nobar_l(clmask_nobar_l~=round(clmask_nobar_l)) = 0;
-
-% rotating and translating tends to distort the view a little, now get rid
-% of non-integers
-CaClMaskFromNonBarTrials = double(roimask) .*  clmask_nobar_l;
-trial.clmaskFromNonBarTrials = CaClMaskFromNonBarTrials;
-
-a.CData(:,:,2) = trial.clmaskFromNonBarTrials>0;
-a.AlphaData = (trial.clmaskFromNonBarTrials>0)*.5;
-drawnow
-
-nobarVsBarAlignment.X_offset = 0;
-nobarVsBarAlignment.Y_offset = 0;
-nobarVsBarAlignment.x_offset = x_offset;
-nobarVsBarAlignment.y_offset = y_offset;
-nobarVsBarAlignment.theta = theta;
-
+    
+    clrs = parula(size(trial.clustertraces,2)+1);
+    clrs = clrs(1:end-1,:);
+    
+    imshow(clmask*0,[0 255],'parent',dispax);
+    for cl = 1:size(trial.clustertraces,2)
+        alphamask(clmask==cl,clrs(cl,:),.5,dispax);
+    end
+    
+    if length(size(nobartrial.clmask))>2
+        N_Cl_idx = nan(size(nobartrial.clmask,3),1);
+        for idx = 1:length(N_Cl_idx)
+            N_Cl_idx(idx) = length(unique(nobartrial.clmask(:,:,idx)))-1;
+        end
+        clmask_nobar = squeeze(nobartrial.clmask(:,:,N_Cl_idx==min(size(nobartrial.clustertraces))));
+    else
+        clmask_nobar = nobartrial.clmask;
+    end
+    
+    green = clmask_nobar>0;
+    wh_Green = size(green);
+    a = alphamask(green>0,[0, 1 0],.5);
+    mask = green;
+    
+    
+    X_offset = 0;
+    Y_offset = 0;
+    x_offset = 0;
+    y_offset = 0;
+    theta = 0;
+    
+    txt = text(10,10,'coords');
+    txt.Color = [1 1 1];
+    
+    %%
+    while 1
+        keydown = waitforbuttonpress;
+        while keydown==0 || ~any(strcmp({' ','j','J','k','K','i','I','l','L','e','E','r','R'},displayf.CurrentCharacter))
+            %disp(displayf.CurrentCharacter);
+            keydown = waitforbuttonpress;
+        end
+        cmd_key = displayf.CurrentCharacter;
+        
+        switch cmd_key
+            case ' '
+                fprintf('Done\n');
+                break
+            case 'j'
+                x_offset = x_offset - .5;
+            case 'J'
+                x_offset = x_offset - 5;
+            case 'k'
+                y_offset = y_offset + .5;
+            case 'K'
+                y_offset = y_offset + 5;
+            case 'i'
+                y_offset = y_offset - .5;
+            case 'I'
+                y_offset = y_offset - 5;
+            case 'l'
+                x_offset = x_offset + .5;
+            case 'L'
+                x_offset = x_offset + 5;
+            case 'e'
+                theta = theta+.5;
+            case 'E'
+                theta = theta+2;
+            case 'r'
+                theta = theta-.5;
+            case 'R'
+                theta = theta-2;
+            otherwise
+        end
+        green_1 = imrotate(green,theta,'bilinear','crop');
+        green_1 = imtranslate(green_1,[x_offset y_offset],'linear','outputview','same','fillvalue',0);
+        mask(Y_offset+1:min([Y_offset+ wh_Green(1),wh(1)]),X_offset+1:min([X_offset+ wh_Green(2),wh(2)])) = green_1;
+        a.CData(:,:,2) = mask;
+        a.AlphaData = mask*.5;
+        txt.String = sprintf('x = %.1f, y = %.1f, theta = %.1f',x_offset,y_offset,theta);
+        drawnow;
+    end
+    
+    roi_ind = 1;
+    roimask = poly2mask(trial.kmeans_ROI{roi_ind}(:,1),trial.kmeans_ROI{roi_ind}(:,2),wh(1),wh(2));
+    
+    clmask_nobar_l = imrotate(clmask_nobar,theta,'bilinear','crop');
+    clmask_nobar_l = imtranslate(clmask_nobar_l,[x_offset y_offset],'linear','outputview','same','fillvalue',0);
+    
+    clmask_nobar_l(clmask_nobar_l~=round(clmask_nobar_l)) = 0;
+    
+    % rotating and translating tends to distort the view a little, now get rid
+    % of non-integers
+    CaClMaskFromNonBarTrials = double(roimask) .*  clmask_nobar_l;
+    trial.clmaskFromNonBarTrials = CaClMaskFromNonBarTrials;
+    
+    a.CData(:,:,2) = trial.clmaskFromNonBarTrials>0;
+    a.AlphaData = (trial.clmaskFromNonBarTrials>0)*.5;
+    drawnow
+    
+    nobarVsBarAlignment.X_offset = 0;
+    nobarVsBarAlignment.Y_offset = 0;
+    nobarVsBarAlignment.x_offset = x_offset;
+    nobarVsBarAlignment.y_offset = y_offset;
+    nobarVsBarAlignment.theta = theta;
+% end
 
 %%
 
@@ -229,7 +231,7 @@ for setidx = 1:length(bartrials)
     for tr_idx = trialnumlist
         
         trial = load(sprintf(trialStem,tr_idx));
-        fprintf('%s\n',trial.name);
+        fprintf('Bar trial, nobar clusters: %s\n',trial.name);
         
         if isfield(trial,'excluded') && trial.excluded
             fprintf('Trial excluded\n')
@@ -271,15 +273,20 @@ for setidx = 1:length(bartrials)
             % nan out the pixels near the bar;
             
             [~,bar_frm] = min(abs(ft_bar-ft(frmcnt)));
-            % nan out the pixels near the bar;
-            bar_i_green = R_cam * (trial.forceProbeStuff.forceProbePosition(:,bar_frm)) + origin_green;
-            barmask = poly2mask(...
-                bar(:,1)+bar_i_green(1),...
-                bar(:,2)+bar_i_green(2),...
-                wh(2),...
-                wh(1));
-            frm(~abvthresh|barmask) = nan;
-            pixels(:,frmcnt) = frm(abvthresh1D);
+            if any(isnan(trial.forceProbeStuff.forceProbePosition(:,bar_frm)))
+                % skip this frame
+            else
+                
+                % nan out the pixels near the bar;
+                bar_i_green = R_cam * (trial.forceProbeStuff.forceProbePosition(:,bar_frm)) + origin_green;
+                barmask = poly2mask(...
+                    bar(:,1)+bar_i_green(1),...
+                    bar(:,2)+bar_i_green(2),...
+                    wh(2),...
+                    wh(1));
+                frm(~abvthresh|barmask) = nan;
+                pixels(:,frmcnt) = frm(abvthresh1D);
+            end
         end
         close(br2)
         
@@ -297,6 +304,7 @@ for setidx = 1:length(bartrials)
         clusters = unique(clustermask1D);
         clusters = clusters(clusters~=0);
         I_traces = nan(length(clusters),N);
+        coveredbybar = nan(length(clusters),N);
         
         if ~exist('ax','var')
             plotclusterfig = figure;
@@ -338,15 +346,20 @@ for setidx = 1:length(bartrials)
             N_nanpixels = sum(isnan(pixels_zscores(cl_idx,:)),1);
             N_pixels = sum(cl_idx);
             I_traces(cl,N_nanpixels ./ N_pixels > .4) = nan;
+            coveredbybar(cl,:) = N_nanpixels ./ N_pixels;
             
             plot(ax,I_traces(cl,:),'color',clrs(cl,:));
+            plot(ax,coveredbybar(cl,:),'color',clrs(cl,:));
             
             alphamask(clmask==cluster,clrs(cl,:),1,instax);
         end
         
         trial.clmaskFromNonBarTrials = clmask_N;
         trial.clustertraces_NBCls = I_traces';
-        trial.nobarVsBarAlignment = nobarVsBarAlignment;
+        trial.clustercovered_NBCls = coveredbybar';
+        if ~isfield(trial,'nobarVsBarAlignment')
+            trial.nobarVsBarAlignment = nobarVsBarAlignment;
+        end
         save(trial.name, '-struct', 'trial');
         
         [protocol,dateID,flynum,cellnum,trialnum] = extractRawIdentifiers(trial.name);

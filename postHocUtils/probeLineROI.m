@@ -230,6 +230,9 @@ elseif strcmp(newbutton,'No')
     end
     response = 'No';
     save(trial.name,'-struct','trial')
+    setacqpref('quickshowPrefs','forceProbeTangent',trial.forceProbe_tangent)
+    setacqpref('quickshowPrefs','forceProbeLine',trial.forceProbe_line)
+
 elseif strcmp(newbutton,'Cancel')
     fprintf('Not setting tangent in trial\n')
     response = 'Cancel';

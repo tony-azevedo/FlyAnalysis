@@ -17,15 +17,15 @@ cd (D)
 
 %% EpiFlash2TTrain - random movements
 
-% trial = load('E:\Data\181021\181021_F1_C1\EpiFlash2TTrain_Raw_181021_F1_C1_11.mat');
-% clear spiketrials bartrials
-% 
-% spiketrials{1} = 1:12; % bar 
-% examplespiketrials = {
-% 'E:\Data\181021\181021_F1_C1\EpiFlash2TTrain_Raw_181021_F1_C1_11.mat'
-%     };
-% 
-% bartrials{1} = 1:12; % bar
+trial = load('E:\Data\181021\181021_F1_C1\EpiFlash2TTrain_Raw_181021_F1_C1_11.mat');
+clear spiketrials bartrials
+
+spiketrials{1} = 1:12; % bar 
+examplespiketrials = {
+'E:\Data\181021\181021_F1_C1\EpiFlash2TTrain_Raw_181021_F1_C1_11.mat'
+    };
+
+bartrials{1} = 1:12; % bar
 
 
 %% Sweep2T - , looking for changes in spike rate with slow movement of the bar

@@ -15,7 +15,6 @@ trial = load('F:\Acquisition\181219\181219_F1_C1\EpiFlash2T_Raw_181219_F1_C1_108
 clear spiketrials bartrials
 
 emgspiketrials{1} = 17:159; % bar
-emgspiketrials{1} = 17:66; % bar
 emgspiketrials{2} = 100:159; % bar
 
 examplespiketrials = {

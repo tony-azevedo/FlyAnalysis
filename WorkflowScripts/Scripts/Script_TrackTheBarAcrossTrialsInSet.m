@@ -26,17 +26,17 @@ for setidx = 1:length(trials)
             % probeTrackROI_IR;
 
             %OR...
-            if isfield(trial.forceProbeStuff,'keimograph')
-                fprintf('\t*Moving keimograph to alt file: redoing\n')
-                keimograph = trial.forceProbeStuff.keimograph;
-                save(regexprep(trial.name,'_Raw_','_keimograph_'),'keimograph');
-                trial.forceProbeStuff = rmfield(trial.forceProbeStuff,'keimograph');
-                save(trial.name,'-struct','trial')
-            end
-            if exist(regexprep(trial.name,'.mat','_barkeimograph.mat'),'file')
-                fprintf('\t*Moving keimograph to alt file: movefile\n')
-                movefile(regexprep(trial.name,'.mat','_barkeimograph.mat'),regexprep(trial.name,'_Raw_','_keimograph_'));
-            end
+            %             if isfield(trial.forceProbeStuff,'keimograph')
+            %                 fprintf('\t*Moving keimograph to alt file: redoing\n')
+            %                 keimograph = trial.forceProbeStuff.keimograph;
+            %                 save(regexprep(trial.name,'_Raw_','_keimograph_'),'keimograph');
+            %                 trial.forceProbeStuff = rmfield(trial.forceProbeStuff,'keimograph');
+            %                 save(trial.name,'-struct','trial')
+            %             end
+            %             if exist(regexprep(trial.name,'.mat','_barkeimograph.mat'),'file')
+            %                 fprintf('\t*Moving keimograph to alt file: movefile\n')
+            %                 movefile(regexprep(trial.name,'.mat','_barkeimograph.mat'),regexprep(trial.name,'_Raw_','_keimograph_'));
+            %             end
         else
             fprintf('\t* Bad movie: No line or tangent: %s\n',trial.name);
             continue

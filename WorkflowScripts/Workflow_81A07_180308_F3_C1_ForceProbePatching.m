@@ -1,9 +1,7 @@
 %% ForceProbe patcing workflow 180308_F3_C1
 trial = load('E:\Data\180308\180308_F3_C1\EpiFlash2T_Raw_180308_F3_C1_5.mat');
-[protocol,dateID,flynum,cellnum,trialnum,D,trialStem,datastructfile] = extractRawIdentifiers(trial.name);
-
+D = fileparts(trial.name);
 cd (D)
-clear trials
 
 %% Current step: No spikes in this cell
 trial = load('E:\Data\180308\180308_F3_C1\CurrentStep2T_Raw_180308_F3_C1_18.mat');
@@ -11,42 +9,50 @@ trial = load('E:\Data\180308\180308_F3_C1\CurrentStep2T_Raw_180308_F3_C1_18.mat'
 %% epi flash Twitch movements
 
 trial = load('E:\Data\180308\180308_F3_C1\EpiFlash2T_Raw_180308_F3_C1_5.mat');
-[~,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
 
-clear trials 
-trials{1} = 4:66; % 0
-trials{2} = 70:99; % 0 
-trials{3} = 100:129; % 75
-trials{4} = 130:159; % 150
-trials{5} = 161:190; % -75
-trials{6} = 191:220; % -150
-trials{7} = 221:242; % 0
-trials{8} = 243:262; % 0 more spikes
-
-dists = [0 0 75 150 -75 -150 0 0];
-
-% trials{2} = 10:19; % these trials have no probe. No sense in doing
-% running this now
-Nsets = length(trials);
-    
-trial = load(sprintf(trialStem,3));
-% showProbeImage(trial)
-
-routine = {
-    'probeTrackROI_IR' 
-    'probeTrackROI_IR' 
-    'probeTrackROI_IR' 
-    'probeTrackROI_IR' 
-    'probeTrackROI_IR' 
-    'probeTrackROI_IR' 
-    'probeTrackROI_IR' 
-    'probeTrackROI_IR' 
+clear trials spiketrials bartrials
+spiketrials{1} = 1:66; % 0
+spiketrials{3} = 100:129; % 75
+spiketrials{4} = 130:159; % 150
+spiketrials{5} = 161:190; % -75
+spiketrials{6} = 191:220; % -150
+spiketrials{7} = 221:242; % 0
+spiketrials{8} = 243:262; % 0 more spikes
+exampletrials = {
+    'E:\Data\171102\171102_F1_C1\EpiFlash2T_Raw_171102_F1_C1_10.mat'
+    'E:\Data\171102\171102_F1_C1\EpiFlash2T_Raw_171102_F1_C1_10.mat'
+    'E:\Data\171102\171102_F1_C1\EpiFlash2T_Raw_171102_F1_C1_10.mat'
     };
 
 %% Sweep Trials, no bar, just strange movements
 
-trial = load('B:\Raw_Data\180308\180308_F3_C1\Sweep2T_Raw_180308_F3_C1_8.mat');
-[protocol,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
+trial = load('E:\Data\180308\180308_F3_C1\Sweep2T_Raw_180308_F3_C1_8.mat');
+
+
+%% Extract spikes
+% trialStem = extractTrialStem(trial.name); D = fileparts(trial.name);
+% trials = spiketrials;
+% exampletrials = examplespiketrials;
+% Script_ExtractSpikesFromInterestingTrials
+
+%% Extract spikes
+sgn = -1;
+
+% load trial
+% spikevars = getacqpref('FlyAnalysis',['Spike_params_current_2_flipped_fs', num2str(trial.params.sampratein)]);
+% setacqpref('FlyAnalysis',['Spike_params_current_2_flipped_fs', num2str(trial.params.sampratein)],spikevars);
+% 
+% trial.current_2_flipped = sgn*trial.current_2; 
+% [trial,spikevars] = spikeDetection(trial,'current_2_flipped',spikevars,'alt_spike_field','EMGspikes');
+
+trials = spiketrials(1:3);
+exampletrials = {
+'E:\Data\180308\180308_F3_C1\EpiFlash2T_Raw_180308_F3_C1_66.mat'
+'E:\Data\180308\180308_F3_C1\EpiFlash2T_Raw_180308_F3_C1_129.mat'
+'E:\Data\180308\180308_F3_C1\EpiFlash2T_Raw_180308_F3_C1_140.mat'
+            };
+
+Script_ExtractEMGSpikesFromInterestingTrials
 
 %% Run scripts one at a time
 

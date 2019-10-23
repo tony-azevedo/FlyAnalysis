@@ -3,7 +3,7 @@
 for setidx = 1:length(trials)
     trialnumlist = trials{setidx};
     
-    for tr_idx = trialnumlist(1:3)
+    for tr_idx = trialnumlist(1)
         trial = load(sprintf(trialStem,tr_idx));
         
         if (~isfield(trial,'excluded') || ~trial.excluded) 
@@ -21,7 +21,7 @@ for setidx = 1:length(trials)
     % just set the line for the rest of the trials
     temp.ROI = getacqpref('quickshowPrefs','brightSpots2Smooth');
 
-    for tr_idx = trialnumlist(4:end)
+    for tr_idx = trialnumlist(2:end)
         trial = load(sprintf(trialStem,tr_idx));
         trial.brightSpots2Smooth = temp.ROI;
         fprintf('Saving bright spots to smooth in trial %s\n',num2str(tr_idx))

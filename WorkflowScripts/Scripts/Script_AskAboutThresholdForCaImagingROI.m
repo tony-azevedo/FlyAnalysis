@@ -1,7 +1,8 @@
 %% Set an ROI that avoids the trace of the probe
 % I think I only need 1 for now, but I'll keep the option for multiple
 
-vid = VideoReader(trial.imageFile2);
+% vid = VideoReader(trial.imageFile2);
+vid = VideoReader(trial.imageFile);
 t_i = 10*1/vid.FrameRate + trial.params.preDurInSec;
 t_f = min([trial.params.stimDurInSec-5*1/vid.FrameRate,1]);
 
@@ -24,9 +25,11 @@ smooshedframe = frame./cnt;
 
 %%
 displayf = figure;
-displayf.Position = [40 40 640 512];
+% displayf.Position = [40 40 640 512];
+displayf.Position = [40 40 1280 1024];
 displayf.ToolBar = 'none';
 dispax = axes('parent',displayf,'units','pixels','position',[0 0 640 512]);
+dispax = axes('parent',displayf,'units','pixels','position',[0 0 1280 1024]);
 dispax.Box = 'off';
 dispax.XTick = [];
 dispax.YTick = [];

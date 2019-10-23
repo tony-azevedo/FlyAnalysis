@@ -41,14 +41,22 @@ set(ax,'tag','response_ax_1');
 
 y = zeros(length(x),length(trials));
 y_2 = zeros(length(x),length(trials));
+spikes_ = y;
 for t = 1:length(trials)
     trial = load(fullfile(handles.dir,sprintf(handles.trialStem,trials(t))));
     y(:,t) = trial.(y_name);
     if isfield(trial,'spikes')
         raster(ax, x(trial.spikes),t+[-.4 .4]);
+        spikes_(:,t) = 0;
+        spikes_(trial.spikes,t) = 1;
     end
     y_2(:,t) = trial.(y_name_2);
+    
+
 end
+    
+DT = 10/300;
+fr = firingRate(x,spikes_,10/300);
 
 ax = panl(2).select();
 plot(ax,x,y,'color',[1, .7 .7],'tag',savetag); hold on

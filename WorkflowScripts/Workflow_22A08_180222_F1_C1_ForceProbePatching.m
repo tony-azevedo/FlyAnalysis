@@ -1,5 +1,5 @@
 %% ForceProbe patcing workflow 180222_F1_C1
-trial = load('B:\Raw_Data\180222\180222_F1_C1\CurrentStep2T_Raw_180222_F1_C1_98.mat');
+trial = load('E:\Data\180222\180222_F1_C1\CurrentStep2T_Raw_180222_F1_C1_104.mat');
 [protocol,dateID,flynum,cellnum,trialnum,D,trialStem,datastructfile] = extractRawIdentifiers(trial.name);
 
 cd (D)
@@ -7,20 +7,53 @@ clear trials
 
 %% Current step movements
 
-trial = load('B:\Raw_Data\180222\180222_F1_C1\CurrentStep2T_Raw_180222_F1_C1_98.mat');
-[protocol,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
+trial = load('E:\Data\180222\180222_F1_C1\CurrentStep2T_Raw_180222_F1_C1_104.mat');
 
-clear trials
-trials{1} = 98:126; 
-Nsets = length(trials);
-    
-trial = load(sprintf(trialStem,100));
-showProbeImage(trial)
-
-routine = {
-    'probeTrackROI_IR' 
+clear trials spiketrials 
+spiketrials{1} = 98:126;
+examplespiketrials = {
+'E:\Data\180222\180222_F1_C1\CurrentStep2T_Raw_180222_F1_C1_104.mat'
     };
 
+%% Extract spikes
+
+% This was agonizing for this cell, very annoying
+
+%% Extract spikes
+sgn = -1;
+
+% load trial
+% spikevars = getacqpref('FlyAnalysis',['Spike_params_current_2_flipped_fs', num2str(trial.params.sampratein)]);
+% setacqpref('FlyAnalysis',['Spike_params_current_2_flipped_fs', num2str(trial.params.sampratein)],spikevars);
+
+% trial.current_2_flipped = sgn*trial.current_2; 
+% [trial,spikevars] = spikeDetection(trial,'current_2_flipped',spikevars,'alt_spike_field','EMGspikes');
+
+trials = spiketrials(1);
+exampletrials = examplespiketrials;
+
+Script_ExtractEMGSpikesFromInterestingTrials
+
+%%
+emgspk = find(trial.EMGspikes>trial.spikes,1);
+cv = diff(t([trial.spikes trial.EMGspikes(emgspk)]))
+
+%     98
+%     99
+%    101
+%    104
+%    108
+%    110
+%    111
+%    114
+%    116
+%    119
+%    120
+%    122
+%    123
+%    125
+%    126
+   
 %% Run scripts one at a time
 
 % Set probe line 
@@ -56,9 +89,6 @@ Script_ExtractSpikesFromInterestingTrials
 
 %% Epi flash trials
 
-%% Extract spikes
-
-% This was agonizing for this cell, very annoying
 
 %% Align spikes and bar trajectories for current injection
 

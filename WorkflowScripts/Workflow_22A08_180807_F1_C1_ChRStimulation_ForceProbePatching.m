@@ -17,10 +17,9 @@ bartrials{2} = 205:258; % High
 spiketrials{1} = 10:204; % Low
 spiketrials{2} = 205:258; % High 
 
-examplespiketrials{1} = [168 199 150];
-examplespiketrials{2} = [];
-
-
+examplespiketrials = {
+'E:\Data\180807\180807_F1_C1\EpiFlash2T_Raw_180807_F1_C1_150.mat'
+    };
 
 %% Sweep, random movments % Not that informative
 
@@ -30,6 +29,25 @@ trial = load('B:\Raw_Data\180807\180807_F1_C1\Sweep2T_Raw_180807_F1_C1_10.mat');
 clear trials 
 % Trials 1:5 show twitches in the muscle 
 trials{1} = 6:10; % Low
+
+%% Extract spikes
+% trials = spiketrials;
+% exampletrials = examplespiketrials;
+% Script_ExtractSpikesFromInterestingTrials
+
+%% Extract spikes
+sgn = 1;
+
+% load trial
+% spikevars = getacqpref('FlyAnalysis',['Spike_params_current_2_flipped_fs', num2str(trial.params.sampratein)]);
+
+trial.current_2_flipped = sgn*trial.current_2; 
+[trial,spikevars] = spikeDetection(trial,'current_2_flipped',spikevars,'alt_spike_field','EMGspikes');
+
+% trials = spiketrials(1);
+% exampletrials = examplespiketrials;
+% 
+% Script_ExtractEMGSpikesFromInterestingTrials
 
 
 %% Run scripts one at a time

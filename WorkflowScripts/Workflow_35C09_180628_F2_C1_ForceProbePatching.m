@@ -23,27 +23,26 @@ cd (D)
 
 trial = load('E:\Data\180628\180628_F2_C1\EpiFlash2T_Raw_180628_F2_C1_8.mat');
 trialStem = extractTrialStem(trial.name); D = fileparts(trial.name);
-% 
-% clear trials spiketrials bartrials nobartrials
-% spiketrials{1} = 1:6;
-% spiketrials{2} = 7:14; % no bar
-% spiketrials{3} = 15:24; % MLA
-% spiketrials{4} = 25:26; % MLA still flowing in
-% spiketrials{5} = 27:29; % MLA still flowing in
-% 
-% examplespiketrials = {
-% 'E:\Data\180628\180628_F2_C1\EpiFlash2T_Raw_180628_F2_C1_3.mat'
-% 'E:\Data\180628\180628_F2_C1\EpiFlash2T_Raw_180628_F2_C1_7.mat'
-% 'E:\Data\180628\180628_F2_C1\EpiFlash2T_Raw_180628_F2_C1_15.mat'
-% 'E:\Data\180628\180628_F2_C1\EpiFlash2T_Raw_180628_F2_C1_26.mat'
-% 'E:\Data\180628\180628_F2_C1\EpiFlash2T_Raw_180628_F2_C1_27.mat'
-%     };
+
+clear trials spiketrials bartrials nobartrials
+spiketrials{1} = 1:6;
+spiketrials{2} = 7:14; % no bar
+spiketrials{3} = 15:24; % MLA
+spiketrials{4} = 25:26; % MLA still flowing in
+spiketrials{5} = 27:29; % MLA still flowing in
+
+examplespiketrials = {
+'E:\Data\180628\180628_F2_C1\EpiFlash2T_Raw_180628_F2_C1_3.mat'
+'E:\Data\180628\180628_F2_C1\EpiFlash2T_Raw_180628_F2_C1_7.mat'
+'E:\Data\180628\180628_F2_C1\EpiFlash2T_Raw_180628_F2_C1_15.mat'
+'E:\Data\180628\180628_F2_C1\EpiFlash2T_Raw_180628_F2_C1_26.mat'
+'E:\Data\180628\180628_F2_C1\EpiFlash2T_Raw_180628_F2_C1_27.mat'
+    };
 
 nobartrials{1} = 7:14;
 
-% bartrials{1} = 1:6;
-% bartrials{2} = 19:34;
-% bartrials{2} = 15:29;
+bartrials{1} = 1:6;
+bartrials{2} = 15:29;
 
 %% PiezoStep2T -  looking for changes in spike rate 
 

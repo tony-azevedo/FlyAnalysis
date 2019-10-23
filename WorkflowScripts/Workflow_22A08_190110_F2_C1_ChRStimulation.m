@@ -1,5 +1,5 @@
 %% ForceProbe patcing workflow 190110_F2_C1
-trial = load('F:\Acquisition\190110\190110_F2_C1\EpiFlash2T_Raw_190110_F2_C1_14.mat');
+trial = load('E:\Data\190110\190110_F2_C1\EpiFlash2T_Raw_190110_F2_C1_14.mat');
 [protocol,dateID,flynum,cellnum,trialnum,D,trialStem,datastructfile] = extractRawIdentifiers(trial.name);
 
 cd (D)
@@ -9,7 +9,7 @@ clear trials spiketrials bartrials
 
 %% EpiFlash2T - random movements
 
-trial = load('F:\Acquisition\190110\190110_F2_C1\EpiFlash2T_Raw_190110_F2_C1_136.mat');
+trial = load('E:\Data\190110\190110_F2_C1\EpiFlash2T_Raw_190110_F2_C1_136.mat');
 [~,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
 
 
@@ -19,8 +19,8 @@ clear spiketrials bartrials
 spiketrials{1} = 13:137; % in voltage clamp, have to change that first (factor of 10)
 spiketrials{2} = 138:166; % in voltage clamp, have to change that first (factor of 10)
 examplespiketrials = {
-    'F:\Acquisition\190110\190110_F2_C1\EpiFlash2T_Raw_190110_F2_C1_68.mat'
-    'F:\Acquisition\190110\190110_F2_C1\EpiFlash2T_Raw_190110_F2_C1_138.mat'
+'E:\Data\190110\190110_F2_C1\EpiFlash2T_Raw_190110_F2_C1_88.mat'
+    'E:\Data\190110\190110_F2_C1\EpiFlash2T_Raw_190110_F2_C1_138.mat'
     };
 
 
@@ -61,6 +61,68 @@ examplespiketrials = {
 %% PiezoStep2T -  looking for changes in spike rate 
 
 %% Sweep2T - , looking for changes in spike rate with slow movement of the bar
+
+%% Extract spikes
+% trials = spiketrials;
+% exampletrials = examplespiketrials;
+% Script_ExtractSpikesFromInterestingTrials
+
+%% Extract spikes
+sgn = -1; % not going to work very well
+% 
+% % load trial
+% spikevars = getacqpref('FlyAnalysis',['Spike_params_current_2_flipped_fs', num2str(trial.params.sampratein)]);
+% 
+trial.current_2_flipped = sgn*trial.current_2; 
+[trial,spikevars] = spikeDetection(trial,'current_2_flipped',spikevars,'alt_spike_field','EMGspikes');
+% 
+% trials = spiketrials(1);
+% exampletrials = examplespiketrials;
+
+% Script_ExtractEMGSpikesFromInterestingTrials
+
+%%
+%             31    38    41    46    49    53    56    58    64    70    73
+%     76    79    82    83    85    88    92    95    98   100   101   103   104   111
+%    113   114   122   123   127   134   137
+emgspk = find(trial.EMGspikes>trial.spikes,1);
+cv = diff(t([trial.spikes trial.EMGspikes(emgspk)]))
+%%
+%    16.0000    0.0009
+%    25.0000    0.0006
+%    28.0000    0.0009
+%    31.0000    0.0004
+%    38.0000    0.0006
+%    41.0000    0.0005
+%    46.0000    0.0005
+%    49.0000    0.0005
+%    53.0000    0.0005
+%    56.0000    0.0003
+%    58.0000    0.0004
+%    64.0000    0.0005
+%    70.0000    0.0006
+%    73.0000    0.0004
+%    76.0000    0.0005
+%    79.0000    0.0005
+%    82.0000    0.0005
+%    83.0000    0.0005
+%    85.0000    0.0005
+%    88.0000    0.0006
+%    92.0000    0.0004
+%    95.0000    0.0004
+%    98.0000    0.0004
+%   100.0000    0.0005
+%   101.0000    0.0005
+%   103.0000    0.0005
+%   104.0000    0.0005
+%   111.0000    0.0034
+%   113.0000    0.0258
+%   114.0000    0.0005
+%   122.0000    0.0276
+%   123.0000    0.0004
+%   127.0000    0.0304
+%   134.0000    0.0354
+%   137.0000    0.0038
 
 %% Run scripts one at a time
 trials = bartrials;

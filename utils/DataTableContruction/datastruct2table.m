@@ -7,16 +7,23 @@ function T = datastruct2table(data,varargin)
 p = inputParser;
 p.PartialMatching = 0;
 p.addParameter('DataStructFileName','',@ischar);
+p.addParameter('rewrite','no',@ischar);
 
 parse(p,varargin{:});
 
-if ~isempty(p.Results.DataStructFileName)
+if ~isempty(p.Results.DataStructFileName) && ~strcmp(p.Results.rewrite,'yes')
     tablename = regexprep(p.Results.DataStructFileName,'.mat','_Table.mat');
-%     if exist(tablename,'file')
-%         T = load(tablename);
-%         return
-%     end
+    if exist(tablename,'file')
+        T = load(tablename); 
+        if isfield(T,'T')
+            T = T.T;
+            %             head(T)
+            return
+        end
+    end
 end
+tablename = regexprep(p.Results.DataStructFileName,'.mat','_Table.mat');
+fprintf('Writing table %s:\n',tablename);
 
 % sz = [length(data) length(fieldnames(data(1)))];
 
@@ -48,7 +55,7 @@ for c_idx = 1:length(fldnames)
         b = ')';
     end
     
-    tblCreateString = [tblCreateString fldnames{c_idx} ','];
+    tblCreateString = cat(2,tblCreateString,fldnames{c_idx},',');
     for r_idx = 1:length(data)
         if isempty(data(r_idx).(fldnames{c_idx}))
             continue

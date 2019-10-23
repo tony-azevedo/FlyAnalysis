@@ -11,6 +11,7 @@ if isempty(fig) && p.Results.closefig
 elseif isempty(fig) || ~ishghandle(fig) 
     fig = figure(69+trials(1)); clf
 else
+    delete(fig.Children)
 end
 
 set(fig,'tag',mfilename);

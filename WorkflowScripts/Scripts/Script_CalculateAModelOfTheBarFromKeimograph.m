@@ -3,9 +3,9 @@
 N = 400;
 bar_model = zeros(N,1);
 trialnumlist = [];
-for set = 1:length(trials)
-    fprintf('\n\t***** Batch %d of %d\n',set,Nsets);
-    trialnumlist = [trialnumlist trials{set}];
+for setidx = 1:length(trials)
+    fprintf('\n\t***** Batch %d of %d\n',setidx,length(trials));
+    trialnumlist = [trialnumlist trials{setidx}];
 end
 
 close all
@@ -30,7 +30,7 @@ for tr_idx = trialnumlist
         keimograph = temp.keimograph;
         
         for fr = 1:length(trial.forceProbeStuff.CoM)
-            if round(trial.forceProbeStuff.CoM(fr)+2*N/3)>size(keimograph,1)
+            if round(trial.forceProbeStuff.CoM(fr)+2*N/3)>size(keimograph,1) || isnan(trial.forceProbeStuff.CoM(fr))
                 %disp('skip frame');
                 continue;
             end

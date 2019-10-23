@@ -17,7 +17,7 @@ figure(fig);
 set(fig,'color',[1 1 1])
 panl = panel(fig);
 
-hdivisions = [1 1]; hdivisions = num2cell(hdivisions/sum(hdivisions));
+hdivisions = [1 1 1 1 1]; hdivisions = num2cell(hdivisions/sum(hdivisions));
 vdivisions = speeds*0+1; vdivisions = num2cell(vdivisions/sum(vdivisions));
 
 panl.pack('h',hdivisions)  % response panel, stimulus panel
@@ -108,7 +108,7 @@ for m_idx = [0 1]
             
             ax.XLim = [t(1) t(end)];
             ax = panl(m_idx+1,s_idx,2).select(); ax.NextPlot = 'add'; ax.Visible = 'off';
-            plot(ax,t,PiezoRampStim(trial.params),'color',stimclrs([-10 10]==dsp,:));
+            plot(ax,t,PiezoRampStim(trial.params)+trial.params.displacementOffset,'color',stimclrs([-10 10]==dsp,:));
             
             %plot(ax2,v(twind),fr(twind));
             drawnow

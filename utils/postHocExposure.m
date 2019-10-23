@@ -73,7 +73,7 @@ if (~islogical(h.exposure) && DF > start) || strcmp(use,'raw')
     b.exposure = logical(exposure_1_0);
 elseif isfield(h,'exposure_raw') || strcmp(use,'skoootched')
     b.exposure = h.exposure;
-    fprintf(' * Exposure vector has been skootched!\n')
+    %fprintf(' * Exposure vector has been skootched!\n')
 else
    error('Exposure vector is not well conditioned for current analysis\n1st true index (exp starts) = %d',find(h.exposure,1,'first')); 
 end

@@ -32,7 +32,7 @@ br.Position =  [1050    251    270    56];
 %%
 vid2 = VideoReader(trial.imageFile2);
 t_i = 0.05 + trial.params.preDurInSec; % give it 50 ms after light turns on
-t_f = min([trial.params.stimDurInSec-5*1/vid2.FrameRate,0.5]);
+t_f = [trial.params.stimDurInSec-5*1/vid2.FrameRate];
 
 vid2.CurrentTime = t_i;
 cnt = 1;
@@ -230,7 +230,8 @@ ft_bar = t(h1.exposure);
 % ft_bar = ft_bar(ft_bar>t_i-trial.params.preDurInSec & ft_bar<t_f-trial.params.preDurInSec);
 
 fctr = vid2.FrameRate/50; % pretend you're sampling at 50 hz;
-N = floor(length(ft)/fctr); % average over enough frames to make it 50 Hz 
+% N = floor(length(ft)/fctr); % average over enough frames to make it 50 Hz 
+N = length(ft);
 
 chnksz = floor(10000/N);
 totalframes = N*length(trialnumlist);
@@ -275,32 +276,37 @@ for chnk_idx = 1:chnksz:length(trialnumlist)
             %             fprintf('frmcnt %d: ',frmcnt);
             
             frm = double(rgb2gray(readFrame(vid2)));
-
-            cnt = 2;
-            while cnt<=fctr
-                cnt = cnt+1;
-                frm = frm+rgb2gray(double(readFrame(vid2)));
-            end 
+%             cnt = 2;
+%             while cnt<=fctr
+%                 cnt = cnt+1;
+%                 frm = frm+rgb2gray(double(readFrame(vid2)));
+%             end 
             % fprintf('\n');
             % waitbar(frmcnt/N,br_frame);
 
-            [~,bar_frm] = min(abs(ft_bar-ft(frmcnt*fctr)));
+%             [~,bar_frm] = min(abs(ft_bar-ft(frmcnt*fctr)));
+            [~,bar_frm] = min(abs(ft_bar-ft(frmcnt)));
             % nan out the pixels near the bar;
-            bar_i_green = R_cam * (trial.forceProbeStuff.forceProbePosition(:,bar_frm)) + origin_green;
-            barmask = poly2mask(...
-                bar(:,1)+bar_i_green(1),...
-                bar(:,2)+bar_i_green(2),...
-                size(smooshedframe_Green,1),...
-                size(smooshedframe_Green,2));
-            frm(~abvthresh|barmask) = nan;
-            im.CData = frm;
-            barshadow.CData(:,:,1) = barmask;
-            
-            frpos.XData = [ft_bar(bar_frm) ft_bar(bar_frm)];
-            drawnow
-            % pause
-            
-            pixels(:,((tr_idx-1)+chnk_idx)*N+frmcnt) = frm(abvthresh1D);
+            if any(isnan(trial.forceProbeStuff.forceProbePosition(:,bar_frm)))
+                % skip this frame
+            else
+
+                bar_i_green = R_cam * (trial.forceProbeStuff.forceProbePosition(:,bar_frm)) + origin_green;
+                barmask = poly2mask(...
+                    bar(:,1)+bar_i_green(1),...
+                    bar(:,2)+bar_i_green(2),...
+                    size(smooshedframe_Green,1),...
+                    size(smooshedframe_Green,2));
+                frm(~abvthresh|barmask) = nan;
+                im.CData = frm;
+                barshadow.CData(:,:,1) = barmask;
+                
+                frpos.XData = [ft_bar(bar_frm) ft_bar(bar_frm)];
+                drawnow
+                % pause
+                
+                pixels(:,((tr_idx-1)+chnk_idx)*N+frmcnt) = frm(abvthresh1D);
+            end
            
         end
         

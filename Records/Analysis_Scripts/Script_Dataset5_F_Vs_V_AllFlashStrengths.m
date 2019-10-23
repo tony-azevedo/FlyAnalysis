@@ -2,7 +2,7 @@
 trial_ = trial;
 [protocol,dateID,flynum,cellnum,trialnum,D,trialStem,datastructfile] = extractRawIdentifiers(trial.name);
 cd(D)
-
+datastruct = load(datastructfile); datastruct = datastruct.data;
 blocktrials = findBlockTrials(trial,datastruct);
 
 f =figure;

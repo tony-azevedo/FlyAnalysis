@@ -46,7 +46,7 @@ for cellid = cellids'
         end
         T_Temp = T_RmpStpSlowFR(rowsidx,:);
         
-        DX = x(2);
+        DX = deg(end);
         % plot(ax,DX+T_Temp.Position/1000 + [0 0.04],[T_Temp.Peak T_Temp.Peak_return],'marker','.','Color',lightclrs(clridx,:));%,'LineStyle','none');
         plot(ax,[0 DX + [0 0.3]],[T_Temp.Rest T_Temp.Peak T_Temp.Peak_return],'marker','.','Color',lightclrs(clridx,:),'tag',[cellid{1} '_' num2str(position)]);%,'LineStyle','none');
     end
@@ -95,7 +95,7 @@ for cellid = cellids'
                 end
                 T_Temp = T_RmpStpSlowFR(rowsidx,:);
                 
-                DX = x(2)/2 * sign(displacement);
+                DX = deg(end)/2 * sign(displacement);
                 % plot(ax,DX+T_Temp.Position/1000 + [0 0.04],[T_Temp.Peak T_Temp.Peak_return],'marker','.','Color',lightclrs(clridx,:));%,'LineStyle','none');
                 plot(ax,pos2deg(T_Temp.Position)+DX,T_Temp.Rest,'marker','.','Color',lightclrs(clridx,:),'tag',[cellid{1} '_' num2str(position)]);%,'LineStyle','none');
             end
@@ -107,7 +107,7 @@ rest = 1:2;
 pstn = 1:2;
 for position = positions
     for displacement = [-10 10]
-        DX = x(2)/2 * sign(displacement);
+        DX = deg(end)/2 * sign(displacement);
         celllbllines = findobj(ax,'color',lightclrs(clridx,:),'XData',pos2deg(position)+DX);
         Rest_mat = nan(length(celllbllines),1);
         for l = 1:length(celllbllines)

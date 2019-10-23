@@ -32,12 +32,13 @@ xlim(ax1,[min(x) max(x)]);
 
 
 ax2 = panl(2).select(); 
-t2 = postHocExposure2(trial,max(size(trial.clustertraces)));
-line(x,EpiFlashStim(trial.params)*max(trial.clustertraces(:)),'parent',ax2,'color',[.9 .9 1],'tag',savetag);
-clrs = parula(size(trial.clustertraces,2)+1);
+t2 = postHocExposure2(trial,max(size(trial.clustertraces_NBCls)));
+% line(x,EpiFlashStim(trial.params)*max(trial.clustertraces_NBCls(:)),'parent',ax2,'color',[.9 .9 1],'tag',savetag);
+line(x,EpiFlashStim(trial.params),'parent',ax2,'color',[.9 .9 1],'tag',savetag);
+clrs = parula(size(trial.clustertraces_NBCls,2)+1);
 clrs = clrs(1:end-1,:);
-for cl = 1:size(trial.clustertraces,2)
-    ls = line(x(t2.exposure2),trial.clustertraces(:,cl),'parent',ax2,'tag',savetag);
+for cl = 1:size(trial.clustertraces_NBCls,2)
+    ls = line(x(t2.exposure2),(trial.clustertraces_NBCls(:,cl)-trial.F0_clustertraces_NBCls(cl))/trial.F0_clustertraces_NBCls(cl),'parent',ax2,'tag',savetag);
     ls.Color = clrs(cl,:);
 end    
 
@@ -111,23 +112,24 @@ elseif isfield(trial,'forceProbeStuff')
     ax4.Tag = 'unlink';
     colormap(ax4,'gray')
     
-    if length(size(trial.clmask))>2
-        N_Cl_idx = nan(size(trial.clmask,3),1);
-        for idx = 1:length(N_Cl_idx)
-            N_Cl_idx(idx) = length(unique(trial.clmask(:,:,idx)))-1;
-        end
-        clmask = squeeze(trial.clmask(:,:,N_Cl_idx==min(size(trial.clustertraces))));
-    else
-        clmask = trial.clmask;
-    end
+%     if length(size(trial.clmask))>2
+%         N_Cl_idx = nan(size(trial.clmask,3),1);
+%         for idx = 1:length(N_Cl_idx)
+%             N_Cl_idx(idx) = length(unique(trial.clmask(:,:,idx)))-1;
+%         end
+%         clmask = squeeze(trial.clmask(:,:,N_Cl_idx==min(size(trial.clustertraces))));
+%     else
+%         clmask = trial.clmask;
+         clmask = trial.clmaskFromNonBarTrials;
+%     end
     imshow(clmask*0,[0 255],'parent',ax4);
-    for cl = 1:size(trial.clustertraces,2)
-        alphamask(clmask==cl,clrs(cl,:),1,ax4);
+    clnums = unique(clmask); clnums = clnums(clnums>1);
+    for cl = 1:size(trial.clustertraces_NBCls,2)
+        alphamask(clmask==clnums(cl),clrs(cl,:),1,ax4);
     end
     ax4.Tag = 'unlink';
     ax4.Position = [.02 .02 .4 .3];
     
-
     
 end
 

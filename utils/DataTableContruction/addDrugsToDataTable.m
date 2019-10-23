@@ -1,20 +1,25 @@
-function [TP,drugs] = addDrugsToDataTable(TP)
+function [T,drugs] = addDrugsToDataTable(T)
+drugs = {'caffeine';'mla';'atropine';'ttx';'5ht';'wash_out'};
 
-if any(strcmp(TP.Properties.VariableNames,'Drugs'))
+if any(strcmp(T.Properties.VariableNames,'Drugs'))
+    [~,drugidx] = intersect(T.Properties.VariableNames,drugs);
+    drugChecks = T(:,drugidx);
+    drugs = drugs(any(drugChecks{:,:},1));
     fprintf('Drugs already added\n')
+    return
 end
 % From the table, find trials matching the distances and fill in the
 % drug columns
-drugs = {'caffeine';'mla';'atropine';'ttx';'5ht'};
+
 strprfunc = @(c)regexprep(c,{';','\s','^_','_$','\.'},{'','_','','','_'});
-Drugs = cell(height(TP),1);
-drugChecks = false(height(TP),length(Drugs));
-for tr = 1:length(TP.tags)
-    if isempty(TP.tags{tr})
+Drugs = cell(height(T),1);
+drugChecks = false(height(T),length(drugs));
+for tr = 1:length(T.tags)
+    if isempty(T.tags{tr})
         % if the trial is not tagged
         continue
     end
-    tags = TP.tags{tr};
+    tags = T.tags{tr};
     if isempty(tags{1})
         % if the trial was tagged, and it was removed
         continue
@@ -37,6 +42,14 @@ mla = drugChecks(:,2);
 atropine = drugChecks(:,3);
 ttx = drugChecks(:,4);
 serotonin  = drugChecks(:,5);
+wash_out  = drugChecks(:,6);
+caffeine = drugChecks(:,1);
+control  = ~any(drugChecks,2);
 
-TP = addvars(TP,Drugs,caffeine,mla,atropine,ttx,serotonin);
+T = addvars(T,Drugs,control,caffeine,mla,atropine,ttx,serotonin,wash_out);
 drugs = drugs(any(drugChecks,1));
+drugs = regexprep(drugs,'5ht','serotonin');
+
+if ~isempty(T.Properties.Description)
+    save(T.Properties.Description,'T')
+end

@@ -11,7 +11,7 @@ for setidx = 1:length(trials)
     br.Position =  [1050    251    270    56];
     
     % set probeline for a few test movies
-    for tr_idx = trialnumlist(1:3) 
+    for tr_idx = trialnumlist(1) 
         trial = load(sprintf(trialStem,tr_idx));
         
         waitbar((tr_idx-trialnumlist(1)+1)/6,br,regexprep(sprintf(trialStem,tr_idx),'_','\\_'));
@@ -22,13 +22,17 @@ for setidx = 1:length(trials)
             continue
         end
         trial = probeLineROI(trial);
+        %trial = probeLineROI_startAtEpi(trial);
     end
     
     % just set the line for the rest of the trials
-    temp.forceProbe_line = getacqpref('quickshowPrefs','forceProbeLine');
-    temp.forceProbe_tangent = getacqpref('quickshowPrefs','forceProbeTangent');
+    temp.forceProbe_line = trial.forceProbe_line;
+    temp.forceProbe_tangent = trial.forceProbe_tangent;
+    
+    % temp.forceProbe_line = getacqpref('quickshowPrefs','forceProbeLine');
+    % temp.forceProbe_tangent = getacqpref('quickshowPrefs','forceProbeTangent');
 
-    for tr_idx = trialnumlist(4:end)
+    for tr_idx = trialnumlist(2:end)
         trial = load(sprintf(trialStem,tr_idx));
         trial.forceProbe_line = temp.forceProbe_line;
         trial.forceProbe_tangent = temp.forceProbe_tangent;

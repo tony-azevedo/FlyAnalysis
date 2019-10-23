@@ -4,6 +4,8 @@ posInDeg = pos2deg(positions);
 deg = pos2deg([-10 -3 -1 1 3 10]' * 6);
 xlims = [-28 28];
 
+T_RampAndStep_nodrugs = T_RampAndStep(T_RampAndStep.Position<Inf,:);
+
 fig = figure;
 %fig.Position = [];
 figure(fig);
@@ -26,34 +28,34 @@ lightclrs = [.8 .8 .8
 ax = panl(1).select(); ax.NextPlot = 'add';
 
 % Plot peak of 150 ramp responses vs amplitude
-wtidx = ~contains(T_RampAndStep.Genotype,'iav-LexA');
-dspidx = T_RampAndStep.Displacement==-10;
-spdidx = T_RampAndStep.Speed==150;
+wtidx = ~contains(T_RampAndStep_nodrugs.Genotype,'iav-LexA');
+dspidx = T_RampAndStep_nodrugs.Displacement==-10;
+spdidx = T_RampAndStep_nodrugs.Speed==150;
 
-cell_labels = unique(T_RampAndStep.Cell_label);
-cellids = unique(T_RampAndStep.CellID);
+cell_labels = unique(T_RampAndStep_nodrugs.Cell_label);
+cellids = unique(T_RampAndStep_nodrugs.CellID);
 offsets = [-1 0 1];
 
 % loop over {slow,inter,fast}
 for cell_label = cell_labels'
     % loop over positions
-    lblidx = contains(T_RampAndStep.Cell_label,cell_label{1});
+    lblidx = contains(T_RampAndStep_nodrugs.Cell_label,cell_label{1});
     clridx = strcmp(cell_labels,cell_label);
     offset = offsets(clridx);
     for cellid = cellids'
-        cllidx = strcmp(T_RampAndStep.CellID,cellid);
+        cllidx = strcmp(T_RampAndStep_nodrugs.CellID,cellid);
         
         for position = positions
             
-            posidx = T_RampAndStep.Position==position;
+            posidx = T_RampAndStep_nodrugs.Position==position;
 
             rowsidx = wtidx & lblidx & dspidx & spdidx & cllidx & posidx;
             if ~sum(rowsidx)
                 continue
             end
-            T_Temp = T_RampAndStep(rowsidx,:);
+            T_Temp = T_RampAndStep_nodrugs(rowsidx,:);
             
-            DX = x(2); % offset the genotypes and positions
+            DX = deg(end); % offset the genotypes and positions
             % plot(ax,DX+T_Temp.Position/1000 + [0 0.04],[T_Temp.Peak T_Temp.Peak_return],'marker','.','Color',lightclrs(clridx,:));%,'LineStyle','none');
             plot(ax,[0 DX + [0 0.3]]+offset,T_Temp.V_m+[0 T_Temp.Peak T_Temp.Peak_return],'marker','.','Color',lightclrs(clridx,:));%,'LineStyle','none');
         end
@@ -78,38 +80,37 @@ ax.XLim = xlims;
 % assume flextion steps (-10) start at 0 deg, extensions (+10V) start at 8 deg
 ax = panl(2).select(); ax.NextPlot = 'add';
 
-wtidx = ~contains(T_RampAndStep.Genotype,'iav-LexA');
+wtidx = ~contains(T_RampAndStep_nodrugs.Genotype,'iav-LexA');
 
-cell_labels = unique(T_RampAndStep.Cell_label);
-cellids = unique(T_RampAndStep.CellID);
+cell_labels = unique(T_RampAndStep_nodrugs.Cell_label);
+cellids = unique(T_RampAndStep_nodrugs.CellID);
 
 offsets = [-1 0 1];
 % loop over {slow,inter,fast}
 for cell_label = cell_labels'
-    offset = offsets(cnt);
-    lblidx = contains(T_RampAndStep.Cell_label,cell_label{1});
+    lblidx = contains(T_RampAndStep_nodrugs.Cell_label,cell_label{1});
     clridx = strcmp(cell_labels,cell_label);
     offset = offsets(clridx);
 
     for cellid = cellids'
-        cllidx = strcmp(T_RampAndStep.CellID,cellid);
+        cllidx = strcmp(T_RampAndStep_nodrugs.CellID,cellid);
         
         for displacement = [-10 10] % displacements
-            dspidx = T_RampAndStep.Displacement==displacement;
+            dspidx = T_RampAndStep_nodrugs.Displacement==displacement;
             for speed = [0 100 150 300]
-                spdidx = T_RampAndStep.Speed==speed;
+                spdidx = T_RampAndStep_nodrugs.Speed==speed;
                 
                 for position = positions
                     
-                    posidx = T_RampAndStep.Position==position;
+                    posidx = T_RampAndStep_nodrugs.Position==position;
                     
                     rowsidx = wtidx & dspidx & spdidx & cllidx & posidx & lblidx;
                     if ~sum(rowsidx)
                         continue
                     end
-                    T_Temp = T_RampAndStep(rowsidx,:);
+                    T_Temp = T_RampAndStep_nodrugs(rowsidx,:);
                     
-                    DX = x(2)/2 * sign(displacement);
+                    DX = deg(end)/2 * sign(displacement);
                     % plot(ax,DX+T_Temp.Position/1000 + [0 0.04],[T_Temp.Peak T_Temp.Peak_return],'marker','.','Color',lightclrs(clridx,:));%,'LineStyle','none');
                     plot(ax,pos2deg(T_Temp.Position)+DX+offset,T_Temp.V_m,'marker','.','Color',lightclrs(clridx,:),'tag',[cellid{1} '_' num2str(position)]);%,'LineStyle','none');
                 end
@@ -126,7 +127,7 @@ for cell_label = cell_labels'
 
     for position = positions
         for displacement = [-10 10]
-            DX = x(2)/2 * sign(displacement);
+            DX = deg(end)/2 * sign(displacement);
             celllbllines = findobj(ax,'color',lightclrs(clridx,:),'XData',pos2deg(position)+DX+offset);
             Rest_mat = nan(length(celllbllines),1);
             for l = 1:length(celllbllines)
@@ -155,26 +156,26 @@ ax.XLim = xlims;
 %% Panel 3
 ax = panl(3).select(); ax.NextPlot = 'add';
 % Plot resting membrane potential starting with second trial of a group
-wtidx = ~contains(T_RampAndStep.Genotype,'iav-LexA');
-dspidx = T_RampAndStep.Displacement==-10;
-spdidx = T_RampAndStep.Speed==150;
+wtidx = ~contains(T_RampAndStep_nodrugs.Genotype,'iav-LexA');
+dspidx = T_RampAndStep_nodrugs.Displacement==-10;
+spdidx = T_RampAndStep_nodrugs.Speed==150;
 
-cell_labels = unique(T_RampAndStep.Cell_label);
-cellids = unique(T_RampAndStep.CellID);
+cell_labels = unique(T_RampAndStep_nodrugs.Cell_label);
+cellids = unique(T_RampAndStep_nodrugs.CellID);
 
 % loop over {slow,inter,fast}
 for cell_label = cell_labels'
     % loop over positions
-    lblidx = contains(T_RampAndStep.Cell_label,cell_label{1});
+    lblidx = contains(T_RampAndStep_nodrugs.Cell_label,cell_label{1});
     clridx = strcmp(cell_labels,cell_label);
     for cellid = cellids'
-        cllidx = strcmp(T_RampAndStep.CellID,cellid);
+        cllidx = strcmp(T_RampAndStep_nodrugs.CellID,cellid);
         
         rowsidx = wtidx & lblidx & dspidx & spdidx & cllidx;
         if sum(rowsidx)<3
             continue
         end
-        T_Temp = T_RampAndStep(rowsidx,:);
+        T_Temp = T_RampAndStep_nodrugs(rowsidx,:);
         
         plot(ax,pos2deg(T_Temp.Position),T_Temp.V_m,'marker','.','Color',lightclrs(clridx,:),'LineStyle','none');
     end

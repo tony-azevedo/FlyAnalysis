@@ -1,6 +1,6 @@
 function h = EpiFlash2TForceVsDistance(h,handles,savetag)
 
-if ~isfield(handles.trial,'forceProbeStuff');
+if ~isfield(handles.trial,'forceProbeStuff')
     fprintf('No profiles\n');
     beep
     return
@@ -42,7 +42,7 @@ plot(ax,y(frame_times>0&frame_times<.08),F(frame_times>0&frame_times<.08),'+')
 % xlim(ax,[-trial.params.preDurInSec  trial.params.stimDurInSec+trial.params.postDurInSec])
 % % ylim(ax,[-1E-6 12E-6])
 % legend({'ky','cy''','my'''''})
-xlabel(ax,'s')
+xlabel(ax,'m')
 ylabel(ax,'F (N)')
 
 A = polyarea(y(~isnan(F)),F(~isnan(F)));

@@ -5,7 +5,7 @@
 % Assuming I'm in a directory where the movies are to be processed
     
 % get rid of the excluded trials (should have already done this)
-trial = load(sprintf(trialStem,trialnumlist(1)));
+trial = load(sprintf(trialStem,trialnumlist(2)));
 
 if isfield(trial,'clmask')
     fprintf('clmask already run\n');
@@ -83,7 +83,9 @@ t_f = trial.params.stimDurInSec-5*1/vid.FrameRate;
 cam2 = postHocExposure2(trial,N);
 frames = find(t(cam2.exposure2)>t_i & t(cam2.exposure2)<t_f);
 
-cam1 = postHocExposure(trial,length(trial.legPositions.Tibia_Angle));
+vid_IR = VideoReader(trial.imageFile);
+N_IR = vid.Duration*vid.FrameRate;
+cam1 = postHocExposure(trial,N_IR);
 cam1frametimes = t(cam1.exposure);
 
 fctr = vid.FrameRate/50; % pretend you're sampling at 50 hz;
@@ -110,7 +112,7 @@ for chnk_idx = 1:chnksz:length(trialnumlist)
         vid.CurrentTime = t_i;       
 
         frmcnt = 0;
-        ta = trial.legPositions.Tibia_Angle;
+        %ta = trial.legPositions.Tibia_Angle;
         
         while frmcnt < N 
             frmcnt = frmcnt+1;
@@ -118,8 +120,8 @@ for chnk_idx = 1:chnksz:length(trialnumlist)
             
             frmrgb = readFrame(vid);
                 
-            cam1FrameTimesOverCam2Frame = cam1frametimes > vid.CurrentTime - 1/vid.FrameRate & cam1frametimes <= vid.CurrentTime;
-            anglesOverFrames = ta(cam1FrameTimesOverCam2Frame);
+            %cam1FrameTimesOverCam2Frame = cam1frametimes > vid.CurrentTime - 1/vid.FrameRate & cam1frametimes <= vid.CurrentTime;
+            %anglesOverFrames = ta(cam1FrameTimesOverCam2Frame);
                 
             if length(size(frmrgb))==2
                 frm = double(frmrgb(:,:,1));

@@ -1,5 +1,5 @@
 %% ForceProbe patcing workflow 181014_F1_C1
-% trial = load('E:\Data\181014\181014_F1_C1\CurrentStep2T_Raw_181014_F1_C1_12.mat');
+trial = load('E:\Data\181014\181014_F1_C1\CurrentStep2T_Raw_181014_F1_C1_12.mat');
 D = fileparts(trial.name);
 cd (D)
 
@@ -18,21 +18,34 @@ cd (D)
 % bartrials{1} = 12:66; %#ok<*NASGU> % no drugs
 % bartrials{2} = 67:171; % Atropine and MLA
 
+%% CurrentStep2T - High current step, permissive spike id
+clear trials spiketrials bartrials
+spiketrials{1} = [15,25,30,35,40,45,50,55,60,65];
+spiketrials{2} = [16,21,26,31,36,46,51,56,61,66];
+examplespiketrials = {
+'E:\Data\181014\181014_F1_C1\CurrentStep2T_Raw_181014_F1_C1_15.mat'
+'E:\Data\181014\181014_F1_C1\CurrentStep2T_Raw_181014_F1_C1_15.mat'
+};
+trialStem = extractTrialStem(trial.name); D = fileparts(trial.name);
+trials = spiketrials;
+exampletrials = examplespiketrials;
+Script_ExtractSpikesFromInterestingTrials
+
 %% EpiFlash2TTrain - random movements
 
-% trial = load('E:\Data\181014\181014_F1_C1\EpiFlash2TTrain_Raw_181014_F1_C1_1.mat');
-% 
-% clear trials spiketrials bartrials nobartrials
-% spiketrials{1} = 1:10; % bar
-% spiketrials{2} = 11:18; % no bar
-% spiketrials{3} = 19:34; % atropine/MLA
-% examplespiketrials = {
-%     'E:\Data\181014\181014_F1_C1\Sweep2T_Raw_181014_F1_C1_34.mat'
-%     };
+trial = load('E:\Data\181014\181014_F1_C1\EpiFlash2TTrain_Raw_181014_F1_C1_1.mat');
 
-% nobartrials{1} = 11:18; % Nice Tibia angles calculated
+clear trials spiketrials bartrials nobartrials
+spiketrials{1} = 1:10; % bar
+spiketrials{2} = 11:18; % no bar
+spiketrials{3} = 19:34; % atropine/MLA
+examplespiketrials = {
+    'E:\Data\181014\181014_F1_C1\Sweep2T_Raw_181014_F1_C1_34.mat'
+    };
 
-% bartrials{1} = 1:10;
+nobartrials{1} = 11:18; % Nice Tibia angles calculated
+
+bartrials{1} = 1:10;
 % bartrials{2} = 19:34;
 
 %% Sweep2T - , looking for changes in spike rate with slow movement of the bar

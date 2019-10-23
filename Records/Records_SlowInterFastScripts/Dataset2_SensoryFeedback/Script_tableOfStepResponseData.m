@@ -45,7 +45,7 @@ for cidx = 1:length(CellID)
     end
     
     fprintf(1,'\tTablizing datastructure %s\n',datafilename);
-    TP = datastruct2table(data,'DataStructFileName',datafilename);
+    TP = datastruct2table(data,'DataStructFileName',datafilename,'rewrite','no');
     fprintf(1,'\tFinding tagged positions: [');
     fprintf(1,'%d\t',T.Positions{cidx});
     fprintf(1,']\n');

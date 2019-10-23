@@ -1,6 +1,6 @@
 % Do stuff with the spike rate of slow neurons
 
-DEBUG =1;
+DEBUG =0;
 
 T_RmpStpSlowFR = T_RampAndStep(strcmp(T_RampAndStep.Cell_label,'slow'),:);
 cids = unique(T_RmpStpSlowFR.CellID);
@@ -54,7 +54,7 @@ for r = 1:height(T_RmpStpSlowFR)
         if isfield(trial,'excluded') && trial.excluded
             continue
         end
-        if ~isfield(trial,'spikes') || isempty(trial.spikes)
+        if ~isfield(trial,'spikes')
             continue
         end
         v_(:,cnt) = trial.voltage_1;

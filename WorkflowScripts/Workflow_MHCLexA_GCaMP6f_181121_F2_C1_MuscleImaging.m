@@ -2,7 +2,7 @@
 
 
 %% EpiFlash2CB2T Bar detection
-trial = load('F:\Acquisition\181121\181121_F2_C1\EpiFlash2CB2T_Raw_181121_F2_C1_2.mat');
+trial = load('E:\Data\181121\181121_F2_C1\EpiFlash2CB2T_Raw_181121_F2_C1_2.mat');
 [~,~,~,~,~,D,trialStem] = extractRawIdentifiers(trial.name);
 cd(D);
 
@@ -19,8 +19,7 @@ nobartrials{3} = 81:100; % after that lost the solution
 
 
 %% Run scripts one at a time
-% trials = bartrials;
-% Nsets = length(trials);
+trials = bartrials;
 
 % Set probe line 
 % Script_SetProbeLine 
@@ -44,21 +43,8 @@ nobartrials{3} = 81:100; % after that lost the solution
 % Fix the trials with Red LED transients and mark them down
 % Script_FixTheTrialsWithRedLEDTransients % Using UV Led
 
-%% Find the minimum CoM, plot a few examples from each trial block and check.
-% Script_FindTheMinimumCoM %% can run this any time, but probably best after all the probe positions have been calculated
-Script_LookAtTrialsWithMinimumCoM %% can run this any time, but probably best after all the probe positions have been calculated
-
-% CoM_origin = CoM_origin(CoM_origin<quantile(CoM_origin,.25));
-% ZeroForce = mean(CoM_origin(round(CoM_origin/10)==mode(round(CoM_origin/10))));
-% mean(CoM_origin(CoM_origin<quantile(CoM_origin,0.2)))
-
-ZeroForce = 681.6;
-trials = bartrials;
-trialnumlist_specific = [];
-for idx = 1:length(trials)
-    trialnumlist_specific = [trialnumlist_specific trials{idx}]; %#ok<AGROW>
-end
-Script_SetTheMinimumCoM_byHand
+% Find the minimum CoM, plot a few examples from each trial block and check.
+Script_FindTheMinimumCoM %% can run this any time, but probably best after all the probe positions have been calculated
 
 %% Calculate position of femur and tibia from csv files
 
@@ -126,7 +112,7 @@ Script_SetTheMinimumCoM_byHand
 
 
 %% showCaImagingROI
-% trial = load('F:\Acquisition\181121\181121_F2_C1\EpiFlash2CB2T_Raw_181121_F2_C1_40.mat');
+% trial = load('E:\Data\181121\181121_F2_C1\EpiFlash2CB2T_Raw_181121_F2_C1_40.mat');
 % Script_AlignCaImagingCameraWithIRCamera
 % 
 % cam1v2alignment.X_offset = 640;
@@ -189,7 +175,7 @@ Script_SetTheMinimumCoM_byHand
 % end
 
 %% Or, alternatively, use the no bar trial clusters to calculate K_meansIntenstiy
-nobartrial = load('F:\Acquisition\181121\181121_F2_C1\EpiFlash2CB2T_Raw_181121_F2_C1_5.mat');
+nobartrial = load('E:\Data\181121\181121_F2_C1\EpiFlash2CB2T_Raw_181121_F2_C1_5.mat');
 
 N_Cl = 6;
 

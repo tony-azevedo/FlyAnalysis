@@ -31,7 +31,7 @@ for p_idx = 1:length(positions)
     panl(p_idx).de.margin = [4 4 4 4];
     for s_idx = 1:length(speeds)        
         panl(p_idx,s_idx).pack('v',{3/4 1/4});
-        ax = panl(p_idx,s_idx,2).select(); ax.NextPlot = 'add'; ax.Visible = 'off';
+        ax = panl(p_idx,s_idx,2).select(); ax.NextPlot = 'add'; %ax.Visible = 'off';
         ax = panl(p_idx,s_idx,1).select(); ax.NextPlot = 'add';
         axs(p_idx,s_idx) = ax;
     end
@@ -74,35 +74,17 @@ for p_idx = 1:length(positions)
                 if isfield(trial,'excluded') && trial.excluded
                     continue
                 end
-                %                 if ~isfield(trial,'spikes') || isempty(trial.spikes)
-                %                     continue
-                %                 end
                 v_(:,cnt) = trial.voltage_1;
                 
-                % spikes_(:,cnt) = 0;
-                % spikes_(trial.spikes,cnt) = 1;
             end
             if all(isnan(v_(:)))
-                % all the trials were excluded
                 continue
             end
-            % ignore the prepulse
-            % twind = t>-trial.params.preDurInSec+.06;
-            
-            % Calculate spike rate
-            % ?(t)=1/?t n_K(t;t+?t) / K.
-            % spikes = nansum(spikes_,2)/sum(~isnan(spikes_(1,:))); % K (some trial may not have spikes)
-            % DT = 10/300; % max displacment/max speed
-            % wind = sum(t>0&t<=DT); nb = round(wind/4); nf = round(wind*3/4);
-            % fr = movsum(spikes,[nb,nf],1)/DT;
-            % fr = smooth(fr,round(wind/4));
         
             v = nanmean(v_,2);
             base = mean(v(t<0 &t>-trial.params.preDurInSec+.1));
             %v = v-mean(v(t<0 &t>-trial.params.preDurInSec+.1));
 
-            
-            panl(p_idx,s_idx).pack('v',{3/4 1/4});
             ax = panl(p_idx,s_idx,1).select(); ax.NextPlot = 'add';
             
             panl(p_idx,s_idx).title(sprintf('v=%d',speeds(s_idx))); 
@@ -114,7 +96,7 @@ for p_idx = 1:length(positions)
             
             ax.XLim = [t(1) t(end)];
             ax = panl(p_idx,s_idx,2).select(); ax.NextPlot = 'add'; ax.Visible = 'off';
-            plot(ax,t,PiezoRampStim(trial.params),'color',stimclrs([-10 10]==dsp,:));
+            plot(ax,t,PiezoRampStim(trial.params)+trial.params.displacementOffset,'color',stimclrs([-10 10]==dsp,:));
             
             %plot(ax2,v(twind),fr(twind));
             drawnow

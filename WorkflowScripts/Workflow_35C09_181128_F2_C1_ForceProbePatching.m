@@ -22,20 +22,33 @@ clear trials spiketrials bartrials
 % bartrials{2} = 50:100; %#ok<*NASGU> % No drugs, was flowing in but then the manipulator movement routine died!
 % bartrials{3} = 101:155; %#ok<*NASGU> % No drugs, was flowing in but then the manipulator movement routine died!
 
-
+%% CurrentStep2T - High current step, permissive spike id
+clear trials spiketrials bartrials
+spiketrials{1} = [5,10,15,20,25,30,35,40,45,50];
+examplespiketrials = {
+'E:\Data\181128\181128_F2_C1\CurrentStep2T_Raw_181128_F2_C1_5.mat'
+};
+trialStem = extractTrialStem(trial.name); D = fileparts(trial.name);
+trials = spiketrials;
+exampletrials = examplespiketrials;
+Script_ExtractSpikesFromInterestingTrials
 
 %% EpiFlash2TTrain - random movements
 
-trial = load('F:\Acquisition\181128\181128_F2_C1\EpiFlash2TTrain_Raw_181128_F2_C1_1.mat');
+trial = load('E:\Data\181128\181128_F2_C1\EpiFlash2TTrain_Raw_181128_F2_C1_1.mat');
 
 clear spiketrials bartrials
 
-% % spiketrials{1} = 1:10; % no bar
-% spiketrials{1} = 16:20; % bar 1-15 Were in Voltage clamp, incorrect units.
-% spiketrials{2} = 21:25; % no bar
+% spiketrials{1} = 1:10; % no bar
+spiketrials{1} = 16:20; % bar 1-15 Were in Voltage clamp, incorrect units.
+spiketrials{2} = 21:25; % no bar
+examplespiketrials = {
+'E:\Data\181128\181128_F2_C1\EpiFlash2TTrain_Raw_181128_F2_C1_16.mat'
+'E:\Data\181128\181128_F2_C1\EpiFlash2TTrain_Raw_181128_F2_C1_21.mat'
+    };
 
 nobartrials{1} = 1:10; % no bar
-nobartrials{1} = 21:30; % no bar
+nobartrials{2} = 21:30; % no bar
 
 bartrials{1} = 16:20; % bar 10-15 Were in Voltage clamp, incorrect units.
 
@@ -72,7 +85,7 @@ bartrials{1} = 337:392; % compare to probe command atropine, atropine MLA
 % bartrials{1} = 253:294; % atropine MLA
 
 %% Sweep2T - , looking for changes in spike rate with slow movement of the bar
-trial = load('F:\Acquisition\181024\181024_F2_C1\Sweep2T_Raw_181024_F2_C1_20.mat');
+trial = load('E:\Data\181024\181024_F2_C1\Sweep2T_Raw_181024_F2_C1_20.mat');
 [~,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
 
 clear spiketrials bartrials

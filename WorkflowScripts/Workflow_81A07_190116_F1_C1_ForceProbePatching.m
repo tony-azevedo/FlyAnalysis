@@ -1,5 +1,5 @@
 %% ForceProbe patcing workflow 190116_F1_C1
-trial = load('F:\Acquisition\190116\190116_F1_C1\EpiFlash2TTrain_Raw_190116_F1_C1_77.mat');
+trial = load('E:\Data\190116\190116_F1_C1\EpiFlash2TTrain_Raw_190116_F1_C1_77.mat');
 [protocol,dateID,flynum,cellnum,trialnum,D,trialStem,datastructfile] = extractRawIdentifiers(trial.name);
 
 cd (D)
@@ -7,7 +7,7 @@ clear trials spiketrials bartrials
 
 %% EpiFlash2TTrain - random movements
 
-trial = load('F:\Acquisition\190116\190116_F1_C1\EpiFlash2TTrain_Raw_190116_F1_C1_77.mat');
+trial = load('E:\Data\190116\190116_F1_C1\EpiFlash2TTrain_Raw_190116_F1_C1_77.mat');
 
 clear spiketrials bartrials
 
@@ -15,11 +15,11 @@ clear spiketrials bartrials
 nobartrials{1} = 48:77; % no bar
 
 bartrials{1} = 1:47; % bar 10-15 Were in Voltage clamp, incorrect units.
-bartrials{1} = 78:92; % bar 10-15 Were in Voltage clamp, incorrect units.
+bartrials{2} = 78:92; % bar 10-15 Were in Voltage clamp, incorrect units.
 
 %% PiezoRamp2T - looking for changes in spike rate 
 
-trial = load('F:\Acquisition\190116\190116_F1_C1\PiezoRamp2T_Raw_190116_F1_C1_1.mat');
+trial = load('E:\Data\190116\190116_F1_C1\PiezoRamp2T_Raw_190116_F1_C1_1.mat');
 
 % No spikes here
 % spiketrials{1} = 1:263; % control
@@ -28,7 +28,7 @@ trial = load('F:\Acquisition\190116\190116_F1_C1\PiezoRamp2T_Raw_190116_F1_C1_1.
 
 %% PiezoStep2T -  looking for changes in spike rate 
 
-trial = load('F:\Acquisition\190116\190116_F1_C1\PiezoStep2T_Raw_190116_F1_C1_1.mat');
+trial = load('E:\Data\190116\190116_F1_C1\PiezoStep2T_Raw_190116_F1_C1_1.mat');
 
 % No spikes here
 % spiketrials{1} = 1:210; % control
@@ -44,12 +44,6 @@ trials = bartrials;
 
 % Set probe line 
 Script_SetProbeLine 
-
-% double check some trials
-trial = load(sprintf(trialStem,66));
-showProbeLocation(trial)
-
-% trial = probeLineROI(trial);
 
 % Find an area to smooth out the pixels
 Script_FindAreaToSmoothOutPixels
@@ -77,7 +71,7 @@ trials = spiketrials;
 Script_ExtractSpikesFromInterestingTrials
 
 %% Calculate position of femur and tibia from csv files
-trial = load('F:\Acquisition\181127\181127_F2_C1\EpiFlash2TTrain_Raw_181127_F2_C1_16.mat');
+trial = load('E:\Data\181127\181127_F2_C1\EpiFlash2TTrain_Raw_181127_F2_C1_16.mat');
 [~,~,~,~,~,~,trialStem,~] = extractRawIdentifiers(trial.name);
 
 clear legtrials 

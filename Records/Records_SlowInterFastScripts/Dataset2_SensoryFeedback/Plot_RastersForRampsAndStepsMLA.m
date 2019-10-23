@@ -145,6 +145,6 @@ set(axs,'ylim',[-16 16])
 set(axs2,'ylim',[10 80])
 set(axs2(1,:),'visible','on')
 set(axs2(1,:),'xcolor',[1 1 1])
-set(axs(1,:),'visible','on')
-set(axs(1,:),'xcolor',[1 1 1])
+% set(axs(1,:),'visible','on')
+% set(axs(1,:),'xcolor',[1 1 1])
 

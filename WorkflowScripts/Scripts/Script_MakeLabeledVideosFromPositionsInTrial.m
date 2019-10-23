@@ -60,9 +60,20 @@ for bdidx = 1:length(bodyparts)
     pnt(bdidx) = drawpoint(dispax,'Position',xy,'Color',clrs(bdidx,:));
     %     pnt(bdidx).setString(bodyparts{bdidx});
 end
-pnt(contains(bodyparts,'TibiaVentralBulge')).Label = 'TibiaVentralBulge';
+%pnt(contains(bodyparts,'TibiaVentralBulge')).Label = 'TibiaVentralBulge';
+%pnt(contains(bodyparts,'TibiaVentralBulge')).Label = '';
 
-% for i = 1:length(imnames)
+% put femur on there
+fem = trial.legPositions.Femur;
+o = trial.legPositions.Origin_3D;
+line([0 fem(1)]*250 + o(1),[0 fem(2)]*250 + o(2),'color',[0 .8 0],'parent',dispax)
+
+% put tibia line on there
+tbp = trial.legPositions.Tibia_Projection(1,:);
+tbln = line([o(1) tbp(1)],[o(2) tbp(2)],'color',[0 .8 0],'parent',dispax);
+angletext = text(o(1) - 30,o(2)-30,[num2str(trial.legPositions.Tibia_Angle(1)) char(176)],'parent',dispax,'color',[1 1 1],'HorizontalAlignment','right');
+
+% start back at the first frame
 vid.CurrentTime = 0;
 while fr_idx <= length(ft) && vid.hasFrame    % load up each image,
     % put a big title on the image,
@@ -80,6 +91,12 @@ while fr_idx <= length(ft) && vid.hasFrame    % load up each image,
         xy = [T_X(fr_idx,1) T_Y(fr_idx,1)];
         pnt(bdidx).Position = xy;
     end
+    
+    tbp = trial.legPositions.Tibia_Projection(fr_idx,:);
+    tbln.XData = [o(1) tbp(1)];
+    tbln.YData = [o(2) tbp(2)];
+    angletext.String = [num2str(trial.legPositions.Tibia_Angle(fr_idx)) char(176)];
+    
     drawnow;
     
     frame = getframe(displayf); 

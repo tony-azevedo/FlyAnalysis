@@ -77,15 +77,17 @@ PWDists.Properties.VariableNames = varNames;
 
 bin_max = max(max(PWDists{:,:}));
 bin_min = min(min(PWDists{:,:}));
-bin_del = (bin_max-bin_min)/(height(TibiaCoords));
+bin_del = (bin_max-bin_min)/(50*length(trialnumlist));
 bins = bin_min+bin_del/2:bin_del:bin_max;
 
 
 %% Distances should be bounded, Find the weird distances
 % Weird distances indicate an error in the tracking
 
-N_cutoff = 5;
+N_cutoff = 3;
 fprintf('Distance is bad if there are fewer than %g values in a bin\n',N_cutoff);
+
+%%
 
 % For each distance comparison, determine weird ones
 weird_dists = false(size(PWDists));
@@ -102,6 +104,15 @@ end
 weird_frames = any(weird_dists,2);
 fprintf('%d frames are weird\n',sum(weird_frames));
 
+%% If the initial plot shows no weird points, flip to 0 to ignore the weird points
+includeweirddists = 0;
+if includeweirddists
+    weird_dists(:,:) = false;
+    weird_frames = any(weird_dists,2);
+    fprintf('\t\t *** Including all the weird distances\n');
+end
+
+%%
 [weirdest_dis,o] = sort(sum(weird_dists,1));
 for oidx = length(o):-1:1
     fprintf('%d weird %s distances\n',weirdest_dis(oidx),varNames{oidx});

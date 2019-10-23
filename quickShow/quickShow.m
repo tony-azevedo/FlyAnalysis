@@ -21,7 +21,7 @@ function varargout = quickShow(varargin)
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 
-% Last Modified by GUIDE v2.5 16-Oct-2018 13:02:24
+% Last Modified by GUIDE v2.5 20-Mar-2019 11:05:48
 
 %% Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -278,6 +278,7 @@ handles.currentPrtcl = protocols{get(hObject,'value')};
 
 set(handles.Spikes,'Value',0);
 set(handles.probetrace_button,'Value',0);
+set(handles.showmenu_chkbx,'Value',0);
 
 % give handles the information on the Trials involved
 rawfiles = dir(fullfile(handles.dir,[handles.currentPrtcl '_Raw*']));
@@ -415,21 +416,32 @@ set(handles.exclude,'enable','off');
 
 if ~isfield(handles.trial,'imageFile') || isempty(handles.trial.imageFile)
     set(handles.image_info,'String','','Enable','off');
-elseif isfield(handles.trial,'imageFile') && ~isempty(handles.trial.imageFile) && imageFileExist(handles.trial)
-    try exp = postHocExposure(handles.trial);
-    catch e
-        guidata(hObject,handles)
-        quickShow_Protocol(hObject, eventdata, handles)
-        error(e.message)
+elseif isfield(handles.trial,'imageFile') && ~isempty(handles.trial.imageFile)
+    [yn,imdir] = imageFileExist(handles.trial);
+    if yn
+        [imdir,imfile,ext] = fileparts(imdir);
     end
-    [~,imfdir] = imageFileExist(handles.trial);
-    a = dir(imfdir);
-    samprate = handles.trial.params.sampratein;
-    imstr = sprintf('Exp: %d - rate: %.2f - size: %dMB (R click for more)',...
-        sum(exp.exposure),...
-        samprate/mean(diff(find(exp.exposure))),...
-        round(a.bytes/1E6));
-    set(handles.image_info,'String',imstr,'fontsize',7,'Enable','on','ButtonDownFcn',@image_button_Callback);
+    if ~yn
+        
+    elseif yn && ~strcmp(handles.trial.imageFile,[imfile,ext]) && ~contains(handles.trial.imageFile,imdir)
+        trialnum_Callback(hObject, eventdata, handles)
+        handles = guidata(hObject);
+    elseif yn && (strcmp(handles.trial.imageFile,[imfile,ext]) || contains(handles.trial.imageFile,imdir))
+        try exp = postHocExposure(handles.trial);
+        catch e
+            guidata(hObject,handles)
+            quickShow_Protocol(hObject, eventdata, handles)
+            error(e.message)
+        end
+        [~,imfdir] = imageFileExist(handles.trial);
+        a = dir(imfdir);
+        samprate = handles.trial.params.sampratein;
+        imstr = sprintf('Exp: %d - rate: %.2f - size: %dMB (R click for more)',...
+            sum(exp.exposure),...
+            samprate/mean(diff(find(exp.exposure))),...
+            round(a.bytes/1E6));
+        set(handles.image_info,'String',imstr,'fontsize',7,'Enable','on','ButtonDownFcn',@image_button_Callback);
+    end
 end
 guidata(hObject,handles)
 quickShow_Protocol(hObject, eventdata, handles)
@@ -699,27 +711,20 @@ end
 function Spikes_Callback(spikebutt, eventdata, h)
 
 if ~spikebutt.Value
-    s = findobj(h.quickShowPanel,'type','line','tag','Spikes');
-    ax = findobj(h.quickShowPanel,'type','axes','tag','quickshow_inax');
-    ax.ButtonDownFcn = '';
-
+    s = findobj(h.quickShowPanel,'type','line','tag','Spikes','-or','tag','EMGspikes','-or','tag','FastEMGspikes');
     if ~isempty(s)
         delete(s);
     end
     
-    % Potential EMG spikes
-    s = findobj(h.quickShowPanel,'type','line','tag','EMGSpikes');
+    ax = findobj(h.quickShowPanel,'type','axes','tag','quickshow_inax');
+    ax.ButtonDownFcn = '';
     ax = findobj(h.quickShowPanel,'type','axes','tag','quickshow_inax2');
     ax.ButtonDownFcn = '';
-    if ~isempty(s)
-        delete(s);
-    end
 
     guidata(spikebutt,h)
     return
 end
-s = findobj(h.quickShowPanel,'type','line','tag','Spikes');
-
+s = findobj(h.quickShowPanel,'type','line','tag','Spikes','-or','tag','EMGSpikes','-or','tag','FastEMGSpikes');
 if ~isempty(s)
     delete(s);
 end
@@ -754,10 +759,17 @@ elseif isfield(h.trial,'spikes') && isfield(h.trial,'spikeDetectionParams')
     end
     ax.ButtonDownFcn = @SimpleSpikeSpotCheckCheck;
 
-    if isfield(h.trial,'EMGspikes') && isfield(h.trial,'EMGspikeDetectionParams')
-
+    % contains(fieldnames(h.trial),'EMGspikes')
+    if any(contains(fieldnames(h.trial),'EMGspikes')) && ...
+            any(contains(fieldnames(h.trial),'EMGspikeDetectionParams'))
+        flds = fieldnames(h.trial);
+        emgspkfld = flds(contains(flds,'EMGspikes'));
+        emgspkfld = emgspkfld{1};
+        emgspkfld = emgspkfld(1:regexp(emgspkfld,'EMGspikes','end'));
+        emgspkfl = emgspkfld(1:end-1);
+        
         ax = findobj(h.quickShowPanel,'type','axes','tag','quickshow_inax2');
-        if isempty(h.trial.EMGspikes)
+        if isempty(h.trial.(emgspkfld))
             t = findobj(ax,'type','text','String','Spike detection has run: 0 spikes');
             delete(t);
             text(ax,ax.XLim(1)+0.05*diff(ax.XLim), ax.YLim(1)+0.05*diff(ax.YLim),sprintf('Spike detection has run: 0 spikes'))
@@ -768,15 +780,16 @@ elseif isfield(h.trial,'spikes') && isfield(h.trial,'spikeDetectionParams')
         end
         y = ax.YLim(2);
         t = makeInTime(h.trial.params);
-        if ~any(isnan(h.trial.EMGspikes))
-            ticks = raster(ax,t(h.trial.EMGspikes),y);
-            set(ticks,'Tag','EMGSpikes');
-            if isfield(h.trial,'EMGspikeSpotChecked') && ~h.trial.EMGspikeSpotChecked
+                
+        if ~any(isnan(h.trial.(emgspkfld)))
+            ticks = raster(ax,t(h.trial.(emgspkfld)),y);
+            set(ticks,'Tag',emgspkfld);
+            if isfield(h.trial,[emgspkfl 'SpotChecked']) && ~h.trial.([emgspkfl 'SpotChecked'])
                 set(ticks,'Color',[0    1    0.7410]);
             end
         else
-            raster(ax,t(h.trial.spikes(~isnan(h.trial.EMGspikes))),y);
-            ticks = raster(ax,t(h.trial.spikes_uncorrected(isnan(h.trial.EMGspikes))),y);
+            raster(ax,t(h.trial.spikes(~isnan(h.trial.(emgspkfld)))),y);
+            ticks = raster(ax,t(h.trial.EMGspikes_uncorrected(isnan(h.trial.(emgspkfld)))),y);
             set(ticks,'Color',[0    1    0.7410]);
         end
         ax.ButtonDownFcn = @SimpleEMGSpikeSpotCheckCheck;
@@ -864,6 +877,8 @@ if ~probebutt.Value
     if ~isempty(s)
         delete(s);
     end
+    guidata(probebutt,h)
+    trialnum_Callback(h.trialnum, eventdata, h)
     return
 end
 s = findobj(h.quickShowPanel,'type','line','tag','ProbeTrace');
@@ -1176,100 +1191,107 @@ handles = guidata(hObject);
 set(handles.analyses_chckbox,'value',0);
 guidata(hObject, handles);
 
-% --- Executes button press in Combine Blocks.
-function combineblocks_Callback(hObject, eventdata, handles) %#ok<*DEFNU>
-fns = fieldnames(handles.trial.params);
-plurals = {};
-for fn_ind = 1:length(fns)
-    if strcmp('s',fns{fn_ind}(end))
-        plurals{end+1} = fns{fn_ind};
-    end
-end
-% Create figure
-h.f = figure('units','pixels','position',[200,200,100,30+16*length(plurals)+10],...
-             'toolbar','none','menu','none');
-for pl_ind = 1:length(plurals)
-    % Create yes/no checkboxes
-    h.c(pl_ind) = uicontrol('style','checkbox','units','pixels','parent',h.f,...
-        'position',[10,30+16*(pl_ind-1),100,15],'string',plurals{pl_ind});
-    % left bottom width height
-end
+% % --- Executes button press in Combine Blocks.
+function parameterTable_Callback(hObject, eventdata, handles) %#ok<*DEFNU>
+parameterTable = datastruct2table(handles.prtclData,'DataStructFileName',handles.prtclDataFileName);
+[parameterTable, drugs] = addDrugsToDataTable(parameterTable);
+openvar('parameterTable')
 
-% Create OK pushbutton
-h.p = uicontrol('style','pushbutton','units','pixels','parent',h.f,...
-                'position',[10,5,80,20],'string','OK',...
-                'callback',@(x,y,z)uiresume);
-uiwait(h.f);
-
-excluded = {'trialBlock','combinedTrialBlock','gain','secondary_gain','randomize'};
-for pl_ind = 1:length(plurals)
-    if get(h.c(pl_ind),'value')
-        excluded{end+1} = plurals{pl_ind};
-    end
-end
-close(h.f);
-clear h
-blocktrials = findLikeTrials('name',handles.trial.name,'datastruct',handles.prtclData,'exclude',excluded);
-
-blocks = zeros(1,length(blocktrials));
-combinedblocks = [];
-combinedblocksnums = [];
-if isfield(handles.prtclData(blocktrials(1)),'combinedTrialBlock')
-    combinedblocks = zeros(1,length(blocktrials));
-    combinedblocksnums = zeros(1,length(blocktrials));
-end
-tags = cell(size(blocks));
-for bt_ind = 1:length(blocktrials)
-    tags{bt_ind} = handles.prtclData(bt_ind).tags;
-    blocks(bt_ind) = handles.prtclData(blocktrials(bt_ind)).trialBlock;
-    if isfield(handles.prtclData(blocktrials(bt_ind)),'combinedTrialBlock') && handles.prtclData(blocktrials(bt_ind)).combinedTrialBlock>0
-        combinedblocks(bt_ind) = handles.prtclData(blocktrials(bt_ind)).trialBlock;
-        combinedblocksnums(bt_ind) = handles.prtclData(blocktrials(bt_ind)).combinedTrialBlock;
-    end
-end
-
-[blocks,ind] = unique(blocks);
-if ~isempty(combinedblocks)
-    combinedblocks = combinedblocks(ind);
-    combinedblocks = combinedblocks(combinedblocks>0);
-    combinedblocksnums = combinedblocksnums(ind);
-    combinedblocksnums = combinedblocksnums(combinedblocksnums>0);
-    disp(['Blocks ' sprintf('%d ', blocks) 'constitute combined blocks ' sprintf('%d ',combinedblocksnums)])
-end
-tags = tags(ind);
-
-% make a little dialog that creates checkboxes and populates the window
-% with choices
-
-blocks2combine = selectFromCheckBoxes(blocks,tags,'title','select blocks, dbl click to continue','prechecked',ismember(blocks,combinedblocks));
-if isempty(blocks2combine)
-    error('No block pairs selected for combination');
-end
-
-blocks2combine = blocks(logical(blocks2combine));
-fprintf('(Un)Combining Blocks: ')
-fprintf('%d, ', blocks2combine);
-fprintf('\n');
-
-for prt_ind = 1:length(handles.prtclData)
-    if sum(blocks2combine==handles.prtclData(prt_ind).trialBlock)
-        handles.prtclData(prt_ind).combinedTrialBlock = handles.trial.params.trialBlock;
-        trial = load(fullfile(handles.dir,sprintf(handles.trialStem,handles.prtclData(prt_ind).trial)));
-        trial.params.combinedTrialBlock = handles.trial.params.trialBlock;
-        save(trial.name, '-struct', 'trial');
-    else 
-        handles.prtclData(prt_ind).combinedTrialBlock = 0;
-        trial = load(fullfile(handles.dir,sprintf(handles.trialStem,handles.prtclData(prt_ind).trial)));
-        if isfield('trial.params','combinedTrialBlock')
-            trial.params = rmfield(trial.params,'combinedTrialBlock');
-        end
-        save(trial.name, '-struct', 'trial');
-    end
-
-end
-data = handles.prtclData; %#ok<NASGU>
-save(handles.prtclDataFileName,'data');
-guidata(hObject,handles)
+% Legacy code that would allow you to combine blocks. Replaced by function
+% creating parameter table and allowing you to browse it.
+% function combineblocks_Callback(hObject, eventdata, handles) %#ok<*DEFNU>
+% fns = fieldnames(handles.trial.params);
+% plurals = {};
+% for fn_ind = 1:length(fns)
+%     if strcmp('s',fns{fn_ind}(end))
+%         plurals{end+1} = fns{fn_ind};
+%     end
+% end
+% % Create figure
+% h.f = figure('units','pixels','position',[200,200,100,30+16*length(plurals)+10],...
+%              'toolbar','none','menu','none');
+% for pl_ind = 1:length(plurals)
+%     % Create yes/no checkboxes
+%     h.c(pl_ind) = uicontrol('style','checkbox','units','pixels','parent',h.f,...
+%         'position',[10,30+16*(pl_ind-1),100,15],'string',plurals{pl_ind});
+%     % left bottom width height
+% end
+% 
+% % Create OK pushbutton
+% h.p = uicontrol('style','pushbutton','units','pixels','parent',h.f,...
+%                 'position',[10,5,80,20],'string','OK',...
+%                 'callback',@(x,y,z)uiresume);
+% uiwait(h.f);
+% 
+% excluded = {'trialBlock','combinedTrialBlock','gain','secondary_gain','randomize'};
+% for pl_ind = 1:length(plurals)
+%     if get(h.c(pl_ind),'value')
+%         excluded{end+1} = plurals{pl_ind};
+%     end
+% end
+% close(h.f);
+% clear h
+% blocktrials = findLikeTrials('name',handles.trial.name,'datastruct',handles.prtclData,'exclude',excluded);
+% 
+% blocks = zeros(1,length(blocktrials));
+% combinedblocks = [];
+% combinedblocksnums = [];
+% if isfield(handles.prtclData(blocktrials(1)),'combinedTrialBlock')
+%     combinedblocks = zeros(1,length(blocktrials));
+%     combinedblocksnums = zeros(1,length(blocktrials));
+% end
+% tags = cell(size(blocks));
+% for bt_ind = 1:length(blocktrials)
+%     tags{bt_ind} = handles.prtclData(bt_ind).tags;
+%     blocks(bt_ind) = handles.prtclData(blocktrials(bt_ind)).trialBlock;
+%     if isfield(handles.prtclData(blocktrials(bt_ind)),'combinedTrialBlock') && handles.prtclData(blocktrials(bt_ind)).combinedTrialBlock>0
+%         combinedblocks(bt_ind) = handles.prtclData(blocktrials(bt_ind)).trialBlock;
+%         combinedblocksnums(bt_ind) = handles.prtclData(blocktrials(bt_ind)).combinedTrialBlock;
+%     end
+% end
+% 
+% [blocks,ind] = unique(blocks);
+% if ~isempty(combinedblocks)
+%     combinedblocks = combinedblocks(ind);
+%     combinedblocks = combinedblocks(combinedblocks>0);
+%     combinedblocksnums = combinedblocksnums(ind);
+%     combinedblocksnums = combinedblocksnums(combinedblocksnums>0);
+%     disp(['Blocks ' sprintf('%d ', blocks) 'constitute combined blocks ' sprintf('%d ',combinedblocksnums)])
+% end
+% tags = tags(ind);
+% 
+% % make a little dialog that creates checkboxes and populates the window
+% % with choices
+% 
+% blocks2combine = selectFromCheckBoxes(blocks,tags,'title','select blocks, dbl click to continue','prechecked',ismember(blocks,combinedblocks));
+% if isempty(blocks2combine)
+%     error('No block pairs selected for combination');
+% end
+% 
+% blocks2combine = blocks(logical(blocks2combine));
+% fprintf('(Un)Combining Blocks: ')
+% fprintf('%d, ', blocks2combine);
+% fprintf('\n');
+% 
+% for prt_ind = 1:length(handles.prtclData)
+%     if sum(blocks2combine==handles.prtclData(prt_ind).trialBlock)
+%         handles.prtclData(prt_ind).combinedTrialBlock = handles.trial.params.trialBlock;
+%         trial = load(fullfile(handles.dir,sprintf(handles.trialStem,handles.prtclData(prt_ind).trial)));
+%         trial.params.combinedTrialBlock = handles.trial.params.trialBlock;
+%         save(trial.name, '-struct', 'trial');
+%     else 
+%         handles.prtclData(prt_ind).combinedTrialBlock = 0;
+%         trial = load(fullfile(handles.dir,sprintf(handles.trialStem,handles.prtclData(prt_ind).trial)));
+%         if isfield('trial.params','combinedTrialBlock')
+%             trial.params = rmfield(trial.params,'combinedTrialBlock');
+%         end
+%         save(trial.name, '-struct', 'trial');
+%     end
+% 
+% end
+% data = handles.prtclData; %#ok<NASGU>
+% save(handles.prtclDataFileName,'data');
+% guidata(hObject,handles)
 
 
 % --- Executes on button press in exclude.
@@ -1508,6 +1530,7 @@ else
       figs = findobj('type','figure');
       figs = figs(figs ~= get(hObject,'parent'));
       close(figs);
+      %clc
 end
 
 function helperFunctionMenu_Callback(hObject, eventdata, handles)
@@ -1610,8 +1633,8 @@ ax2 = findobj(handles.quickShowPanel,'tag','quickshow_inax');
 
 [prot,d,fly,cell,trialnum] = extractRawIdentifiers(handles.trial.name);
 
-xlims = get(ax1,'xlim');
-ylims = get(ax1,'ylim');
+xlims = get(ax2,'xlim');
+ylims = get(ax2,'ylim');
 if ~isempty(xlims)
     text(xlims(1)+.05*diff(xlims),ylims(1)+.05*diff(ylims),...
         sprintf('%s', [prot '.' d '.' fly '.' cell '.' trialnum]),...
@@ -1716,7 +1739,7 @@ if strcmp(button,'Cancel'), return, end
 handles = guidata(hObject);
 if strcmp(button,'Yes')
     nums = findLikeTrials_includingExcluded('name',handles.trial.name,'datastruct',handles.prtclData,...
-        'exclude',{'step','amp','displacement','freq'});
+        'exclude',{'step','amp','displacement','freq','ndf'});
     for n_ind = 1:length(nums)
         trial = load(fullfile(handles.dir,sprintf(handles.trialStem,nums(n_ind))));
         d = 0;
@@ -1757,8 +1780,8 @@ else
     fprintf('Spikes removal complete\n');
         
     set(handles.Spikes,'Value',0);
-    guidata(spikebutt,h)
-    trialnum_Callback(h.trialnum, eventdata, h)
+    guidata(handles.Spikes,handles)
+    trialnum_Callback(handles.trialnum, eventdata,handles)
 end
 
 guidata(hObject, handles);
@@ -1824,6 +1847,7 @@ end
 
 guidata(hObject, handles);
 
+
 function removeProbeLine(hObject,eventdata,handles)
 button = questdlg('Remove Probe Line for entire block?','Remove Probe','Yes');
 if strcmp(button,'Cancel'), return, end
@@ -1831,7 +1855,7 @@ if strcmp(button,'Cancel'), return, end
 handles = guidata(hObject);
 if strcmp(button,'Yes')
     nums = findLikeTrials_includingExcluded('name',handles.trial.name,'datastruct',handles.prtclData,...
-        'exclude',{'step','amp','displacement','freq','speed'});
+        'exclude',{'step','amp','ndf','displacement','freq','speed'});
     for n_ind = 1:length(nums)
         trial = load(fullfile(handles.dir,sprintf(handles.trialStem,nums(n_ind))));
         try trial = rmfield(trial,'forceProbe_line'); 
