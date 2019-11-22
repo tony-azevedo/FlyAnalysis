@@ -906,6 +906,9 @@ if isfield(h.trial,'forceProbeStuff')
     ax.XLim = inax.XLim;
     
     % enable for other trials
+    if isfield(h.trial,'arduino_output')
+        plot(ax,t,h.trial.arduino_output*max(h.trial.forceProbeStuff.CoM-h.trial.forceProbeStuff.CoM(1))+h.trial.forceProbeStuff.CoM(1),'color',[1 .5 0],'tag','ProbeTrace');
+    end
     
 elseif isfield(h.trial,'legPositions')
     ax = findobj(h.quickShowPanel,'type','axes','tag','quickshow_outax');

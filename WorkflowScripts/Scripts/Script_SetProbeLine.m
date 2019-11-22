@@ -5,7 +5,7 @@ close all
 % Go through all the sets of trials
 for setidx = 1:length(trials)
     fprintf('\n\t***** Batch %d of %d\n',setidx,length(trials));
-    trialnumlist = trials{setidx};
+    trialnumlist = trials{setidx}; if size(trialnumlist,1)>1, trialnumlist = trialnumlist'; end
     
     br = waitbar(0,sprintf('Batch %d of %d',setidx,length(trials)));
     br.Position =  [1050    251    270    56];

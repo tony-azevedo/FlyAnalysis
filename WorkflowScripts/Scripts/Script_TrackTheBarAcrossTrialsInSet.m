@@ -2,7 +2,7 @@
 
 for setidx = 1:length(trials)
     fprintf('\n\t***** Batch %d of %d\n',setidx,length(trials));
-    trialnumlist = trials{setidx};
+    trialnumlist = trials{setidx}; if size(trialnumlist,1)>1, trialnumlist = trialnumlist'; end
     
     close all
     

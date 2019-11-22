@@ -2,10 +2,10 @@
 % Go through each cell and add lines for each displacement value at each
 % position.
 
-T = T_RampCells;
+T = T_Reach;
 n = zeros(height(T),1); n_cell = cell(height(T),1);
 Position = n; Trialnums = n_cell; Displacement = n; Speed = n; V_m = n; Peak = n; Peak_step = n; Peak_return = n; TimeToPeak = n; Area = n; Delay = n; mla = n;
-T = addvars(T,Position,Trialnums,Displacement,Speed,V_m,Peak,Peak_step,Peak_return,TimeToPeak,Area,Delay,mla);
+T = addvars(T,Trialnums,NanoOnDur);
 varTypes = varfun(@class,T,'OutputFormat','cell');
 T_Ramp = table('Size',[2000,size(T,2)],'VariableTypes',varTypes,'VariableNames',T.Properties.VariableNames);
 Row_cnt = 0;

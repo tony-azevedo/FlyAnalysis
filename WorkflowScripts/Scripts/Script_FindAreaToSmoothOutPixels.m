@@ -1,7 +1,7 @@
 %% Script_SetProbeLine
 
 for setidx = 1:length(trials)
-    trialnumlist = trials{setidx};
+    trialnumlist = trials{setidx}; if size(trialnumlist,1)>1, trialnumlist = trialnumlist'; end
     
     for tr_idx = trialnumlist(1)
         trial = load(sprintf(trialStem,tr_idx));

@@ -32,12 +32,12 @@ tblCreateString = 'T = table(';
 d = '(';
 b = ')';
 for c_idx = 1:length(fldnames)
-    if isa(data(1).(fldnames{c_idx}),'double')
+    if isa(data(1).(fldnames{c_idx}),'double') 
         eval([fldnames{c_idx} ' = nan(size(data));']);
         d = '(';
         b = ')';
     end
-    if isa(data(1).(fldnames{c_idx}),'double') && length(data(1).(fldnames{c_idx}))>1
+    if isa(data(1).(fldnames{c_idx}),'double') && (length(data(1).(fldnames{c_idx}))>1 || strcmp(fldnames{c_idx}(end),'s')) % might be plural
         eval([fldnames{c_idx} ' = cell(size(data));']);
         d = '{';
         b = '}';
