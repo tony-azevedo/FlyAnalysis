@@ -16,9 +16,13 @@ Dir = fileparts(T.Properties.Description);
 trial = load(fullfile(Dir,[T.protocol{1} '_Raw_' cid '_' num2str(T.trial(1)) '.mat']));
 time = makeInTime(trial.params);
 for tr = 1:length(T.trial)
+    %     fprintf('%d ',tr);
     ao = load(fullfile(Dir,[T.protocol{tr} '_Raw_' cid '_' num2str(T.trial(tr)) '.mat']),'arduino_output');
-    if isfield(ao,'arduino_output')
+    if isfield(ao,'arduino_output') && any(ao.arduino_output)
         ArduinoDuration(tr) = time(find(ao.arduino_output,1,'last'));
+    elseif isfield(ao,'arduino_output') && ~any(ao.arduino_output)
+        fprintf('\tArduino off - trial %d\n',tr);
+        ArduinoDuration(tr) = nan;
     else
         ArduinoDuration(tr) = nan;
     end

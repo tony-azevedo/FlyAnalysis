@@ -879,6 +879,7 @@ if ~probebutt.Value
     end
     guidata(probebutt,h)
     trialnum_Callback(h.trialnum, eventdata, h)
+    probebutt.ButtonDownFcn = [];
     return
 end
 s = findobj(h.quickShowPanel,'type','line','tag','ProbeTrace');
@@ -900,16 +901,27 @@ if isfield(h.trial,'forceProbeStuff')
     if isfield(h.trial.forceProbeStuff,'ZeroForce')
         plot(ax.XLim,[1 1]*h.trial.forceProbeStuff.ZeroForce,'color',.9 *[1 1 1],'tag','ProbeTrace'); hold(ax,'on');
     end
-    plot(ax,frame_times,h.trial.forceProbeStuff.CoM(1:length(frame_times)),'color',[0 .2 0],'tag','ProbeTrace'), hold(ax,'on');
+    plot(ax,frame_times,h.trial.forceProbeStuff.CoM(:,1:length(frame_times)),'color',[0 .2 0],'tag','ProbeTrace'), hold(ax,'on');
 
     inax = findobj(h.quickShowPanel,'type','axes','tag','quickshow_inax');
     ax.XLim = inax.XLim;
     
     % enable for other trials
     if isfield(h.trial,'arduino_output')
-        plot(ax,t,h.trial.arduino_output*max(h.trial.forceProbeStuff.CoM-h.trial.forceProbeStuff.CoM(1))+h.trial.forceProbeStuff.CoM(1),'color',[1 .5 0],'tag','ProbeTrace');
+        ardo = plot(ax,t,h.trial.arduino_output*max(h.trial.forceProbeStuff.CoM(1,:)-h.trial.forceProbeStuff.CoM(1,1))+h.trial.forceProbeStuff.CoM(1,1),'color',[1 .5 0],'tag','ProbeTrace');
     end
-    
+    if isfield(h.trial.forceProbeStuff,'ArduinoThresh')
+        plot(ax,[t(1) t(end)],[1 1]*h.trial.forceProbeStuff.ArduinoThresh,'color',[.5 .1 .5],'tag','arduinothresh');
+    end
+    if isfield(h.trial.forceProbeStuff,'ProbeLimits')
+        ax.YLim = h.trial.forceProbeStuff.ProbeLimits;
+        ardo.YData = h.trial.arduino_output*...
+            (h.trial.forceProbeStuff.ProbeLimits(2) - h.trial.forceProbeStuff.Neutral) + ...
+            h.trial.forceProbeStuff.Neutral;
+    end
+
+    probebutt.ButtonDownFcn = @probeButton_alternative;
+
 elseif isfield(h.trial,'legPositions')
     ax = findobj(h.quickShowPanel,'type','axes','tag','quickshow_outax');
     if isempty(ax)
@@ -966,6 +978,30 @@ end
 
 guidata(probebutt,h)
 %quickShow_Protocol(h.trialnum, eventdata, h)
+
+
+function probeButton_alternative(probebutt, eventdata, h)
+% An earlier version printed the script for the quickShow function 4/27/15
+h = guidata(probebutt);
+fig = figure('color',[1 1 1]);
+set(fig,'Units',get(h.quickShowPanel,'Units'));
+set(fig,'Position',get(h.quickShowPanel,'position'));
+set(fig,'Units','points');
+
+ax = findobj(h.quickShowPanel,'type','axes','tag','quickshow_outax');
+p = copyobj(ax,fig);
+p.Units = 'normalized';
+p.Position(2) = .15;
+p.Position(4) = .8;
+fig.Position = [273.0000  351.0000 fig.Position(3) 2/5*fig.Position(4)];
+p.Units = 'points';
+p.Position(2) = 40;
+p.Position(4) = fig.Position(4)*.85 - 40;
+
+[prot,d,fly,cell,trial] = extractRawIdentifiers(h.trial.name);
+
+title(ax,sprintf('%s', [prot '.' d '.' fly '.' cell '.' trial]))
+
 
 
 % --- Executes on button press in showroitraces.

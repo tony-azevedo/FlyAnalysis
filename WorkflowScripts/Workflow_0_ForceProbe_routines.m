@@ -1,10 +1,10 @@
 %% Run each section above in turn, then run the sections below on each protocol
 
 %% Extract spikes
-trialStem = extractTrialStem(trial.name); D = fileparts(trial.name);
-trials = spiketrials;
-exampletrials = examplespiketrials;
-Script_ExtractSpikesFromInterestingTrials
+% trialStem = extractTrialStem(trial.name); D = fileparts(trial.name);
+% trials = spiketrials;
+% exampletrials = examplespiketrials;
+% Script_ExtractSpikesFromInterestingTrials
 
 
 %% Run Bar detection scripts one at a time

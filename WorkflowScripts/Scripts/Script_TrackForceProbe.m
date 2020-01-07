@@ -1,129 +1,260 @@
-%% Want to: 
+%% run through all the movies. Decide if there is a probe or not
+% Assuming you're in the right folder
+movies = dir('*.avi');
+
+%% Find the force probe
+figure
+ax_mball = subplot(1,1,1); hold(ax_mball,'on');
+
+mb_all = nan(length(movies),2);
+tngnt_all = nan(length(movies),2);
+hasBar = false(length(movies),1);
+frcprbline = [];
+for m_idx = 1:length(movies)
+    m = movies(m_idx).name;
+    
+    trnm = regexprep(m,{'Image','_\d+T\d+.avi'},{'Raw','.mat'});
+    trial = load(trnm);
+    if ~strcmp(trial.imageFile,m)
+        warning(['Movie ' m ' has an unidentified trial']);
+        continue
+    end 
+    
+    if m_idx <= 3
+        [trial,mb,tngntpnt] = findForceProbe(trial,'PLOT',true);
+    else
+        [trial,mb,tngntpnt] = findForceProbe(trial);
+    end
+    % tangent point is reversed for now
+    
+    if ~isempty(mb)
+        mb_all(m_idx,:) = mb;
+        tngnt_all(m_idx,:) = tngntpnt;
+        hasBar(m_idx) = true;
+        plot(ax_mball,[0 10],mb(1)*([0 10])+mb(2))
+        if isempty(frcprbline)
+            frcprbline = trial.forceProbe_line;
+        end
+    else
+        mb = 0;
+        tngntpnt = 0;
+    end
+    
+    if sum(~isnan(mb_all(:,1)))>12 && (nanstd(mb_all(:,1))/sqrt(sum(~isnan(mb_all(:,1)))))/nanmean(mb_all(:,1)) < .01
+        break
+    end
+    fprintf('error: %g\n',(nanstd(mb_all(:,1))/sqrt(sum(~isnan(mb_all(:,1)))))/nanmean(mb_all(:,1)))
+end
+mb_all = mb_all(~isnan(mb_all(:,1)),:);
+tngnt_all = tngnt_all(~isnan(tngnt_all(:,1)),:);
+% Reverse tangent point
+tngnt_all = fliplr(tngnt_all);
 
 close all
-trialnumlist = trials;
-% Run through all the trials with the same protocol
-for t = 1:length(trialnumlist)
-    tr_idx = trials(t);
-    trial = load(sprintf(trialStem,tr_idx));
-    fprintf('%s\n',trial.name);
 
-    % For each trial,
-    %   decide if you should look or not
-    
-    %   decide if the bar is there        
-    trial = findForceProbe(trial);
+%% calculate a common line
+mb_line = mean(mb_all,1);
 
-    % Print list of included trials, non-bar trials, and undefined trials.        
+frcprbline(:,2) = mb_line(1)*frcprbline(:,1) + mb_line(2);
+if frcprbline(1,2)<1
+    frcprbline(1,2) = 1;
+    frcprbline(1,1) = (frcprbline(1,2)-mb_line(2))/mb_line(1);
+end
+
+%% Calculate a common tangent point
+tngntpnt = mean(tngnt_all,1);
+
+showtrial = trial;
+showtrial.forceProbe_line = frcprbline;
+% showtrial.forceProbe_tangent = tngntpnt;
+
+showProbeImage(showtrial);
+% showProbeLocation(trial)
+
+dispax = gca;
+[l,p,l_r,R,p_,p_scalar,barbar] = probeCoordinates(trial);
+
+line(showtrial.forceProbe_line(:,1),showtrial.forceProbe_line(:,2),'parent',dispax,'color',[1 0 0]);
+line(showtrial.forceProbe_tangent(:,1),showtrial.forceProbe_tangent(:,2),'parent',dispax,'marker','o','markeredgecolor',[0 1 0],'tag','oldpoint');
+line(l_r(:,1),l_r(:,2),'parent',dispax,'color',[1 .3 .3]);
+line(p_(1),p_(2),'parent',dispax,'marker','o','markeredgecolor',[0 1 1]);
+
+p_crn_ur = [1280 0];
+line(p_crn_ur(1),p_crn_ur(2),'parent',dispax,'marker','o','markeredgecolor',[.3 .6 1]);
+
+p_crn_0 = p_crn_ur - mean(l,1);
+
+p_crn_scalar_ur = barbar*p_crn_0';
+
+p_crn_ = p_crn_scalar_ur*barbar+mean(l,1);
+
+l_r_crn = [p_crn_; p_crn_ur];
+
+line(p_crn_(1),p_crn_(2),'parent',dispax,'marker','o','markeredgecolor',[.3 .3 .3]);
+line(l_r_crn(:,1),l_r_crn(:,2),'parent',dispax,'color',[.3 .3 .3]);
     
+% Check that the end of the line doesn't cut off the other corner.
+
+% find the corner projection onto y
+p_crn_ll = [0 1024];
+line(p_crn_ll(1),p_crn_ll(2),'parent',dispax,'marker','o','markeredgecolor',[.3 .6 1]);
+
+p_crn_0 = p_crn_ll - mean(l,1);
+
+p_crn_scalar_ll = barbar*p_crn_0';
+
+p_crn_ = p_crn_scalar_ll*barbar+mean(l,1);
+
+l_r_crn = [p_crn_; p_crn_ll];
+
+line(p_crn_(1),p_crn_(2),'parent',dispax,'marker','o','markeredgecolor',[.3 .3 .3]);
+line(l_r_crn(:,1),l_r_crn(:,2),'parent',dispax,'color',[.3 .3 .3]);
+
+if p_scalar>p_crn_scalar_ll || p_scalar> p_crn_scalar_ur
+    p_scalar = min([p_crn_scalar_ur, p_crn_scalar_ll]) - 10;
+
+    tngntpnt = p_scalar*barbar+mean(l,1);
+    l_r = l_r - repmat(mean(l_r,1),2,1) + repmat(tngntpnt,2,1);
+
+    line(tngntpnt(1),tngntpnt(2),'parent',dispax,'marker','o','markeredgecolor',[1 .5 1]);
+    line(l_r(:,1),l_r(:,2),'parent',dispax,'color',[.7 0 .3],'linewidth',3);
+
 end
 
 
-% Find an area to smooth out the pixels
-Script_FindAreaToSmoothOutPixels
+%% Now go back through and correct line and tangent
+% run through all the movies. Decide if there is a probe or not
+REWRITE = 0;
+fprintf('Saving probes, if needed\n');
+wt = 0;
+for m_idx = 1:length(movies)
+    m = movies(m_idx).name;    
+    
+    trnm = regexprep(m,{'Image','_\d+T\d+.avi'},{'Raw','.mat'});
+    trial = load(trnm);
+    if REWRITE || ...
+            ~isfield(trial ,'forceProbe_line') || ...
+            ~isfield(trial,'forceProbe_tangent')
+        
+        trial.forceProbe_tangent = tngntpnt;
+        trial.forceProbe_line = frcprbline;
+        fprintf('Saving common probe: %s - %d\n',trial.params.protocol,trial.params.trial);
+        
+        save(trial.name, '-struct', 'trial');
+    else
+        wt = wt+1;
+    end
 
-% Track the bar
-Script_TrackTheBarAcrossTrialsInSet
-
-Script_FixTheTrialsWithRedLEDTransients
-
-% Find the minimum CoM, plot a few examples from each trial block and check.
-Script_FindTheMinimumCoM %% can run this any time, but probably best after all the probe positions have been calculated
-
-
-%% Calculate position of femur and tibia from csv files
-
-% After bringing videos back from DeepLabCut, run through all trials, get
-% some stats on the dots, do some error correction, make some videos.
-
-trials = nobartrials;
-trialnumlist = [];
-for idx = 1:length(trials)
-    trialnumlist = [trialnumlist trials{idx}]; %#ok<AGROW>
+    if wt>10
+        fprintf('Already saved\n');
+        break
+    end
 end
+
+
+%% The line and tangent are set, Now run the tracking
+
 close all
+movies = dir('*.avi');
 
-Script_AddTrackedPositions
-Script_UseAllTrialsInSetToCorrectLegPosition;
-Script_AddTrackedLegAngleToTrial
-Script_UseAllTrialsInSetToCalculateLegElevation
+br = waitbar(0,'Batch');
+br.Position =  [1050    251    270    56];
 
+[fid,message] = fopen('ProbeTrackLog.txt','w');
+fprintf(fid,'Tracking errors: %s\n',pwd);
 
+for m_idx = 1:length(movies)
+    m = movies(m_idx).name;    
+    
+    trnm = regexprep(m,{'Image','_\d+T\d+.avi'},{'Raw','.mat'});
+    trial = load(trnm);
+        
+    waitbar((m_idx)/length(movies),br,sprintf('%s - %d\n',trial.params.protocol,trial.params.trial));
+    if ...
+            isfield(trial ,'forceProbe_line') && ...
+            isfield(trial,'forceProbe_tangent') && ...
+            (~isfield(trial,'excluded') || ~trial.excluded) ...&& ...
+            %~isfield(trial,'forceProbeStuff')
+        
+        fprintf('Track probe: %s - %d\n',trial.params.protocol,trial.params.trial);
+        try 
+            probeTrackROI_2Bumps;
+            % probeTrackROI_IR;
+        catch e
+            % rethrow(e);
+            fprintf(fid,'Probe track failed: %s - %d (%s)\n',trial.params.protocol,trial.params.trial,e.message);
+            fprintf('Probe track failed: %s - %d (%s)\n',trial.params.protocol,trial.params.trial,e.message);
+            continue
+        end
+    elseif isfield(trial,'forceProbeStuff')
+            fprintf('%s\n',trial.name);
+            fprintf('\t*Has profile: passing over trial for now\n')
+            
+            % OR...
+            % fprintf('\t*Has profile: redoing\n')
+            % probeTrackROI_IR;
 
-%% Extract EMG spikes - 
-clear trial
-
-trial
-spkvarstr = ['Spike_params_current_2_flipped_fs' num2str(trial.params.sampratein)];
-spikevars = getacqpref('FlyAnalysis',spkvarstr);
-
-emgspktype = 'Intermediate'; % 'Fast'
-sgn = -1;
-trial.current_2_flipped = sgn*trial.current_2; 
-         
-[trial,vars_skeleton] = spikeDetection(...
-    trial,'current_2_flipped',spikevars,...
-    'interact','yes',...
-    'alt_spike_field',[emgspktype 'EMGspikes']...'IntermediateEMGspikes'...'FastEMGspikes'...
-    );
-spikevars = getacqpref('FlyAnalysis',spkvarstr);
-
-%% Now do it for the rest of the trials
-spkvarstr = ['Spike_params_current_2_flipped_fs' num2str(trial.params.sampratein)];
-spikevars = getacqpref('FlyAnalysis',spkvarstr);
-trialStem = extractTrialStem(trial.name);
-trialnumlist = [1:21];
-
-for tr_idx = trialnumlist
-    trial = load(sprintf(trialStem,tr_idx));
-
-    if isfield(trial,'spikes') && length(trial.spikes)<1
+    else
+        fprintf('\t* Bad movie: No line or tangent: %s\n',trial.name);
         continue
     end
-    
-    trial.current_2_flipped = sgn*trial.current_2;
-    % Now do the detection
-    [trial,vars_skeleton] = spikeDetection(...
-        trial,'current_2_flipped',spikevars,...
-        'interact','yes',...
-        'alt_spike_field',[emgspktype 'EMGspikes']...
-        );
-    spikevars = getacqpref('FlyAnalysis',spkvarstr);
 end
+    
+fclose(fid);
+delete(br);
 
-%% correct  mistakes:
-    if isfield(trial,'FastEMGspikes')
-        %trial.FastEMGspikes = trial.EMGspikes;
-        trial = rmfield(trial,'FastEMGspikes');
-    end
-    if isfield(trial,'FastEMGspikes_uncorrected')
-        %trial.FastEMGspikes_spikes_uncorrected = trial.EMGspikes_spikes_uncorrected;
-        trial = rmfield(trial,'FastEMGspikes_uncorrected');
-    end
-    if isfield(trial,'FastEMGspikeDetectionParams')
-        %trial.FastEMGspikeDetectionParams = trial.EMGspikeDetectionParams;
-        trial = rmfield(trial,'FastEMGspikeDetectionParams');
-    end
-    if isfield(trial,'FastEMGspikeSpotChecked')
-        %trial.FastEMGspikeSpotChecked = trial.EMGspikeSpotChecked;
-        trial = rmfield(trial,'FastEMGspikeSpotChecked');
-    end
-    save(trial.name, '-struct', 'trial');
+%% One more thing on the two bumps:
+% the indices can switch some times, so just run through all the traces,
+% find the big jumps and swtich them
 
-    if isfield(trial,'IntermediateEMGspikes')
-        %trial.FastEMGspikes = trial.EMGspikes;
-        trial = rmfield(trial,'IntermediateEMGspikes');
+close all
+movies = dir('*.avi');
+
+br = waitbar(0,'Batch');
+br.Position =  [1050    251    270    56];
+
+% [fid,message] = fopen('ProbeTrackLog.txt','w');
+fprintf(fid,'Tracking errors: %s\n',pwd);
+
+for m_idx = 1:length(movies)
+    m = movies(m_idx).name;    
+    
+    trnm = regexprep(m,{'Image','_\d+T\d+.avi'},{'Raw','.mat'});
+    trial = load(trnm);
+        
+    if isfield(trial,'forceProbeStuff')
+        fprintf('%s\n',trial.name);
+        
+        CoM = trial.forceProbeStuff.CoM;
+        % how big are changes, usually?
+        DCoM1 = diff(CoM(1,:));
+        DCoM2 = diff(CoM(2,:));
+
+        wps = find(abs(DCoM1)>100); % likely a jump
+        while ~isempty(wps)
+            for i = 1:length(wps)
+                if abs(CoM(2,wps(i)+1)-CoM(1,wps(i))) < 100 && abs(CoM(1,wps(i)+1)-CoM(2,wps(i))) < 100 % they should be switched
+                    %switch em
+                    temp = CoM(1,wps(i)+1);
+                    CoM(1,wps(i)+1) = CoM(2,wps(i)+1);
+                    CoM(2,wps(i)+1) = temp;
+                    
+                end
+            end
+            DCoM1 = diff(CoM(1,:));
+            DCoM2 = diff(CoM(2,:));
+            wps = find(abs(DCoM1)>100); % likely a jump
+        end
+                    
+        trial.forceProbeStuff.CoM = CoM;
+        save(trial.name,'-struct','trial');
+            
+    else
+        fprintf('\t* Bad movie: No line or tangent: %s\n',trial.name);
+        continue
     end
-    if isfield(trial,'IntermediateEMGspikes_uncorrected')
-        %trial.FastEMGspikes_spikes_uncorrected = trial.EMGspikes_spikes_uncorrected;
-        trial = rmfield(trial,'IntermediateEMGspikes_uncorrected');
-    end
-    if isfield(trial,'IntermediateEMGspikeDetectionParams')
-        %trial.FastEMGspikeDetectionParams = trial.EMGspikeDetectionParams;
-        trial = rmfield(trial,'IntermediateEMGspikeDetectionParams');
-    end
-    if isfield(trial,'IntermediateEMGspikeSpotChecked')
-        %trial.FastEMGspikeSpotChecked = trial.EMGspikeSpotChecked;
-        trial = rmfield(trial,'IntermediateEMGspikeSpotChecked');
-    end
-    save(trial.name, '-struct', 'trial');
+end
+    
+% fclose(fid);
+delete(br);
+

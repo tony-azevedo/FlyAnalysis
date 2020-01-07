@@ -1,6 +1,11 @@
 %% Set an ROI that avoids the leg, just gets the probe
 % I think I only need 1 for now, but I'll keep the option for multiple
 % (storing in cell vs matrix)
+DEBUG = 0;
+
+if isfield(trial,'excluded') && trial.excluded
+    return
+end
 
 vid = VideoReader(trial.imageFile);
 N = round(vid.Duration*vid.FrameRate);
@@ -8,7 +13,8 @@ h2 = postHocExposure(trial,N);
 t = makeInTime(trial.params);
 t_f = trial.params.durSweep-5*1/vid.FrameRate;
 
-for cnt = 1:5
+for cnt = 1:40
+    
     frame = readFrame(vid);
 end
 frame = squeeze(frame(:,:,1));
@@ -37,19 +43,28 @@ smooshedframe = squeeze(smooshedframe(:,:,1));
 smooshedframe(:) = 0; 
 readFrame(vid); readFrame(vid);
 
+% Average a few frames
 for jj = 1:4
     mov3 = double(readFrame(vid));
     smooshedframe = smooshedframe+mov3(:,:,1);
 end
 frame = smooshedframe/4;
+% frame_0 = frame;
+% frame = imgaussfilt(frame,30);
+
+% Create a larger average for the background
 for jj = 1:20
     mov3 = double(readFrame(vid));
     smooshedframe = smooshedframe+mov3(:,:,1);
 end
 smooshedframe = smooshedframe/24;
+% smooshedframe_0 = smooshedframe;
+% smooshedframe = imgaussfilt(smooshedframe,30);
 
 %% Smooth out the spot to show
 if isfield(trial,'brightSpots2Smooth')
+    annulusmask_all = false(size(smooshedframe));
+    spotmask_all = false(size(smooshedframe));
     for roi_ind = 1:length(trial.brightSpots2Smooth)
         spot = trial.brightSpots2Smooth{roi_ind};
         centroid = mean(spot,1); centroids = repmat(centroid,size(spot,1),1);
@@ -62,6 +77,10 @@ if isfield(trial,'brightSpots2Smooth')
         
         frame(spotmask) = I;
         smooshedframe(spotmask) = I;
+        
+        annulusmask_all = annulusmask_all | annulusmask;
+        spotmask_all = spotmask_all | spotmask;
+        
     end
 end
 
@@ -90,35 +109,41 @@ end
 % loop through these points
 %   get the improfile, centered on the probe line, with the points of
 %   measurements at the same intervals
+[l,p,l_r,R,p_,p_scalar,barbar,x] = probeCoordinates(trial);
 
-l = trial.forceProbe_line;
-p = trial.forceProbe_tangent;
-
-% probe_eval_points = turnLineIntoEvalPnts(l,p);
-% recenter
-l_0 = l - repmat(mean(l,1),2,1);
-p_0 = p - mean(l,1);
-
-% for my purposes, get the line equation (m,b)
+% l = trial.forceProbe_line;
+% p = trial.forceProbe_tangent;
+% 
+% % probe_eval_points = turnLineIntoEvalPnts(l,p);
+% % recenter
+% l_0 = l - repmat(mean(l,1),2,1);
+% p_0 = p - mean(l,1);
+% 
+% % for my purposes, get the line equation (m,b)
 m = diff(l(:,2))/diff(l(:,1));
 b = l(1,2)-m*l(1,1);
+% 
+% % find y vector
+% barbar = l_0(2,:)/norm(l_0(2,:));
+% 
+% % project tangent point
+% p_scalar = barbar*p_0';
+% 
+% % find intercept, recenter
+% p_ = p_scalar*barbar+mean(l,1);
+% 
+% % rotate coordinates
+% R = [cos(pi/2) -sin(pi/2);
+%     sin(pi/2) cos(pi/2)];
+% l_r = (R*l_0')'/4;
+% upperright_ind = find(l_r(:,1)>l_r(:,2));
+% x = l_r(upperright_ind,:)/norm(l_r(upperright_ind,:));
+% l_r = l_r + repmat(p_,2,1);
 
-% find y vector
-barbar = l_0(2,:)/norm(l_0(2,:));
 
-% project tangent point
-p_scalar = barbar*p_0';
-
-% find intercept, recenter
-p_ = p_scalar*barbar+mean(l,1);
-
-% rotate coordinates
-R = [cos(pi/2) -sin(pi/2);
-    sin(pi/2) cos(pi/2)];
-l_r = (R*l_0')'/4;
-upperright_ind = find(l_r(:,1)>l_r(:,2));
-x = l_r(upperright_ind,:)/norm(l_r(upperright_ind,:));
-l_r = l_r + repmat(p_,2,1);
+if DEBUG
+    showProbeLocation(trial);
+end
 
 
 %% now set up evaluation points
@@ -151,8 +176,6 @@ dist_to_edge(2) = sqrt(diff(p_to_edge_along_tangent(:,1))^2+diff(p_to_edge_along
 % + and -
 evalpnts_x = -ceil(max(dist_to_edge)):1:ceil(max(dist_to_edge));
 evalpnts = x'*evalpnts_x;
-% evalN = size(evalpnts,2);
-% evalEnds = [evalpnts(:,1) evalpnts(:,end)];
 
 xy = evalpnts+repmat(moveEvalPntsAlong(:,1),1,length(evalpnts));
 xy = uint16(xy);
@@ -165,17 +188,13 @@ BackgroundProfiles = ProfileMat;
 Rmap = nan(size(ProfileMat,1),size(ProfileMat,2));
 Cmap = nan(size(ProfileMat,1),size(ProfileMat,2));
 
-% move along line back to corner,
-% xy = evalpnts+repmat(moveEvalPntsAlong(:,1),1,length(evalpnts));
-% pos_idxs = xy(1,:)>0 & xy(2,:)>0;
-% xy = xy(:,pos_idxs);
-% l = line(xy(1,:),xy(2,:),'parent',dispax,'linestyle','none','marker','.','markerfacecolor',[1 1 1],'markeredgecolor',[1 1 1],'tag','samples');
+if DEBUG
+    line(moveEvalPntsAlong(1,:),moveEvalPntsAlong(2,:),'marker','o','markeredgecolor',[1 .5 1],'markerfacecolor','none');
+    %line(moveEvalPntsAlong(1,1),moveEvalPntsAlong(2,1),'parent',dispax,'marker','o','markeredgecolor',[0 0 1],'markerfacecolor',[1 1 1]);
+    line(xy(1,:),xy(2,:),'marker','.','markeredgecolor','none','markerfacecolor',[.5 0 .5]);
+    %line(moveEvalPntsAlong(1,1),moveEvalPntsAlong(2,1),'parent',dispax,'marker','o','markeredgecolor',[0 0 1],'markerfacecolor',[1 1 1]);
+end
 
-% profileFigure = figure;
-% set(profileFigure,'position',[1331 421 560 420]);
-% profileAxes = subplot(1,1,1); hold(profileAxes,'on');
-% I = impixel(smpd.sampledImage(:,:,1),xy(1,:),xy(2,:));
-% % prfl = plot(evalpnts_x(pos_idxs),I(:,1),'k','parent',profileAxes);
 
 for ep_idx = 1:size(moveEvalPntsAlong,2)
     xy = evalpnts+repmat(moveEvalPntsAlong(:,ep_idx),1,length(evalpnts));
@@ -185,37 +204,40 @@ for ep_idx = 1:size(moveEvalPntsAlong,2)
     Rmap(ep_idx,pos_idxs) = xy(1,pos_idxs);
     Cmap(ep_idx,pos_idxs) = xy(2,pos_idxs);
     
-    pos_idxs_i(pos_idxs) = find(pos_idxs);
-    
-    for rc = 1:size(xy,2)
-        if xy(1,rc)>0 && xy(2,rc)>0
-            ProfileMat(ep_idx,pos_idxs_i(rc)) = frame(xy(2,rc),xy(1,rc));
-            BackgroundProfiles(ep_idx,pos_idxs_i(rc)) = smooshedframe(xy(2,rc),xy(1,rc));
-        end
-    end
-    
-    % set(prfl,'XData',evalpnts_x(pos_idxs),'YData',I(:,1));
-    % drawnow
 end
 
-% slim down the profile mat and evalpnst
-indices_gt4vals = sum(~isnan(ProfileMat),1)>4; % Want to average over 
-
+% Slim this down, at least 4 points in the column
+indices_gt4vals = sum(~isnan(Rmap),1)>4; % Want to average over at least 4 points
+Rmap = Rmap(:,indices_gt4vals);
+Cmap = Cmap(:,indices_gt4vals);
 evalpnts_x = evalpnts_x(indices_gt4vals);
 evalpnts = evalpnts(:,indices_gt4vals);
 
-BackgroundProfiles = BackgroundProfiles(:,indices_gt4vals);
-Rmap = Rmap(:,indices_gt4vals);
-Cmap = Cmap(:,indices_gt4vals);
-ProfileMat = ProfileMat(:,indices_gt4vals);
-
-%quick check on the profileIndices: in third dim, all entries should either
-%be nan or real
-% sum(sum(~isnan(ProfileIndices(:,:,1)) & isnan(ProfileIndices(:,:,1))))
-% sum(sum(~isnan(ProfileIndices(:,:,1)) & ~isnan(ProfileIndices(:,:,1))))
-
+% Turn this into a linear set of indices
 isn = isnan(Rmap)|isnan(Cmap);
 linearidx = sub2ind(size(frame),Cmap(~isn),Rmap(~isn));
+
+ProfileMat = Rmap;
+ProfileMat(:) = nan;
+ProfileMat(~isn) = frame(linearidx); % *** Nice addition, so much faster than before! ***;
+% At this point, the frame has not been filtered
+
+% Estimate the minimum to left of bar
+int_vals = ProfileMat(:,1:size(Rmap,2)<find(evalpnts(1,:)==0));
+int_vals = int_vals(~isnan(int_vals));
+dark = mean(int_vals(int_vals<quantile(int_vals,0.12)));
+
+% Fill in dark points and filter
+ProfileMat(isn) = dark; 
+ProfileMat = imgaussfilt(ProfileMat,30);
+ProfileMat(isn) = nan;
+
+% Do the Background too
+BackgroundProfiles = ProfileMat;
+BackgroundProfiles(~isn) = smooshedframe(linearidx); % *** Nice addition, so much faster than before! ***;
+BackgroundProfiles(isn) = dark; 
+BackgroundProfiles = imgaussfilt(BackgroundProfiles,30);
+BackgroundProfiles(isn) = nan;
 
 
 %% for the first image - assume the first image the bar is far from the body, near 0
@@ -319,12 +341,12 @@ if filtered_mu(lefthash)>coef(1)+dark  % right side of the bar comes up too much
     % use the trough after peak of the model, instead
     [~,righttrough] = min(filtered_mu(bar_idx_i+1:lefthash));
     lefthash = righttrough+bar_idx_i;
-    bar_threshold_right = 4/5;%
-    bar_threshold_left = 3/4;%
+    bar_threshold_right = 3/4;%
+    bar_threshold_left = 17/32;%
     fprintf('\t\tWeight the left side of bar\n');
 else
-    bar_threshold_right = 23/32;%
-    bar_threshold_left = 19/32;%
+    bar_threshold_right =19/32;% 23/32
+    bar_threshold_left = 15/32; %19/32
     fprintf('\t\tWeight the left and right of bar equally\n');
 end
 
@@ -366,17 +388,13 @@ filtered_frame_mu(1:49) = mb(2)+mb(1)*(1:49);
 mb = polyfit((length(evalpnts_x)-100:length(evalpnts_x)-50)',filtered_frame_mu(length(evalpnts_x)-100:length(evalpnts_x)-50),1);
 filtered_frame_mu(end-49+1:end) = mb(2)+mb(1)*(length(evalpnts_x)-(49:-1:1));
 
-[pk,loc] = max(filtered_frame_mu(trough+1:righthash)-dark);
+[pk,loc] = max(filtered_frame_mu(trough:righthash)-dark_right);
 loc = loc+trough;
 % 9) Assume the shape of the bar doesn't change and get the CoM of the
 % fullwidth @ 67% max, hopefully this will eliminate the weird jumping of
 % the bar
-try left = find(filtered_frame_mu(1:loc)-dark_right<pk*bar_threshold_left,1,'last');
-catch e
-    left = find(filtered_frame_mu(1:loc)-dark<pk*bar_threshold_left,1,'last');
-end
-right = find(filtered_frame_mu(loc:end)-dark<pk*bar_threshold_right,1,'first')+loc;
-if isempty(right), right = length(filtered_frame_mu); end
+left = find(filtered_frame_mu(1:loc)-dark_right<pk*bar_threshold_left,1,'last');
+right = find(filtered_frame_mu(loc:end)-dark_right<pk*bar_threshold_right,1,'first')+loc;
 % if abs(evalpnts_x(loc)-coef(2))>200 || isempty(left)
 %     fprintf('Bar profile average is high on the left\n')
 %     newone = find(filtered_frame_mu(1:righthash)-dark<coef(1)*bar_threshold_left*.95,1,'first');
@@ -434,6 +452,7 @@ plot([evalpnts_x(lefthash) evalpnts_x(lefthash)],[0 max(filtered_mu)],'color',[1
 plot([evalpnts_x(righthash) evalpnts_x(righthash)],[0 max(filtered_mu)],'color',[1 1 1.2]*.8,'parent',profileAxes);
 
 profmu = plot(evalpnts_x,filtered_frame_mu,'color',[0 0 0],'parent',profileAxes);
+darkln = plot([evalpnts_x(1) evalpnts_x(end)],[dark dark],'color',[0 0 0],'parent',profileAxes);
 bar_ontangent = plot([evalpnts_x(com),evalpnts_x(com)],[0 max(filtered_mu)],'color',[0 0 0],'parent',profileAxes);
 rocom_left = plot(evalpnts_x(left)*[1 1],[0 filtered_frame_mu(left)],'color',[0 0 0],'parent',profileAxes);
 rocom_right = plot(evalpnts_x(right)*[1 1],[0 filtered_frame_mu(right)],'color',[0 0 0],'parent',profileAxes);
@@ -546,18 +565,21 @@ while hasFrame(vid)
         break
     end
 %     tic
-    mov3 = readFrame(vid);
-    frame = mov3;
+    mov3 = double(readFrame(vid));
+    frame = mov3(:,:,3);
 %     fprintf('Load: '),toc
     tic
     if exist('annulusvals','var')
-        annulusvals = frame(annulusmask&~spotmask);
+        annulusvals = frame(annulusmask_all&~spotmask_all);
         I = mean(annulusvals);
-        frame(spotmask) = I;
+        frame(spotmask_all) = I;
     end
 
-    ProfileMat(:) = nan;
+    ProfileMat(:) = dark;
     ProfileMat(~isn) = frame(linearidx); % *** Nice addition, so much faster than before! ***;
+    ProfileMat = imgaussfilt(ProfileMat,30);
+    ProfileMat(isn) = nan;
+    
     
     ProfileMat_BS = ProfileMat-Background;
     filtered_frame_mu = nanmean(ProfileMat_BS,1);
@@ -580,7 +602,7 @@ while hasFrame(vid)
 %         loc = loc+trough;
 %     end
 
-    [pks,locs] = findpeaks(filtered_frame_mu-dark,'MinPeakWidth',length(filtered_frame_mu)/50,'MinPeakProminence',2); %/30);
+    [pks,locs] = findpeaks(filtered_frame_mu-dark,'MinPeakWidth',length(filtered_frame_mu)/50,'MinPeakProminence',1); %/30);
     [~,loc] = min(abs(locs-com));
     pk = pks(loc);
     loc = locs(loc);
@@ -588,10 +610,17 @@ while hasFrame(vid)
     % 9) Assume the shape of the bar doesn't change and get the CoM of the
     % fullwidth @ 67% max, hopefully this will eliminate the weird jumping of
     % the bar
+    right_last = right;
+    left_last = left;
+    
     left = find(filtered_frame_mu(1:loc)-dark<pk*bar_threshold_left,1,'last');
     right = find(filtered_frame_mu(loc:end)-dark<pk*bar_threshold_right,1,'first')+loc;
+    if abs(right-right_last)>10
+        % fprintf('big jump, change bar_threshold')
+    end
     
     profmu.YData = filtered_frame_mu;
+    darkln.YData = [dark dark];
 
     if isempty(left) || isempty(right)
         continue

@@ -12,6 +12,7 @@ end
 % From the table, find excluded trials
 Excluded = false(height(T),1);
 for tr = 1:length(T.trial)
+    %fprintf('%d ',tr);
     ex = load(sprintf(trialStem,T.trial(tr)),'excluded');
     if ~isfield(ex,'excluded')
         Excluded(tr) = false;

@@ -84,20 +84,39 @@ line(l_r(:,1),l_r(:,2),'parent',dispax,'color',[1 .3 .3],'tag','intercept');
 %% Check that the end of the line doesn't cut off the corner.
 
 % find the corner projection onto y
-p_crn = [1280 0];
-line(p_crn(1),p_crn(2),'parent',dispax,'marker','o','markeredgecolor',[.3 .6 1]);
+p_crn_ur = [1280 0];
+line(p_crn_ur(1),p_crn_ur(2),'parent',dispax,'marker','o','markeredgecolor',[.3 .6 1]);
 
-p_crn_0 = p_crn - mean(l,1);
+p_crn_0 = p_crn_ur - mean(l,1);
 
 p_crn_scalar = y*p_crn_0';
 
 p_crn_ = p_crn_scalar*y+mean(l,1);
 
-l_r_crn = [p_crn_; p_crn];
+l_r_crn = [p_crn_; p_crn_ur];
 
 line(p_crn_(1),p_crn_(2),'parent',dispax,'marker','o','markeredgecolor',[.3 .3 .3]);
 line(l_r_crn(:,1),l_r_crn(:,2),'parent',dispax,'color',[.3 .3 .3]);
     
+
+%% Check that the end of the line doesn't cut off the other corner.
+
+% find the corner projection onto y
+p_crn_ll = [0 1024];
+line(p_crn_ll(1),p_crn_ll(2),'parent',dispax,'marker','o','markeredgecolor',[.3 .6 1]);
+
+p_crn_0 = p_crn_ll - mean(l,1);
+
+p_crn_scalar = y*p_crn_0';
+
+p_crn_ = p_crn_scalar*y+mean(l,1);
+
+l_r_crn = [p_crn_; p_crn_ll];
+
+line(p_crn_(1),p_crn_(2),'parent',dispax,'marker','o','markeredgecolor',[.3 .3 .3]);
+line(l_r_crn(:,1),l_r_crn(:,2),'parent',dispax,'color',[.3 .3 .3]);
+    
+
 %%
 figure(displayf)
 newbutton = questdlg('Make new probe bar and tangent?','Probe ROI','No');
