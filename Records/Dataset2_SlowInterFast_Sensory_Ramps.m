@@ -182,6 +182,13 @@ Script_showRelativeTimeToPeakForSlowNeurons
 Script_compareSensoryFeedbackAcrossTimescales 
 Script_compareSlowMNSpikeRatesAcrossTimescales
 
+
+%% Plot the average dynamics of 82 deg per second across cells
+Script_showAverageVmAcrossCellsForOnePositionAndSpeed
+
+%%
+Script_showAverageFRAcrossCellsForSmallDisplacements
+
 %%
 Script_showVmForEachType
 

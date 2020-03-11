@@ -868,6 +868,50 @@ else
     guidata(spikebutt,h)
     trialnum_Callback(h.trialnum, eventdata, h)
 end
+spikebutt.ButtonDownFcn = @protocol_spike_button_alternative;
+
+function protocol_spike_button_alternative(spikebutt_right, eventdata, h)
+% run through all the trials for this protocol and process the spikes
+h = guidata(spikebutt_right);
+if strcmp(h.figure1.SelectionType,'alt')
+    % run through all the trials for the protocol and use the params from
+    % this trial to detect spikes.
+    butt = questdlg('Detect spikes in protocol trials?','Batch spike detection', 'Cancel');
+    switch butt
+        case 'Yes'
+        case 'No'
+            guidata(spikebutt_right,h)
+            return
+        case 'Cancel'
+            guidata(spikebutt_right,h)
+            return
+    end
+
+    fprintf('\n\t***** Detecting spikes for %s trials **** \n',h.trial.params.protocol);    
+    [~,~,~,~,~,D,trialStem,datastructfile] = extractRawIdentifiers(h.trial.name);
+    data = load(datastructfile); data = data.data;
+    spikevars = h.trial.spikeDetectionParams;
+    switch h.trial.params.mode_1; case 'VClamp', invec1 = 'current_1'; case 'IClamp', invec1 = 'voltage_1'; otherwise; invec1 = 'voltage_1'; end
+    
+    % Go through all trials
+    REDODETECTION = 1;
+    
+    for tidx = 1:length(data)
+        tnum = data(tidx).trial;
+        if tnum == h.trial.params.trial
+            continue
+        end
+                
+        trial = load(fullfile(D,sprintf(trialStem,tnum)));
+            
+        if (~isfield(trial,'spikes') || REDODETECTION) %&& (~isfield(trial,'spikeSpotChecked') || ~trial.spikeSpotChecked)
+            spikeDetection(trial,invec1,spikevars,'interact','no'); % fieldname will be 'spikes'
+        else
+            fprintf('Skipping %d\n',tnum)
+        end
+    end
+    
+end
 
 
 % --- Executes on button press in probetrace_button.
@@ -885,6 +929,15 @@ end
 s = findobj(h.quickShowPanel,'type','line','tag','ProbeTrace');
 if ~isempty(s)
     delete(s);
+end
+
+% Check if this trial has a video
+if ~isfield(h.trial,'imageFile')
+    fprintf('No video for %s\n',h.trial.name)
+    probebutt.Value = 0;
+    guidata(probebutt,h)
+
+    return
 end
 
 % Check if this trial has a probe vector
@@ -920,7 +973,11 @@ if isfield(h.trial,'forceProbeStuff')
             h.trial.forceProbeStuff.Neutral;
     end
 
-    probebutt.ButtonDownFcn = @probeButton_alternative;
+    if isempty(eventdata) || isempty(eventdata.Source.UserData)
+        probebutt.ButtonDownFcn = @probeButton_alternative;
+    elseif ~isempty(eventdata) && strcmp(eventdata.Source.UserData,'DetectionRun')
+        probebutt.ButtonDownFcn = @protocol_probe_button_alternative;
+    end
 
 elseif isfield(h.trial,'legPositions')
     ax = findobj(h.quickShowPanel,'type','axes','tag','quickshow_outax');
@@ -942,12 +999,29 @@ else
     else
         butt = questdlg('Track Probe?','Track probe', 'Cancel');
         switch butt
-            case 'Yes'            
-                [h.trial,response] = probeLineROI(h.trial);
-                h.trial = smoothOutBrightPixels(h.trial);
-                if strcmp(response,'Cancel')
-                    return
+            case 'Yes'
+                vertbutt = questdlg('Vertical Probe?','Track probe', 'Yes');
+                switch vertbutt
+                    case 'Yes'
+                        frcprbline = [536    0
+                            536  890];
+                        tngntpnt = [536 256];
+                        h.trial.forceProbe_line = frcprbline;
+                        h.trial.forceProbe_tangent = tngntpnt;
+                        
+%                         showProbeLocation(h.trial)
+
+                    case 'No'
+                        [h.trial,response] = probeLineROI(h.trial);
+                        h.trial = smoothOutBrightPixels(h.trial);
+                        if strcmp(response,'Cancel')
+                            return
+                        end
+                        
+                    case 'Cancel'
+                        return
                 end
+                
             case 'No'
                 h.probetrace_button.Value = 0;
                 guidata(probebutt,h)
@@ -958,15 +1032,26 @@ else
                 return
         end
     end
-   
+    [~,~,~,~,~,~,barbar] = probeCoordinates(h.trial);
+
     if isfield(h.trial ,'forceProbe_line') && isfield(h.trial,'forceProbe_tangent') && (~isfield(h.trial,'excluded') || ~h.trial.excluded) && ~isfield(h.trial,'forceProbeStuff')
         fprintf('%s\n',h.trial.name);
         %fprintf('%s\n','Need to figure out if this is a 2X or 5X objective');
         trial = h.trial;
-        probeTrackROI_IR;
+        if barbar(1)==0
+            probeTrackWithShape
+            zeroOutStimArtifactsVertical
+            % zeroOutStimArtifactsAssumefast
+            % zeroOutStimArtifactsAssumeTranslate
+        else
+            probeTrackROI_IR;
+            zeroOutStimArtifactsAssumeTranslate
+        end
         h.trial = trial;
         guidata(probebutt,h)
-        trialnum_Callback(h.trialnum, eventdata, h)
+        eventdata.Source.UserData = 'DetectionRun';
+        probetrace_button_Callback(probebutt,eventdata, h)
+        % trialnum_Callback(h.trialnum, eventdata, h)
 
     elseif isfield(h.trial,'forceProbeStuff')
         fprintf('\t* Already detected the probe (delete probe stuff from quickshow window): %s\n',h.trial.name);
@@ -1001,6 +1086,75 @@ p.Position(4) = fig.Position(4)*.85 - 40;
 [prot,d,fly,cell,trial] = extractRawIdentifiers(h.trial.name);
 
 title(ax,sprintf('%s', [prot '.' d '.' fly '.' cell '.' trial]))
+
+
+function protocol_probe_button_alternative(probe_butt_right, eventdata, h)
+% run through all the trials for this protocol and process the spikes
+h = guidata(probe_butt_right);
+if strcmp(h.figure1.SelectionType,'alt')
+    % run through all the trials for the protocol and use the params from
+    % this trial to detect probe.
+    butt = questdlg('Detect probe in protocol trials?','Batch probe detection', 'Cancel');
+    switch butt
+        case 'Yes'
+        case 'No'
+            h.probetrace_button.ButtonDownFcn = @probeButton_alternative;
+            guidata(probe_butt_right,h)
+            return
+        case 'Cancel'
+            h.probetrace_button.ButtonDownFcn = @probeButton_alternative;
+            guidata(probe_butt_right,h)
+            return
+    end
+
+    fprintf('\n\t***** Detecting probe for %s trials **** \n',h.trial.params.protocol);    
+    [~,~,~,~,~,D,trialStem,datastructfile] = extractRawIdentifiers(h.trial.name);
+    data = load(datastructfile); data = data.data;    
+    % Go through all trials
+    REDODETECTION = 1;
+    havaskedaboutdetection = 0;
+    
+    for tidx = 1:length(data)
+        tnum = data(tidx).trial;
+        if tnum == h.trial.params.trial
+            continue
+        end
+            
+        trial = load(fullfile(D,sprintf(trialStem,tnum)));
+        if isfield(h.trial,'forceProbeStuff') && havaskedaboutdetection == 0
+            butt = questdlg('Re-Detect probe if already found?','Batch probe detection', 'Cancel');
+            switch butt
+                case 'Yes'
+                    REDODETECTION = 1;
+                case 'No'
+                    REDODETECTION = 0;
+                case 'Cancel'
+                    guidata(probe_butt_right,h)
+                    return
+            end
+            havaskedaboutdetection = 1;
+            
+        end
+        if (~isfield(h.trial,'forceProbeStuff') || REDODETECTION)
+            trial.forceProbe_line = h.trial.forceProbe_line;
+            trial.forceProbe_tangent = h.trial.forceProbe_tangent;
+            
+            [~,~,~,~,~,~,barbar] = probeCoordinates(h.trial);
+            
+            fprintf('%s\n',trial.name);
+            if barbar(1)==0
+                %probeTrackWithShape
+                zeroOutStimArtifactsVertical
+            else
+                probeTrackROI_IR;
+                zeroOutStimArtifactsAssumeTranslate
+            end
+            % h.trial = trial;
+        else 
+            fprintf('Skipping %d\n',tnum)
+        end
+    end
+end
 
 
 

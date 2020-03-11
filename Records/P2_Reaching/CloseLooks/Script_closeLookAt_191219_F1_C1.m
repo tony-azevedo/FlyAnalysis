@@ -65,26 +65,33 @@ ax1.XColor = [1 1 1];
 clrbr.Color = [1 1 1];
 clrbr.Label.String = '\Delta (\mum)';
 
-%% Probe force bins:
+%% Look at different stretches of trials
 
-ubins = linspace(750,1250,60);
-vbins = linspace(-6000,6000,40);
+block{1} = [1:40]; % pull (349) % neurtal is around 419
+block{2} = [52:91]; % Kick (276)
+block{3} = [98:137]; % Kicking (834)
+block{4} = [149:188]; % pull (276)
+block{5} = [200:239]; % Kick
+block{6} = [251:290]; % kick
+block{7} = [302:341]; % pull
+block{8} = [350:357]; % kick aborted
+block{9} = [369:408]; % kick 
 
-%% Where is neutral?
+drctn = {
+    'pull'
+    'kick'
+    'kick'
+    'pull'
+    'kick'
+    'kick'
+    'pull'
+    'kick_abrt'
+    'kick'
+    'probe'
+    };
 
-histfig = figure;
-hax = subplot(1,1,1,'parent',histfig); hax.NextPlot = 'add';
-xlabel(hax, 'Force Probe');
-ylabel(hax, 'Counts');
 
-
-% assume it is where the probe is resting when the fly is resting
-neutralpnts = forceProbe(:,144:148);
-neutral = mean(neutralpnts(:));
-
-histogram(hax,neutralpnts,ubins,'Normalization','countdensity','DisplayStyle','stairs','displayname','neutrpnts');
-drawnow
-plot(hax,[neutral neutral],[0 hax.YLim(2)],'color','red');
+block{end+1} = [41,92,138,189,240,291,342,409]; % probe trials
 
 %% Where is the threshold?
 figure
@@ -100,50 +107,84 @@ for t = 1:length(trials)
     end
 end
 
-histogram(hax,fp_off,ubins,'Normalization','count','DisplayStyle','stairs','displayname','allthresh');
+%% Probe force bins:
 
+ubins = linspace(750,1250,60);
+vbins = linspace(-6000,6000,40);
+
+%% Where is neutral?
+
+histfig = figure; 
+histfig.Position = [[680 243 560 735]];
+hax = subplot(3,1,1,'parent',histfig); hax.NextPlot = 'add';
+xlabel(hax, 'Force Probe');
+ylabel(hax, 'Counts');
+
+
+% assume it is where the probe is resting when the fly is resting
+neutralpnts = forceProbe(:,144:148);
+neutral = mean(neutralpnts(:));
+
+histogram(hax,neutralpnts,ubins,'Normalization','countdensity','DisplayStyle','stairs','displayname','neutrpnts');
+drawnow
+plot(hax,[neutral neutral],[0 hax.YLim(2)],'color','red','displayname','neutral');
+ntrl = findobj(hax,'displayname','neutral');
+
+histogram(hax,fp_off,ubins,'Normalization','count','DisplayStyle','stairs','displayname','allthresh');
 
 % end
 
-%% Look at different stretches of trials
-
-block{1} = [1:40]; % low forces (349)
-block{2} = [52:91]; % Kick (276)
-block{3} = [98:137]; % low force threshold (336)
-block{4} = [149:188]; % high force threshold (276)
-block{5} = [215:219]; % resting
-block{6} = [220:259]; % kicking
-block{7} = [41,92,138];
 %%
-delete(findobj(hax,'displayname','allthresh'));
-delete(findobj(hax,'displayname','neutrpnts'));
+% delete(findobj(hax,'displayname','allthresh'));
+% delete(findobj(hax,'displayname','neutrpnts'));
+
+hbax = subplot(3,1,2,'parent',histfig); hbax.NextPlot = 'add';
+n1 = copyobj(ntrl,hbax); n1.YData = [0 10];
+hbax = subplot(3,1,3,'parent',histfig); hbax.NextPlot = 'add';
+n2 = copyobj(ntrl,hbax); n2.YData = [0 10];
 
 for b = 1:length(block)
     btrs = block{b};
-    histogram(hax,fp_off(btrs),ubins,'Normalization','count','DisplayStyle','stairs','displayname',['block ' num2str(b)]);
+    if strcmp(drctn{b},'kick')
+        hbax = subplot(3,1,2,'parent',histfig);
+        histogram(hbax,fp_off(btrs),ubins,'Normalization','count','DisplayStyle','stairs','displayname',['block ' num2str(b)]);
+    elseif strcmp(drctn{b},'pull')
+        hbax = subplot(3,1,3,'parent',histfig);
+        histogram(hbax,fp_off(btrs),ubins,'Normalization','count','DisplayStyle','stairs','displayname',['block ' num2str(b)]);
+    end
 end
 
+hbax = subplot(3,1,2,'parent',histfig); hbax.NextPlot = 'add';
 legend('toggle')
 legend('boxoff')
 
-%%
-blck3 = findobj(hax,'displayname','block 3');
-lowthrsh = blck3.BinEdges(blck3.Values== max(blck3.Values));
+hbax = subplot(3,1,3,'parent',histfig); 
+legend('toggle')
+legend('boxoff')
 
-blck4 = findobj(hax,'displayname','block 4');
-highthrsh = blck4.BinEdges(blck4.Values== max(blck4.Values));
+%% Calculate thresholds
 
-blckthresh = [
-    lowthrsh
-    highthrsh
-    lowthrsh
-    highthrsh
-    neutral
-    850];
+% pulling blocks
+for blck = [1 4 7]
+    blck3 = findobj(hax,'displayname','block 3');
+    pullthrsh = 978.8;
+    blckthresh(blck) = pullthrsh;
+end
+
+for blck = [5 6]
+    blck3 = findobj(hax,'displayname','block 3');
+    kickthrsh = 843;
+    blckthresh(blck) = kickthrsh;
+end
+
+% from the notes, blck 5 and 6 were around 874, block 9 was not clear. Then block 2 ~819 and 3 ~834 
+blckthresh(2) = 928;
+blckthresh(3) = 911;
+
 
 %% Save the thresholds back in to the trials. Then we can display them in quickshow
 
-for b = 1:6
+for b = 1:7
     btrs = block{b};
     fprintf('Saving block %d trials with thresh %g\n',b,blckthresh(b));
 
@@ -161,7 +202,8 @@ for b = 1:6
 end    
 
 %% Now look at probe distribution in different blocks.
-% Ignore the training period, just compare 2 - high, 3 - low, 4 - high
+% Ignore the training period, just compare 4 - pull, 5 - kick, 6 - kick, 7
+% - pull
 
 fphistfig = figure;
 hpax = subplot(1,1,1,'parent',fphistfig); hpax.NextPlot = 'add';
@@ -169,9 +211,10 @@ xlabel(hpax, 'Force Probe');
 ylabel(hpax, 'Counts');
 
 
-for b = 2:4
+for b = 4:7
     btrs = block{b};
     histogram(hpax,forceProbe(:,btrs),ubins,'Normalization','count','DisplayStyle','stairs','displayname',['block ' num2str(b)]);
+    plot(hpax,[lowthrsh lowthrsh],[0 hpax.YLim(2)],'displayname','low');
 end
 
 plot(hpax,[lowthrsh lowthrsh],[0 hpax.YLim(2)],'displayname','low');

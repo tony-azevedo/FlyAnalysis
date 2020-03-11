@@ -6,6 +6,7 @@ p.PartialMatching = 0;
 p.addParameter('PLOT',false,@islogical);
 PLOT = 0;
 parse(p,varargin{:});
+PLOT = p.results.PLOT;
 
 %%
 
