@@ -477,6 +477,7 @@ if get(handles.showmenu_chkbx,'value')
     showMenu_Callback(hObject, eventdata, handles)
 else
     feval(str2func(handles.quickShowFunction),handles.quickShowPanel,handles,savetag);
+    handles.quickShowPanel.UserData = handles.quickShowFunction;
     if isfield(handles.trial,'exposure') && (isfield(handles.trial,'imageNum') || 7 == exist(regexprep(handles.trial.name(1:end-4),'Raw','Images')))
         if isempty(findobj('String','Image','Style','pushbutton'))
             obj = copyobj(handles.loadstr_button,get(handles.loadstr_button,'parent'));
@@ -546,7 +547,8 @@ else
 end
 add_tags_to_subplots(hObject, eventdata, handles)  
 showAnnotations(hObject)  
-    
+guidata(hObject,handles)
+
 function showMenu_Callback(hObject, eventdata, handles)
 showfunctions = get(handles.showMenu,'string');
 handles.quickShowFunction = showfunctions{get(handles.showMenu,'value')};
@@ -870,6 +872,7 @@ else
 end
 spikebutt.ButtonDownFcn = @protocol_spike_button_alternative;
 
+
 function protocol_spike_button_alternative(spikebutt_right, eventdata, h)
 % run through all the trials for this protocol and process the spikes
 h = guidata(spikebutt_right);
@@ -916,6 +919,7 @@ end
 
 % --- Executes on button press in probetrace_button.
 function probetrace_button_Callback(probebutt, eventdata, h)
+
 if ~probebutt.Value
     s = findobj(h.quickShowPanel,'type','line','tag','ProbeTrace');
     if ~isempty(s)
@@ -940,6 +944,12 @@ if ~isfield(h.trial,'imageFile')
     return
 end
 
+% Check if this trial has been excluded
+if isfield(h.trial,'excluded') && h.trial.excluded
+    fprintf('Trial excluded %s\n',h.trial.name)
+    return
+end
+
 % Check if this trial has a probe vector
 if isfield(h.trial,'forceProbeStuff')
     ax = findobj(h.quickShowPanel,'type','axes','tag','quickshow_outax');
@@ -958,6 +968,10 @@ if isfield(h.trial,'forceProbeStuff')
 
     inax = findobj(h.quickShowPanel,'type','axes','tag','quickshow_inax');
     ax.XLim = inax.XLim;
+    ylabel(ax,'Probe (um)');
+
+    
+    ax.ButtonDownFcn = @probeButton_alternative;
     
     % enable for other trials
     if isfield(h.trial,'arduino_output')
@@ -973,11 +987,7 @@ if isfield(h.trial,'forceProbeStuff')
             h.trial.forceProbeStuff.Neutral;
     end
 
-    if isempty(eventdata) || isempty(eventdata.Source.UserData)
-        probebutt.ButtonDownFcn = @probeButton_alternative;
-    elseif ~isempty(eventdata) && strcmp(eventdata.Source.UserData,'DetectionRun')
-        probebutt.ButtonDownFcn = @protocol_probe_button_alternative;
-    end
+    probebutt.ButtonDownFcn = @protocol_probe_button_alternative;
 
 elseif isfield(h.trial,'legPositions')
     ax = findobj(h.quickShowPanel,'type','axes','tag','quickshow_outax');
@@ -997,19 +1007,43 @@ else
     if isfield(h.trial,'excluded') && h.trial.excluded
         fprintf(' * Bad movie: %s\n',h.trial.name)
     else
-        butt = questdlg('Track Probe?','Track probe', 'Cancel');
+        butt = questdlg('Track Probe?','Track probe', 'Yes');
         switch butt
             case 'Yes'
                 vertbutt = questdlg('Vertical Probe?','Track probe', 'Yes');
                 switch vertbutt
                     case 'Yes'
+                        humpbutt = questdlg('Two fibers?','Humps number', 'No');
+                        switch humpbutt
+                            case 'Yes'
+                                opts.HUMPS = 2;
+                            case 'No'
+                                opts.HUMPS = 1;                                
+                            case 'Cancel'
+                                return
+                        end
+                        
+                        if numel(probebutt.UserData) > 2000
+                            butt = questdlg('Use saved background?','Background?', 'Yes');
+                            switch butt
+                                case 'Yes'
+                                    opts.Background = probebutt.UserData;
+                                case 'No'
+                                case 'Cancel'
+                            end
+                        end
+                        
                         frcprbline = [536    0
                             536  890];
                         tngntpnt = [536 256];
                         h.trial.forceProbe_line = frcprbline;
                         h.trial.forceProbe_tangent = tngntpnt;
+                        trial = h.trial;
+                        save(trial.name,'-struct','trial')
                         
-%                         showProbeLocation(h.trial)
+                        % h.trial = smoothOutBrightPixels(h.trial);
+
+                        % showProbeLocation(h.trial)
 
                     case 'No'
                         [h.trial,response] = probeLineROI(h.trial);
@@ -1040,7 +1074,31 @@ else
         trial = h.trial;
         if barbar(1)==0
             probeTrackWithShape
-            zeroOutStimArtifactsVertical
+            
+            if isfield(h.trial.params,'ndf')
+                tempf = figure();
+                plot(makeFrameTime(trial),trial.forceProbeStuff.CoM); hold on
+                plot(makeInTime(trial.params),(max(trial.forceProbeStuff.CoM)-min(trial.forceProbeStuff.CoM))*EpiFlashStim(trial.params)/trial.params.ndf+min(trial.forceProbeStuff.CoM));
+                
+                TransientButt = questdlg('Correct transients at light onset?','Light Artifacts', 'No');
+                close(tempf);
+                switch TransientButt
+                    case 'Yes'
+                        CORRECTTRANSIENTS = 1;
+                    case 'No'
+                        CORRECTTRANSIENTS = 0;
+                    case 'Cancel'
+                        return
+                end
+                
+                if CORRECTTRANSIENTS
+                    zeroOutStimArtifactsVertical
+                end
+                
+                trial.forceProbeStuff.LightTransients = CORRECTTRANSIENTS;
+                save(trial.name,'-struct','trial')
+            end
+            % zeroOutStimArtifactsVertical
             % zeroOutStimArtifactsAssumefast
             % zeroOutStimArtifactsAssumeTranslate
         else
@@ -1048,8 +1106,14 @@ else
             zeroOutStimArtifactsAssumeTranslate
         end
         h.trial = trial;
-        guidata(probebutt,h)
-        eventdata.Source.UserData = 'DetectionRun';
+        butt = questdlg('Set saved background?','Background?', 'Yes');
+        switch butt
+            case 'Yes'
+                h.probetrace_button.UserData = Background;
+            case 'No'
+            case 'Cancel'
+        end
+
         probetrace_button_Callback(probebutt,eventdata, h)
         % trialnum_Callback(h.trialnum, eventdata, h)
 
@@ -1065,9 +1129,9 @@ guidata(probebutt,h)
 %quickShow_Protocol(h.trialnum, eventdata, h)
 
 
-function probeButton_alternative(probebutt, eventdata, h)
+function probeButton_alternative(src, eventdata, h)
 % An earlier version printed the script for the quickShow function 4/27/15
-h = guidata(probebutt);
+h = guidata(src);
 fig = figure('color',[1 1 1]);
 set(fig,'Units',get(h.quickShowPanel,'Units'));
 set(fig,'Position',get(h.quickShowPanel,'position'));
@@ -1106,14 +1170,27 @@ if strcmp(h.figure1.SelectionType,'alt')
             guidata(probe_butt_right,h)
             return
     end
+    butt = questdlg('Use saved background?','Background?', 'Yes');
+    switch butt
+        case 'Yes'
+            opts.Background = probe_butt_right.UserData;
+        case 'No'
+        case 'Cancel'
+    end
 
     fprintf('\n\t***** Detecting probe for %s trials **** \n',h.trial.params.protocol);    
     [~,~,~,~,~,D,trialStem,datastructfile] = extractRawIdentifiers(h.trial.name);
     data = load(datastructfile); data = data.data;    
     % Go through all trials
     REDODETECTION = 1;
+    if isfield(h.trial.forceProbeStuff, 'LightTransients')
+        CORRECTTRANSIENTS = h.trial.forceProbeStuff.LightTransients;
+    else
+        CORRECTTRANSIENTS = 0;
+    end
+    opts.HUMPS = h.trial.forceProbeStuff.HumpsNum;
     havaskedaboutdetection = 0;
-    
+
     for tidx = 1:length(data)
         tnum = data(tidx).trial;
         if tnum == h.trial.params.trial
@@ -1121,8 +1198,14 @@ if strcmp(h.figure1.SelectionType,'alt')
         end
             
         trial = load(fullfile(D,sprintf(trialStem,tnum)));
+        if ~isfield(trial,'imageFile')
+            continue
+        end
+        if isfield(trial,'excluded') && trial.excluded
+            continue
+        end
         if isfield(h.trial,'forceProbeStuff') && havaskedaboutdetection == 0
-            butt = questdlg('Re-Detect probe if already found?','Batch probe detection', 'Cancel');
+            butt = questdlg('Re-Detect probe if already found?','Batch probe detection', 'Yes');
             switch butt
                 case 'Yes'
                     REDODETECTION = 1;
@@ -1135,7 +1218,8 @@ if strcmp(h.figure1.SelectionType,'alt')
             havaskedaboutdetection = 1;
             
         end
-        if (~isfield(h.trial,'forceProbeStuff') || REDODETECTION)
+
+        if (~isfield(trial,'forceProbeStuff') || REDODETECTION)
             trial.forceProbe_line = h.trial.forceProbe_line;
             trial.forceProbe_tangent = h.trial.forceProbe_tangent;
             
@@ -1143,8 +1227,10 @@ if strcmp(h.figure1.SelectionType,'alt')
             
             fprintf('%s\n',trial.name);
             if barbar(1)==0
-                %probeTrackWithShape
-                zeroOutStimArtifactsVertical
+                probeTrackWithShape
+                if CORRECTTRANSIENTS
+                    zeroOutStimArtifactsVertical
+                end
             else
                 probeTrackROI_IR;
                 zeroOutStimArtifactsAssumeTranslate
@@ -2069,7 +2155,7 @@ guidata(hObject, handles);
 
 
 function removeProbeTrackStuff(hObject,eventdata,handles)
-button = questdlg('Remove Probe profile stuff for entire block?','Remove Probe','Yes');
+button = questdlg('Remove Probe profile stuff for entire block?','Remove Probe','No');
 if strcmp(button,'Cancel'), return, end
 
 handles = guidata(hObject);

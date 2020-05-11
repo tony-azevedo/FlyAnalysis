@@ -1,12 +1,22 @@
 %% Set an ROI that avoids the leg, just gets the probe
 % I think I only need 1 for now, but I'll keep the option for multiple
 % (storing in cell vs matrix)
-DEBUG = 1;
-HUMPS = 1;
+DEBUG = 0;
+if exist('opts','var')
+    HUMPS = opts.HUMPS;
+else
+    HUMPS = 1;
+end
 
 if isfield(trial,'excluded') && trial.excluded
     return
 end
+
+usebackground = 0;
+if exist('opts','var') && isfield(opts,'Background')
+usebackground = 1;
+end
+
 
 vid = VideoReader(trial.imageFile);
 N = round(vid.Duration*vid.FrameRate);
@@ -21,7 +31,7 @@ end
 frame = squeeze(frame(:,:,1));
 if sum(frame(:)>10) < numel(frame)/1000
     startAt0 = true;
-    t_i = 5*1/vid.FrameRate;
+    t_i = 5*1/vid.FrameRate; % start a few frames in
 elseif isempty(strfind(trial.params.protocol,'Sweep'))
     startAt0 = false;
     t_i = 5*1/vid.FrameRate -trial.params.preDurInSec;
@@ -52,11 +62,17 @@ end
 frame = smooshedframe/4;
 
 % Create a larger average for the background
-for jj = 1:20
-    mov3 = double(readFrame(vid));
-    smooshedframe = smooshedframe+mov3(:,:,1);
-end
-smooshedframe = smooshedframe/24;
+% **** Obsolete. if the bar is moving, this is a little weird
+% for jj = 1:20
+%     mov3 = double(readFrame(vid));
+%     smooshedframe = smooshedframe+mov3(:,:,1);
+% end
+% smooshedframe = smooshedframe/24;
+smooshedframe = smooshedframe/4;
+
+% imshow(frame,'DisplayRange',[0 max(frame(:))],'InitialMagnification',50)
+% imshow(smooshedframe,'DisplayRange',[0 max(smooshedframe(:))],'InitialMagnification',50)
+
 
 %% Smooth out the spot to show
 if isfield(trial,'brightSpots2Smooth')
@@ -144,8 +160,10 @@ end
 
 if DEBUG
 plot(ax1,evalpnts_x(locs),pks,'ro'); 
-plot(ax1,evalpnts_x(locs(1)),pks(1),'b+'); 
-plot(ax1,evalpnts_x(locs(2)),pks(2),'k+'); 
+plot(ax1,evalpnts_x(locs(1)),pks(1),'b+');
+if HUMPS > 1
+    plot(ax1,evalpnts_x(locs(2)),pks(2),'k+');
+end
 end
 
 % 3) Find the location of the darkest spot to the left of the bar (s)
@@ -201,6 +219,9 @@ end
 mask = ~isnan(BackgroundProfiles);
 mask(:,evalpnts_x<evalpnts_x(righthash)) = 0;
 Background = (BackgroundProfiles-filtered_mu(righthash)).*mask;
+if usebackground
+    Background = opts.Background;
+end
 
 ProfileMat_BS = ProfileMat-Background;
 filtered_frame_mu = nanmean(ProfileMat_BS,1);
@@ -213,20 +234,41 @@ end
 %% For tracking purposes, choose an initial point. This should be relatively constanst across trials
 x2fit = x2fit(:);
 
-% Double Gaussian fit
-coef0 = [560 761 13 67 10 56]; % start with peaks at 400 and 600, heights of 10 and widths of 100
-lb = [  20      20      1   1   1   1];
-ub = [  1260    1260    50  400   50   400];
-coef = lsqcurvefit(@doubleGaussian_bar_1at0,coef0,x2fit,barshape,lb,ub);
-% coef = lsqcurvefit(@doubleGaussian_bar_1at0,coef,x2fit,barshape,lb,ub);
+if HUMPS > 1
+    % Double Gaussian fit
+    coef0 = [560 761 13 67 10 56]; % start with peaks at 400 and 600, heights of 10 and widths of 100
+    lb = [  20      20      1   1   1   1];
+    ub = [  1260    1260    50  400   50   400];
+    coef = lsqcurvefit(@doubleGaussian_bar_1at0,coef0,x2fit,barshape,lb,ub);
+    % coef = lsqcurvefit(@doubleGaussian_bar_1at0,coef,x2fit,barshape,lb,ub);
+    if DEBUG
+        plot(ax1,x2fit,doubleGaussian_bar_1at0(coef,x2fit),'k');
+    end
 
-% Gaussian fit
-coef0 = [560 13 67]; % start with peaks at 400 and 600, heights of 10 and widths of 100
-lb = [  20   1   1];
-ub = [  1260 50  400];
-coef = lsqcurvefit(@gaussian_1at0,coef0,x2fit,barshape,lb,ub);
+else
+    % Gaussian fit
+    coef0 = [13 761 67]; % start with peaks at 400 and 600, heights of 10 and widths of 100
+    [~,coef0(2)] = max(barshape);
+    lb = [  1   400   1];
+    ub = [  50 1260 400];
+    coef = lsqcurvefit(@gaussian_1at0,coef0,x2fit,barshape,lb,ub);
+    if coef(1)<1.1
+        coef0 = [13 1000 67]; % start with peaks at 400 and 600, heights of 10 and widths of 100
+        lb = [  1   560   1];
+        ub = [  50 1260 400];
+        coef = lsqcurvefit(@gaussian_1at0,coef0,x2fit,barshape,lb,ub);
+        if coef(1)<1.1
+            error('Can''t fit the gaussian')
+        end
+    end
+    if DEBUG
+        plot(ax1,x2fit,gaussian_1at0(coef,x2fit),'k');
+    end
+
+end
 
 % Just use the right hand bump as 0
+
 anchor0 = coef(2);
 anchor = round(anchor0);
 % anchor will be updated and will shift as it moves
@@ -234,7 +276,7 @@ anchor = round(anchor0);
 %% Now find the best correlation with the frame
 
 ffm_bs = filtered_frame_mu-filtered_frame_mu(righthash);
-xc = 20;
+xc = length(barshape);
 [r,lags] = xcorr(ffm_bs,barshape,xc); r = r-r(xc-4);
 [r1,x1] = max(r);
 r2 = r(x1+1);
@@ -338,7 +380,7 @@ k0 = 1;
 kf = find(t(h2.exposure)<trial.params.durSweep,1,'last');
 
 br_trial = waitbar(0,sprintf('%d',kk));
-br_trial.Name = 'Frames';
+br_trial.Name = sprintf('Trials %d Frames',trial.params.trial);
 
 forceProbePosition = nan(2,N);
 CoM = nan(1,N);
@@ -368,7 +410,7 @@ while hasFrame(vid)
     
     ProfileMat_BS = ProfileMat-Background;
     filtered_frame_mu = nanmean(ProfileMat_BS,1);
-    % filtered_frame_mu = smooth(filtered_frame_mu,30);
+    filtered_frame_mu = (smooth(filtered_frame_mu,30))';
 
     
     % taper both ends
@@ -382,12 +424,21 @@ while hasFrame(vid)
     %     darkln.YData = [dark dark];
 
     %% correlate with bar shape, assuming barshape doesn't change
-    ffm_bs = filtered_frame_mu-filtered_frame_mu(righthash);
+    ffm_bs = filtered_frame_mu-dark; %filtered_frame_mu(righthash);
 
     % calculate xc = +- 20 lags
-    xc = 20;
+    if kk<=k0
+        xc = length(barshape);
+    elseif kk>k0
+        xc = 50;
+    end
     [r,lags] = xcorr(ffm_bs,barshape,xc);
     [r1,x1] = max(r);
+    if x1 == 1 || x1 == 101
+        xc = length(barshape);
+        [r,lags] = xcorr(ffm_bs,barshape,xc);
+        [r1,x1] = max(r);
+    end
     r2 = r(x1+1);
     rm1 = r(x1-1);
     if r2-rm1 > 0
@@ -427,6 +478,7 @@ delete(br_trial);
     
 trial.forceProbeStuff.forceProbePosition = forceProbePosition;
 trial.forceProbeStuff.CoM = CoM;
+trial.forceProbeStuff.HumpsNum = HUMPS;
 fprintf('Saving bar position\n')
 save(trial.name,'-struct','trial')
 
@@ -439,6 +491,6 @@ toc
 
 function [pks,locs] = findpeaksWithCurrentModel(ffm)
 
-[pks,locs] = findpeaks(ffm,'MinPeakWidth',1280/50,'MinPeakProminence',2); 
+[pks,locs] = findpeaks(ffm,'MinPeakWidth',1280/50,'MinPeakProminence',1.5); 
 
 end

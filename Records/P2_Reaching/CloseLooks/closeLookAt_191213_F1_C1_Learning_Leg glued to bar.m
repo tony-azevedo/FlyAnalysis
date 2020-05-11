@@ -1,4 +1,4 @@
-%% 191213_F1_C1
+% 191213_F1_C1
 
 %% Create a plot ordering trials normally
 % Then color force through out trials
