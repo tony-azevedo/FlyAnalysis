@@ -122,6 +122,38 @@ if p_scalar>p_crn_scalar_ll || p_scalar> p_crn_scalar_ur
 end
 
 
+%% Or just use the good old probetrack line
+movies = dir('*.avi');
+
+for m_idx = 1:length(movies)
+    m = movies(m_idx).name;
+    
+    trnm = regexprep(m,{'Image','_\d+T\d+.avi'},{'Raw','.mat'});
+    trial = load(trnm);
+    if ~strcmp(trial.imageFile,m)
+        warning(['Movie ' m ' has an unidentified trial']);
+        continue
+    end 
+
+    if m_idx <= 3
+        [trial,response] = probeLineROI(trial);
+        if strcmp(response,'Cancel')
+            break
+        end
+        temp.forceProbe_line = trial.forceProbe_line;
+        temp.forceProbe_tangent = trial.forceProbe_tangent;
+    else        
+        trial.forceProbe_line = temp.forceProbe_line;
+        trial.forceProbe_tangent = temp.forceProbe_tangent;
+        %         adjustProbeLineROI(trial);
+        fprintf('Saving bar and tangent in trial %s\n',num2str(trial.params.trial))
+        save(trial.name,'-struct','trial')
+    end
+    % temp.forceProbe_line = getacqpref('quickshowPrefs','forceProbeLine');
+    % temp.forceProbe_tangent = getacqpref('quickshowPrefs','forceProbeTangent');
+end
+
+
 %% Now go back through and correct line and tangent
 % run through all the movies. Decide if there is a probe or not
 REWRITE = 0;
@@ -213,7 +245,7 @@ movies = dir('*.avi');
 br = waitbar(0,'Batch');
 br.Position =  [1050    251    270    56];
 
-% [fid,message] = fopen('ProbeTrackLog.txt','w');
+[fid,message] = fopen('ProbeTrackLog.txt','w');
 fprintf(fid,'Tracking errors: %s\n',pwd);
 
 for m_idx = 1:length(movies)

@@ -1,4 +1,5 @@
-%% Create a table of 
+%% Create a table of cellids for Calcium Imagining experiments
+%
 % close all
 
 T = T_MHC;

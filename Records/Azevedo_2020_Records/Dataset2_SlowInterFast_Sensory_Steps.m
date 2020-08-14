@@ -102,9 +102,9 @@ for cidx = 1:length(cids)
     if ~isempty(regexp(T_Step.Genotype{find(idx,1)},'iav','once'))
         continue
     end
-    step_idx = cell2mat(T_Step.Step);
-    x = cell2mat(T_Step.Step(idx));
-    y = cell2mat(T_Step.Delay(idx));
+    step_idx = T_Step.Displacement;
+    x = T_Step.Displacement(idx);
+    y = T_Step.Delay(idx);
     
     delay = y(x==-10);
     typ = find(strcmp(clbls,T_Step.Cell_label{find(idx,1)}));

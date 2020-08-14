@@ -16,7 +16,12 @@ T.Properties.VariableNames = varNames;
 % T{1,:} = {'191213_F1_C1', 'WT_berlin',            'pilot', 'EpiFlash2T','empty'};
 % T{1,:} = {'191215_F1_C1', 'WT_berlin',            'pilot', 'EpiFlash2T','empty'};
 % T{1,:} = {'191215_F2_C1', 'WT_berlin',            'pilot', 'EpiFlash2T','empty'};
-T{1,:} = {'191219_F1_C1', 'WT_berlin',            'pilot', 'EpiFlash2T','empty'};
+% T{1,:} = {'191219_F1_C1', 'WT_berlin',            'pilot', 'EpiFlash2T','empty'};
+T{1,:} = {'200705_F1_C1', 'WT_berlin',            'pilot', 'EpiFlash2T','empty'};
+T{1,:} = {'200705_F2_C1', 'WT_berlin',            'pilot', 'EpiFlash2T','empty'};
+T{1,:} = {'200705_F3_C1', 'WT_berlin',            'pilot', 'EpiFlash2T','empty'};
+% T{1,:} = {'200712_F1_C1', 'WT_berlin',            'pilot', 'EpiFlash2T','empty'};
+% T{1,:} = {'200712_F2_C1', 'WT_berlin',            'pilot', 'EpiFlash2T','empty'};
 
 T_Reach = T;
 
@@ -53,57 +58,44 @@ for t = 1:length(trials)
     tr = trials(t);
     trial = load(fullfile(Dir,[T_row.Protocol{1} '_Raw_' cid '_' num2str(tr) '.mat']));
     if isfield(trial,'forceProbeStuff')
-        if length(trial.forceProbeStuff.CoM(1,:))==size(forceProbe,1)
-            if trial.forceProbeStuff.CoM(1,:) > trial.forceProbeStuff.CoM(2,:)
-                forceProbe(:,t) = trial.forceProbeStuff.CoM(1,:);
-            else
-                forceProbe(:,t) = trial.forceProbeStuff.CoM(2,:);
-            end
-            
-        else
-            forceProbe(1:length(trial.forceProbeStuff.CoM(1,:)),t) = trial.forceProbeStuff.CoM(1,:);
-        end
+        forceProbe(1:length(trial.forceProbeStuff.CoM(1,:)),t) = trial.forceProbeStuff.CoM(1,:);
     end
 end
 
 %% Look at different stretches of trials
-clear block
-block{1} = [1:40]; % pull (349) % neurtal is around 419
-block{2} = [52:91]; % Kick (276)
-block{3} = [98:137]; % Kicking (834)
-block{4} = [149:188]; % pull (276)
-block{5} = [200:239]; % Kick
-block{6} = [251:290]; % kick
-block{7} = [302:341]; % pull
-block{8} = [350:357]; % kick aborted
-block{9} = [369:408]; % kick 
+clear blocks
+blocks{1} = [1:40]; % extend (890) % neurtal is around 419
+blocks{2} = [47:86]; % extend (890)
+blocks{3} = [93:132]; % extend (340)
+blocks{4} = [139:178]; % flex (340)
+blocks{5} = [185:224]; % flex (340)
+blocks{6} = [231:270]; % flex (340)
+blocks{7} = [277:316]; % extend (890)
 
-drctn = {
-    'pull'
-    'kick'
-    'kick'
-    'pull'
-    'kick'
-    'kick'
-    'pull'
-    'kick_abrt'
-    'kick'
-    'probe'
+direction = {
+    'extend'
+    'extend'
+    'extend'
+    'flex'
+    'flex'
+    'flex'
+    'extend'
     };
 
 
-block{end+1} = [41,92,138,189,240,291,342,409]; % probe trials
+probetrials{1} = [41,87,133,179,225,271,317]; % probe trials
 
-blckclrs = fire(11); blckclrs = blckclrs(2:10,:);
+blckclrs = fire(length(blocks)+1); blckclrs = blckclrs(2:length(blocks)+1,:);
 
 %% Where is the threshold?
+% Weird but the sampling rate was ~160, instead of 170
 figure
 ax = subplot(1,1,1); ax.NextPlot = 'add';
 fp_off = trials*nan;
 for t = 1:length(trials)
     if ~isnan(TP.ArduinoDuration(t))
         ft_off = find(ft<TP.ArduinoDuration(t),1,'last');
-        if ft_off<845-20
+        if ft_off<799-20
             fp_off(t) = forceProbe(ft_off,t);
             plot(ax,forceProbe(ft_off-20:ft_off+20,t))
         end
@@ -112,7 +104,7 @@ end
 
 %% Probe force bins:
 
-ubins = linspace(750,1250,60);
+ubins = linspace(min(forceProbe(:)),max(forceProbe(:)),60);
 vbins = linspace(-6000,6000,40);
 
 %% Where is neutral?
@@ -125,7 +117,7 @@ ylabel(hax, 'Counts');
 
 
 % assume it is where the probe is resting when the fly is resting
-neutralpnts = forceProbe(:,144:148);
+neutralpnts = forceProbe(:,ft>-.02&ft<=0);
 neutral = mean(neutralpnts(:));
 
 histogram(hax,neutralpnts,ubins,'Normalization','countdensity','DisplayStyle','stairs','displayname','neutrpnts');
@@ -143,12 +135,12 @@ n1 = copyobj(ntrl,hbax); n1.YData = [0 10];
 hbax = subplot(3,1,3,'parent',histfig); hbax.NextPlot = 'add';
 n2 = copyobj(ntrl,hbax); n2.YData = [0 10];
 
-for b = 2:length(block)-2
-    btrs = block{b};
-    if strcmp(drctn{b},'kick') && b>=5 &&b<=6
+for b = 1:length(blocks)
+    btrs = blocks{b};
+    if strcmp(direction{b},'extend') 
         hbax = subplot(3,1,2,'parent',histfig);
         histogram(hbax,fp_off(btrs),ubins,'Normalization','count','DisplayStyle','stairs','displayname',['block ' num2str(b)]);
-    elseif strcmp(drctn{b},'pull')
+    elseif strcmp(direction{b},'flex')
         hbax = subplot(3,1,3,'parent',histfig);
         histogram(hbax,fp_off(btrs),ubins,'Normalization','count','DisplayStyle','stairs','displayname',['block ' num2str(b)]);
     end
@@ -166,16 +158,33 @@ legend('boxoff')
 
 % ax = fpHm(ft,trials,forceProbe,TP.ArduinoDuration);
 % ax = fpHm(ft,trials,forceProbe-neutral,TP.ArduinoDuration);
-ax = fpHm(ft,trials,forceProbe-neutral,TP.ArduinoDuration);
-for b = 1:length(block)-1
-    btrs = block{b};
-    rectangle(ax,'Position',[ax.XLim(1) btrs(1) diff(ax.XLim) diff([btrs(1), btrs(end)])],'EdgeColor',blckclrs(b,:),'LineWidth',4)
+ax = fpHm(ft,trials,forceProbe,TP.ArduinoDuration);
+
+% Put rectangles on to indicate block number
+% for b = 1:length(blocks)-1
+%     btrs = blocks{b};
+%     rectangle(ax,'Position',[ax.XLim(1) btrs(1) diff(ax.XLim) diff([btrs(1), btrs(end)])],'EdgeColor',blckclrs(b,:),'LineWidth',4)
+% end
+
+% Or put rectangles on to indicate direction
+direction_clrs = [
+    1 0 0
+    0 1 1
+    ];
+directions = unique(direction);
+for b = 1:length(blocks)
+    btrs = blocks{b};
+    rectangle(ax,'Position',[ax.XLim(1) btrs(1) diff(ax.XLim) diff([btrs(1), btrs(end)])],...
+        'EdgeColor',direction_clrs(contains(directions,direction{b}),:),'LineWidth',4)
 end
 
-blckclrs = fire(6); blckclrs = [blckclrs(1:3,:);blckclrs(2:5,:)];
+
+
+%% Plot blocks minus neutral, if such a thing makes sense
+blckclrs = fire(12); %blckclrs = [blckclrs(1:3,:);blckclrs(2:5,:)];
 ax = fpHm(ft,trials,forceProbe-neutral,TP.ArduinoDuration);
-for b = 4:7
-    btrs = block{b};
+for b = 4:10
+    btrs = blocks{b};
     rectangle(ax,'Position',[ax.XLim(1) btrs(1) diff(ax.XLim) diff([btrs(1), btrs(end)])],'EdgeColor',blckclrs(b,:),'LineWidth',4)
 end
 
@@ -186,7 +195,7 @@ pullthrsh = 978.8;
 kickthrsh = 843;
 
 % pulling blocks
-for blck = [1 4 7]
+for blck = find(contains(direction,'flex'))
     blck3 = findobj(hax,'displayname','block 3');
     blckthresh(blck) = pullthrsh;
 end
@@ -232,7 +241,7 @@ xlabel(hpax, 'Force Probe');
 ylabel(hpax, 'Counts');
 
 for b = 4:7
-    btrs = block{b};
+    btrs = blocks{b};
     histogram(hpax,forceProbe(:,btrs),ubins,'Normalization','count','DisplayStyle','stairs','displayname',['block ' num2str(b)],'edgecolor',blckclrs(b,:));
 end
 
@@ -246,13 +255,13 @@ l.TextColor = [1 1 1];
 [pullax,kickax] = blckTrcFig;
 title(pullax,'pull','color',[1 1 1])
 for b = [4, 7]
-    trs = block{b};
+    trs = blocks{b};
     putTraces(pullax, Dir, trialStem, trs,blckclrs(b,:))
 end
 
 title(kickax,'kick','color',[1 1 1])
 for b = [6,5]
-    trs = block{b};
+    trs = blocks{b};
     putTraces(kickax, Dir, trialStem, trs,blckclrs(b,:))
 end
 

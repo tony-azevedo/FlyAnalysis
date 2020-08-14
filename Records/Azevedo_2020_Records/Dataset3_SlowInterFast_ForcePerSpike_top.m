@@ -30,9 +30,17 @@ T_fastinter{end+1,:} = {'190712_F1_C1', '22A08',    'intermediate', 'EpiFlash2T'
 
 rewrite_yn = 'yes';
 
-Script_tableOfForcePerSpike
+% Script_tableOfForcePerSpike
+% head(T_FperSpike_0)
+% head(T_FperSpike_mla)
+
+% save('E:\Results\Dataset3_SIF_T_FperSpike_0','T_FperSpike_0')
+% save('E:\Results\Dataset3_SIF_T_FperSpike_mla','T_FperSpike_mla')
+T_FperSpike_0 = load('E:\Results\Dataset3_SIF_T_FperSpike_0'); T_FperSpike_0 = T_FperSpike_0.T_FperSpike_0;
+T_FperSpike_mla = load('E:\Results\Dataset3_SIF_T_FperSpike_mla'); T_FperSpike_mla = T_FperSpike_mla.T_FperSpike_mla;
 head(T_FperSpike_0)
 head(T_FperSpike_mla)
+
 
 %% Table of force production in slow neurons
 
@@ -65,6 +73,20 @@ head(T_FperNSpikes_0)
 head(T_FperNSpikes_mla)
 head(T_FvsFiringRate_0)
 head(T_FvsFiringRate_mla)
+
+% save('E:\Results\Dataset3_SIF_T_FperNSpikes_0','T_FperNSpikes_0')
+% save('E:\Results\Dataset3_SIF_T_FperNSpikes_mla','T_FperNSpikes_mla')
+% save('E:\Results\Dataset3_SIF_T_FvsFiringRate_0','T_FvsFiringRate_0')
+% save('E:\Results\Dataset3_SIF_T_FvsFiringRate_mla','T_FvsFiringRate_mla')
+% T_FperSpike_0 = load('E:\Results\Dataset3_SIF_T_FperNSpikes_0'); T_FperNSpikes_0 = T_FperNSpikes_0.T_FperNSpikes_0;
+% T_FperSpike_mla = load('E:\Results\Dataset3_SIF_T_FperNSpikes_mla'); T_FperNSpikes_mla = T_FperNSpikes_mla.T_FperNSpikes_mla;
+% T_FperSpike_0 = load('E:\Results\Dataset3_SIF_T_FvsFiringRate_0'); T_FvsFiringRate_0 = T_FvsFiringRate_0.T_FvsFiringRate_0;
+% T_FperSpike_mla = load('E:\Results\Dataset3_SIF_T_FvsFiringRate_mla'); T_FvsFiringRate_mla = T_FvsFiringRate_mla.T_FvsFiringRate_mla;
+% head(T_FperNSpikes_0)
+% head(T_FperNSpikes_mla)
+% head(T_FvsFiringRate_0)
+% head(T_FvsFiringRate_mla)
+% 
 
 %% Create force per spike plot
 Script_forcePerSpike

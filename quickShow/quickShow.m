@@ -1839,6 +1839,7 @@ helperfuncs = ...
 'removeKmeansStuff'
 'removeProbeTrackStuff'
 'removeProbeLine'
+'alignBarForProtocolTrials'
 'removeAnnotations'
 };
 set(hObject,'String',helperfuncs);
@@ -2183,6 +2184,15 @@ else
 end
 
 guidata(hObject, handles);
+
+
+function alignBarForProtocolTrials(hObject,eventdata,handles)
+% run through all the trials for this protocol and align the bar to a
+% common template
+h = guidata(hObject);
+trial0 = h.trial;
+alignBarForAllProtocolTrials(trial0);
+h.trial = load(trial0.name);
 
 
 function removeAnnotations(hObject,eventdata,handles)

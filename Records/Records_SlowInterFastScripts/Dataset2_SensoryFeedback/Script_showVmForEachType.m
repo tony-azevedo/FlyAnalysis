@@ -76,6 +76,7 @@ ax.XTickLabel = {'fast','intermediate','fast'};
 ax.XLim = [-1.5 1.5];
 
 % Compare
+figure
 [P,T,stats] = anovan(X_all,Gs);
 results = multcompare(stats);
 
