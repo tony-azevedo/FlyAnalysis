@@ -33,8 +33,16 @@ cdr = ContinuousDataReader('AcquireWithEpiFeedback_ContRaw_201104_F2_C1_1_A.bin'
 
 cdr.chooseChannels({'probe_position','arduino_output','current_extEMG','current_2'});%,'b_0','b_128'});
 
+%% continuous recording of trials
+% cdr = ContinuousDataReader('AcquireWithEpiFeedback_ContRaw_201209_F0_C0_2_A.bin');
+% cdr.chooseChannels({'probe_position','arduino_output','refchan'});%,'b_0','b_128'});
+
+cdr = ContinuousDataReader('AcquireWithEpiFeedback_ContRaw_201215_F1_C1_1_A.bin');
+cdr.chooseChannels({'arduino_output','refchan','probe_position'});%,'b_0','b_128'});
+
+
 %% 
-cdr.nextCookie(100);
+cdr.nextCookie(50);
 
 %%
 cdr.backup

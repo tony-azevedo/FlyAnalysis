@@ -126,7 +126,7 @@ classdef ContinuousDataReader < handle
                 obj.cookiesize = varargin{1};
             end
             if isempty(obj.cookiesize)
-                obj.cookiesize = 50;
+                obj.cookiesize = 10;
             end
             st = obj.readCookie;
             if ~st
@@ -137,6 +137,7 @@ classdef ContinuousDataReader < handle
         
         function plotCookie(obj)
             % plot the cookie
+            obj.cookie(strcmp(obj.channels,'refchan'),:) = obj.cookie(strcmp(obj.channels,'refchan'),:)*50;
             obj.openFFWFig
             if isempty(obj.ai_ch_lines) || ~all(isvalid(obj.ai_ch_lines)) || length(obj.ai_ch_lines(1).YData) ~= obj.cookiesamps
                 obj.replaceCookieLines

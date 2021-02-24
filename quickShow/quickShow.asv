@@ -1875,7 +1875,7 @@ end
 fclose('all');
 handles.notesfilename = fullfile(handles.dir,a.name);
 handles.notesfid = fopen(handles.notesfilename,'r');
-set(handles.infoPanel,'userdata',sprintf('%s\n\n%s',ntstr,fileread(handles.notesfilename)))
+set(handles.infoPanel,'userdata',strcat(ntstr,fileread(handles.notesfilename)))
 
 if ~isempty(eventdata) && ischar(eventdata) && strcmp(eventdata,'loadCellFromDir')
 else

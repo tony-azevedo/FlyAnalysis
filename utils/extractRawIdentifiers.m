@@ -2,7 +2,7 @@ function varargout = extractRawIdentifiers(name)
 % [protocol,dateID,flynum,cellnum,trialnum,D,trialStem,datastructfile,notesfile] = extractRawIdentifiers(name)
 %   [mfilename '_' protocol '_' dateID '_' flynum '_' cellnum '_' trialnum]
 
-if isempty(strfind(name,'.mat'))
+if ~contains(name,'.mat')
     name = [name '.mat'];
 end
 [remain,D] = strtok(fliplr(name),filesep);
