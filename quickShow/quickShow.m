@@ -477,7 +477,11 @@ handles = guidata(hObject);
 if get(handles.showmenu_chkbx,'value')
     showMenu_Callback(hObject, eventdata, handles)
 else
-    feval(str2func(handles.quickShowFunction),handles.quickShowPanel,handles,savetag);
+    if handles.probetrace_button.Value && strcmp(handles.probetrace_button.String,'Intertrial')
+        feval(str2func(regexprep(handles.quickShowFunction,'quickShow','interTrial')),handles.quickShowPanel,handles,savetag);
+    else    
+        feval(str2func(handles.quickShowFunction),handles.quickShowPanel,handles,savetag);
+    end
     handles.quickShowPanel.UserData = handles.quickShowFunction;
     if isfield(handles.trial,'exposure') && (isfield(handles.trial,'imageNum') || 7 == exist(regexprep(handles.trial.name(1:end-4),'Raw','Images')))
         if isempty(findobj('String','Image','Style','pushbutton'))
@@ -536,12 +540,15 @@ else
     elseif isfield(handles.trial,'legPositions')
         handles.probetrace_button.String = 'Leg Pose';
         handles.probetrace_button.FontWeight = 'bold';
+    elseif isfield(handles.trial,'intertrial')
+        handles.probetrace_button.String = 'Intertrial';
+        handles.probetrace_button.FontWeight = 'bold';
     else
         handles.probetrace_button.FontWeight = 'normal';
         handles.probetrace_button.String = 'Probe';
     end
     
-    if get(handles.probetrace_button,'value')
+    if get(handles.probetrace_button,'value') && ~strcmp(handles.probetrace_button.String,'Intertrial')
         probetrace_button_Callback(handles.probetrace_button, [], handles)
     end
     
@@ -753,12 +760,19 @@ elseif isfield(h.trial,'spikes') && isfield(h.trial,'spikeDetectionParams')
     y = ax.YLim(2);
     t = makeInTime(h.trial.params);
     if ~any(isnan(h.trial.spikes))
-        ticks = raster(ax,t(h.trial.spikes),y);
-        set(ticks,'Tag','Spikes');
+        raster(ax,t(h.trial.spikes),y,'tag','Spikes');
+        if h.probetrace_button.Value && strcmp(h.probetrace_button.String,'Intertrial')
+            t_ = [t; makeInterTime(h.trial)];
+            raster(ax,t_(h.trial.intertrial.spikes),y,'tag','Spikes');
+        end
     else
-        raster(ax,t(h.trial.spikes(~isnan(h.trial.spikes))),y);
-        ticks = raster(ax,t(h.trial.spikes_uncorrected(isnan(h.trial.spikes))),y);
-        ticks.Color = [0    0.4470    0.7410];
+        raster(ax,t(h.trial.spikes(~isnan(h.trial.spikes))),y,'tag','Spikes');
+        raster(ax,t(h.trial.spikes_uncorrected(isnan(h.trial.spikes))),y,'color',[0 0.4470 0.7410],'tag','Spikes');
+        if h.probetrace_button.Value && strcmp(h.probetrace_button.String,'Intertrial')
+            t_ = [t; makeInterTime(h.trial)];
+            raster(ax,t_(h.trial.intertrial.spikes(~isnan(h.trial.intertrial.spikes))),y,'tag','Spikes');
+            raster(ax,t(h.trial.spikes_uncorrected(isnan(h.trial.spikes))),y,'color',[0 0.4470 0.7410],'tag','Spikes');
+        end
     end
     ax.ButtonDownFcn = @SimpleSpikeSpotCheckCheck;
 
@@ -834,7 +848,7 @@ else
         end
     end
     % Then go through all protocol files
-    if ~gotone
+    if 0 % ~gotone
         for t = 1:length(h.prtclData)
             mtfl = matfile(sprintf(h.trialStem,h.prtclData(t).trial));
             if ~isempty(whos(mtfl,'spikeDetectionParams'))
@@ -850,6 +864,12 @@ else
         spikevars = mtfl.spikeDetectionParams;
     end
     % optional: then check other protocols
+    
+    % a quick check. If there is no mode_1 or if mode is empty, assume
+    % voltage_1 has spikes and that mode is mode_1. Save that in the file
+    if ~isfield(h.trial.params,'mode_1') && isempty(h.trial.params.mode)
+        h.trial.params.mode_1 = 'IClamp';
+    end
     
     switch h.trial.params.mode_1; case 'VClamp', invec1 = 'current_1'; case 'IClamp', invec1 = 'voltage_1'; otherwise; invec1 = 'voltage_1'; end
     if ~exist('spikevars','var') 
@@ -867,7 +887,11 @@ else
     % run the spike filter GUI with these prefs., select example spikes.
     
     % may need to allow for different versions of spike analysis
-    [h.trial,~] = spikeDetection(h.trial,invec1,spikevars);
+    if isfield(h.trial,'intertrial')
+        [h.trial,~] = spikeDetection(h.trial,invec1,spikevars,'intertrial_spikes','yes');        
+    else
+        [h.trial,~] = spikeDetection(h.trial,invec1,spikevars);
+    end
     guidata(spikebutt,h)
     trialnum_Callback(h.trialnum, eventdata, h)
 end
@@ -934,6 +958,14 @@ end
 s = findobj(h.quickShowPanel,'type','line','tag','ProbeTrace');
 if ~isempty(s)
     delete(s);
+end
+
+% For trials with an intertrial period, from continuous acquisition, just
+% run a separate routine.
+if isfield(h.trial,'intertrial')
+    guidata(probebutt,h)
+    quickShow_Protocol(probebutt, eventdata, h)
+    return
 end
 
 % Check if this trial has a video
@@ -1152,7 +1184,6 @@ p.Position(4) = fig.Position(4)*.85 - 40;
 
 title(ax,sprintf('%s', [prot '.' d '.' fly '.' cell '.' trial]))
 
-
 function protocol_probe_button_alternative(probe_butt_right, eventdata, h)
 % run through all the trials for this protocol and process the spikes
 h = guidata(probe_butt_right);
@@ -1241,6 +1272,29 @@ if strcmp(h.figure1.SelectionType,'alt')
             fprintf('Skipping %d\n',tnum)
         end
     end
+end
+
+function showIntertrialPeriod(h,probebutt)
+
+
+chax = findobj(h.quickShowPanel,'type','axes');
+if isempty(chax)
+    error('Clear panel, go to quickShow visualization\n')
+end
+t = cat(1,makeInTime(h.trial.params),makeInterTime(h.trial));
+
+for ax = 1:length(chax)
+    chl = findobj(chax(ax),'type','line');
+    for l = 1:length(chl)
+        tag = get(chl,'displayname');
+        y = cat(1,get(chl(l),'ydata')',h.trial.intertrial.(tag)');
+        set(chl,'xdata',t,'ydata',y);
+    end
+end
+    
+ptch = findobj(chax,'type','patch');
+for p = 1:length(ptch)
+    ptch(p).Vertices([2 3],1) = t(end);
 end
 
 
@@ -1434,6 +1488,8 @@ feval(@playAviAndData,handles.trial,handles.trial.params,exposureNum);
 
     
 function addClickableExposureTimeline(handles,savetag)
+% Not functional after prob_position routine created. TA 21/3/12
+
 % x = (1:handles.trial.params.sampratein*handles.params.durSweep)/handles.trial.params.sampratein;
 % if isfield(handles.trial.params,'preDurInSec')
 %     x = ((1:handles.trial.params.sampratein*handles.params.durSweep) - handles.trial.params.preDurInSec*handles.trial.params.sampratein)/handles.trial.params.sampratein;
@@ -1471,108 +1527,12 @@ handles = guidata(hObject);
 set(handles.analyses_chckbox,'value',0);
 guidata(hObject, handles);
 
-% % --- Executes button press in Combine Blocks.
+% % --- Executes button press to creat table
 function parameterTable_Callback(hObject, eventdata, handles) %#ok<*DEFNU>
-parameterTable = datastruct2table(handles.prtclData,'DataStructFileName',handles.prtclDataFileName);
-[parameterTable, drugs] = addDrugsToDataTable(parameterTable);
-openvar('parameterTable')
-
-% Legacy code that would allow you to combine blocks. Replaced by function
-% creating parameter table and allowing you to browse it.
-% function combineblocks_Callback(hObject, eventdata, handles) %#ok<*DEFNU>
-% fns = fieldnames(handles.trial.params);
-% plurals = {};
-% for fn_ind = 1:length(fns)
-%     if strcmp('s',fns{fn_ind}(end))
-%         plurals{end+1} = fns{fn_ind};
-%     end
-% end
-% % Create figure
-% h.f = figure('units','pixels','position',[200,200,100,30+16*length(plurals)+10],...
-%              'toolbar','none','menu','none');
-% for pl_ind = 1:length(plurals)
-%     % Create yes/no checkboxes
-%     h.c(pl_ind) = uicontrol('style','checkbox','units','pixels','parent',h.f,...
-%         'position',[10,30+16*(pl_ind-1),100,15],'string',plurals{pl_ind});
-%     % left bottom width height
-% end
-% 
-% % Create OK pushbutton
-% h.p = uicontrol('style','pushbutton','units','pixels','parent',h.f,...
-%                 'position',[10,5,80,20],'string','OK',...
-%                 'callback',@(x,y,z)uiresume);
-% uiwait(h.f);
-% 
-% excluded = {'trialBlock','combinedTrialBlock','gain','secondary_gain','randomize'};
-% for pl_ind = 1:length(plurals)
-%     if get(h.c(pl_ind),'value')
-%         excluded{end+1} = plurals{pl_ind};
-%     end
-% end
-% close(h.f);
-% clear h
-% blocktrials = findLikeTrials('name',handles.trial.name,'datastruct',handles.prtclData,'exclude',excluded);
-% 
-% blocks = zeros(1,length(blocktrials));
-% combinedblocks = [];
-% combinedblocksnums = [];
-% if isfield(handles.prtclData(blocktrials(1)),'combinedTrialBlock')
-%     combinedblocks = zeros(1,length(blocktrials));
-%     combinedblocksnums = zeros(1,length(blocktrials));
-% end
-% tags = cell(size(blocks));
-% for bt_ind = 1:length(blocktrials)
-%     tags{bt_ind} = handles.prtclData(bt_ind).tags;
-%     blocks(bt_ind) = handles.prtclData(blocktrials(bt_ind)).trialBlock;
-%     if isfield(handles.prtclData(blocktrials(bt_ind)),'combinedTrialBlock') && handles.prtclData(blocktrials(bt_ind)).combinedTrialBlock>0
-%         combinedblocks(bt_ind) = handles.prtclData(blocktrials(bt_ind)).trialBlock;
-%         combinedblocksnums(bt_ind) = handles.prtclData(blocktrials(bt_ind)).combinedTrialBlock;
-%     end
-% end
-% 
-% [blocks,ind] = unique(blocks);
-% if ~isempty(combinedblocks)
-%     combinedblocks = combinedblocks(ind);
-%     combinedblocks = combinedblocks(combinedblocks>0);
-%     combinedblocksnums = combinedblocksnums(ind);
-%     combinedblocksnums = combinedblocksnums(combinedblocksnums>0);
-%     disp(['Blocks ' sprintf('%d ', blocks) 'constitute combined blocks ' sprintf('%d ',combinedblocksnums)])
-% end
-% tags = tags(ind);
-% 
-% % make a little dialog that creates checkboxes and populates the window
-% % with choices
-% 
-% blocks2combine = selectFromCheckBoxes(blocks,tags,'title','select blocks, dbl click to continue','prechecked',ismember(blocks,combinedblocks));
-% if isempty(blocks2combine)
-%     error('No block pairs selected for combination');
-% end
-% 
-% blocks2combine = blocks(logical(blocks2combine));
-% fprintf('(Un)Combining Blocks: ')
-% fprintf('%d, ', blocks2combine);
-% fprintf('\n');
-% 
-% for prt_ind = 1:length(handles.prtclData)
-%     if sum(blocks2combine==handles.prtclData(prt_ind).trialBlock)
-%         handles.prtclData(prt_ind).combinedTrialBlock = handles.trial.params.trialBlock;
-%         trial = load(fullfile(handles.dir,sprintf(handles.trialStem,handles.prtclData(prt_ind).trial)));
-%         trial.params.combinedTrialBlock = handles.trial.params.trialBlock;
-%         save(trial.name, '-struct', 'trial');
-%     else 
-%         handles.prtclData(prt_ind).combinedTrialBlock = 0;
-%         trial = load(fullfile(handles.dir,sprintf(handles.trialStem,handles.prtclData(prt_ind).trial)));
-%         if isfield('trial.params','combinedTrialBlock')
-%             trial.params = rmfield(trial.params,'combinedTrialBlock');
-%         end
-%         save(trial.name, '-struct', 'trial');
-%     end
-% 
-% end
-% data = handles.prtclData; %#ok<NASGU>
-% save(handles.prtclDataFileName,'data');
-% guidata(hObject,handles)
-
+PT = datastruct2table(handles.prtclData,'DataStructFileName',handles.prtclDataFileName,'rewrite','yes');
+% [PT, drugs] = addDrugsToDataTable(PT);
+PT = addExcludeFlagToDataTable(PT,handles.trialStem);
+openvar('PT')
 
 % --- Executes on button press in exclude.
 function exclude_Callback(hObject, eventdata, handles)
@@ -1827,6 +1787,7 @@ function helperFunctionMenu_CreateFcn(hObject, eventdata, handles)
 helperfuncs = ...
 {
 'edit_analysis'
+'edit_quickShow'
 'save_data_struct'
 'reload_notes'
 'skootch_exposure'
@@ -1855,6 +1816,17 @@ end
 function edit_analysis(hObject, eventdata, handles)
 handles = guidata(hObject);
 eval(['edit ' handles.showMenu.String{handles.showMenu.Value}])
+
+function edit_quickShow(hObject, eventdata, handles)
+handles = guidata(hObject);
+% a = what('quickShow');
+% a = dir([a.path filesep 'quickShow_' handles.currentPrtcl '.m']);
+% if isempty(a)
+%     error('No quickShow for %s\n',handles.currentPrtcl)
+% end
+% handles.quickShowFunction = regexprep(a.name,'\.m','');
+eval(['edit ' handles.quickShowFunction]);%;  showMenu.String{handles.showMenu.Value}])
+
 
 function save_data_struct(hObject, eventdata, handles)
 handles = guidata(hObject);

@@ -181,7 +181,7 @@ classdef ContinuousDataExtractor < handle
                         trial.intertrial.(cstr) = obj.cookie(strcmp(obj.channels,cstr),trial.params.durSweep*obj.samprate+1:end);
                     end
                 end
-
+                
                 save(trial.name,'-struct','trial');
                 if rem(i,10)==0
                     fprintf('Saving trial %d\n',trnums(i))

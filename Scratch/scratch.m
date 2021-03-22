@@ -1,15 +1,11 @@
-figure
-clrs = parula(size(trial.clustertraces,2));
+a = dir('CurrentStepControl*')
 
-for cl = 1:size(trial.clustertraces,2)
-    alphamask(trial.clmask==cl,clrs(cl,:),.5);
+for f = 1:length(a)
+    trial = load(a(f).name);
+    trial.params.protocol = 'CurrentStepControl';
+    trial.name = regexprep(trial.name,'CurrentStep_Control','CurrentStepControl');
+    save(a(f).name,'-struct','trial');
 end
 
 %%
-figure
-clrs = parula(size(trial.clustertraces,2));
-ax = subplot(1,1,1);
-for cl = 1:size(trial.clustertraces,2)
-    plot(trial.clustertraces(:,cl),'color',clrs(cl,:),'parent',ax)
-    hold(ax,'on')
-end
+

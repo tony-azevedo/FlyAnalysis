@@ -23,7 +23,6 @@ if ~isempty(p.Results.DataStructFileName) && ~strcmp(p.Results.rewrite,'yes')
     end
 end
 tablename = regexprep(p.Results.DataStructFileName,'.mat','_Table.mat');
-fprintf('Writing table %s:\n',tablename);
 
 % sz = [length(data) length(fieldnames(data(1)))];
 
@@ -74,6 +73,7 @@ eval(tblCreateString)
 T.Properties.Description = tablename;
 
 if ~isempty(p.Results.DataStructFileName)
+    fprintf('Writing table %s:\n',tablename);
     save(tablename,'T')
 end
 
