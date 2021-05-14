@@ -23,12 +23,14 @@ trialStem = [prot '_Raw_' d '_' fly '_' cell '_%d.mat'];
 
 ind_ = regexp(name,'_');
 indDot = regexp(name,'\.');
-dfile = name(~(1:length(name) >= ind_(end) & 1:length(name) < indDot(1)));
-dfile = regexprep(dfile,'_Raw','');
-% dfile = regexprep(dfile,'Acquisition','Raw_Data');
+tfile = name(~(1:length(name) >= ind_(end) & 1:length(name) < indDot(1)));
+tfile = regexprep(tfile,{'_Raw','.mat'},{'','_Table.mat'});
+if ~exist(tfile,'file')
+    error('No data table: %s\n',tfile)
+end
 
 notesfile = fullfile(D,['notes_' d '_' fly '_' cell '.txt']);
 % notesfile = regexprep(notesfile,'Acquisition','Raw_Data');
 
-varargout = {prot,d,fly,cell,trial,D,trialStem,dfile,notesfile};
+varargout = {prot,d,fly,cell,trial,D,trialStem,tfile,notesfile};
 

@@ -4,7 +4,7 @@
 
 %% Prelim
 %cdr = ContinuousDataReader('AcquireWithEpiFeedback_ContRaw_200823_F2_C1_1_A.bin');
-%cdr = ContinuousDataReader('AcquireWithEpiFeedback_ContRaw_200823_F3_C1_7_A.bin');
+%cdr = ContinuousDataReader('AcquireWithEpiFeedback_ContRaw_210319_F2_C1_3_A.bin');
 
 %% WT
 % cdr = ContinuousDataReader('AcquireWithEpiFeedback_ContRaw_200904_F1_C1_1_A.bin');
@@ -40,6 +40,9 @@ cdr.chooseChannels({'probe_position','arduino_output','current_extEMG','current_
 cdr = ContinuousDataReader('AcquireWithEpiFeedback_ContRaw_201215_F1_C1_1_A.bin');
 cdr.chooseChannels({'arduino_output','refchan','probe_position'});%,'b_0','b_128'});
 
+%%
+cdr = ContinuousDataReader('AcquireWithEpiFeedback_ContRaw_210319_F2_C1_3_A.bin');
+cdr.chooseChannels({'arduino_output','refchan','probe_position','sgsmonitor','current_1'});%,'b_0','b_128'});
 
 %% 
 cdr.nextCookie(50);

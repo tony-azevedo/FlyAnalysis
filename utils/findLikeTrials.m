@@ -1,6 +1,8 @@
 function varargout = findLikeTrials(varargin)
 % [nums,inds] = findLikeTrials('name',name,'trial',trial,'window',window,'datastruct',datastruct)
 
+error('Use Tables instead of data struct, fix this method')
+
 p = inputParser;
 p.addParameter('trial',[],@isnumeric);
 p.addParameter('name','',@ischar);

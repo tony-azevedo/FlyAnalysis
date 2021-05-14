@@ -73,6 +73,7 @@ if nargin>3
         if ~isempty(strfind(linkvariable,'C:\Users\Anthony Azevedo\')) || ~isempty(strfind(linkvariable,'/Users/tony/'))
             dir = linkvariable;
         end
+        handles.dir = dir;
     elseif isstruct(linkvariable) && ...
             isfield(linkvariable,'flygenotype') && ...
             isfield(linkvariable,'flynumber') && ...
@@ -84,13 +85,12 @@ if nargin>3
             linkvariable(1).date,...
             '_F',linkvariable(1).flynumber,...
             '_C',linkvariable(1).cellnumber];
-
+        handles.dir = dir;
     end
-    handles.dir = dir;
 end
 guidata(hObject,handles);
 handles.dir;
-[l, handles] = isInCellDir;
+[l, handles] = isInCellDir(handles);
 if ~l
     folderButton_Callback(handles.folderButton, eventdata, handles)
 else
@@ -233,10 +233,20 @@ else
     handles.trialStem = [rawfiles(1).name((1:length(rawfiles(1).name)) <= ind_(end)) '%d' rawfiles(1).name(1:length(rawfiles(1).name) >= indDot(1))];
     dfile = rawfiles(1).name(~(1:length(rawfiles(1).name) >= ind_(end) & 1:length(rawfiles(1).name) < indDot(1)));
     dfile = regexprep(dfile,'_Raw_','_');
-    handles.prtclDataFileName = fullfile(handles.dir,dfile);
+    tfile = rawfiles(1).name(~(1:length(rawfiles(1).name) >= ind_(end) & 1:length(rawfiles(1).name) < indDot(1)));
+    tfile = regexprep(tfile,'_Raw_','_');
+    tfile = regexprep(tfile,'.mat','_Table.mat');
+    %handles.prtclDataFileName = fullfile(handles.dir,dfile);
+    handles.prtclTableFileName = fullfile(handles.dir,tfile);
     
-    if exist(handles.prtclDataFileName,'file')
-        d = load(handles.prtclDataFileName);
+    guidata(handles.protocolMenu,handles)
+    
+    %     if exist(handles.prtclDataFileName,'file')
+    %         d = load(handles.prtclDataFileName);
+    %     end
+    if exist(handles.prtclTableFileName,'file')
+        T = load(handles.prtclTableFileName);
+        T = T.T;
     end
     
     trial = load(fullfile(handles.dir,rawfiles(1).name));
@@ -244,14 +254,15 @@ else
     if changeFileNames
         error('On the wrong system');
     end
-    % once all cells have been examined, next line can be commented out.
-    % changeFileNames = true;
     
     % Creating the data file and testing what platform I'm on and what the name should be
-    if ~exist(handles.prtclDataFileName,'file') || length(d.data) ~= length(rawfiles) || changeFileNames
-        createDataFileFromRaw(handles.prtclDataFileName);
-        %FlySoundDataStruct2csv(handles.prtclDataFileName);
-    end    
+    %     if ~exist(handles.prtclDataFileName,'file') || length(d.data) ~= length(rawfiles) || changeFileNames
+    %         createDataFileFromRaw(handles.prtclDataFileName);
+    %         %FlySoundDataStruct2csv(handles.prtclDataFileName);
+    %     end
+    if ~exist(handles.prtclTableFileName,'file') || length(T.trial) ~= length(rawfiles) || changeFileNames
+        createTablesFromRaw(handles.prtclTableFileName);
+    end
     protocolMenu_Callback(handles.protocolMenu, [], handles);
 end
 
@@ -288,28 +299,43 @@ if isempty(rawfiles)
     contProtocolMenu_callback(hObject,eventdata,handles);
     return
 end
+
 ind_ = regexp(rawfiles(1).name,'_');
 indDot = regexp(rawfiles(1).name,'\.');
 handles.trialStem = [rawfiles(1).name((1:length(rawfiles(1).name)) <= ind_(end)) '%d' rawfiles(1).name(1:length(rawfiles(1).name) >= indDot(1))];
-dfile = rawfiles(1).name(~(1:length(rawfiles(1).name) >= ind_(end) & 1:length(rawfiles(1).name) < indDot(1)));
-dfile = regexprep(dfile,'_Raw','');
-handles.prtclDataFileName = fullfile(handles.dir,dfile);
+% dfile = rawfiles(1).name(~(1:length(rawfiles(1).name) >= ind_(end) & 1:length(rawfiles(1).name) < indDot(1)));
+% dfile = regexprep(dfile,'_Raw','');
+tfile = regexprep(rawfiles(1).name,{'_Raw','_\d*.mat'},{'','_Table.mat'});
 
-dataFileExist = dir(handles.prtclDataFileName);
-if ~isempty(dataFileExist)
-    d = load(handles.prtclDataFileName);
+% handles.prtclDataFileName = fullfile(handles.dir,dfile);
+handles.prtclTableFileName = fullfile(handles.dir,tfile);
+
+% dataFileExist = dir(handles.prtclDataFileName);
+% if ~isempty(dataFileExist)
+%     d = load(handles.prtclDataFileName);
+% else
+%     createDataFileFromRaw(handles.prtclDataFileName,'one');
+%     error('Should have created a Data File in loadCellFromDir function above')
+% end
+
+tableFileExist = dir(handles.prtclTableFileName);
+if ~isempty(tableFileExist)
+    T = load(handles.prtclTableFileName);
 else
-    createDataFileFromRaw(handles.prtclDataFileName,'one');
-    error('Should have created a Data File in loadCellFromDir function above')
+    createTablesFromRaw(handles.prtclTableFileName,'one');
+    error('Should have created a Table File in loadCellFromDir function above')
 end
 
-handles.prtclData = d.data;
-prtclTrialNums = nan(size(rawfiles));
-for i = 1:length(handles.prtclData)
-    prtclTrialNums(i) = handles.prtclData(i).trial;
-end
-handles.prtclTrialNums = prtclTrialNums;
-handles.currentTrialNum = prtclTrialNums(1);
+% handles.prtclData = d.data;
+handles.prtclTable = T.T;
+
+% prtclTrialNums = nan(size(rawfiles));
+% for i = 1:length(handles.prtclData)
+%     prtclTrialNums(i) = handles.prtclData(i).trial;
+% end
+
+handles.prtclTrialNums = handles.prtclTable.trial;
+handles.currentTrialNum = handles.prtclTrialNums(1);
 
 set(handles.trialnum,'string',num2str(handles.currentTrialNum));
 guidata(hObject,handles)
@@ -318,29 +344,29 @@ handles = guidata(hObject);
 trialnum_Callback(handles.trialnum,[],handles)
 
 
-function contProtocolMenu_callback(hObject,eventdata,handles)
-rawfiles = dir(fullfile(handles.dir,[handles.currentPrtcl '_ContRaw*']));
-if length(rawfiles)==0
-    error('No continuous raw files either')
-end
-ind_ = regexp(rawfiles(1).name,'_');
-indDot = regexp(rawfiles(1).name,'\.');
-handles.trialStem = [rawfiles(1).name((1:length(rawfiles(1).name)) <= ind_(end)) '%d' rawfiles(1).name(1:length(rawfiles(1).name) >= indDot(1))];
-dfile = rawfiles(1).name(~(1:length(rawfiles(1).name) >= ind_(end) & 1:length(rawfiles(1).name) < indDot(1)));
-dfile = regexprep(dfile,'_ContRaw','');
-handles.prtclDataFileName = fullfile(handles.dir,dfile);
-
-dataFileExist = dir(handles.prtclDataFileName);
-if length(dataFileExist)
-    d = load(handles.prtclDataFileName);
-end
-
-% Creating the data file and testing what platform I'm on and what the name should be
-if ~length(dataFileExist) || length(d.data) ~= length(rawfiles)
-    createDataFileFromContRaw(handles.prtclDataFileName);
-    %FlySoundDataStruct2csv(handles.prtclDataFileName);
-    d = load(handles.prtclDataFileName);
-end
+% function contProtocolMenu_callback(hObject,eventdata,handles)
+% rawfiles = dir(fullfile(handles.dir,[handles.currentPrtcl '_ContRaw*']));
+% if length(rawfiles)==0
+%     error('No continuous raw files either')
+% end
+% ind_ = regexp(rawfiles(1).name,'_');
+% indDot = regexp(rawfiles(1).name,'\.');
+% handles.trialStem = [rawfiles(1).name((1:length(rawfiles(1).name)) <= ind_(end)) '%d' rawfiles(1).name(1:length(rawfiles(1).name) >= indDot(1))];
+% dfile = rawfiles(1).name(~(1:length(rawfiles(1).name) >= ind_(end) & 1:length(rawfiles(1).name) < indDot(1)));
+% dfile = regexprep(dfile,'_ContRaw','');
+% handles.prtclDataFileName = fullfile(handles.dir,dfile);
+% 
+% dataFileExist = dir(handles.prtclDataFileName);
+% if length(dataFileExist)
+%     d = load(handles.prtclDataFileName);
+% end
+% 
+% % Creating the data file and testing what platform I'm on and what the name should be
+% if ~length(dataFileExist) || length(d.data) ~= length(rawfiles)
+%     createDataFileFromContRaw(handles.prtclDataFileName);
+%     %FlySoundDataStruct2csv(handles.prtclDataFileName);
+%     d = load(handles.prtclDataFileName);
+% end
 
 
 function protocolMenu_CreateFcn(hObject, eventdata, handles)
@@ -396,24 +422,16 @@ if ~sum(handles.prtclTrialNums==trialnum)
 end
 handles.currentTrialNum = trialnum;
 handles.trial = load(fullfile(handles.dir, sprintf(handles.trialStem,handles.currentTrialNum)));
-handles.params = handles.prtclData(handles.prtclTrialNums==handles.currentTrialNum);
+handles.params = handles.trial.params;
 if ~isfield(handles.trial,'excluded')
     handles.trial.excluded = 0;
     trial = handles.trial;
+    error
     save(trial.name, '-struct', 'trial');
 end
 set(handles.exclude,'value',handles.trial.excluded);
-if ismac
-    if handles.trial.excluded
-        set(handles.exclude,'FontWeight','bold');
-    else
-        set(handles.exclude,'FontWeight','normal');
-    end
-end
 set(handles.allow_excluding,'value',0);
 set(handles.exclude,'enable','off');
-
-% imdir = regexprep(handles.trial.name,{'_Raw_','.mat'},{'_Images_',''});
 
 if ~isfield(handles.trial,'imageFile') || isempty(handles.trial.imageFile)
     set(handles.image_info,'String','','Enable','off');
@@ -1529,10 +1547,7 @@ guidata(hObject, handles);
 
 % % --- Executes button press to creat table
 function parameterTable_Callback(hObject, eventdata, handles) %#ok<*DEFNU>
-PT = datastruct2table(handles.prtclData,'DataStructFileName',handles.prtclDataFileName,'rewrite','yes');
-% [PT, drugs] = addDrugsToDataTable(PT);
-PT = addExcludeFlagToDataTable(PT,handles.trialStem);
-openvar('PT')
+openvar('handles.prtclTable')
 
 % --- Executes on button press in exclude.
 function exclude_Callback(hObject, eventdata, handles)
@@ -1547,6 +1562,10 @@ else
 end
 trial = handles.trial;
 save(trial.name, '-struct', 'trial');
+T = handles.prtclTable;
+T(T.trial == handles.trial.params.trial,:).excluded = handles.trial.excluded;
+save(handles.prtclTableFileName,'T')
+
 guidata(hObject,handles)
 
 % --- Executes on button press in allow_excluding.
@@ -1656,7 +1675,7 @@ end
 handles.trial.tags = s;
 
 if strcmp(button,'Yes')
-    nums = findLikeTrials_includingExcluded('name',handles.trial.name,'datastruct',handles.prtclData,...
+    nums = findLikeTrials_includingExcluded('name',handles.trial.name,'datastruct',handles.prtclTable,...
         'exclude',{'step','amp','displacement','freq','speed','ndf'});
     for n_ind = 1:length(nums)
         trial = load(fullfile(handles.dir,sprintf(handles.trialStem,nums(n_ind))));
@@ -1788,22 +1807,23 @@ helperfuncs = ...
 {
 'edit_analysis'
 'edit_quickShow'
-'save_data_struct'
+%'save_data_struct'
+'save_table'
 'reload_notes'
-'skootch_exposure'
-'bad_movie'
-'addTagsToSubplots'
-'clicky_on_image'
+%'skootch_exposure'
+%'bad_movie'
+%'addTagsToSubplots'
+%'clicky_on_image'
 'rename_tag'
 'cleanuptags'
 'excludeBlock_toggle'
 'removeSpikes'
 'reDetectSpikes'
 'reCheckSpikes'
-'removeKmeansStuff'
-'removeProbeTrackStuff'
-'removeProbeLine'
-'alignBarForProtocolTrials'
+%'removeKmeansStuff'
+%'removeProbeTrackStuff'
+%'removeProbeLine'
+%'alignBarForProtocolTrials'
 'removeAnnotations'
 'extractContinuousData'
 };
@@ -1828,12 +1848,20 @@ handles = guidata(hObject);
 eval(['edit ' handles.quickShowFunction]);%;  showMenu.String{handles.showMenu.Value}])
 
 
-function save_data_struct(hObject, eventdata, handles)
+% function save_data_struct(hObject, eventdata, handles)
+% handles = guidata(hObject);
+% createDataFileFromRaw(handles.prtclDataFileName);
+% d = load(handles.prtclDataFileName);
+% handles.prtclData = d.data;
+% guidata(hObject, handles);
+
+function save_table(hObject, eventdata, handles)
+% usually, the only thing changing is exclusion/inclusion of trials, and
+% tags, so don't recreate datafiles.
 handles = guidata(hObject);
-createDataFileFromRaw(handles.prtclDataFileName);
-d = load(handles.prtclDataFileName);
-handles.prtclData = d.data;
-guidata(hObject, handles);
+T = handles.prtclTable;
+save(handles.prtclTableFileName,'T')
+
 
 function handles = reload_notes(hObject, eventdata, handles)
 % a = dir([handles.dir '\notes_*']);
@@ -1951,19 +1979,21 @@ newtag = newtag{1};
 
 loopThroughRawFilesTags(handles.trial.name,oldtag,newtag);
 
-createDataFileFromRaw(handles.prtclDataFileName);
-d = load(handles.prtclDataFileName);
-handles.prtclData = d.data;
+createTablesFromRaw(handles.prtclTableFileName,'one');
+T = load(handles.prtclTableFileName);
+handles.prtclTable = T.T;
 guidata(hObject, handles);
+
 
 function cleanuptags(hObject, eventdata, handles)  
 handles = guidata(hObject);
 loopThroughRawFilesTags_cleanup(handles.dir);
 
-createDataFileFromRaw(handles.prtclDataFileName);
-d = load(handles.prtclDataFileName);
-handles.prtclData = d.data;
+createTablesFromRaw(handles.prtclTableFileName,'one');
+T = load(handles.prtclTableFileName);
+handles.prtclTable = T.T;
 guidata(hObject, handles);
+
 
 function excludeBlock_toggle(hObject,eventdata,handles)
 button = questdlg('Exclude entire block?','Exclude Block','Yes');
@@ -1971,7 +2001,7 @@ if strcmp(button,'Cancel') || strcmp(button,'No'), return, end
 
 handles = guidata(hObject);
 if strcmp(button,'Yes')
-    nums = findLikeTrials_includingExcluded('name',handles.trial.name,'datastruct',handles.prtclData,...
+    [~,idx] = findLikeTrials_includingExcluded('name',handles.trial.name,'datatable',handles.prtclTable,...
         'exclude',{'step','amp','displacement','freq','speed','ndf'});
     ex = handles.trial.excluded;
     switch ex
@@ -1981,11 +2011,16 @@ if strcmp(button,'Yes')
             fprintf('Trial is included, including others in block\n');
     end
     
-    for n_ind = 1:length(nums)
-        trial = load(fullfile(handles.dir,sprintf(handles.trialStem,nums(n_ind))));
+    for n_ind = 1:length(idx)
+        trial = load(fullfile(handles.dir,sprintf(handles.trialStem,handles.prtclTable.trial(idx(n_ind)))));
         trial.excluded = ex;
+        handles.prtclTable.excluded(idx(n_ind)) = 1;
         save(trial.name, '-struct', 'trial');
     end
+    T = handles.prtclTable;
+    [~,tblname] = fileparts(T.Properties.Description);
+    fprintf('Datatable updated: saving %s\n',tblname);
+    save(T.Properties.Description,'T')
 else
     trial = handles.trial;
     save(trial.name, '-struct', 'trial');
@@ -1999,7 +2034,7 @@ if strcmp(button,'Cancel'), return, end
 
 handles = guidata(hObject);
 if strcmp(button,'Yes')
-    nums = findLikeTrials_includingExcluded('name',handles.trial.name,'datastruct',handles.prtclData,...
+    nums = findLikeTrials_includingExcluded('name',handles.trial.name,'datastruct',handles.prtclTable,...
         'exclude',{'step','amp','displacement','freq','ndf'});
     for n_ind = 1:length(nums)
         trial = load(fullfile(handles.dir,sprintf(handles.trialStem,nums(n_ind))));
@@ -2086,7 +2121,7 @@ if strcmp(button,'Cancel'), return, end
 
 handles = guidata(hObject);
 if strcmp(button,'Yes')
-    nums = findLikeTrials_includingExcluded('name',handles.trial.name,'datastruct',handles.prtclData,...
+    nums = findLikeTrials_includingExcluded('name',handles.trial.name,'datastruct',handles.prtclTable,...
         'exclude',{'step','amp','displacement','freq'});
     for n_ind = 1:length(nums)
         trial = load(fullfile(handles.dir,sprintf(handles.trialStem,nums(n_ind))));
@@ -2115,7 +2150,7 @@ if strcmp(button,'Cancel'), return, end
 
 handles = guidata(hObject);
 if strcmp(button,'Yes')
-    nums = findLikeTrials_includingExcluded('name',handles.trial.name,'datastruct',handles.prtclData,...
+    nums = findLikeTrials_includingExcluded('name',handles.trial.name,'datastruct',handles.prtclTable,...
         'exclude',{'step','amp','ndf','displacement','freq','speed'});
     for n_ind = 1:length(nums)
         trial = load(fullfile(handles.dir,sprintf(handles.trialStem,nums(n_ind))));
@@ -2142,7 +2177,7 @@ if strcmp(button,'Cancel'), return, end
 
 handles = guidata(hObject);
 if strcmp(button,'Yes')
-    nums = findLikeTrials_includingExcluded('name',handles.trial.name,'datastruct',handles.prtclData,...
+    nums = findLikeTrials_includingExcluded('name',handles.trial.name,'datastruct',handles.prtclTable,...
         'exclude',{'step','amp','displacement','freq'});
     for n_ind = 1:length(nums)
         trial = load(fullfile(handles.dir,sprintf(handles.trialStem,nums(n_ind))));

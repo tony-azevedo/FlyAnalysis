@@ -40,7 +40,7 @@ title(axLED,sprintf('%s', [prot '.' d '.' fly '.' cell '.' trial]));
 x = makeInTime(obj.trial.params);
 
 if ~isfield(obj.trial,'arduino_output')
-    fprintf('Need to run continuous data extraction routine\n')
+    fprintf('Need to run continuous data extraction routine\nMay need to exclude trial: excludeEmptyControlTrials\n')
     return
 end
 % displayTrial
@@ -53,9 +53,13 @@ line(x,obj.trial.voltage_1,'parent',axPhys,'color',[.8 0 0],'tag',savetag,'displ
 ylabel(axPhys,'LED on'); %xlim([0 max(t)]);
 axis(axPhys,'tight');
 
-patch('XData',[x(1) x(end) x(end) x(1)], 'YData',obj.trial.target_location(1)*[1 1 1 1] + obj.trial.target_location(2)*[0 0 1 1],'FaceColor',[.8 .8 .8],'EdgeColor',[.8 .8 .8],'parent',axProbe)
+fcclr = [.8 .8 .8];
+if obj.trial.params.blueToggle
+    fcclr = [.8 .8 1];
+end
+patch('XData',[x(1) x(end) x(end) x(1)], 'YData',obj.trial.target_location(1)*[1 1 1 1] + obj.trial.target_location(2)*[0 0 1 1],'FaceColor',fcclr,'EdgeColor',fcclr,'parent',axProbe)
 line(x,obj.trial.probe_position,'parent',axProbe,'color',[1 .2 .2],'tag',savetag,'displayname','probe_position');
 axis(axProbe,'tight');
-axProbe.YLim = [350 700];
+axProbe.YLim = [0 700];
 
 

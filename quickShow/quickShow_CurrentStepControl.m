@@ -14,8 +14,8 @@ h = guidata(plotcanvas);
 
 % setupStimulus
 x = ((1:obj.trial.params.sampratein*obj.params.durSweep) - obj.trial.params.preDurInSec*obj.trial.params.sampratein)/obj.trial.params.sampratein;
-voltage = obj.trial.voltage(1:length(x));
-current = obj.trial.current(1:length(x));
+voltage = obj.trial.voltage_1(1:length(x));
+current = obj.trial.current_1(1:length(x));
 
 if isfield(obj.trial,'dFoverF')
     ax1 = subplot(3,1,2,'parent',plotcanvas);

@@ -60,11 +60,14 @@ ylabel(axPhys,'LED on'); %xlim([0 max(t)]);
 axis(axPhys,'tight');
 
 % Probe ax
-
+fcclr = [.8 .8 .8];
+if obj.trial.params.blueToggle
+    fcclr = [.8 .8 1];
+end
 y = cat(2,obj.trial.probe_position,obj.trial.intertrial.probe_position);
-patch('XData',[x(1) x(end) x(end) x(1)], 'YData',obj.trial.target_location(1)*[1 1 1 1] + obj.trial.target_location(2)*[0 0 1 1],'FaceColor',[.8 .8 .8],'EdgeColor',[.8 .8 .8],'parent',axProbe)
+patch('XData',[x(1) x(end) x(end) x(1)], 'YData',obj.trial.target_location(1)*[1 1 1 1] + obj.trial.target_location(2)*[0 0 1 1],'FaceColor',fcclr,'EdgeColor',fcclr,'parent',axProbe)
 line(x,y,'parent',axProbe,'color',[1 .2 .2],'tag',savetag,'displayname','probe_position');
 axis(axProbe,'tight');
-axProbe.YLim = [350 700];
+axProbe.YLim = [0 700];
 
 

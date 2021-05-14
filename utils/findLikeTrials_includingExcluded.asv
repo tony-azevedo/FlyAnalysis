@@ -43,9 +43,8 @@ rowextable = excludeColumns(compare_row,excludedFields);
 
 idx = true(height(xtable),1);
 for cidx = 1:width(xtable)
-    if ~isnan(rowextable{1,cidx})
-        idx = idx & xtable{:,cidx} == rowextable{1,cidx};
-    end
+    sum(xtable{:,cidx} == rowextable{1,cidx})
+    %idx = idx & xtable{:,cidx} == rowextable{1,cidx};
 end
 comptable = comptable(idx,:);
 
