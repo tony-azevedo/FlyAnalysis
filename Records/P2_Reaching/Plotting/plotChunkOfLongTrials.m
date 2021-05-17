@@ -53,7 +53,7 @@ for r = 1:size(T,1)
     y = cat(2,trial.probe_position,trial.intertrial.probe_position);
     plot(posax,x,-y,'tag',num2str(T_row.trial));
     y = cat(2,trial.voltage_1,trial.intertrial.voltage_1);
-    plot(aiax,x,y);
+    plot(aiax,x,y,'tag',num2str(T_row.trial));
 end    
 
 if all(T.target1==T.target1(1)) && all(T.target2==T.target2(1))

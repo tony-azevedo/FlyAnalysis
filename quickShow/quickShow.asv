@@ -1332,9 +1332,9 @@ evalin('base', ['trial = load(''' h.trial.name ''')']);
 % for now, assume there is a single continuous trial and all the trials are
 % in it.
 evalin('base',['ContinuousDataReader(''', file, ''')']);
-if isfield(h.trial,'startsample')
-    evalin('base',['cdr.gotoSection([',num2str(h.trial.startsample+[0, h.trial.params.sampratein*(h.trial.params.durSweep)*3]) '])']);
-end
+evalin('base',['cdr.gotoSection([',num2str(h.trial.startsample+[0, h.trial.params.sampratein*(h.trial.params.durSweep)*3]) '])']);
+cdr = ContinuousDataReader(file);
+cdr.gotoSection(h.trial.startsample+[0, cdr.samprate*(h.trial.params.durSweep)*3])
 
 guidata(cdrbutt,h)
 %quickShow_Protocol(h.trialnum, eventdata, h)
@@ -1528,12 +1528,9 @@ else
 end
 trial = handles.trial;
 save(trial.name, '-struct', 'trial');
-T = load(handles.prtclTableFileName);
-T = T.T;
-T.excluded(T.trial == handles.trial.params.trial) = handles.trial.excluded;
+T = handles.prtclTable;
+T(T.trial == handles.trial.params.trial,:).excluded = handles.trial.excluded;
 save(handles.prtclTableFileName,'T')
-fprintf('Saving protocol data table\n')
-handles.prtclTable = T;
 
 guidata(hObject,handles)
 

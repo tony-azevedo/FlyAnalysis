@@ -169,7 +169,7 @@ H.Parent.YLim = [0 sum(H.Values(H.BinEdges(1:end-1)>H.BinEdges(2)))];
 text(H.Parent,H.BinEdges(3),H.Parent.YLim(2)-.1*diff(H.Parent.YLim),sprintf('Bin 1 total: %d',H.Values(1)))
 title(H.Parent,'Histogram of RMS Movement in timeout trials');
 
-T = cleanUpMeasureTable(T); % get rid of any trials that are excluded
+cleanUpMeasurementT(T); % get rid of any trial
 
 % plot moving punishment - off trials 
 idx = (T.outcome == 3);
@@ -193,7 +193,7 @@ ttl = sprintf('%s: %d trials (of %d)',ttl,sum(idx),sum(idx0));
 T.rms_mvmt(idx)
 [fig] = plotChunkOfTrials(T(idx,:),ttl);%,fplims);
 
-% plot moving punishment - off trials, hi force, Red LED only
+%% plot moving punishment - off trials, hi force, Red LED only
 idx0 = T.outcome == 3 & T.hiforce;
 idx = idx0 & ~T.blueToggle;
 ttl = 'punishment - off, hi force trials, red LED';
@@ -202,7 +202,7 @@ T.rms_mvmt(idx)
 [fig] = plotChunkOfTrials(T(idx,:),ttl);%,fplims);
 
 
-% plot moving punishment - off trials, lo force
+%% plot moving punishment - off trials, lo force
 idx0 = T.outcome == 3 & ~T.hiforce;
 idx = idx0;% & ~T.blueToggle;
 ttl = 'punishment - off, lo force';
@@ -210,7 +210,7 @@ ttl = sprintf('%s: %d trials (of %d)',ttl,sum(idx),sum(idx0));
 T.rms_mvmt(idx)
 [fig] = plotChunkOfTrials(T(idx,:),ttl);%,fplims);
 
-% plot moving punishment - off trials, lo force, Blue LED
+%% plot moving punishment - off trials, lo force, Blue LED
 idx0 = T.outcome == 3 & ~T.hiforce;
 idx = idx0 & T.blueToggle;
 ttl = 'punishment - off, lo force, blue LED';
@@ -219,7 +219,7 @@ T.rms_mvmt(idx)
 [fig] = plotChunkOfTrials(T(idx,:),ttl);%,fplims);
 
 
-% plot moving punishment - off trials, lo force, Blue LED
+%% plot moving punishment - off trials, lo force, Blue LED
 idx0 = T.outcome == 3 & ~T.hiforce;
 idx = idx0 & ~T.blueToggle;
 ttl = 'punishment - off, lo force, red LED only';
@@ -261,15 +261,6 @@ ttl = sprintf('%s: %d trials (of %d)',ttl,sum(idx),sum(idx0));
 T.rms_mvmt(idx)
 [fig] = plotChunkOfLongTrials(T(idx,:),ttl);%,fplims);
 
-% plot moving punishment - late, lo force
-idx0 = T.outcome == 4 & ~T.hiforce;
-idx = idx0 & ~T.blueToggle;
-ttl = 'punishment - late, lo force';
-ttl = sprintf('%s: %d trials',ttl,sum(idx));
-T.rms_mvmt(idx)
-[fig] = plotChunkOfLongTrials(T(idx,:),ttl);%,fplims);
-
-
 
 %% ********** Compare sensory feedback **********
 
@@ -284,18 +275,14 @@ for stp = steps
 end
 
 %% lo vs. high
-plotCompareLoHiFeedbackResponses(T)
+plotCompareLoHiFeedbackResponses(T(idx,:))
 
 % early
 idx = (T.block == 1 | T.block == 2 | T.block == 3 | T.block == 4);
 plotCompareLoHiFeedbackResponses(T(idx,:))
 
-% middle
-idx = (T.block == 5 | T.block == 6 | T.block == 7 | T.block == 8);
-plotCompareLoHiFeedbackResponses(T(idx,:))
-
 % late
-idx = (T.block == 9 | T.block == 10 | T.block == 11 | T.block == 12 | T.block == 14);
+idx = (T.block == 9 | T.block == 10 | T.block == 11 | T.block == 12);
 plotCompareLoHiFeedbackResponses(T(idx,:))
 
 

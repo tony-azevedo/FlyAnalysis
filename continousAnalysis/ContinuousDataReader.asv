@@ -574,7 +574,6 @@ classdef ContinuousDataReader < handle
             % Read more data
             nextcookie = obj.readnext(nextreads);
             if isempty(nextcookie)
-                obj.savemap; % just to update last_seen_samp
                 st = false;
                 return
             end

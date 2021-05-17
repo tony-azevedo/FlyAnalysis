@@ -25,6 +25,7 @@ end
 fprintf('Excluded trials:\n')
 exctrls = T_params.trial(logical(T_params.excluded));
 disp(exctrls')
+fprintf('%d ',T_params.trial(logical(T_params.excluded)))
 
 if ~any(contains(T_params.Properties.VariableNames,'arduino_duration'))
     T_params = add2table_ArduinoDuration(T_params);
@@ -42,10 +43,6 @@ measuretblname = fullfile(Dir,[T_cell.Protocol{cidx} '_' cid '_MeasureTable.mat'
 if exist(measuretblname,'file')
     T = load(measuretblname);
     T = T.T;
-    [~,~,~,~,~,~,trialStem] = extractRawIdentifiers(measuretblname);
-    
-    T.Properties.UserData.trialStem = trialStem;
-    T.Properties.UserData.Dir = Dir;
 else
     T = [];
 end

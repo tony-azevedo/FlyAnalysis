@@ -6,9 +6,12 @@ if any(contains(T.Properties.VariableNames,'Vm_stim_on')) || ...
     any(contains(T.Properties.VariableNames,'Vm_pretrial'))
     error('Delete Vm_stim, Vm_Delta, and Vm_pretrial variables')
 end
+
+fprintf('Measuring voltage responses to mechanical cue\n')
+
 %% Measure Stim response in trials (have to run this in addition to stim movement, which is based on forceprobe matrix)
 
-ft_0i = ft(1:end-1)<=0 & ft(2:end)>0;
+ft_0i = find(ft>0,1,'first');
 probe_position_init = zeros(size(T.arduino_duration));
 Vm_stim_on = probe_position_init;
 Vm_stim_off = probe_position_init;
@@ -98,4 +101,36 @@ T.Vm_pretrial = Vm_pretrial;
 T.probe_position_init = probe_position_init;
 
 save(T.Properties.Description,'T')
+
+fprintf('Done measuring voltage responses to mechanical cue\n')
+
+%%
+hiblck = bT(find(bT.HiForce,1),:); 
+loblck = bT(find(~bT.HiForce,1),:);
+hiclr = [1 .3 1];
+loclr = [.7 0 .7];
+
+figure
+H = histogram(T.probe_position_init);
+H.Parent.NextPlot = 'add';
+rectangle(H.Parent,'Position',[hiblck.Target_min,0,diff([hiblck.Target_min hiblck.Target_max]),max(H.Values)],'EdgeColor',hiclr);
+rectangle(H.Parent,'Position',[loblck.Target_min,0,diff([loblck.Target_min loblck.Target_max]),max(H.Values)],'EdgeColor',loclr);
+xlabel(H.Parent,'Probe Position')
+title(regexprep(cid,'_','\\_'))
+
+figure
+H = histogram(T.rms_mvmt);
+% H.Parent.NextPlot = 'add';
+% rectangle(H.Parent,'Position',[hiblck.Target_min,0,diff([hiblck.Target_min hiblck.Target_max]),max(H.Values)],'EdgeColor',hiclr);
+% rectangle(H.Parent,'Position',[loblck.Target_min,0,diff([loblck.Target_min loblck.Target_max]),max(H.Values)],'EdgeColor',loclr);
+xlabel(H.Parent,'rms Trial Movement')
+title(regexprep(cid,'_','\\_'))
+
+figure
+H = histogram(T.cue_mvmt);
+% H.Parent.NextPlot = 'add';
+% rectangle(H.Parent,'Position',[hiblck.Target_min,0,diff([hiblck.Target_min hiblck.Target_max]),max(H.Values)],'EdgeColor',hiclr);
+% rectangle(H.Parent,'Position',[loblck.Target_min,0,diff([loblck.Target_min loblck.Target_max]),max(H.Values)],'EdgeColor',loclr);
+xlabel(H.Parent,'Cue Perturbation')
+title(regexprep(cid,'_','\\_'))
 

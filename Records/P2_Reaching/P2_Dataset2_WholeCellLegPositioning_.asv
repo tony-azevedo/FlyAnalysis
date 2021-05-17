@@ -43,7 +43,7 @@ size(fp)
 Script_MeasurePrePostStimMovement
 
 %% Measure Vm changes during mechstim in trials
-Script_MeasureCueResponses
+Script_MeasureMechStimResponses
 
 %% Now look at individual flies
 closeLook_210331_F2_C1_R81A06_proximalFlexorWithSpikes

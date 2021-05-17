@@ -59,7 +59,32 @@ for tr = 1:size(T,1)
 end
 
 T.rms_mvmt = rms_trial_mvmt;
-T.cue_mvmt = pre_trial_mvmt;
+T.stim_mvmt = pre_trial_mvmt;
 
-save(T.Properties.Description,'T')
-fprintf('Done measuring force probe stimulus movement\n')
+hiblck = bT(find(bT.HiForce,1),:); 
+loblck = bT(find(~bT.HiForce,1),:);
+hiclr = [1 .3 1];
+loclr = [.7 0 .7];
+
+figure
+H = histogram(trial_f_init);
+H.Parent.NextPlot = 'add';
+rectangle(H.Parent,'Position',[hiblck.Target_min,0,diff([hiblck.Target_min hiblck.Target_max]),max(H.Values)],'EdgeColor',hiclr);
+rectangle(H.Parent,'Position',[loblck.Target_min,0,diff([loblck.Target_min loblck.Target_max]),max(H.Values)],'EdgeColor',loclr);
+xlabel(H.Parent,'Probe Position')
+
+figure
+H = histogram(T.rms_mvmt);
+% H.Parent.NextPlot = 'add';
+% rectangle(H.Parent,'Position',[hiblck.Target_min,0,diff([hiblck.Target_min hiblck.Target_max]),max(H.Values)],'EdgeColor',hiclr);
+% rectangle(H.Parent,'Position',[loblck.Target_min,0,diff([loblck.Target_min loblck.Target_max]),max(H.Values)],'EdgeColor',loclr);
+xlabel(H.Parent,'rms Trial Movement')
+
+figure
+H = histogram(pre_trial_mvmt);
+% H.Parent.NextPlot = 'add';
+% rectangle(H.Parent,'Position',[hiblck.Target_min,0,diff([hiblck.Target_min hiblck.Target_max]),max(H.Values)],'EdgeColor',hiclr);
+% rectangle(H.Parent,'Position',[loblck.Target_min,0,diff([loblck.Target_min loblck.Target_max]),max(H.Values)],'EdgeColor',loclr);
+xlabel(H.Parent,'Pretrial Perturbation')
+
+fprintf('Measuring force probe stimulus movement\n')

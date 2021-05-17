@@ -219,9 +219,9 @@ fpHm(ft,trials,fp,T.arduino_duration,bT,fplims);
 % 6: Leg not in target - fly does not move
 
 outcomes = {'no punishment - static';
-    'no punishment - moved';
-    'punishment - off';
-    'punishment - late';
+    'no stim - moved';
+    'stim - off';
+    'stim - late';
     'timeout - static';
     'timeout - fail'};
 outcome_id = zeros(size(T.block));
