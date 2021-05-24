@@ -7,9 +7,10 @@ data = cell(sz);
 T_cell = cell2table(data);
 T_cell.Properties.VariableNames = varNames;
 
-%T_cell{1,:} = {'210302_F1_C2', 'Hot-Cell-Gal4, 50uL ATR mixed in', 'pilot', 'LEDFlashWithPiezoCueControl','empty'};
+% T_cell{1,:} = {'210302_F1_C2', 'Hot-Cell-Gal4, 50uL ATR mixed in', 'pilot', 'LEDFlashWithPiezoCueControl','empty'};
+% T_cell{1,:} = {'210319_F2_C1', 'HC-LexA/13XLexAop-ChrimsonR;81A06/pJFRC7 100uL ATR mixed in', 'Fe>proximal tidm', 'LEDFlashWithPiezoCueControl','empty'};
 T_cell{1,:} = {'210331_F2_C1', 'HC-LexA/13XLexAop-ChrimsonR;81A06/pJFRC7 100uL ATR mixed in', 'Fe>proximal tidm', 'LEDFlashWithPiezoCueControl','empty'};
-%T_cell{1,:} = {'210405_F1_C1', 'HC-LexA/13XLexAop-ChrimsonR;81A06/pJFRC7 100uL ATR mixed in', 'Fe>distal tidm', 'LEDFlashWithPiezoCueControl','empty'};
+% T_cell{1,:} = {'210405_F1_C1', 'HC-LexA/13XLexAop-ChrimsonR;81A06/pJFRC7 100uL ATR mixed in', 'Fe>distal tidm', 'LEDFlashWithPiezoCueControl','empty'};
 
 T_Reach = T_cell;
 
@@ -46,7 +47,9 @@ Script_MeasurePrePostStimMovement
 Script_MeasureCueResponses
 
 %% Now look at individual flies
-closeLook_210331_F2_C1_R81A06_proximalFlexorWithSpikes
-closeLook_210405_F1_C1_R81A06_largeDistalFlexor
+% closeLook_210302_F1_C1_HCGal4_unknown
+% closeLook_210319_F2_C1_R81A06_unknown
+% closeLook_210331_F2_C1_R81A06_proximalFlexorWithSpikes
+% closeLook_210405_F1_C1_R81A06_largeDistalFlexor
 
 %% Links to population level

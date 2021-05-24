@@ -56,10 +56,11 @@ for r = 1:size(T,1)
     plot(aiax,x,y,'tag',num2str(T_row.trial));
 end    
 
-if all(T.target1==T.target1(1)) && all(T.target2==T.target2(1))
+if all(T.hiforce) || all(~T.hiforce)
+    %all(T.target1==T.target1(1)) && all(T.target2==T.target2(1))
 
     patch('XData',[x(1) x(end) x(end) x(1)], ...
-        'YData',-(T.target1(1)*[1 1 1 1] + diff([T.target1(1) T.target2(1)])*[0 0 1 1]),...
+        'YData',-(T.target1(end)*[1 1 1 1] + diff([T.target1(end) T.target2(end)])*[0 0 1 1]),...
         'FaceColor',[1 1 1]*.9,'EdgeColor','none','parent',posax,'Tag','target')
     posax.Children = circshift(posax.Children,-1);
     
@@ -69,7 +70,7 @@ if all(T.target1==T.target1(1)) && all(T.target2==T.target2(1))
     else
         trgclr = [1 .8 1];
     end
-    rectangle(posax,'Position',[x(1) -T.target2(1) .05 diff([T.target1(1) T.target2(1)])],'FaceColor',trgclr,'EdgeColor','none','LineWidth',2)
+    rectangle(posax,'Position',[x(1) -T.target2(end) .05 diff([T.target1(end) T.target2(end)])],'FaceColor',trgclr,'EdgeColor','none','LineWidth',2)
 end
 if all(T.blueToggle)
     ptch = findobj(posax,'Tag','target');

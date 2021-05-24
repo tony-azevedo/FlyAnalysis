@@ -540,7 +540,13 @@ classdef ContinuousDataReader < handle
             obj.plotCookie();
         end
 
-        
+        function st = gotoAndPlotSection(obj,smp1,smp2)
+            % Trials will have to start within the length of the trial, so
+            % make that the initial cookie size
+            obj.gotoSection(smp1,smp2);
+            obj.plotCookie();
+        end
+
         function st = gotoSection(obj,n1,n2)
             % Trials will have to start within the length of the trial, so
             % make that the initial cookie size

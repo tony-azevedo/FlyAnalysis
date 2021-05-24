@@ -1,4 +1,4 @@
-function [fig] = plotChunkOfTrials(T,varargin)
+function [fig] = plotPiezoStepResponseByNum(T,varargin)
 % f = plotChunkOfTrials(T,title)
 
 
@@ -44,20 +44,34 @@ posax.XAxis.Visible = 'off';
 aiax.NextPlot = 'add';
 
 
+T_row = T(1,:);
+trial = load(fullfile(Dir,sprintf(trialStem,T_row.trial)));
+x = makeInTime(trial.params);
+xidx = x > -trial.params.cueStimDurInSec-trial.params.cueDelayDurInSec-.01 & x<0;
+x1 = x(find(xidx,1,'first'));
+
+clr = parula(size(T,1));
 for r = 1:size(T,1)
     T_row = T(r,:);    
     trial = load(fullfile(Dir,sprintf(trialStem,T_row.trial)));
     x = makeInTime(trial.params);
-    plot(diax,x,trial.arduino_output);
-    plot(posax,x,-trial.probe_position,'tag',num2str(T_row.trial));
-    plot(aiax,x,trial.voltage_1,'tag',num2str(T_row.trial));
+    plot(diax,x(xidx),trial.arduino_output(xidx));
+    plot(posax,x(xidx),-trial.probe_position(xidx),'tag',num2str(T_row.trial),'color',clr(r,:));
+    plot(aiax,x(xidx),trial.voltage_1(xidx),'tag',num2str(T_row.trial),'color',clr(r,:));
 end    
 
-if all(T.hiforce) || all(~T.hiforce)
-    %all(T.target1==T.target1(1)) && all(T.target2==T.target2(1))
+ind_lines = findobj(aiax,'type','line');
+v_bar = zeros(size(ind_lines(1).YData));
+for l = 1:length(ind_lines)
+    v_bar = v_bar+ind_lines(l).YData;
+end
+v_bar = v_bar/length(ind_lines);
+plot(aiax,ind_lines(1).XData,v_bar,'color',[0 0 0],'linewidth',2);
+
+if all(T.target1==T.target1(1)) && all(T.target2==T.target2(1))
 
     patch('XData',[x(1) x(end) x(end) x(1)], ...
-        'YData',-(T.target1(end)*[1 1 1 1] + diff([T.target1(end) T.target2(end)])*[0 0 1 1]),...
+        'YData',-(T.target1(1)*[1 1 1 1] + diff([T.target1(1) T.target2(1)])*[0 0 1 1]),...
         'FaceColor',[1 1 1]*.9,'EdgeColor','none','parent',posax,'Tag','target')
     posax.Children = circshift(posax.Children,-1);
     
@@ -67,7 +81,7 @@ if all(T.hiforce) || all(~T.hiforce)
     else
         trgclr = [1 .8 1];
     end
-    rectangle(posax,'Position',[x(1) -T.target2(end) .05 diff([T.target1(end) T.target2(end)])],'FaceColor',trgclr,'EdgeColor','none','LineWidth',2)
+    rectangle(posax,'Position',[x(1) -T.target2(1) .05 diff([T.target1(1) T.target2(1)])],'FaceColor',trgclr,'EdgeColor','none','LineWidth',2)
 end
 if all(T.blueToggle)
     ptch = findobj(posax,'Tag','target');
@@ -75,7 +89,7 @@ if all(T.blueToggle)
 end
 
 
-aiax.XLim = [x(1) x(end)];
+aiax.XLim = [x1 0];
 
 title(diax,ttl);
 ylabel(diax,'LED state')

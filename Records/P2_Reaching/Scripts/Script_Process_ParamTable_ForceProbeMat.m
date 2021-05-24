@@ -1,8 +1,5 @@
 %% Script_Process_ParamTable_ForceProbeMat
 
-if ~isempty(T)
-    error('Clear variable T if you want to reprocess forceProbe and table')
-end
 %% downsample force probe at Pyas frame rate, save the matrix
 
 forceprobematname = regexprep(T_params.Properties.Description,'Table.','ForceProbe.');
@@ -187,9 +184,13 @@ T_params.block = block;
 %% get rid of excluded trials or bad trials
 idx = ~T_params.excluded & ~isnan(T_params.arduino_duration);
 fp = forceProbe(:,idx);
-T = T_params(idx,:);
-trials = T.trial;
-T.Properties.Description = measuretblname;
+if ~isempty(T)
+    warning('Clear variable T if you want to reprocess forceProbe and table')
+    trials = T.trial;
+else
+    T = T_params(idx,:);
+    T.Properties.Description = measuretblname;
+end
 
 %% See if fly ever lets go
 
@@ -201,7 +202,11 @@ H = histogram(extremes);
 % values out, the point at which the fly lets go is likely lower
 bins = H.BinEdges(1:end-1)+H.BinWidth/2;
 bins = bins(1:find(bins>bins(find(H.Values==max(H.Values),1)) & H.Values==0 & [diff(H.Values)==0 0],1,'first'));
-fplims = [bins(1) bins(end)];
+if ~isempty(bins)
+    fplims = [min([bins(1) min(bT.Target_min)-30]) bins(end)];
+else
+    fplims = [min(bT.Target_min-30), H.BinEdges(end)];
+end
 xlabel(H.Parent,'Extreme values in each trial');
 
 
@@ -217,6 +222,9 @@ fpHm(ft,trials,fp,T.arduino_duration,bT,fplims);
 %       4: after "trial" is over
 % 5: Leg not in target - fly moves - does not turn off stim
 % 6: Leg not in target - fly does not move
+if any(contains(T.Properties.VariableNames,'outcome'))
+    error('Clear variable T if you want to reprocess forceProbe and table')
+end
 
 outcomes = {'no punishment - static';
     'no punishment - moved';

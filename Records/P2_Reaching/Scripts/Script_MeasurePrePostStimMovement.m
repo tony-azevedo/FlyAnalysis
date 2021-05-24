@@ -8,6 +8,7 @@ ft_0i = ft(1:end-1)<=0 & ft(2:end)>0;
 trial_f_init = zeros(size(T.arduino_duration));
 rms_trial_mvmt = trial_f_init;
 pre_trial_mvmt = rms_trial_mvmt;
+var_trial_mvmt = rms_trial_mvmt;
 
 if DEBUG
    f = figure;
@@ -39,6 +40,7 @@ for tr = 1:size(T,1)
         y_ = cat(2,trial.probe_position,trial.intertrial.probe_position);
         rms_trial_mvmt(tr) = sqrt(mean((y_(x>0)-baseline).^2));
         rms_short = sqrt(mean((y_(x>0&x<=ft(end))-baseline).^2));
+        var_trial_mvmt(tr) = var(y(ft>0));
         if DEBUG
             cla(ax)
             plot(ax,ft,fp(:,tr));
@@ -55,11 +57,13 @@ for tr = 1:size(T,1)
         end
     else 
         rms_trial_mvmt(tr) = sqrt(mean((y(ft>0)-baseline).^2));
+        var_trial_mvmt(tr) = var(y(ft>0));
     end
 end
 
 T.rms_mvmt = rms_trial_mvmt;
 T.cue_mvmt = pre_trial_mvmt;
+T.var_mvmt = var_trial_mvmt;
 
 save(T.Properties.Description,'T')
 fprintf('Done measuring force probe stimulus movement\n')

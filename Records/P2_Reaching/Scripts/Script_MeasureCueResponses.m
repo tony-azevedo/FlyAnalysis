@@ -105,8 +105,8 @@ save(T.Properties.Description,'T')
 fprintf('Done measuring voltage responses to mechanical cue\n')
 
 %%
-hiblck = bT(find(bT.HiForce,1),:); 
-loblck = bT(find(~bT.HiForce,1),:);
+hiblck = bT(find(bT.HiForce,1,'last'),:); 
+loblck = bT(find(~bT.HiForce,1,'last'),:);
 hiclr = [1 .3 1];
 loclr = [.7 0 .7];
 

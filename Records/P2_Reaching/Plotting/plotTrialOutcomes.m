@@ -23,7 +23,9 @@ panl.marginbottom = 12;
 
 outcomeax = panl(1).select();
 
-plot(outcomeax,T.trial,T.outcome,'.');
+plot(outcomeax,T.trial(T.blueToggle==1),T.outcome(T.blueToggle==1),'.b');
+outcomeax.NextPlot = 'add';
+plot(outcomeax,T.trial,T.outcome,'.r');
 
 outcomeax.YTick = 0:6;
 outcomeax.YTickLabel = {'rest',outcomes{:}};

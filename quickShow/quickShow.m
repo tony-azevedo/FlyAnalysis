@@ -1331,9 +1331,9 @@ fprintf('\tcdr.extractProtocolFiles(trial);\n');
 evalin('base', ['trial = load(''' h.trial.name ''')']);
 % for now, assume there is a single continuous trial and all the trials are
 % in it.
-evalin('base',['ContinuousDataReader(''', file, ''')']);
+evalin('base',['cdr = ContinuousDataReader(''', file, ''')']);
 if isfield(h.trial,'startsample')
-    evalin('base',['cdr.gotoSection([',num2str(h.trial.startsample+[0, h.trial.params.sampratein*(h.trial.params.durSweep)*3]) '])']);
+    evalin('base',['cdr.gotoAndPlotSection(',num2str(h.trial.startsample),',' num2str(h.trial.startsample + h.trial.params.sampratein*(h.trial.params.durSweep)*3) ')']);
 end
 
 guidata(cdrbutt,h)
