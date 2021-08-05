@@ -1,15 +1,21 @@
-%% closeLook_210302_F1_C1
+%% closeLook_210604_F1_C1
 
 disp(T.Properties.UserData.trialStem)
 disp(T.Properties.UserData.Dir)
 head(T)
 disp(fplims) % likely the extent of movement
+outcomes = {'no punishment - static';
+    'no punishment - moved';
+    'punishment - off';
+    'punishment - late';
+    'timeout - static';
+    'timeout - fail'};
 
 T0 = load(measuretblname);
 T0 = T0.T;
 
 %% summary slide
-url = 'https://docs.google.com/presentation/d/1B2hmukx68iU-G_946XfPkyASyogKAxg19f6EY3Rjx7k/edit#slide=id.gd79e4c5fbb_0_0';
+url = 'https://docs.google.com/presentation/d/1fKks2vCGHE28xyi7kB_Pns9e7uE5AvoZ2tG9sNA-1e4/edit#slide=id.gd4c03a7d51_0_2';
 web(url,'-browser')
 
 %% probe position and Rm over time
@@ -43,8 +49,7 @@ movement_threshold = 5;
 %% outcomes
 
 % progression of outcomes
-fig = plotTrialOutcomes(T,outcomes,'Title',[regexprep(cid,'_','\\_'), ': Trial outcome over course of experiment'],'Simple','No');
-fig = plotTrialOutcomes(T,outcomes,'Title',[regexprep(cid,'_','\\_'), ': Trial outcome over course of experiment'],'Simple','Yes');
+fig = plotTrialOutcomes(T,outcomes,[regexprep(cid,'_','\\_'), ': Trial outcome over course of experiment']);
 
 % histograms of outcomes
 figure
@@ -102,7 +107,7 @@ idx = T.outcome == 1 & T.hiforce & (T.block == 1 | T.block == 3);
 ttl = 'Early hi force successful trials (blocks 1 and 3)';
 ttl = sprintf('%s: %d trials (of %d)',ttl,sum(idx),sum(T.block == 1 | T.block == 3));
 T.rms_mvmt(idx)
-[fig] = plotChunkOfTrials(T(idx,:),'Title',ttl);
+[fig] = plotChunkOfTrials(T(idx,:),ttl);
 
 idx = T.outcome == 1 & T.hiforce & (T.block == 9 | T.block == 11);
 ttl = 'Late hi force successful trials (blocks 9 and 11)';
@@ -116,7 +121,7 @@ idx = T.outcome == 1 & ~T.hiforce & (T.block == 2 | T.block == 4);
 ttl = 'Early lo force successful trials (blocks 2 and 4)';
 ttl = sprintf('%s: %d trials (of %d)',ttl,sum(idx),sum(T.block == 1 | T.block == 3));
 T.rms_mvmt(idx)
-[fig] = plotChunkOfTrials(T(idx,:),'Title',ttl);
+[fig] = plotChunkOfTrials(T(idx,:),ttl);
 
 idx = T.outcome == 1 & ~T.hiforce & (T.block == 10 | T.block == 12);
 ttl = 'Late lo force successful trials (blocks 10 and 12)';
@@ -308,43 +313,20 @@ xlabel('RMS')
 xlabel('Variance')
 
 % Maybe reaching trials lie off the unity line
-m = 1/2.5;
-b = 6;
+m = 1/1.7;
+b = 0;
 plot([0 max(T.rms_mvmt(idx))],m*[0 max(T.rms_mvmt(idx))]+b,'color',[.8 .8 .8])
 
 idx = T.outcome == 3 & T.rms_mvmt>40 & T.rms_mvmt<100;
 reach_idx = idx & sqrt(T.var_mvmt) < m*T.rms_mvmt+b;
 plot(T.rms_mvmt(reach_idx),sqrt(T.var_mvmt(reach_idx)),'.')
 
-%% plot reach movements for hi force target
-reach_hi_idx = reach_idx & T.hiforce;
+%% plot reach movements
 ttl = 'reach trials';
-ttl = sprintf('%s: %d trials',ttl,sum(reach_hi_idx));  
-T.rms_mvmt(reach_hi_idx)
-[fig] = plotChunkOfLongTrials(T(reach_hi_idx,:),ttl);%,fplims);
-[fig] = plotChunkOfSpikes(T(reach_hi_idx,:),ttl);%,fplims);
-
-% find the ones where the next trial is static, i.e. moved into target
-reach_hi_idx = reach_idx & T.hiforce & circshift(T.outcome==1,-1) & T.trial~=518;
-ttl = 'reach trials';
-ttl = sprintf('%s: %d trials',ttl,sum(reach_hi_idx));
-[fig] = plotChunkOfLongTrials(T(reach_hi_idx,:),ttl);%,fplims);
-[fig] = plotChunkOfLongSpikes(T(reach_hi_idx,:),ttl);%,fplims);
-[fig] = plotChunkOfTrials(T(reach_hi_idx,:),'Title',ttl,'Long','Yes','Spikes','Yes','Align2LEDOff','Yes');%,fplims);
-% [fig] = plotCoLT_aligned2LEDOff(T(reach_hi_idx,:),ttl);%,fplims);
-% [fig] = plotCoLS_aligned2LEDOff(T(reach_hi_idx,:),ttl);%,fplims);
-% nexttrials = circshift(reach_hi_idx,1);
-
-% compute forces before movement for each trial
-% exclude a few trials where there is some spiking before the trial
-reach_hi_idx_ = reach_idx & T.hiforce & circshift(T.outcome==1,-1) & T.trial~=518;
-[fig, peakidx] = plot_pre_post_reach_force(T(reach_hi_idx_,:),ttl);
-
-[~,ord] = sort(peakidx);
-T_reach_hi_idx_ = T(reach_hi_idx_,:);
-T_reach_hi_idx_ = T_reach_hi_idx_(ord,:);
-[fig] = plotChunkOfTrials(T_reach_hi_idx_,'Title',ttl,'Long','Yes','Spikes','Yes','Align2LEDOff','Yes');%,fplims);
-
+ttl = sprintf('%s: %d trials',ttl,sum(reach_idx));
+T.rms_mvmt(idx)
+[fig] = plotChunkOfTrials(T(idx,:),ttl);%,fplims);
+[fig] = plotChunkOfSpikes(T(idx,:),ttl);%,fplims);
 
 % I think we're looking for trial ~64
 idx = T.outcome == 3 & T.rms_mvmt>20 & T.rms_mvmt<80;
@@ -468,6 +450,5 @@ T.rms_mvmt(idx)
 
 % Find trials where the neuron is spiking during the cue
 % Relate movements to spike rates
-
 
 

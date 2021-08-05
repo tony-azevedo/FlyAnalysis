@@ -778,10 +778,12 @@ elseif isfield(h.trial,'spikes') && isfield(h.trial,'spikeDetectionParams')
     y = ax.YLim(2);
     t = makeInTime(h.trial.params);
     if ~any(isnan(h.trial.spikes))
-        raster(ax,t(h.trial.spikes),y,'tag','Spikes');
         if h.probetrace_button.Value && strcmp(h.probetrace_button.String,'Intertrial')
+            raster(ax,t(h.trial.spikes(h.trial.spikes<length(t))),y,'tag','Spikes');
             t_ = [t; makeInterTime(h.trial)];
             raster(ax,t_(h.trial.intertrial.spikes),y,'tag','Spikes');
+        else
+            raster(ax,t(h.trial.spikes(h.trial.spikes<length(t))),y,'tag','Spikes');
         end
     else
         raster(ax,t(h.trial.spikes(~isnan(h.trial.spikes))),y,'tag','Spikes');
@@ -856,7 +858,7 @@ else
     end
 
     nums = h.trial.params.trial+[-1 1 -2 2 -3 3 -4 4];
-    nums = nums(nums>0&nums<h.prtclData(end).trial);
+    nums = nums(nums>0&nums<h.prtclTable.trial(end));
     gotone = 0;
     for t = nums
         mtfl = matfile(sprintf(h.trialStem,t));
@@ -867,8 +869,8 @@ else
     end
     % Then go through all protocol files
     if 0 % ~gotone
-        for t = 1:length(h.prtclData)
-            mtfl = matfile(sprintf(h.trialStem,h.prtclData(t).trial));
+        for t = 1:height(h.prtclTable)
+            mtfl = matfile(sprintf(h.trialStem,h.prtclTable.trial(t)));
             if ~isempty(whos(mtfl,'spikeDetectionParams'))
                 gotone = 1;
                 break
@@ -934,16 +936,21 @@ if strcmp(h.figure1.SelectionType,'alt')
     end
 
     fprintf('\n\t***** Detecting spikes for %s trials **** \n',h.trial.params.protocol);    
-    [~,~,~,~,~,D,trialStem,datastructfile] = extractRawIdentifiers(h.trial.name);
-    data = load(datastructfile); data = data.data;
+    [~,~,~,~,~,D,trialStem,datatablefile] = extractRawIdentifiers(h.trial.name);
+    T = load(datatablefile); T = T.T;
     spikevars = h.trial.spikeDetectionParams;
+
+    if ~isfield(h.trial.params,'mode_1') && isempty(h.trial.params.mode)
+        h.trial.params.mode_1 = 'IClamp';
+    end
+
     switch h.trial.params.mode_1; case 'VClamp', invec1 = 'current_1'; case 'IClamp', invec1 = 'voltage_1'; otherwise; invec1 = 'voltage_1'; end
     
     % Go through all trials
     REDODETECTION = 1;
     
-    for tidx = 1:length(data)
-        tnum = data(tidx).trial;
+    for tidx = 1:height(T)
+        tnum = T.trial(tidx);
         if tnum == h.trial.params.trial
             continue
         end
@@ -951,12 +958,15 @@ if strcmp(h.figure1.SelectionType,'alt')
         trial = load(fullfile(D,sprintf(trialStem,tnum)));
             
         if (~isfield(trial,'spikes') || REDODETECTION) %&& (~isfield(trial,'spikeSpotChecked') || ~trial.spikeSpotChecked)
-            spikeDetection(trial,invec1,spikevars,'interact','no'); % fieldname will be 'spikes'
+            if isfield(trial,'intertrial')
+               spikeDetection(trial,invec1,spikevars,'intertrial_spikes','yes','interact','no');
+            else
+                spikeDetection(trial,invec1,spikevars,'interact','no');
+            end
         else
             fprintf('Skipping %d\n',tnum)
         end
     end
-    
 end
 
 
@@ -1983,7 +1993,7 @@ if strcmp(button,'Yes')
     for n_ind = 1:length(idx)
         trial = load(fullfile(handles.dir,sprintf(handles.trialStem,handles.prtclTable.trial(idx(n_ind)))));
         trial.excluded = ex;
-        handles.prtclTable.excluded(idx(n_ind)) = 1;
+        handles.prtclTable.excluded(idx(n_ind)) = ex;
         save(trial.name, '-struct', 'trial');
     end
     T = handles.prtclTable;
@@ -2056,6 +2066,9 @@ function reDetectSpikes(hObject,eventdata,handles)
 
 handles = guidata(hObject);
 trial = handles.trial;
+if ~isfield(handles.trial.params,'mode_1') && isempty(handles.trial.params.mode)
+    handles.trial.params.mode_1 = 'IClamp';
+end
 switch handles.trial.params.mode_1; case 'VClamp', invec1 = 'current_1'; case 'IClamp', invec1 = 'voltage_1'; otherwise; invec1 = 'voltage_1'; end
 
 button = questdlg('Use params from preferences?','Preferences','No');
@@ -2065,7 +2078,12 @@ if strcmp(button,'No')
 elseif strcmp(button,'Yes')
     fstag = ['fs' num2str(trial.params.sampratein)];
     spikevars = getacqpref('FlyAnalysis',['Spike_params_' invec1 '_' fstag]);
-    [~,spikevars] = spikeDetection(trial,invec1,spikevars);
+
+    if isfield(trial,'intertrial')
+        [handles.trial,~] = spikeDetection(trial,invec1,spikevars,'intertrial_spikes','yes');        
+    else
+        [handles.trial,~] = spikeDetection(trial,invec1,spikevars);
+    end
 end
 figure(gcbf);
 guidata(hObject, handles);

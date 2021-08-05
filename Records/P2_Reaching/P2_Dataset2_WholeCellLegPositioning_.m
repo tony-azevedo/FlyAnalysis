@@ -7,12 +7,14 @@ data = cell(sz);
 T_cell = cell2table(data);
 T_cell.Properties.VariableNames = varNames;
 
-% T_cell{1,:} = {'210302_F1_C2', 'Hot-Cell-Gal4, 50uL ATR mixed in', 'pilot', 'LEDFlashWithPiezoCueControl','empty'};
-% T_cell{1,:} = {'210319_F2_C1', 'HC-LexA/13XLexAop-ChrimsonR;81A06/pJFRC7 100uL ATR mixed in', 'Fe>proximal tidm', 'LEDFlashWithPiezoCueControl','empty'};
-T_cell{1,:} = {'210331_F2_C1', 'HC-LexA/13XLexAop-ChrimsonR;81A06/pJFRC7 100uL ATR mixed in', 'Fe>proximal tidm', 'LEDFlashWithPiezoCueControl','empty'};
-% T_cell{1,:} = {'210405_F1_C1', 'HC-LexA/13XLexAop-ChrimsonR;81A06/pJFRC7 100uL ATR mixed in', 'Fe>distal tidm', 'LEDFlashWithPiezoCueControl','empty'};
+T_cell{1,:} = {'210302_F1_C2', 'Hot-Cell-Gal4, 50uL ATR mixed in', 'pilot', 'LEDFlashWithPiezoCueControl','empty'};
+T_cell{2,:} = {'210319_F2_C1', 'HC-LexA/13XLexAop-ChrimsonR;81A06/pJFRC7 100uL ATR mixed in', 'Fe>proximal tidm', 'LEDFlashWithPiezoCueControl','empty'};
+T_cell{3,:} = {'210331_F2_C1', 'HC-LexA/13XLexAop-ChrimsonR;81A06/pJFRC7 100uL ATR mixed in', 'Fe>proximal tidm', 'LEDFlashWithPiezoCueControl','empty'};
+T_cell{4,:} = {'210405_F1_C1', 'HC-LexA/13XLexAop-ChrimsonR;81A06/pJFRC7 100uL ATR mixed in', 'Fe>distal tidm', 'LEDFlashWithPiezoCueControl','empty'};
+T_cell{5,:} = {'210602_F1_C1', 'HC-LexA/13XLexAop-ChrimsonR;35C09/pJFRC7 75 ATR mixed in, no attenuator on LED', 'Fe>distal tidm', 'LEDFlashWithPiezoCueControl','empty'};
+T_cell{6,:} = {'210604_F1_C1', 'HC-LexA/13XLexAop-ChrimsonR;35C09/pJFRC7 75 ATR mixed in, attenuator on LED', 'Fe>distal tidm, slow', 'LEDFlashWithPiezoCueControl','empty'};
 
-T_Reach = T_cell;
+T_Reach = T_cell(6,:);
 
 % Script_tableOfReachData
 
@@ -47,9 +49,22 @@ Script_MeasurePrePostStimMovement
 Script_MeasureCueResponses
 
 %% Now look at individual flies
+
+outcomes = {'no punishment - static';
+    'no punishment - moved';
+    'punishment - off';
+    'punishment - late';
+    'timeout - static';
+    'timeout - fail'};
+
 % closeLook_210302_F1_C1_HCGal4_unknown
 % closeLook_210319_F2_C1_R81A06_unknown
 % closeLook_210331_F2_C1_R81A06_proximalFlexorWithSpikes
 % closeLook_210405_F1_C1_R81A06_largeDistalFlexor
+% closeLook_210602_F1_C1_R35C09_slowDistalFlexor
+% closeLook_210604_F1_C1_R35C09_slowDistalFlexor
 
 %% Links to population level
+% some examples
+% Script_Columbia_Talk_210615
+% Script_R01figures_210617

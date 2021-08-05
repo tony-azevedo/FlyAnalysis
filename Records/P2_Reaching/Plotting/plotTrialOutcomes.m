@@ -1,6 +1,13 @@
 function [fig] = plotTrialOutcomes(T,outcomes,varargin)
 % f = plotChunkOfTrials(T,title)
 
+p = inputParser;
+p.PartialMatching = 0;
+p.addParameter('Simple','No',@(x)any(ismember({'Yes','yes','No','no'},x)));
+p.addParameter('Title','',@ischar);
+
+parse(p,varargin{:});
+
 if isempty(T)
     fprintf('No trials\n')
     fig = [];
@@ -23,9 +30,17 @@ panl.marginbottom = 12;
 
 outcomeax = panl(1).select();
 
-plot(outcomeax,T.trial(T.blueToggle==1),T.outcome(T.blueToggle==1),'.b');
+outcomevec = T.outcome;
+if any(strcmp(p.Results.Simple,{'Yes','yes'}))
+    outcomevec(outcomevec==2) = 1;
+    outcomevec(outcomevec==4) = 3;
+    outcomevec(outcomevec==6) = 5;
+end
+
+
+plot(outcomeax,T.trial,outcomevec,'+r');
 outcomeax.NextPlot = 'add';
-plot(outcomeax,T.trial,T.outcome,'.r');
+plot(outcomeax,T.trial(T.blueToggle==1),outcomevec(T.blueToggle==1),'+b');
 
 outcomeax.YTick = 0:6;
 outcomeax.YTickLabel = {'rest',outcomes{:}};

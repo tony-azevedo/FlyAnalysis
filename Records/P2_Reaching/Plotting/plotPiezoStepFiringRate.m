@@ -1,4 +1,4 @@
-function [fig] = plotPiezoStepSpikes(T,varargin)
+function [fig,pre,post,delta_max,delta_min] = plotPiezoStepFiringRate(T,varargin)
 % f = plotChunkOfTrials(T,title)
 
 
@@ -41,14 +41,19 @@ diax.NextPlot = 'add';
 diax.XAxis.Visible = 'off';
 posax.NextPlot = 'add';
 posax.XAxis.Visible = 'off';
+posax.Tag = 'posax';
 aiax.NextPlot = 'add';
+aiax.Tag = 'frax';
 
 
 T_row = T(1,:);
 trial = load(fullfile(Dir,sprintf(trialStem,T_row.trial)));
 x = makeInTime(trial.params);
-xidx = x > -trial.params.cueStimDurInSec-trial.params.cueDelayDurInSec-.01 & x<0;
-x1 = x(find(xidx,1,'first'));
+% xidx = x > -trial.params.cueStimDurInSec-trial.params.cueDelayDurInSec-.01 & x<0;
+xidx = x > -trial.params.preDurInSec & x<0;
+spikemat = 0*repmat(x(xidx)',height(T),1);
+x1 = find(xidx,1,'first');
+x0 = find(xidx,1,'last');
 
 clr = parula(size(T,1));
 for r = 1:size(T,1)
@@ -57,16 +62,32 @@ for r = 1:size(T,1)
     x = makeInTime(trial.params);
     plot(diax,x(xidx),trial.arduino_output(xidx));
     plot(posax,x(xidx),-trial.probe_position(xidx),'tag',num2str(T_row.trial),'color',clr(r,:));
-
-    spikes = x(trial.spikes(trial.spikes<length(x)));
-    spikes = spikes(spikes<0);
+    
+    spikes = trial.spikes;
+    spikes = trial.spikes(spikes>x1 & spikes<x0);
     if ~isempty(spikes)
-        ticks = raster(aiax,spikes,-r+[-.5 .5]);
-        set(ticks,'linewidth',.5,'color',clr(r,:));
-    else
-        plot(aiax,[x1 0],-r*[1 1],'tag',num2str(T_row.trial),'color',[.8 .8 .8]);
+        spikemat(r,spikes-x1) = 1;
     end
 end 
+fr = firingRate(x(xidx),spikemat,43/300);
+
+pre = mean(fr(...
+    x(xidx)>-trial.params.cueStimDurInSec-trial.params.cueDelayDurInSec-.05 & ...
+    x(xidx)<-trial.params.cueStimDurInSec-trial.params.cueDelayDurInSec));
+post = mean(fr(...
+    x(xidx)>-.15 & ...
+    x(xidx)<.1));
+delta_max = max(fr) - post;
+delta_min = min(fr(...
+    x(xidx)>-trial.params.cueStimDurInSec-trial.params.cueDelayDurInSec & ...
+    x(xidx)<-trial.params.cueDelayDurInSec/2))...
+    - post;
+
+plot(aiax,x(xidx),fr,'tag',num2str(T_row.trial),'color',[0 0 0]);
+x_ = x(xidx);
+plot(aiax,[x_(1) x_(end)],post*[1 1],'tag',num2str(T_row.trial),'color',[1 1 1]*.85);
+plot(aiax,[x_(1) x_(end)],(post+delta_max)*[1 1],'tag',num2str(T_row.trial),'color',[1 1 1]*.55);
+
 
 if all(T.hiforce) || all(~T.hiforce)
     %all(T.target1==T.target1(1)) && all(T.target2==T.target2(1))
@@ -90,8 +111,7 @@ if all(T.blueToggle)
     ptch.FaceColor = [.9 .9 1];
 end
 
-
-aiax.XLim = [x1 0];
+aiax.XLim = [x(x1) 0];
 
 title(diax,ttl);
 ylabel(diax,'LED state')

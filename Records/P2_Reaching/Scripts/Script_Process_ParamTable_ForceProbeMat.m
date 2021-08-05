@@ -211,7 +211,11 @@ xlabel(H.Parent,'Extreme values in each trial');
 
 
 %% forceprobe Heat Map
-fpHm(ft,trials,fp,T.arduino_duration,bT,fplims);
+fpHm(ft,T.trial,fp,T.arduino_duration,bT,fplims);
+
+%% measureTable stuff
+T.Properties.UserData.trialStem = trialStem;
+T.Properties.UserData.Dir = Dir;
 
 %% Tagging trials with the outcome
 

@@ -33,7 +33,7 @@ if isfield(obj.trial,'dFoverF')
     ax1 = subplot(3,1,1,'parent',plotcanvas);
 
 else
-    ax1 = subplot(3,1,[1 2],'parent',plotcanvas);
+    ax1 = subplot(3,1,1,'parent',plotcanvas);
 end
 set(ax1,'tag','quickshow_inax');
 
@@ -50,7 +50,7 @@ box(ax1,'off'); set(ax1,'TickDir','out'); axis(ax1,'tight');
 [prot,d,fly,cell,trial] = extractRawIdentifiers(obj.trial.name);
 title(ax1,sprintf('%s', [prot '.' d '.' fly '.' cell '.' trial]));
 
-ax2 = subplot(3,1,3,'parent',plotcanvas,'tag','quickshow_outax'); 
+ax2 = subplot(3,1,2,'parent',plotcanvas,'tag','quickshow_outax'); 
 set(ax2,'tag','quickshow_outax');
 
 if length(x) > 100000
@@ -62,5 +62,12 @@ line(x,current,'parent',ax2,'color',[0 0 1],'tag',savetag);
 ylabel(ax2,'I (pA)'); %xlim([0 max(t)]);
 box(ax2,'off'); set(ax2,'TickDir','out'); axis(ax2,'tight');
 xlabel(ax2,'Time (s)'); %xlim([0 max(t)]);
+
+ax3 = subplot(3,1,3,'parent',plotcanvas,'tag','quickshow_inax2'); 
+line(x,obj.trial.probe_position,'parent',ax3,'color',[0 0 1],'tag',savetag);
+ylabel(ax3,'Probe (pix)'); %xlim([0 max(t)]);
+box(ax2,'off'); set(ax2,'TickDir','out'); axis(ax2,'tight');
+xlabel(ax2,'Time (s)'); %xlim([0 max(t)]);
+
 
 

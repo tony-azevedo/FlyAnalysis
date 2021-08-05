@@ -51,9 +51,9 @@ for r = 1:size(T,1)
     plot(diax,x,trial.arduino_output);
     pr = plot(posax,x,-trial.probe_position,'tag',num2str(T_row.trial));
     % plot(aiax,x,trial.voltage_1,'tag',num2str(T_row.trial));
-    spikes = x(trial.spikes);
+    spikes = x(trial.spikes(trial.spikes<length(x)));
     if ~isempty(spikes)
-        ticks = raster(aiax,x(trial.spikes),-r+[-.5 .5]);
+        ticks = raster(aiax,spikes,-r+[-.5 .5]);
         set(ticks,'linewidth',.5,'color',pr.Color);
     else
         plot(aiax,[x(1) x(end)],-r*[1 1],'tag',num2str(T_row.trial),'color',[.95 .95 .95]);

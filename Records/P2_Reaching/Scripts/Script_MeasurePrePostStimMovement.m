@@ -1,6 +1,13 @@
 %% Script_MeasurePrePostStimMovement
 DEBUG = 0;
 fprintf('Measuring force probe stimulus movement\n')
+if any(contains(T.Properties.VariableNames,'rms_trial_mvmt')) || ...
+    any(contains(T.Properties.VariableNames,'cue_mvmt')) || ...
+    any(contains(T.Properties.VariableNames,'var_mvmt'))
+    error('Delete rms_trial_mvmt, cue_mvmt, and var_mvmt variables')
+end
+
+fprintf('Measuring voltage responses to mechanical cue\n')
 
 %% Measure movement in trials
 

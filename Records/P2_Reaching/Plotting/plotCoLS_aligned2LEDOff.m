@@ -1,4 +1,4 @@
-function [fig] = plotPiezoStepSpikes(T,varargin)
+function [fig] = plotCoLS_aligned2LEDOff(T,varargin)
 % f = plotChunkOfTrials(T,title)
 
 
@@ -44,29 +44,25 @@ posax.XAxis.Visible = 'off';
 aiax.NextPlot = 'add';
 
 
-T_row = T(1,:);
-trial = load(fullfile(Dir,sprintf(trialStem,T_row.trial)));
-x = makeInTime(trial.params);
-xidx = x > -trial.params.cueStimDurInSec-trial.params.cueDelayDurInSec-.01 & x<0;
-x1 = x(find(xidx,1,'first'));
-
-clr = parula(size(T,1));
 for r = 1:size(T,1)
     T_row = T(r,:);    
     trial = load(fullfile(Dir,sprintf(trialStem,T_row.trial)));
-    x = makeInTime(trial.params);
-    plot(diax,x(xidx),trial.arduino_output(xidx));
-    plot(posax,x(xidx),-trial.probe_position(xidx),'tag',num2str(T_row.trial),'color',clr(r,:));
+    x = cat(1,makeInTime(trial.params),makeInterTime(trial));
+    y = cat(2,trial.arduino_output,trial.intertrial.arduino_output);
+    plot(diax,x-T_row.arduino_duration,y);
 
-    spikes = x(trial.spikes(trial.spikes<length(x)));
-    spikes = spikes(spikes<0);
+    y = cat(2,trial.probe_position,trial.intertrial.probe_position);
+    plot(posax,x-T_row.arduino_duration,-y,'tag',num2str(T_row.trial));
+    spikes = x(trial.spikes);
+
     if ~isempty(spikes)
-        ticks = raster(aiax,spikes,-r+[-.5 .5]);
-        set(ticks,'linewidth',.5,'color',clr(r,:));
+        ticks = raster(ax,x(trial.spikes(~isnan(trial.spikes))),-r+[-.45 .45],'tag','Spikes');
+        set(ticks,'linewidth',.5,'color',pr.Color);
     else
-        plot(aiax,[x1 0],-r*[1 1],'tag',num2str(T_row.trial),'color',[.8 .8 .8]);
+        plot(aiax,[x(1) x(end)],-r*[1 1],'tag',num2str(T_row.trial),'color',[.95 .95 .95]);
     end
-end 
+    
+end    
 
 if all(T.hiforce) || all(~T.hiforce)
     %all(T.target1==T.target1(1)) && all(T.target2==T.target2(1))
@@ -84,14 +80,13 @@ if all(T.hiforce) || all(~T.hiforce)
     end
     rectangle(posax,'Position',[x(1) -T.target2(end) .05 diff([T.target1(end) T.target2(end)])],'FaceColor',trgclr,'EdgeColor','none','LineWidth',2)
 end
-
 if all(T.blueToggle)
     ptch = findobj(posax,'Tag','target');
     ptch.FaceColor = [.9 .9 1];
 end
 
 
-aiax.XLim = [x1 0];
+aiax.XLim = [x(1) x(end)];
 
 title(diax,ttl);
 ylabel(diax,'LED state')

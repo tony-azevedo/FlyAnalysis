@@ -91,7 +91,7 @@ for p = 1:length(protocols)
         rawtrial = load(fullfile(D,rawfiles(f).name));
         if ~isfield(rawtrial,'excluded')
             rawtrial.excluded = 0;
-            save(rawtrial.name, '-struct', 'trial');
+            save(rawtrial.name, '-struct', 'rawtrial');
         end
         timestamp(f) = rawtrial.timestamp;
         excluded(f) = rawtrial.excluded;

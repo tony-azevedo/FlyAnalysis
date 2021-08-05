@@ -1,15 +1,46 @@
-%% closeLook_210302_F1_C1
+%% closeLook_210602_F1_C1 - 35C09 slow neuron
+% Not a great recording. I think the biggest issue was that the low target
+% included the resting point. I think perhaps it's hard for the fly to keep
+% very low force on the probe.
+
+% T = load('F:\Acquisition\210602\210602_F1_C1\LEDFlashWithPiezoCueControl_210602_F1_C1_MeasureTable.mat');
+% T = T.T;
 
 disp(T.Properties.UserData.trialStem)
 disp(T.Properties.UserData.Dir)
 head(T)
 disp(fplims) % likely the extent of movement
+outcomes = {'no punishment - static';
+    'no punishment - moved';
+    'punishment - off';
+    'punishment - late';
+    'timeout - static';
+    'timeout - fail'};
 
 T0 = load(measuretblname);
 T0 = T0.T;
 
+if 0
+    tablefile = fullfile(Dir,[T_cell.Protocol{cidx} '_' cid '_Table.mat']);
+    T_params = load(tablefile);
+    T_params = T_params.T;
+    
+    forceprobematname = regexprep(T_params.Properties.Description,'Table.','ForceProbe.');
+    
+    if exist(forceprobematname,'file')
+        fbstruct = load(forceprobematname);
+        if isfield(fbstruct,'forceProbe')
+            ft = fbstruct.forceProbeTime;
+            forceProbe = fbstruct.forceProbe;
+        end
+        idx = ~T_params.excluded & ~isnan(T_params.arduino_duration);
+        fp = forceProbe(:,idx);
+    end
+end
+
+
 %% summary slide
-url = 'https://docs.google.com/presentation/d/1B2hmukx68iU-G_946XfPkyASyogKAxg19f6EY3Rjx7k/edit#slide=id.gd79e4c5fbb_0_0';
+url = 'https://docs.google.com/presentation/d/1kl12ZJKsmxT_qMSEQdm6lG5a2dkQT1YddfhMlz24lbA/edit#slide=id.gd4c03a7d51_0_2';
 web(url,'-browser')
 
 %% probe position and Rm over time
@@ -23,6 +54,77 @@ plotScript_probeposition_Rm_overtime
 % Maybe some trials were excluded
 T = cleanUpMeasureTable(T); % get rid of any trials that are excluded
 
+%% Plot histograms of leg position based on low and high force.
+fpcumfig = figure;
+ax_cdf = subplot(2,1,1,'parent',fpcumfig); ax_cdf.NextPlot = 'add';
+ax_pdf = subplot(2,1,2,'parent',fpcumfig); ax_pdf.NextPlot = 'add';
+
+
+% CellID = T_cell.CellID{c_ind};
+[T,bT,fp] = loadTableAndFPMatrix(CellID{1});
+
+hitarget = [mode(bT.target1(bT.hiforce)) 0];
+hitarget(2) = mode(bT.target2(bT.target1==hitarget(1)));
+lotarget = [mode(bT.target1(~bT.hiforce)) 0];
+lotarget(2) = mode(bT.target2(bT.target1==lotarget(1)));
+goodblocks = [0; sort(...
+    [bT.block(bT.target1==hitarget(1) & bT.target2==hitarget(2));
+    bT.block(bT.target1==lotarget(1) & bT.target2==lotarget(2))])];
+
+isgoodblck =  arrayfun(@(x)ismember(x,goodblocks),T.block);
+% plot
+fpgood = fp(:,isgoodblck);
+
+% [fig] = plotChunkOfTrials(T(reach_hi_idx,:),'Title',ttl,'Long','Yes','Spikes','Yes','Align2LEDOff','Yes');%,fplims);
+
+
+% fpgood = fp(:,T.block<=8);
+% x = sort(fpgood(:));
+% y = (1:length(x))'./length(x);
+% plot(ax_cdf,x,y,'Color',[.8 .8 .8])
+% 
+% [x_,y_] = cummulativeEnvelope(x);
+% plot(ax_cdf,x_,y_,'Color',[.5 .5 .5])
+% 
+% step = 2;
+% xq = (round(x_(1)):step:round(x_(end)));
+% cdf_total = pchip(x_,y_,xq);
+% pdf_total = diff(cdf_total);
+% plot(ax_cdf,xq,cdf_total,'Color',[0 0 0])
+% plot(ax_pdf,xq(1:end-1)+step/2,pdf_total,'Color',[0 0 0])
+% 
+% hi = fp(:,T.hiforce&T.block<=8);
+% x = sort(hi(:));
+% y = (1:length(x))'./length(x);
+% [x_,y_] = cummulativeEnvelope(x);
+% cdf_total = pchip(x_,y_,xq);
+% cdf_total(xq<x_(find(y_>0,1,'first'))) = 0;
+% pdf_total = diff(cdf_total);
+% plot(ax_cdf,xq,cdf_total,'Color',hiclr);
+% plot(ax_pdf,xq(1:end-1)+step/2,pdf_total,'Color',hiclr)
+% 
+% lo = fp(:,~T.hiforce&T.block<=8);
+% x = sort(lo(:));
+% y = (1:length(x))'./length(x);
+% [x_,y_] = cummulativeEnvelope(x);
+% cdf_total = pchip(x_,y_,xq);
+% cdf_total(xq<find(y_>0,1,'first')) = 0;
+% pdf_total = diff(cdf_total);
+% plot(ax_cdf,xq,cdf_total,'Color',loclr);
+% plot(ax_pdf,xq(1:end-1)+step/2,pdf_total,'Color',loclr)
+% 
+% htidx = find(T.hiforce&T.block<=8,1,'first');
+% hitarget = [T.target1(htidx) T.target2(htidx)];
+% 
+% ltidx = find(~T.hiforce&T.outcome>0&T.block<=8,1,'first');
+% lotarget = [T.target1(ltidx) T.target2(ltidx)];
+% 
+% plot(ax_cdf,hitarget,-.05*[1 1],'Linewidth',3,'Color',hiclr)
+% plot(ax_cdf,lotarget,-.05*[1 1],'Linewidth',3,'Color',loclr)
+% 
+% plot(ax_pdf,hitarget,-.05*[1 1],'Linewidth',3,'Color',hiclr)
+% plot(ax_pdf,lotarget,-.05*[1 1],'Linewidth',3,'Color',loclr)
+
 
 %% Separate cases 1 and 2 based on movement
 figure
@@ -35,16 +137,16 @@ title(H.Parent,'Histogram of RMS Movement in no punishment trials');
 
 movement_threshold = 5;
 
-% Any trial with > 5 rms movement is classified as outcome 2;
+% Any trial with > 10 rms movement is classified as outcome 2;
 % idx = (T.outcome == 1 | T.outcome == 2) & T.rms_mvmt > movement_threshold;
 % T.outcome(idx) = 2;
+% save(T.Properties.Description,'T')
 
 
 %% outcomes
 
 % progression of outcomes
-fig = plotTrialOutcomes(T,outcomes,'Title',[regexprep(cid,'_','\\_'), ': Trial outcome over course of experiment'],'Simple','No');
-fig = plotTrialOutcomes(T,outcomes,'Title',[regexprep(cid,'_','\\_'), ': Trial outcome over course of experiment'],'Simple','Yes');
+fig = plotTrialOutcomes(T,outcomes,[regexprep(cid,'_','\\_'), ': Trial outcome over course of experiment']);
 
 % histograms of outcomes
 figure
@@ -76,16 +178,18 @@ title(H.Parent,'Outcome in blocks 9,10,11,12');
 
 %%
 % plot no_punishment trials with large movements
-idx = (T.outcome == 1 | T.outcome == 2) & T.rms_mvmt > 40;
+idx = (T.outcome == 1 | T.outcome == 2) & T.rms_mvmt > 40 & isgoodblck;
 ttl = 'no punishment with rms movement > 40 um';
 T.rms_mvmt(idx)
-[fig] = plotChunkOfTrials(T(idx,:),ttl);
+T.trial(idx)
+[fig] = plotChunkOfTrials(T(idx,:),'Title',ttl,'Long','Yes','Spikes','Yes','Align2LEDOff','Yes');%,fplims);
 
 % plot no_punishment trials with semi large movements
-idx = (T.outcome == 1 | T.outcome == 2) & T.rms_mvmt > movement_threshold & T.rms_mvmt < 32;
+idx = (T.outcome == 1 | T.outcome == 2) & T.rms_mvmt > movement_threshold & T.rms_mvmt < 32 & isgoodblck;
 ttl = sprintf('no punishment with rms movement > %d & < 40 um',movement_threshold);
 T.rms_mvmt(idx)
-[fig] = plotChunkOfTrials(T(idx,:),ttl);
+T.trial(idx)
+[fig] = plotChunkOfTrials(T(idx,:),'Title',ttl,'Long','Yes','Spikes','Yes','Align2LEDOff','Yes');%,fplims);
 
 % quick check outcome1 is trials on which the fly didn't move
 sum(T.rms_mvmt(T.outcome==1) > movement_threshold)
@@ -102,7 +206,7 @@ idx = T.outcome == 1 & T.hiforce & (T.block == 1 | T.block == 3);
 ttl = 'Early hi force successful trials (blocks 1 and 3)';
 ttl = sprintf('%s: %d trials (of %d)',ttl,sum(idx),sum(T.block == 1 | T.block == 3));
 T.rms_mvmt(idx)
-[fig] = plotChunkOfTrials(T(idx,:),'Title',ttl);
+[fig] = plotChunkOfTrials(T(idx,:),ttl);
 
 idx = T.outcome == 1 & T.hiforce & (T.block == 9 | T.block == 11);
 ttl = 'Late hi force successful trials (blocks 9 and 11)';
@@ -116,7 +220,7 @@ idx = T.outcome == 1 & ~T.hiforce & (T.block == 2 | T.block == 4);
 ttl = 'Early lo force successful trials (blocks 2 and 4)';
 ttl = sprintf('%s: %d trials (of %d)',ttl,sum(idx),sum(T.block == 1 | T.block == 3));
 T.rms_mvmt(idx)
-[fig] = plotChunkOfTrials(T(idx,:),'Title',ttl);
+[fig] = plotChunkOfTrials(T(idx,:),ttl);
 
 idx = T.outcome == 1 & ~T.hiforce & (T.block == 10 | T.block == 12);
 ttl = 'Late lo force successful trials (blocks 10 and 12)';
@@ -179,7 +283,7 @@ end
 
 ttl_stem = 'Lo, Late %gV';
 for stp = [-5 5]
-    idx = T.outcome == 1 & ~T.hiforce & T.displacement == stp & (T.block == 15 | T.block == 16 | T.block == 11 | T.block == 12 | T.block == 13 | T.block == 14);
+    idx = T.outcome == 1 & ~T.hiforce & T.displacement == stp & (T.block == 5 | T.block == 6 | T.block == 7 | T.block == 8);
     ttl = sprintf(ttl_stem,stp);
     %[fig] = plotPiezoStepResponse(T(idx,:),ttl);
     [fig] = plotPiezoStepSpikes(T(idx,:),ttl);
@@ -187,10 +291,46 @@ end
 
 ttl_stem = 'Hi, Late %gV';
 for stp = [-5 5]
-    idx = T.outcome == 1 & T.hiforce & T.displacement == stp & (T.block == 15 | T.block == 16 | T.block == 11 | T.block == 12 | T.block == 13 | T.block == 14);
+    idx = T.outcome == 1 & T.hiforce & T.displacement == stp & (T.block == 5 | T.block == 6 | T.block == 7 | T.block == 8);
     ttl = sprintf(ttl_stem,stp);
     [fig] = plotPiezoStepSpikes(T(idx,:),ttl);
 end
+
+%% All Lo or Hi trials
+ttl_stem = 'Lo %gV';
+pre_lo = [0 0];
+post_lo = [0 0];
+delta_lo = [0 0];
+stps = [-5 5];
+for stp = [-5 5]
+    idx = T.outcome == 1 & ~T.hiforce & T.displacement == stp & isgoodblck;
+    ttl = sprintf(ttl_stem,stp);
+    %[fig] = plotPiezoStepResponse(T(idx,:),ttl);
+    %[fig] = plotPiezoStepSpikes(T(idx,:),ttl);
+    [fig,pre,post,delta] = plotPiezoStepFiringRate(T(idx,:),ttl);
+    s = find(stp==stps);
+    pre_lo(s) = pre;
+    post_lo(s) = post;
+    delta_lo(s) = delta;
+end
+
+ttl_stem = 'Hi %gV';
+pre_hi = [0 0];
+post_hi = [0 0];
+delta_hi = [0 0];
+for stp = [-5 5]
+    idx = T.outcome == 1 & T.hiforce & T.displacement == stp & isgoodblck;
+    ttl = sprintf(ttl_stem,stp);
+    [fig,pre,post,delta] = plotPiezoStepFiringRate(T(idx,:),ttl);
+    s = find(stp==stps);
+    pre_hi(s) = pre;
+    post_hi(s) = post;
+    delta_hi(s) = delta;
+end
+
+%% compare sensory responses to high and lo
+f = figure;
+
 
 
 %% lo vs. high probe stiffness
@@ -216,7 +356,20 @@ plotCompareLoHiFeedbackResponses(T(idx,:))
 idx = (T.block == 9 | T.block == 10 | T.block == 11 | T.block == 12 | T.block == 14);
 plotCompareLoHiFeedbackResponses(T(idx,:))
 
+%% Look at failures in bad blocks. Are they closer to current or past target? 
+% this fly had a hard time with the low force target, possibly for several
+% reasons. So, for the trials in low force target, is the fly trying to be
+% closer to hi or low target?
 
+idx = ~(T.outcome==1 | T.outcome==2);
+idx = idx & ~T.hiforce & T.block>=4 & T.block<=8;
+
+ttl = 'Unsuccessful trials in low force target';
+[fig] = plotChunkOfLongTrials(T(idx,:),ttl);
+
+%% Reflex reversal?
+
+possibletrials = [7, 205, 285, 471, 478, 105, 179]
 
 %% ********** Punishment trials **********
 
@@ -308,43 +461,20 @@ xlabel('RMS')
 xlabel('Variance')
 
 % Maybe reaching trials lie off the unity line
-m = 1/2.5;
-b = 6;
+m = 1/1.7;
+b = 0;
 plot([0 max(T.rms_mvmt(idx))],m*[0 max(T.rms_mvmt(idx))]+b,'color',[.8 .8 .8])
 
 idx = T.outcome == 3 & T.rms_mvmt>40 & T.rms_mvmt<100;
 reach_idx = idx & sqrt(T.var_mvmt) < m*T.rms_mvmt+b;
 plot(T.rms_mvmt(reach_idx),sqrt(T.var_mvmt(reach_idx)),'.')
 
-%% plot reach movements for hi force target
-reach_hi_idx = reach_idx & T.hiforce;
+%% plot reach movements
 ttl = 'reach trials';
-ttl = sprintf('%s: %d trials',ttl,sum(reach_hi_idx));  
-T.rms_mvmt(reach_hi_idx)
-[fig] = plotChunkOfLongTrials(T(reach_hi_idx,:),ttl);%,fplims);
-[fig] = plotChunkOfSpikes(T(reach_hi_idx,:),ttl);%,fplims);
-
-% find the ones where the next trial is static, i.e. moved into target
-reach_hi_idx = reach_idx & T.hiforce & circshift(T.outcome==1,-1) & T.trial~=518;
-ttl = 'reach trials';
-ttl = sprintf('%s: %d trials',ttl,sum(reach_hi_idx));
-[fig] = plotChunkOfLongTrials(T(reach_hi_idx,:),ttl);%,fplims);
-[fig] = plotChunkOfLongSpikes(T(reach_hi_idx,:),ttl);%,fplims);
-[fig] = plotChunkOfTrials(T(reach_hi_idx,:),'Title',ttl,'Long','Yes','Spikes','Yes','Align2LEDOff','Yes');%,fplims);
-% [fig] = plotCoLT_aligned2LEDOff(T(reach_hi_idx,:),ttl);%,fplims);
-% [fig] = plotCoLS_aligned2LEDOff(T(reach_hi_idx,:),ttl);%,fplims);
-% nexttrials = circshift(reach_hi_idx,1);
-
-% compute forces before movement for each trial
-% exclude a few trials where there is some spiking before the trial
-reach_hi_idx_ = reach_idx & T.hiforce & circshift(T.outcome==1,-1) & T.trial~=518;
-[fig, peakidx] = plot_pre_post_reach_force(T(reach_hi_idx_,:),ttl);
-
-[~,ord] = sort(peakidx);
-T_reach_hi_idx_ = T(reach_hi_idx_,:);
-T_reach_hi_idx_ = T_reach_hi_idx_(ord,:);
-[fig] = plotChunkOfTrials(T_reach_hi_idx_,'Title',ttl,'Long','Yes','Spikes','Yes','Align2LEDOff','Yes');%,fplims);
-
+ttl = sprintf('%s: %d trials',ttl,sum(reach_idx));
+T.rms_mvmt(idx)
+[fig] = plotChunkOfTrials(T(idx,:),ttl);%,fplims);
+[fig] = plotChunkOfSpikes(T(idx,:),ttl);%,fplims);
 
 % I think we're looking for trial ~64
 idx = T.outcome == 3 & T.rms_mvmt>20 & T.rms_mvmt<80;
@@ -436,15 +566,17 @@ title(H.Parent,'Histogram of RMS Movement in timeout trials');
 idx0 = (T.outcome == 5 | T.outcome == 6);
 idx = idx0 & T.rms_mvmt <= 50;
 figure
-H = histogram(T.rms_mvmt(idx));
+H = histogram(T.rms_mvmt(idx),'BinWidth',2);
+disp([H.BinEdges(1:end-1)',H.Values'])
 
 fprintf('Make sure to classify movement trials');
 % Any trial with > 20 rms movement is classified as outcome 6;
-% idx = (T.outcome == 5 | T.outcome == 6) & T.rms_mvmt > 20;
+% idx = (T.outcome == 5 | T.outcome == 6) & T.rms_mvmt > 5;
 % T.outcome(idx) = 6;
+% save(T.Properties.Description,'T')
 
 % quick check outcome1 is trials on which the fly didn't move
-any(T.rms_mvmt(T.outcome==5) > 20)
+any(T.rms_mvmt(T.outcome==5) > 5)
 
 
 % plot failure trials with large movements
@@ -470,4 +602,10 @@ T.rms_mvmt(idx)
 % Relate movements to spike rates
 
 
-
+%% ************ functions ***********
+function [x_,y_] = cummulativeEnvelope(x)
+    x = sort(x(:));
+    y = (1:length(x))'./length(x);
+    [x_,Ix,Ix_] = unique(x,'last');
+    y_ = y(Ix);
+end

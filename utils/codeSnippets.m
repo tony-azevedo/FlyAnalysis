@@ -104,6 +104,7 @@ p.addParameter('dFoFfig',[],@isnumeric);
 p.addParameter('MotionCorrection',true,@islogical);
 p.addParameter('ShowMovies',false,@islogical);
 p.addParameter('MovieLocation','',@ischar);
+p.addParameter('Long','No',@(x)any(ismember({'Yes','yes','No','no'},x)));
 
 parse(p,varargin{:});
 
