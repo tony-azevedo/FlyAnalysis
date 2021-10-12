@@ -9,6 +9,7 @@ T_cell.Properties.VariableNames = varNames;
 
 T_cell{1,:} = {'210302_F1_C2', 'Hot-Cell-Gal4, 50uL ATR mixed in', 'pilot', 'LEDFlashWithPiezoCueControl','empty'};
 T_cell{1,:} = {'210405_F1_C1', 'HC-LexA/13XLexAop-ChrimsonR;81A06/pJFRC7 100uL ATR mixed in', 'Fe>distal tidm', 'LEDFlashWithPiezoCueControl','empty'};
+T_cell{1,:} = {'210604_F1_C1', 'Hot-Cell-Gal4, 50uL ATR mixed in', 'pilot', 'LEDFlashWithPiezoCueControl','empty'};
 
 T_Reach = T_cell;
 
@@ -22,7 +23,13 @@ Script_MeasurePrePostStimMovement
 
 %% Now look at individual flies
 
-closeLook_210405_F1_C1;
+% closeLook_210302_F1_C2_HCGal4_unknown;
+% closeLook_210319_F2_C1_R81A06_unknown;
+% closeLook_210331_F2_C1_R81A06_proximalFlexorWithSpikes;
+closeLook_210602_F1_C1_R35C09_slowDistalFlexor;
+% closeLook_210405_F1_C1_R81A06_largeDistalFlexor;
+closeLook_210602_F1_C1_R35C09_slowDistalFlexor;
+closeLook_210604_F1_C1_R35C09_slowDistalFlexor;
 
 %% now try separating cases 1 and 2, and 5 and 6 based on movement
 no_stim_trials = outcome_id==1;
