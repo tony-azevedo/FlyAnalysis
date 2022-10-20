@@ -27,4 +27,5 @@ nb = round(wind*7/8);
 nf = round(wind*1/8);
 fr = movsum(spikes,[nb,nf],mid)/DT;
 fr = smooth(fr,round(wind/4));
+%fr = fr/size(spike_counts,dim);
 

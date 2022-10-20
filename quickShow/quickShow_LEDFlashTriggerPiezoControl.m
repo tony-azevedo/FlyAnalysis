@@ -1,6 +1,6 @@
-function interTrial_LEDFlashWithPiezoCueControl(plotcanvas,obj,savetag)
+function quickShow_LEDFlashTriggerPiezoControl(plotcanvas,obj,savetag)
 
-if strcmp(plotcanvas.UserData,mfilename) && ~isempty(plotcanvas.Children)  % the plotcanvas is already set up for this protocol
+if strcmp(plotcanvas.UserData,mfilename) && ~isempty(plotcanvas.Children)   % the plotcanvas is already set up for this protocol
     axLED = findobj(plotcanvas,'type','axes','tag','quickshow_inax2');
     axPhys = findobj(plotcanvas,'type','axes','tag','quickshow_inax');
     axProbe = findobj(plotcanvas,'type','axes','tag','quickshow_inax3');
@@ -36,40 +36,29 @@ end
 title(axLED,sprintf('%s', [prot '.' d '.' fly '.' cell '.' trial]));
 %%
 
-% x = makeInTime(obj.trial.params);
-x = cat(1,makeInTime(obj.trial.params),makeInterTime(obj.trial));
+% setupStimulus
+x = makeInTime(obj.trial.params);
 
 if ~isfield(obj.trial,'arduino_output')
-    fprintf('Need to run continuous data extraction routine\n')
+    fprintf('Need to run continuous data extraction routine\nMay need to exclude trial: excludeEmptyControlTrials\n')
     return
 end
-
-% Overview ax
-y = cat(2,obj.trial.sgsmonitor,obj.trial.intertrial.sgsmonitor);
-line(x,y,'parent',axLED,'color',[.8 0 0],'tag',savetag);
-
-y = cat(2,obj.trial.arduino_output,obj.trial.intertrial.arduino_output);
-line(x,y,'parent',axLED,'color',[.8 0 .8],'tag',savetag,'displayname','arduino_output');
+% displayTrial
+line(x,obj.trial.sgsmonitor,'parent',axLED,'color',[.8 0 0],'tag',savetag);
+line(x,obj.trial.arduino_output,'parent',axLED,'color',[.8 0 .8],'tag',savetag,'displayname','arduino_output');
 ylabel(axLED,'LED on'); %xlim([0 max(t)]);
 axis(axLED,'tight');
 
-% Voltage ax
-y = cat(2,obj.trial.voltage_1,obj.trial.intertrial.voltage_1);
-line(x,y,'parent',axPhys,'color',[.8 0 0],'tag',savetag,'displayname','voltage_1');
+line(x,obj.trial.voltage_1,'parent',axPhys,'color',[.8 0 0],'tag',savetag,'displayname','voltage_1');
 ylabel(axPhys,'LED on'); %xlim([0 max(t)]);
 axis(axPhys,'tight');
 
-% Probe ax
 fcclr = [.8 .8 .8];
 if obj.trial.params.blueToggle
     fcclr = [.8 .8 1];
 end
-y = cat(2,obj.trial.probe_position,obj.trial.intertrial.probe_position);
 patch('XData',[x(1) x(end) x(end) x(1)], 'YData',obj.trial.target_location(1)*[1 1 1 1] + obj.trial.target_location(2)*[0 0 1 1],'FaceColor',fcclr,'EdgeColor',fcclr,'parent',axProbe)
-ddpp = false(size(y));
-ddpp(1:end-1) = diff(y)>0;
-
-line(x(ddpp),y(ddpp),'parent',axProbe,'color',[1 .2 .2],'tag',savetag,'displayname','probe_position');
+line(x,obj.trial.probe_position,'parent',axProbe,'color',[1 .2 .2],'tag',savetag,'displayname','probe_position');
 axis(axProbe,'tight');
 axProbe.YLim = [0 700];
 

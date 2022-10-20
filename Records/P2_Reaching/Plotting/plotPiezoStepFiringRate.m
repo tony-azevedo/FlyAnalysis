@@ -69,7 +69,7 @@ for r = 1:size(T,1)
         spikemat(r,spikes-x1) = 1;
     end
 end 
-fr = firingRate(x(xidx),spikemat,43/300);
+fr = firingRate(x(xidx),spikemat,.08);
 
 pre = mean(fr(...
     x(xidx)>-trial.params.cueStimDurInSec-trial.params.cueDelayDurInSec-.05 & ...
@@ -86,8 +86,12 @@ delta_min = min(fr(...
 plot(aiax,x(xidx),fr,'tag',num2str(T_row.trial),'color',[0 0 0]);
 x_ = x(xidx);
 plot(aiax,[x_(1) x_(end)],post*[1 1],'tag',num2str(T_row.trial),'color',[1 1 1]*.85);
-plot(aiax,[x_(1) x_(end)],(post+delta_max)*[1 1],'tag',num2str(T_row.trial),'color',[1 1 1]*.55);
-
+switch sign(T_row.displacement)
+    case -1
+        plot(aiax,[x_(1) x_(end)],(post+delta_max)*[1 1],'tag',num2str(T_row.trial),'color',[1 1 1]*.55);
+    case 1
+        plot(aiax,[x_(1) x_(end)],(post+delta_min)*[1 1],'tag',num2str(T_row.trial),'color',[1 1 1]*.55);
+end
 
 if all(T.hiforce) || all(~T.hiforce)
     %all(T.target1==T.target1(1)) && all(T.target2==T.target2(1))

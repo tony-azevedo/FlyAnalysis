@@ -10,15 +10,16 @@ T_row = T_Reach(cidx,:);
 cid = CellID{cidx};
 fprintf('Starting %s\n',cid);
 
-Dir = fullfile('F:\Acquisition\',cid(1:6),cid);
+% Dir = fullfile('F:\Acquisition\',cid(1:6),cid);
+Dir = fullfile('D:\Data',cid(1:6),cid);
+
 cd(Dir);
 
 trialStem = [T_row.Protocol{1} '_Raw_' cid '_%d.mat'];
 
 %% Create param table
-tablefile = fullfile(Dir,[T_cell.Protocol{cidx} '_' cid '_Table.mat']);
-T_params = load(tablefile); 
-T_params = T_params.T;
+tablefile = fullfile(Dir,[T_Reach.Protocol{cidx} '_' cid '_Table.mat']);
+T_params = loadtable(tablefile); 
 if ~any(contains(T_params.Properties.VariableNames,'excluded'))
     T_params = add2table_ExcludeFlag(T_params);
 end
@@ -38,10 +39,9 @@ trial = load(fullfile(Dir,[T_row.Protocol{1} '_Raw_' cid '_' num2str(T_params.tr
 
 %% Load the processed table
 
-measuretblname = fullfile(Dir,[T_cell.Protocol{cidx} '_' cid '_MeasureTable.mat']);
+measuretblname = fullfile(Dir,[T_Reach.Protocol{cidx} '_' cid '_MeasureTable.mat']);
 if exist(measuretblname,'file')
-    T = load(measuretblname);
-    T = T.T;
+    T = loadtable(measuretblname);
     [~,~,~,~,~,~,trialStem] = extractRawIdentifiers(measuretblname);
     
     T.Properties.UserData.trialStem = trialStem;

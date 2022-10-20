@@ -58,7 +58,12 @@ if obj.trial.params.blueToggle
     fcclr = [.8 .8 1];
 end
 patch('XData',[x(1) x(end) x(end) x(1)], 'YData',obj.trial.target_location(1)*[1 1 1 1] + obj.trial.target_location(2)*[0 0 1 1],'FaceColor',fcclr,'EdgeColor',fcclr,'parent',axProbe)
-line(x,obj.trial.probe_position,'parent',axProbe,'color',[1 .2 .2],'tag',savetag,'displayname','probe_position');
+% downsample probe position
+ddpp = logical(size(obj.trial.probe_position));
+ddpp(1:end-1) = find(ddpp);
+ddpp(end) = 0; 
+
+line(x(ddpp),obj.trial.probe_position(ddpp),'parent',axProbe,'color',[1 .2 .2],'tag',savetag,'displayname','probe_position');
 axis(axProbe,'tight');
 axProbe.YLim = [0 700];
 

@@ -954,6 +954,9 @@ if strcmp(h.figure1.SelectionType,'alt')
         if tnum == h.trial.params.trial
             continue
         end
+        if T.excluded(tidx)
+            continue
+        end
                 
         trial = load(fullfile(D,sprintf(trialStem,tnum)));
             

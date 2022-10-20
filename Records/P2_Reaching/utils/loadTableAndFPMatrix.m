@@ -1,13 +1,14 @@
 function [T,bT,fp,fp_time,T_params] = loadTableAndFPMatrix(CellID)
-Dir = fullfile('F:\Acquisition\',CellID(1:6),CellID);
+ddir = getpref('FlyAnalysis','Datadir');
+Dir = fullfile(ddir,CellID(1:6),CellID);
 
 a = dir(fullfile(Dir,'*_MeasureTable.mat'));
 measuretablestem = regexprep(a.name,CellID,'%s');
 fpstem = regexprep(measuretablestem,'MeasureTable','ForceProbe');
 paramTstem = regexprep(measuretablestem,'MeasureTable','Table');
 
-T = load(fullfile(Dir,sprintf(measuretablestem,CellID)));
-T = T.T;
+T = loadtable(fullfile(Dir,sprintf(measuretablestem,CellID)));
+
 fp = load(fullfile(Dir,sprintf(fpstem,CellID)));
 fp_time = fp.forceProbeTime;
 fp = fp.forceProbe;

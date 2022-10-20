@@ -4,9 +4,7 @@
 
 % get a filestem to be able to import measure tables
 CellID = T_cell.CellID{1};
-Dir = fullfile('F:\Acquisition\',CellID(1:6),CellID);
-a = dir(fullfile(Dir,'*_MeasureTable.mat'));
-measuretablestem = regexprep(a.name,CellID,'%s');
+ddir = getpref('FlyAnalysis','Datadir');
 
 % go through each cell, load the measureTable, plot the fraction of trials
 % in each block in which the fly is in the right place.
@@ -17,10 +15,9 @@ ax_pct = subplot(2,1,2,'parent',fig); ax_pct.NextPlot = 'add';
 
 for c_ind = 1:length(T_cell.CellID)
     CellID = T_cell.CellID{c_ind};
-    Dir = fullfile('F:\Acquisition\',CellID(1:6),CellID);
-
-    T = load(fullfile(Dir,sprintf(measuretablestem,CellID)));
-    T = T.T;
+    Dir = fullfile(ddir,CellID(1:6),CellID);
+    measuretablestem = [T_cell.Protocol{c_ind} '_%s_MeasureTable.mat'];
+    T = loadtable(fullfile(Dir,sprintf(measuretablestem,CellID)));
     
     blcks = unique(T.block(:));
     blcks = blcks(blcks~=0);
@@ -76,8 +73,8 @@ ax_bar.XLim = [0 12];
 
 
 %% Try a new routine where all the high vs. low target distributions are plotted for each fly
-measuretablestem = 'LEDFlashWithPiezoCueControl_%s_MeasureTable.mat';
-fpstem = regexprep(measuretablestem,'MeasureTable','ForceProbe');
+hiclr = [1 .3 1];
+loclr = [.7 0 .7];
 
 fpcumfig = figure;
 fpcumfig.Position = [680 199 560 779];
@@ -112,17 +109,28 @@ for c_ind = 1:length(T_cell.CellID)
     % Hi target distributions
     hi = fp(:,T.hiforce & isgoodblck);
     x = sort(hi(:));
-    [cdf_total,pdf_total] = smoothCummulative(x,xq);
-    plot(ax_cdf,xq,cdf_total,'Color',hiclr);
+    [cdf_total_hi,pdf_total] = smoothCummulative(x,xq);
+    plot(ax_cdf,xq,cdf_total_hi,'Color',hiclr);
     plot(ax_hi,xq(1:end-1)+step/2-hitarget(2),pdf_total,'Color',hiclr,'DisplayName',CellID)
+    hi_mnt(c_ind) = sum((xq(1:end-1)+step/2-hitarget(2)).*pdf_total)/sum(pdf_total);
+    hi_med(c_ind) = xq(find(cdf_total_hi<=.5,1,'last'))-hitarget(2);
+    % plot(ax_hi,hi_mnt(c_ind)*[1 1],[0 .05],'Color',hiclr,'DisplayName',CellID)
+    
     
     % Low target distributions
     lo = fp(:,~T.hiforce & isgoodblck);
     x = sort(lo(:));
-    [cdf_total,pdf_total] = smoothCummulative(x,xq);
-    plot(ax_cdf,xq,cdf_total,'Color',loclr);
+    [cdf_total_lo,pdf_total] = smoothCummulative(x,xq);
+    plot(ax_cdf,xq,cdf_total_lo,'Color',loclr);
     plot(ax_lo,xq(1:end-1)+step/2-lotarget(2)+100,pdf_total,'Color',loclr,'DisplayName',CellID)
+    lo_mnt(c_ind) = sum((xq(1:end-1)+step/2-lotarget(2)+100).*pdf_total)/sum(pdf_total);
+    lo_med(c_ind) = xq(find(cdf_total_lo<=.5,1,'last'))-lotarget(2)+100;
+    % plot(ax_hi,hi_mnt(c_ind)*[1 1],[0 .05],'Color',hiclr,'DisplayName',CellID)
     
+    mnt_dist(c_ind) = hi_mnt(c_ind) - lo_mnt(c_ind);
+    med_dist(c_ind) = hi_med(c_ind) - lo_med(c_ind);
+    [pval(c_ind),h,stats] = ranksum(lo(:),hi(:));
+
     plot(ax_cdf,hitarget,-.05*c_ind*[1 1],'Linewidth',3,'Color',hiclr,'DisplayName',CellID)
     plot(ax_cdf,lotarget,-.05*c_ind*[1 1],'Linewidth',3,'Color',loclr,'DisplayName',CellID)
     
@@ -135,7 +143,7 @@ end
 
 linkaxes([ax_pdf, ax_hi, ax_lo]);
 ax_pdf.XLim = [-150 150];
-ax_pdf.YLim = [-0.05 .15];
+ax_pdf.YLim = [-0.15 .15];
 
 set(findobj(ax_pdf,'DisplayName','210604_F1_C1'),'linewidth',2);
 set(findobj(ax_hi,'DisplayName','210604_F1_C1'),'linewidth',2);
@@ -145,6 +153,11 @@ averagePDFs(ax_pdf,[-150 151]);
 averagePDFs(ax_hi,[-150 151]);
 averagePDFs(ax_lo,[-150 151]);
 
+
+mdfig = figure;
+plot(-[hi_med(:),lo_med(:)]',repmat((1:c_ind)',1,2)')
+hold on;
+plot(-[hi_med(:),lo_med(:)],repmat((1:c_ind)',1,2),'o')
 
 %% Aim 2.1: compare the sensory responses in two slow neurons.
 
@@ -158,7 +171,7 @@ ax_delta_ext = subplot(2,2,2,'parent',sens_cmp_fig); ax_delta_ext.NextPlot = 'ad
 ax_pre_flx = subplot(2,2,3,'parent',sens_cmp_fig); ax_pre_flx.NextPlot = 'add';
 ax_delta_flx = subplot(2,2,4,'parent',sens_cmp_fig); ax_delta_flx.NextPlot = 'add';
 
-for c_ind = 5:6
+for c_ind = 5:8
     CellID = T_cell.CellID{c_ind};
     [T,bT,fp] = loadTableAndFPMatrix(CellID);
     
@@ -175,7 +188,7 @@ for c_ind = 5:6
     fpgood = fp(:,isgoodblck);
     
     % All Lo or Hi trials
-    ttl_stem = 'Lo %gV';
+    ttl_stem = '%s: Lo %gV';
     pre_lo = [0 0];
     post_lo = [0 0];
     delta_lo = [0 0];
@@ -183,7 +196,7 @@ for c_ind = 5:6
     stps = [-5 5];
     for stp = [-5 5]
         idx = T.outcome == 1 & ~T.hiforce & T.displacement == stp & isgoodblck;
-        ttl = sprintf(ttl_stem,stp);
+        ttl = sprintf(ttl_stem,CellID,stp);
         %[fig] = plotPiezoStepResponse(T(idx,:),ttl);
         %[fig] = plotPiezoStepSpikes(T(idx,:),ttl);
         [fig,pre,post,delta_max,delta_min] = plotPiezoStepFiringRate(T(idx,:),ttl);
@@ -205,14 +218,14 @@ for c_ind = 5:6
         end
     end
     
-    ttl_stem = 'Hi %gV';
+    ttl_stem = '%s: Hi %gV';
     pre_hi = [0 0];
     post_hi = [0 0];
     delta_hi = [0 0];
     delta_off_hi = [0 0];
     for stp = [-5 5]
         idx = T.outcome == 1 & T.hiforce & T.displacement == stp & isgoodblck;
-        ttl = sprintf(ttl_stem,stp);
+        ttl = sprintf(ttl_stem,CellID,stp);
         [fig,pre,post,delta_max,delta_min] = plotPiezoStepFiringRate(T(idx,:),ttl);
         frax = findobj(fig,'type','axes','tag','frax');
         frax.YLim = [0 100];
@@ -245,10 +258,34 @@ for c_ind = 5:6
     
 end
 figure(sens_cmp_fig)
+ax_delta_ext.YLim = [0 50];
+ax_delta_flx.YLim = [-50 0];
 
-%% Aim 2.2 reflex reversal of 210903_F3_C1
-measuretablestem = 'LEDFlashWithPiezoCueControl_%s_MeasureTable.mat';
+
+%% Aim 2.2 reflex reversal 
+measuretablestem = 'LEDFlashTriggerPiezoControl_%s_MeasureTable.mat';
 fpstem = regexprep(measuretablestem,'MeasureTable','ForceProbe');
+[T,bT,fp] = loadTableAndFPMatrix('210903_F3_C1');
+trialStem = T.Properties.UserData.trialStem;
+cd(T.Properties.UserData.Dir)
+
+targettriggeredstimtrials = T(T.outcome==3,:);
+
+stimvals = targettriggeredstimtrials.displacements{1};
+
+flexstims = targettriggeredstimtrials(targettriggeredstimtrials.displacement==2.5,:);
+extstims = targettriggeredstimtrials(targettriggeredstimtrials.displacement==5,:);
+
+extstims = extstims(extstims.trial~=381,:);
+
+flexstims = flexstims(flexstims.trial~=381,:);
+
+dirstimset = {extstims, flexstims};
+sllims = {[4.5 3],[5.5 7]};
+
+close all
+Script_PlotTargetTriggeredStimuli
+
 
 %% Aim 3.1: for the premotor neuron we have,210302_F1_C1
 % pull out the reaching trials, show a few. For all the trials in which
