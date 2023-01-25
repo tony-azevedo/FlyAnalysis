@@ -19,13 +19,16 @@ Finally, FlySound can acquire continuous data. FlyAnalysis provides routines, in
 
 MATLAB toolboxes are not necessary to simply open and view data. Some analysis scripts may require additional toolboxes. Typically those analysis scripts are for specific protocols that a user creates, such as protocols that acquire images along with analog or digital streams. 
 
-To install FlyAnalysis, fork and clone the FlyAnalysis and FlySound repositories. Add the directory paths to MATLAB
+### Install FlyAnalysis
+ - fork and clone the FlyAnalysis and FlySound repositories. 
+ - Add the directory paths to MATLAB
 
 TODO:
  - add an example experiment to the repo for users to play with.
  - generalize for any data path
  - create version names.
 
+## Versions
 Dev branch:
 Clean install of FlyAnalysis routines.
 
