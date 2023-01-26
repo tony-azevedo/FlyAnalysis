@@ -163,7 +163,9 @@ classdef ContinuousDataReader < handle
             end
             
             % Need a look up table for stimrefvals
+            map_loc = which('controlProtocolRefValueMap.mat');
             map = load('controlProtocolRefValueMap');
+            
             stimRefVals = zeros(size(protocols));
             for p = 1:length(protocols)
                 try stimRefVals(p) = map.(protocols{p});

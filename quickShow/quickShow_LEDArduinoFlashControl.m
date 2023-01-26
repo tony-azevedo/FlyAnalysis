@@ -40,12 +40,21 @@ if ~isfield(obj.trial,'arduino_output')
     return
 end
 % displayTrial
-line(x,obj.trial.arduino_output,'parent',axLED,'color',[.8 0 0],'tag',savetag);
+try line(x,obj.trial.arduino_output,'parent',axLED,'color',[.8 0 0],'tag',savetag);
+catch
+    warning('makeTime makes a different vector length than data')
+    line(x(1:length(obj.trial.arduino_output)),obj.trial.arduino_output,'parent',axLED,'color',[.8 0 0],'tag',savetag);
+end
+
 ylabel(axLED,'LED on'); %xlim([0 max(t)]);
 axis(axLED,'tight');
 
 patch('XData',[x(1) x(end) x(end) x(1)], 'YData',obj.trial.target_location(1)*[1 1 1 1] + obj.trial.target_location(2)*[0 0 1 1],'FaceColor',[.8 .8 .8],'EdgeColor',[.8 .8 .8],'parent',axProbe)
-line(x,obj.trial.probe_position,'parent',axProbe,'color',[1 .2 .2],'tag',savetag);
+try line(x,obj.trial.probe_position,'parent',axProbe,'color',[1 .2 .2],'tag',savetag);
+catch
+    warning('makeTime makes a different vector length than data')
+    line(x(1:length(obj.trial.probe_position)),obj.trial.probe_position,'parent',axProbe,'color',[1 .2 .2],'tag',savetag);
+end
 axis(axProbe,'tight');
 axProbe.YLim = [100 900];
 
