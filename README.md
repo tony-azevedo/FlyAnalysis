@@ -34,11 +34,13 @@ TODO:
   - Assume the top level data location is in a directory Data on storage drive D:, assuming a windows operating system: 'D:\Data'. 
   - Each experiment is saved to its own folder, YYMMDD.
   - Each sample is saved to a sub folder, YYMMDD_F<N>_C<M>, where N is the nth fly of the day, and M is the mth cell of that fly, in the case where multiple cells can be recorded from the same fly. 
-  - Each trial is named according to the protocol used to produce the trial
+  - Each trial is named according to the protocol used to produce the trial, followed by '_Raw_', the date and F<N>_C<M> indicator and the trial number.
 
  A typical file location would thus be as follows: "D:\Data\230120\230120_F2_C1\LEDArduinoFlashControl_Raw_230120_F2_C1_1.mat"
  
  #### Conventions
+  - If testing data acquistion, F0_C<M> is used to indicate data that can safely be thrown away.
+  - If not recording from any cells, C1 is used
 
 ## Versions
 Master branch:
