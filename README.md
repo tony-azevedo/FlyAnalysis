@@ -27,6 +27,7 @@ TODO:
  - add an example experiment to the repo for users to play with.
  - generalize for any data path
  - create version names.
+ - documentation at https://flyanalysis.readthedocs.io/en/latest/
 
 ## Data location and naming
 
