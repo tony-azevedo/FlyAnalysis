@@ -6,7 +6,7 @@ Routines to analyze data collected with FlySound acquisition software. FlySound 
 
 For more script-like analysis routines, the Record directory contains example scripts, with different sections, to analyze data within and across experiments. As an example, a Record_<name>.m script my make several plots that together would go into a figure of a paper. Script_<script_name>.m files typically contain specific analyses which might be run in a section of a record. Often, Script_<name>.m files start as a section of a record and typically gets moved to its own file for readability of the Record_<name>.m, rather than to repeat a code snippet.
 
-Finally, FlySound can acquire continuous data. FlyAnalysis provides routines, in the continousAnalysis directory, to extract individual trials from the continously acquired data and to save them to .mat files, as for discrete trial based analyasis. In addition, `continousDataReader()` opens a simple viewer that allows the user to scan through recordings of continuous data, zoom in, annotate, and extract data.
+Finally, FlySound can acquire continuous data. FlyAnalysis provides routines, in the continousAnalysis directory, to extract individual trials from the continously acquired data and to save them to .mat files, so that the same trial based analysis can be done on those trial structures. In addition, `continousDataReader()` opens a simple viewer that allows the user to scan through recordings of continuous data, zoom in, annotate, and extract data.
 
 ## Installation
 
@@ -21,7 +21,7 @@ MATLAB toolboxes are not necessary to simply open and view data. Some analysis s
 
 ### Install FlyAnalysis
  - fork and clone the FlyAnalysis and FlySound repositories. 
- - Add the directory paths to MATLAB
+ - Add the directory paths to MATLAB path.
 
 TODO:
  - add an example experiment to the repo for users to play with.
