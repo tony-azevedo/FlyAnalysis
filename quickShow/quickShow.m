@@ -32,8 +32,8 @@ gui_State = struct('gui_Name',       mfilename, ...
                    'gui_LayoutFcn',  [] , ...
                    'gui_Callback',   []);
 
-% setpref('USERDIRECTORY','MAC','/Users/tony')
-% setpref('USERDIRECTORY','PC','C:\Users\tony')
+% setacqpref('USERDIRECTORY','MAC','/Users/tony')
+% setacqpref('USERDIRECTORY','PC','C:\Users\tony')
 
 if nargin
     str2test = varargin{1};

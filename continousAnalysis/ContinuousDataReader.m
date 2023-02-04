@@ -77,6 +77,8 @@ classdef ContinuousDataReader < handle
         probe_comb
         last_seen_samp
         
+        controlsamprate
+        trialnumsamps
 
         nextbutt
         nexttrialbutt
@@ -268,11 +270,15 @@ classdef ContinuousDataReader < handle
                     trial.starttime = n1/obj.samprate;
                     trial.startsample = n1;
                     
+                    trial.params.sampratein_control = trial.params.sampratein;
+                    trial.params.sampratein = obj.samprate;
+
                     for ch = 1:length(obj.channels)
                         if ~startsWith(obj.channels{ch},'b_') && ~strcmp(obj.channels{ch},'refchan')
                             cstr = obj.channels{ch};
-                            trial.(cstr) = obj.cookie(strcmp(obj.channels,cstr),1:trial.params.durSweep*obj.samprate);
-                            trial.intertrial.(cstr) = obj.cookie(strcmp(obj.channels,cstr),trial.params.durSweep*obj.samprate+1:end);
+                            tr_end = round(trial.params.durSweep*obj.samprate);
+                            trial.(cstr) = obj.cookie(strcmp(obj.channels,cstr),1:tr_end);
+                            trial.intertrial.(cstr) = obj.cookie(strcmp(obj.channels,cstr),tr_end+1:end);
                         end
                     end
                     
@@ -318,19 +324,19 @@ classdef ContinuousDataReader < handle
                 
                 linkaxes([obj.ffwaiax,obj.ffwdiax],'x')
                 
-                obj.nextbutt = uicontrol('Parent',obj.ffwfig,'Style','pushbutton','Position',[1800 824 40 20],'String','->');
-                obj.prevbutt = uicontrol('Parent',obj.ffwfig,'Style','pushbutton','Position',[1750 824 40 20],'String','<-');
-                obj.sizeedit = uicontrol('Parent',obj.ffwfig,'Style','edit','Position',[1700 824 40 20],'String',num2str(obj.cookiesize));
-                obj.gotoedit = uicontrol('Parent',obj.ffwfig,'Style','edit','Position',[1650 824 40 20],'String',num2str(obj.cookietime(1)));
+                obj.nextbutt = uicontrol('Parent',obj.ffwfig,'Style','pushbutton','Position',[1800 824 40 20],'String','->','Tooltip','Next Cookie');
+                obj.prevbutt = uicontrol('Parent',obj.ffwfig,'Style','pushbutton','Position',[1750 824 40 20],'String','<-','Tooltip','Previous Cookie');
+                obj.sizeedit = uicontrol('Parent',obj.ffwfig,'Style','edit','Position',[1700 824 40 20],'String',num2str(obj.cookiesize),'Tooltip','Cookie size');
+                obj.gotoedit = uicontrol('Parent',obj.ffwfig,'Style','edit','Position',[1650 824 40 20],'String',num2str(obj.cookietime(1)),'Tooltip','Cookie start time');
 
-                obj.nexttrialbutt = uicontrol('Parent',obj.ffwfig,'Style','pushbutton','Position',[1800 800 40 20],'String','->');
-                obj.prevtrialbutt = uicontrol('Parent',obj.ffwfig,'Style','pushbutton','Position',[1750 800 40 20],'String','<-');
-                obj.trialedit = uicontrol('Parent',obj.ffwfig,'Style','edit','Position',[1700 800 40 20],'String',num2str(0));
-                obj.refchedit = uicontrol('Parent',obj.ffwfig,'Style','edit','Position',[1650 800 40 20],'String',num2str(0));
+                obj.nexttrialbutt = uicontrol('Parent',obj.ffwfig,'Style','pushbutton','Position',[1800 800 40 20],'String','->','Tooltip','Next Trial');
+                obj.prevtrialbutt = uicontrol('Parent',obj.ffwfig,'Style','pushbutton','Position',[1750 800 40 20],'String','<-','Tooltip','Previous Trial');
+                obj.trialedit = uicontrol('Parent',obj.ffwfig,'Style','edit','Position',[1700 800 40 20],'String',num2str(0),'Tooltip','Trial num');
+                obj.refchedit = uicontrol('Parent',obj.ffwfig,'Style','edit','Position',[1650 800 40 20],'String',num2str(0),'Tooltip','Stimulus hash');
 
-                obj.resizebutt = uicontrol('Parent',obj.ffwfig,'Style','pushbutton','Position',[1600 824 40 20],'String','resize');
-                obj.vizucheck = uicontrol('Parent',obj.ffwfig,'Style','togglebutton','Position',[1600 800 40 20],'String','An In');
-                obj.quickShow = uicontrol('Parent',obj.ffwfig,'Style','pushbutton','Position',[1550 824 40 20],'String','qckSh');
+                obj.resizebutt = uicontrol('Parent',obj.ffwfig,'Style','pushbutton','Position',[1600 824 40 20],'String','resize','Tooltip','Tighten the axes');
+                obj.vizucheck = uicontrol('Parent',obj.ffwfig,'Style','togglebutton','Position',[1600 800 40 20],'String','An In','Tooltip','Show analog in channels');
+                obj.quickShow = uicontrol('Parent',obj.ffwfig,'Style','pushbutton','Position',[1550 824 40 20],'String','qckSh','Tooltip','Open quickshow');
                 obj.quickShow.Visible = obj.extracted;
                 if obj.extracted
                     obj.quickShow.Enable = 'on';
@@ -576,7 +582,8 @@ classdef ContinuousDataReader < handle
         end
         
         function st = readCookie(obj)
-            obj.cookiesamps = round(obj.cookiesize*obj.samprate);            
+            obj.cookiesamps = round(obj.cookiesize*obj.samprate);
+            %             fprintf('Readnext %d samps',obj.cookiesamps);  %% comment out
             nextreads = obj.cookiesamps;
             
             % Read more data
@@ -1133,6 +1140,7 @@ classdef ContinuousDataReader < handle
         end
         
         function  next = filterStimhashval(obj,next)
+            persistent guess_sample_idxs
             % Where are the trials?
             % stimulus hash values must be >.5V, so look for 1 volt changes.
             % But the change could come between samples, so first filter
@@ -1151,7 +1159,9 @@ classdef ContinuousDataReader < handle
             % just see if refchan val increased at any point before the
             % trial started
             idxidx = rfch(idxs-1) > 0;
-            idxs(idxidx) = idxs(idxidx)-1;
+            if any(idxidx)
+                idxs(idxidx) = idxs(idxidx)-1;
+            end
             
             % Just make sure the value didn't change at the cookie
             if ~isempty(obj.lastrefchanval) && obj.lastrefchanval == 0 && rfch(1)>0
@@ -1163,22 +1173,43 @@ classdef ContinuousDataReader < handle
             cookie_hashes = idxs;
             
             if ~isempty(obj.cookie_trial_index)
-                trnumsamps = 25+10*(0:8);
+                % The indices at which to look for trial nubmbers had been
+                % hard coded and assumed acquisition and control had the
+                % same sample rates. This code checks thats
+                if isempty(obj.controlsamprate) || isempty(obj.trialnumsamps)
+                    obj.guesscontrolsamprate();
+                    if obj.controlsamprate==-1
+                        error('Handle this case')
+                    elseif obj.controlsamprate~=obj.samprate
+                        obj.trialnumsamps = obj.betterTrialNumSamples(rfch(obj.cookie_trial_index(1):obj.cookie_trial_index(1)+100));
+                        fprintf('Control and acquisition samp rates are different\nGuessing idxs on each trial: ')
+                        fprintf('%d, ',obj.trialnumsamps)
+                        fprintf('\n')
+                        guess_sample_idxs = true;
+                    elseif obj.controlsamprate==obj.samprate
+                        fprintf('Control and acquisition samp rates are identical\n')
+                        if obj.samprate==50000
+                            obj.trialnumsamps = 25+10*(0:8);
+                            guess_sample_idxs = false;
+                        else
+                            obj.trialnumsamps = obj.betterTrialNumSamples(rfch(obj.cookie_trial_index(1):100));
+                        end
+                    end
+                end
+                
                 % Check if this occurs at the end of the cookie
-                if obj.cookie_trial_index(end)+trnumsamps(end)>length(rfch)
+                if obj.cookie_trial_index(end)+obj.trialnumsamps(end)>length(rfch)
                     error('The trial number signal in the refchannel is right at the end of the cookie')
                 end
                 for tidx = 1:length(obj.cookie_trial_index)
                     tridx = obj.cookie_trial_index(tidx);
-                    digits = rfch(tridx+trnumsamps)-rfch(tridx+10);
-                    digits = round(digits*10);
-                    digits = digits(1:find(digits==-1,1,'last'));
-                    digits = digits(digits>=0);
-                    cookie_trialnumbers(tidx) = sum(10.^(0:length(digits)-1).*digits);
-                    cookie_hashes(tidx) = rfch(tridx+10);
-                    % rfch(tridx+10:tridx+trnumsamps(end)) = cookie_hashes(tidx);
+                    rfch_s = rfch(tridx+(0:100-1));
+                    if guess_sample_idxs
+                        obj.trialnumsamps = obj.betterTrialNumSamples(rfch_s);
+                    end
+                    [cookie_trialnumbers(tidx),cookie_hashes(tidx)] = obj.trial_num_from_refchan(rfch_s);
                 end
-                
+                fprintf('\n')
                 % next(strcmp(obj.channels,'refchan'),:) = rfch;
                 obj.lastrefchanval = rfch(end);
                 obj.trial_index = [obj.trial_index, obj.samp0+idxs];
@@ -1187,6 +1218,52 @@ classdef ContinuousDataReader < handle
             end
         end
         
+        function guesscontrolsamprate(obj)
+            rawfiles = dir(fullfile(obj.D,'*_Raw_*.mat'));
+            rb = rawfiles(randperm(length(rawfiles)));
+            samprates = zeros(1,10);
+            for rt = 1:length(samprates)
+                trial = load(fullfile(rb(rt).folder,rb(rt).name));
+                samprates(rt) = trial.params.samprateout;
+            end
+            if all(samprates==samprates(1))
+                obj.controlsamprate = samprates(1);
+            elseif any(samprates~=samprates(1))
+                obj.controlsamprate = -1;
+            end
+
+        end
+
+        function ud_idx = betterTrialNumSamples(obj,s)
+            s1 = round((s-s(end))*10);
+            low_idx = s1==-1;
+            % check that this waveform is well conditioned and adjust
+
+            ud_idx = find([0, diff(low_idx)]<0);
+            if max(s1(ud_idx))< max(s1)
+                n1_per = find([0, diff(low_idx)]>0);
+                for n_idx = 1:length(n1_per)-1
+                    up_idx(n_idx) = n1_per(n_idx)-1+find(s1(n1_per(n_idx):n1_per(n_idx+1))==max(s1(n1_per(n_idx):n1_per(n_idx+1))),1,'first');
+                end
+                up_idx(n_idx+1) = n1_per(end)+2;
+                digits = s1(up_idx(1:end-1));
+                ods = s1(ud_idx(1:end-1));
+                fprintf('\n\tWeirdly conditioned refchan for trial %d (%d)\n',sum(10.^(0:length(digits)-1).*digits),sum(10.^(0:length(ods)-1).*ods))
+                ud_idx = up_idx;
+            end
+
+        end
+
+        function [trialnum,hash] = trial_num_from_refchan(obj,s)
+            digits = s(obj.trialnumsamps);
+            digits = round(digits*10);
+            hash = digits(end);
+            digits = digits(1:end-1)-hash;
+            trialnum = sum(10.^(0:length(digits)-1).*digits);
+            hash = hash/10;
+            fprintf('(%d, %.1f), ',trialnum, hash)
+        end
+
         function updateoverview(obj,next)
             % don't run this if the histogram pointer is already ahead
             if obj.last_seen_samp > obj.samp1
