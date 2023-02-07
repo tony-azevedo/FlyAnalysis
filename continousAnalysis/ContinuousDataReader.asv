@@ -1214,7 +1214,6 @@ classdef ContinuousDataReader < handle
                     end
                     rfch_s = rfch(tridx+(0:max(obj.trialnumsamps)+10));
                     [cookie_trialnumbers(tidx),cookie_hashes(tidx)] = obj.trial_num_from_refchan(rfch_s);
-                    fprintf('(%d, %.1f), ',cookie_trialnumbers(tidx), cookie_hashes(tidx))
                     if cookie_trialnumbers(tidx)==69
                         a = 'stop';
                     end
@@ -1258,14 +1257,24 @@ classdef ContinuousDataReader < handle
             % check that this waveform is well conditioned and adjust
 
             du_idx = find([0, diff(low_idx)]<0);
-            for n_idx = 1:length(du_idx)-1
-                i_0 = du_idx(n_idx);
-                i_1 = du_idx(n_idx+1)-1;    % point before s1 is no longer -1;
-                s_i = s1(i_0:i_1-1);        % snippet between -1 transitions;
-                up_idx(n_idx) = (i_0-1) + find(s_i==max(s_i),1,'first');
+            obj.trialnumsamps = du_idx;
+            if max(s1(du_idx))< max(s1)
+                % If the 
+                [curtrialnum,hash] = obj.trial_num_from_refchan(s);
+                % n1_per = find([0, diff(low_idx)]>0);
+                for n_idx = 1:length(du_idx)-1
+                    i_0 = du_idx(n_idx);
+                    i_1 = du_idx(n_idx+1)-1;    % point before s1 is no longer -1;
+                    s_i = s1(i_0:i_1-1);        % snippet between -1 transitions;
+                    up_idx(n_idx-1) = (i_0-1) + find(s_i==max(s_i),1,'first');
+                end
+                up_idx(n_idx) = du_idx(end)+2;
+                obj.trialnumsamps = up_idx;
+
+                [trialnum,hash] = obj.trial_num_from_refchan(s);
+
+                fprintf('\n\tWeirdly conditioned refchan for trial %d (%d)\n',trialnum,curtrialnum)
             end
-            up_idx(n_idx+1) = du_idx(end)+2;
-            obj.trialnumsamps = up_idx;
 
         end
 
@@ -1276,6 +1285,7 @@ classdef ContinuousDataReader < handle
             digits = digits(1:end-1)-hash;
             trialnum = sum(10.^(0:length(digits)-1).*digits);
             hash = hash/10;
+            fprintf('(%d, %.1f), ',trialnum, hash)
         end
 
         function updateoverview(obj,next)
