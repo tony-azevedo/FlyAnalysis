@@ -1215,9 +1215,9 @@ classdef ContinuousDataReader < handle
                     rfch_s = rfch(tridx+(0:max(obj.trialnumsamps)+10));
                     [cookie_trialnumbers(tidx),cookie_hashes(tidx)] = obj.trial_num_from_refchan(rfch_s);
                     fprintf('(%d, %.1f), ',cookie_trialnumbers(tidx), cookie_hashes(tidx))
-                    if cookie_trialnumbers(tidx)==69
-                        a = 'stop';
-                    end
+                    % if cookie_trialnumbers(tidx)==69
+                    %     a = 'stop';
+                    % end
                 end
                 fprintf('\n')
                 % next(strcmp(obj.channels,'refchan'),:) = rfch;
