@@ -44,6 +44,11 @@ cdr.chooseChannels({'arduino_output','refchan','probe_position'});%,'b_0','b_128
 cdr = ContinuousDataReader('AcquireWithEpiFeedback_ContRaw_210319_F2_C1_3_A.bin');
 cdr.chooseChannels({'arduino_output','refchan','probe_position','sgsmonitor','current_1'});%,'b_0','b_128'});
 
+
+%%
+cdr = ContinuousDataReader('AcquireWithEpiFeedback_ContRaw_210319_F2_C1_3_A.bin');
+cdr.chooseChannels({'arduino_output','refchan','probe_position','sgsmonitor','current_1'});%,'b_0','b_128'});
+
 %% 
 cdr.nextCookie(50);
 
